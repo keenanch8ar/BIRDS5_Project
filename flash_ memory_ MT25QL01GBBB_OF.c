@@ -799,6 +799,16 @@ void TRANSFER_DATA_NBYTE_TOPC_SMF(unsigned INT32 ADRESS,int32 data_byte)        
    return;
 }
 
+void TRANSFER_DATA_NBYTE_TOFAB_SMF(unsigned INT32 ADRESS,int32 data_byte)         //read and send the specified data
+{
+   for (int32 i=0 ; i < data_byte ; i++)
+   {
+      fputc(READ_DATA_BYTE_SMF(ADRESS),fab);
+      ADRESS++;
+   }
+   return;
+}
+
 
 /*
 void TRANSFER_DATA_NBYTE_OFtoSCF(unsigned INT32 FROM_ADRESS,unsigned INT32 TO_ADRESS,int32 data_byte) //transfer data from MAIN FLASH to COM FLASH
