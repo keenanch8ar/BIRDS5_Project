@@ -32,6 +32,10 @@
 #use spi(MASTER, CLK=PIN_B2, DI=PIN_B5, DO=PIN_B4,  BAUD=1000000, BITS=8, STREAM=COM_FM, MODE=0)         //COM flash memory port
 #use spi(MASTER, CLK=PIN_A3, DI=PIN_A0, DO=PIN_A1,  BAUD=1000000, BITS=8, STREAM=MISSION_FM, MODE=0)     //MISSION flash memory port
 
+//--------------Pin Assignment---------------------------------------------------------------------------------------------
+#define sel PIN_D6
+#define hvs PIN_D7
+#define PINO_POWER PIN_D5
 
 
 //-------------mainpic_function.c-----------------------------------------------------------------------------------------
