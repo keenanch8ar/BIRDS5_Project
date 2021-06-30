@@ -227,7 +227,7 @@ void GET_RESET_DATA()                                                           
       for(i=6; i<39; i++)
       {
          PINO_DATA[i] = 0x01;
-      }
+         }
       
       
       

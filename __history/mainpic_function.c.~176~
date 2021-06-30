@@ -172,7 +172,7 @@ void PINO_Test()
          output_low (sel);
          break;
          
-         case 0x9F:
+         case 0x9F://Finish
          fprintf (fab, "Start 0x9F\r\n") ;
          GET_RESET_DATA ();
          fprintf (fab, "Finish 0x9F\r\n") ;
@@ -227,7 +227,7 @@ void GET_RESET_DATA()                                                           
       for(i=6; i<39; i++)
       {
          PINO_DATA[i] = 0x01;
-      }
+         }
       
       
       
