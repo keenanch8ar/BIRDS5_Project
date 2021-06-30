@@ -1,9 +1,10 @@
-D G "__PCH__" 0 36 ""5.050""
-D G "__DEVICE__" 0 36 "6794"
-D G "__DATE__" 0 36 ""30-Jun-21""
-D G "__TIME__" 0 36 ""17:11:11""
-D G "_UNICODE" 0 36 ""?""
-D G "__EVAL" 0 36 ""?"" "Standard Header file for the PIC18F67J94 device ////////////////"
+f N "UART4_RXD" 0 4 ""
+D G "__PCH__" 0 7 ""5.050""
+D G "__DEVICE__" 0 7 "6794"
+D G "__DATE__" 0 7 ""30-Jun-21""
+D G "__TIME__" 0 7 ""17:16:21""
+D G "_UNICODE" 0 7 ""?""
+D G "__EVAL" 0 7 ""?"" "Standard Header file for the PIC18F67J94 device ////////////////"
 c L "set_tris_a" 2 3 26 "FUNCTION"
 f N "set_tris_a" 2 75 ""
 v L "value" 2 75 "int8" `54 
@@ -977,9 +978,9 @@ f N "setup_act" 2 995 ""
 f B "setup_act" 2 995 "int8()" `413 
 f N "setup_act" 2 996 ""
 v L "mode" 2 996 "int8" `415 
-f B "setup_act" 2 996 "int8(int8 mode,int32 mode)" `414 
+f B "setup_act" 2 996 "int8(int8 mode,int8 )" `414 
 f N "act_status" 2 997 ""
-f B "act_status" 2 997 "int8(int8 mode,int32 mode)" `414  "Constants used in setup_oscillator() are:"
+f B "act_status" 2 997 "int8(int8 mode,int8 )" `414  "Constants used in setup_oscillator() are:"
 d G "OSC_31000" 2 1000 "0x00000005"
 d G "OSC_31250" 2 1001 "0x00070000"
 d G "OSC_125KHZ" 2 1002 "0x00060000"
@@ -1020,7 +1021,7 @@ f N "setup_adc" 2 1050 ""
 v L "mode" 2 1050 "int32" `416 
 f B "setup_adc" 2 1050 "void(int32 mode)" `415 
 f N "read_adc" 2 1051 ""
-f B "read_adc" 2 1051 "int8()" `417 
+f B "read_adc" 2 1051 "int8(int8 )" `417 
 f N "read_adc" 2 1052 ""
 v L "mode" 2 1052 "int8" `419 
 f B "read_adc" 2 1052 "int8(int8 mode)" `418 
@@ -1028,9 +1029,9 @@ f N "read_adc" 2 1053 ""
 f B "read_adc" 2 1053 "int16()" `420 
 f N "read_adc" 2 1054 ""
 v L "mode" 2 1054 "int8" `421 
-f B "read_adc" 2 1054 "int16(int8 mode,int32 pins)" `420 
+f B "read_adc" 2 1054 "int16(int8 mode)" `420 
 f N "adc_done" 2 1055 ""
-f B "adc_done" 2 1055 "int8(int8 mode,int32 pins)" `420  "Constants used for SETUP_ADC() are:"
+f B "adc_done" 2 1055 "int8(int8 mode)" `420  "Constants used for SETUP_ADC() are:"
 d G "ADC_OFF" 2 1057 "0x10000"
 d G "ADC_CLOCK" 2 1058 "0x0000"
 d G "ADC_CLOCK_DIV_2" 2 1059 "0x0001"
@@ -1405,9 +1406,9 @@ f B "i2c_init" 2 1230 "void(int8 stream,int32 baud)" `648  "#use spi() Prototype
 f N "spi_xfer" 2 1233 ""
 f B "spi_xfer" 2 1233 "int8()" `651 
 f N "spi_xfer" 2 1234 ""
-f B "spi_xfer" 2 1234 "int16(int8 data)" `652 
+f B "spi_xfer" 2 1234 "int16()" `652 
 f N "spi_xfer" 2 1235 ""
-f B "spi_xfer" 2 1235 "int32(int8 data)" `652 
+f B "spi_xfer" 2 1235 "int32()" `652 
 f N "spi_xfer" 2 1236 ""
 v L "data" 2 1236 "int8" `653 
 f B "spi_xfer" 2 1236 "int8(int8 data)" `652 
@@ -1487,18 +1488,18 @@ f B "spi_prewrite" 2 1255 "void(int8 ,int32 data)" `705
 f N "spi_xfer_in" 2 1256 ""
 f B "spi_xfer_in" 2 1256 "int8()" `708 
 f N "spi_xfer_in" 2 1257 ""
-f B "spi_xfer_in" 2 1257 "int16(int8 bits)" `709 
+f B "spi_xfer_in" 2 1257 "int16()" `709 
 f N "spi_xfer_in" 2 1258 ""
-f B "spi_xfer_in" 2 1258 "int32(int8 bits)" `709 
+f B "spi_xfer_in" 2 1258 "int32()" `709 
 f N "spi_xfer_in" 2 1259 ""
 v L "bits" 2 1259 "int8" `710 
 f B "spi_xfer_in" 2 1259 "int8(int8 bits)" `709 
 f N "spi_xfer_in" 2 1260 ""
 v L "bits" 2 1260 "int8" `712 
-f B "spi_xfer_in" 2 1260 "int16(int8 bits,int8 bits)" `711 
+f B "spi_xfer_in" 2 1260 "int16(int8 bits)" `711 
 f N "spi_xfer_in" 2 1261 ""
 v L "bits" 2 1261 "int8" `712 
-f B "spi_xfer_in" 2 1261 "int32(int8 bits,int8 bits)" `711 
+f B "spi_xfer_in" 2 1261 "int32(int8 bits)" `711 
 f N "spi_xfer_in" 2 1262 ""
 v L "stream" 2 1262 "int8" `712 
 v L "bits" 2 1262 "int8" `713 
@@ -1506,15 +1507,15 @@ f B "spi_xfer_in" 2 1262 "int8(int8 stream,int8 bits)" `711
 f N "spi_xfer_in" 2 1263 ""
 v L "stream" 2 1263 "int8" `712 
 v L "bits" 2 1263 "int8" `716 
-f B "spi_xfer_in" 2 1263 "int16(int8 stream,int8 bits,int8 task)" `714 
+f B "spi_xfer_in" 2 1263 "int16(int8 stream,int8 bits)" `714 
 f N "spi_xfer_in" 2 1264 ""
 v L "stream" 2 1264 "int8" `712 
 v L "bits" 2 1264 "int8" `716 
-f B "spi_xfer_in" 2 1264 "int32(int8 stream,int8 bits,int8 task)" `714  "#use rtos() Prototypes:"
+f B "spi_xfer_in" 2 1264 "int32(int8 stream,int8 bits)" `714  "#use rtos() Prototypes:"
 f N "rtos_run" 2 1267 ""
-f B "rtos_run" 2 1267 "void(int8 stream,int8 bits,int8 task)" `714 
+f B "rtos_run" 2 1267 "void(int8 stream,int8 bits)" `714 
 f N "rtos_yield" 2 1268 ""
-f B "rtos_yield" 2 1268 "void(int8 bits,int8 task)" `715 
+f B "rtos_yield" 2 1268 "void(int8 bits)" `715 
 f N "rtos_enable" 2 1269 ""
 v L "task" 2 1269 "int8" `717 
 f B "rtos_enable" 2 1269 "void(int8 task)" `716 
@@ -1550,9 +1551,9 @@ f B "rtos_stats" 2 1279 "void(int8 task,*int8 stat)" `734  "#use timer() Prototy
 f N "get_ticks" 2 1282 ""
 f B "get_ticks" 2 1282 "int8()" `737 
 f N "get_ticks" 2 1283 ""
-f B "get_ticks" 2 1283 "int16(int8 stream)" `738 
+f B "get_ticks" 2 1283 "int16()" `738 
 f N "get_ticks" 2 1284 ""
-f B "get_ticks" 2 1284 "int32(int8 stream)" `738 
+f B "get_ticks" 2 1284 "int32()" `738 
 f N "get_ticks" 2 1285 ""
 v L "stream" 2 1285 "int8" `739 
 f B "get_ticks" 2 1285 "int8(int8 stream)" `738 
@@ -1574,7 +1575,7 @@ f B "set_ticks" 2 1290 "void(int32 value)" `744
 f N "set_ticks" 2 1291 ""
 v L "stream" 2 1291 "int8" `747 
 v L "value" 2 1291 "int8" `748 
-f B "set_ticks" 2 1291 "void(int8 stream,int8 value)" `746 
+f B "set_ticks" 2 1291 "void(int8 stream,int8 value,int8 )" `746 
 f N "set_ticks" 2 1292 ""
 v L "stream" 2 1292 "int8" `750 
 v L "value" 2 1292 "int16" `751 
@@ -1587,12 +1588,12 @@ f N "pwm_on" 2 1296 ""
 f B "pwm_on" 2 1296 "void()" `755 
 f N "pwm_on" 2 1297 ""
 v L "stream" 2 1297 "int8" `757 
-f B "pwm_on" 2 1297 "void(int8 stream)" `756 
+f B "pwm_on" 2 1297 "void(int8 stream,int8 )" `756 
 f N "pwm_off" 2 1298 ""
 f B "pwm_off" 2 1298 "void()" `758 
 f N "pwm_off" 2 1299 ""
 v L "stream" 2 1299 "int8" `760 
-f B "pwm_off" 2 1299 "void(int8 stream)" `759 
+f B "pwm_off" 2 1299 "void(int8 stream,int8 ,int8 )" `759 
 f N "pwm_set_duty" 2 1300 ""
 v L "duty" 2 1300 "int16" `762 
 f B "pwm_set_duty" 2 1300 "void(int16 duty)" `761 
@@ -2035,34 +2036,39 @@ V L "ADRESS" 5 792 "int32" `1270
 V L "data_byte" 5 792 "int32" `1271  "read and send the specified data"
 F G "TRANSFER_DATA_NBYTE_TOPC_SMF" 5 793 "void(int32 ADRESS,int32 data_byte)" `1269 
 V L "i" 5 794 "int32" `1272 
+F N "TRANSFER_DATA_NBYTE_TOFAB_SMF" 5 802 ""
+V L "ADRESS" 5 802 "int32" `1274 
+V L "data_byte" 5 802 "int32" `1275  "read and send the specified data"
+F G "TRANSFER_DATA_NBYTE_TOFAB_SMF" 5 803 "void(int32 ADRESS,int32 data_byte,int32 data_byte)" `1273 
+V L "i" 5 804 "int32" `1276 
 C L "TRANSFER_DATA_NBYTE_SMFtoOF" 5 25 19 "FUNCTION"
-F N "TRANSFER_DATA_NBYTE_SMFtoOF" 5 836 ""
-V L "FROM_ADRESS" 5 836 "int32" `1274 
-V L "TO_ADRESS" 5 836 "int32" `1275 
-V L "data_byte" 5 836 "int32" `1276  "transfer data from MISSION FLASH to MAIN FLASH"
-F G "TRANSFER_DATA_NBYTE_SMFtoOF" 5 837 "void(int32 FROM_ADRESS,int32 TO_ADRESS,int32 data_byte)" `1273 
-V L "i" 5 838 "int32" `1277 
-F N "TRANSFER_DATA_NBYTE_SMFtoSCF" 5 848 ""
-V L "FROM_ADRESS" 5 848 "int32" `1279 
-V L "TO_ADRESS" 5 848 "int32" `1280 
-V L "data_byte" 5 848 "int32" `1281  "transfer data from MISSION FLASH to COM FLASH"
-F G "TRANSFER_DATA_NBYTE_SMFtoSCF" 5 849 "void(int32 FROM_ADRESS,int32 TO_ADRESS,int32 data_byte)" `1278 
-V L "i" 5 850 "int32" `1282 
+F N "TRANSFER_DATA_NBYTE_SMFtoOF" 5 846 ""
+V L "FROM_ADRESS" 5 846 "int32" `1278 
+V L "TO_ADRESS" 5 846 "int32" `1279 
+V L "data_byte" 5 846 "int32" `1280  "transfer data from MISSION FLASH to MAIN FLASH"
+F G "TRANSFER_DATA_NBYTE_SMFtoOF" 5 847 "void(int32 FROM_ADRESS,int32 TO_ADRESS,int32 data_byte,int32 data_byte)" `1277 
+V L "i" 5 848 "int32" `1281 
+F N "TRANSFER_DATA_NBYTE_SMFtoSCF" 5 858 ""
+V L "FROM_ADRESS" 5 858 "int32" `1283 
+V L "TO_ADRESS" 5 858 "int32" `1284 
+V L "data_byte" 5 858 "int32" `1285  "transfer data from MISSION FLASH to COM FLASH"
+F G "TRANSFER_DATA_NBYTE_SMFtoSCF" 5 859 "void(int32 FROM_ADRESS,int32 TO_ADRESS,int32 data_byte)" `1282 
+V L "i" 5 860 "int32" `1286 
 D G "SECT" 6 11 "65536" "1 Sector = 65536 Bytes"
-V G "ADD_INFO_ADDRESS" 6 13 "int32" `1283 
-V G "ADDRESS_WRITING_COUNTER" 6 14 "int32" `1284 
-V G "FLAG_DATA_ADDRESS" 6 16 "int32" `1285 
-V G "RSV_DATA_ADDRESS" 6 17 "int32" `1286 
-V G "SAT_LOG" 6 18 "int32" `1287 
-V G "CAM_ADDRESS" 6 19 "int32" `1288 
-V G "FAB_HK_ADDRESS" 6 20 "int32" `1289 
-V G "FAB_CW_ADDRESS" 6 21 "int32" `1290 
-V G "ADCS_SENSOR_ADDRESS" 6 22 "int32" `1291 
-V G "ADCS_TLE_ADDRESS" 6 23 "int32" `1292 
-V G "DC_STATUS_ADDRESS" 6 24 "int32" `1293 
-V G "HIGH_SAMP_HK_ADDRESS" 6 25 "int32" `1294 
-V G "FLAG_ADDRESS_EEPROM" 6 26 "int32" `1295 
-V G "FLASH_AD_ADDRESS_EEPROM" 6 27 "int32" `1296 
+V G "ADD_INFO_ADDRESS" 6 13 "int32" `1287 
+V G "ADDRESS_WRITING_COUNTER" 6 14 "int32" `1288 
+V G "FLAG_DATA_ADDRESS" 6 16 "int32" `1289 
+V G "RSV_DATA_ADDRESS" 6 17 "int32" `1290 
+V G "SAT_LOG" 6 18 "int32" `1291 
+V G "CAM_ADDRESS" 6 19 "int32" `1292 
+V G "FAB_HK_ADDRESS" 6 20 "int32" `1293 
+V G "FAB_CW_ADDRESS" 6 21 "int32" `1294 
+V G "ADCS_SENSOR_ADDRESS" 6 22 "int32" `1295 
+V G "ADCS_TLE_ADDRESS" 6 23 "int32" `1296 
+V G "DC_STATUS_ADDRESS" 6 24 "int32" `1297 
+V G "HIGH_SAMP_HK_ADDRESS" 6 25 "int32" `1298 
+V G "FLAG_ADDRESS_EEPROM" 6 26 "int32" `1299 
+V G "FLASH_AD_ADDRESS_EEPROM" 6 27 "int32" `1300 
 D G "FLAG_DATA_ADDRESS_END" 6 29 "SECT*5-26" "considera la longitud de cada dato para determinar la direccion de finalizacion"
 D G "RSV_DATA_ADDRESS_END" 6 30 "SECT*6-160"
 D G "SAT_LOG_END" 6 31 "SECT*8-22"
@@ -2074,91 +2080,91 @@ D G "ADCS_SENSOR_ADDRESS_END" 6 36 "SECT*1638-408000" "408000 is for 2 hour data
 D G "ADCS_TLE_ADDRESS_END" 6 37 "SECT*1638-TLE_size"
 D G "DC_STATUS_ADDRESS_END" 6 38 "SECT*1639-415"
 D G "HIGH_SAMP_HK_ADDRESS_END" 6 39 "SECT*2047-178560" "178560 is for 2 hour data(124*3600*2/5)"
-V G "BC_ATTEMPT_FLAG" 6 41 "int8" `1297 
-V G "PASSED_DAYS" 6 42 "int16" `1298 
-V G "RESERVE_CHECK" 6 43 "int8" `1299 
-V G "RESERVE_MIN_FLAG" 6 44 "int8" `1300 
-V G "RESERVE_TARGET_FLAG" 6 45 "int8" `1301 
-V G "MISSION_CONTENTS" 6 46 "int8" `1302 
-V G "MISSION_DETAIL" 6 47 "int8" `1303 
-V G "RESERVE_ADDRESS_1" 6 48 "int8" `1304 
-V G "RESERVE_ADDRESS_2" 6 49 "int8" `1305 
-V G "RESERVE_ADDRESS_3" 6 50 "int8" `1306 
-V G "RESERVE_ADDRESS_4" 6 51 "int8" `1307 
-V G "RESERVE_PACKET_NUM" 6 52 "int8" `1308 
-V G "Kill_FLAG_MAIN" 6 53 "int8" `1309 
-V G "Kill_FLAG_FAB" 6 54 "int8" `1310 
-V G "FIRST_HSSC_DONE" 6 55 "int8" `1311 
-V G "AUTO_CAM_DONE" 6 56 "int8" `1312 
-V G "AUTO_MBP_DONE" 6 57 "int8" `1313 
-V G "AUTO_ADCS_DONE" 6 58 "int8" `1314 
-V G "ANT_DEP_STATUS" 6 59 "int8" `1315 
-V G "UPLINK_SUCCESS" 6 60 "int8" `1316 
-V G "RESERVE_SEC_FLAG" 6 62 "int8" `1317 
-V G "CMD_FROM_PC" 6 65 "int8[8]" `1318 
-V G "in_bffr_main" 6 66 "int8[16]" `1319 
-V G "COM_DATA" 6 67 "int8" `1320 
-V G "CW_IDENTIFIER" 6 68 "int8" `1321 
-V G "OPERATION_MODE" 6 69 "int8" `1322 
-V G "PC_DATA" 6 70 "int8" `1323 
-V G "COM_ONEBYTE_COMMAND" 6 71 "int8" `1324 
+V G "BC_ATTEMPT_FLAG" 6 41 "int8" `1301 
+V G "PASSED_DAYS" 6 42 "int16" `1302 
+V G "RESERVE_CHECK" 6 43 "int8" `1303 
+V G "RESERVE_MIN_FLAG" 6 44 "int8" `1304 
+V G "RESERVE_TARGET_FLAG" 6 45 "int8" `1305 
+V G "MISSION_CONTENTS" 6 46 "int8" `1306 
+V G "MISSION_DETAIL" 6 47 "int8" `1307 
+V G "RESERVE_ADDRESS_1" 6 48 "int8" `1308 
+V G "RESERVE_ADDRESS_2" 6 49 "int8" `1309 
+V G "RESERVE_ADDRESS_3" 6 50 "int8" `1310 
+V G "RESERVE_ADDRESS_4" 6 51 "int8" `1311 
+V G "RESERVE_PACKET_NUM" 6 52 "int8" `1312 
+V G "Kill_FLAG_MAIN" 6 53 "int8" `1313 
+V G "Kill_FLAG_FAB" 6 54 "int8" `1314 
+V G "FIRST_HSSC_DONE" 6 55 "int8" `1315 
+V G "AUTO_CAM_DONE" 6 56 "int8" `1316 
+V G "AUTO_MBP_DONE" 6 57 "int8" `1317 
+V G "AUTO_ADCS_DONE" 6 58 "int8" `1318 
+V G "ANT_DEP_STATUS" 6 59 "int8" `1319 
+V G "UPLINK_SUCCESS" 6 60 "int8" `1320 
+V G "RESERVE_SEC_FLAG" 6 62 "int8" `1321 
+V G "CMD_FROM_PC" 6 65 "int8[8]" `1322 
+V G "in_bffr_main" 6 66 "int8[16]" `1323 
+V G "COM_DATA" 6 67 "int8" `1324 
+V G "CW_IDENTIFIER" 6 68 "int8" `1325 
+V G "OPERATION_MODE" 6 69 "int8" `1326 
+V G "PC_DATA" 6 70 "int8" `1327 
+V G "COM_ONEBYTE_COMMAND" 6 71 "int8" `1328 
 D G "buffer_from_com" 6 73 " (in_bffr_main[0]==0xAA) && (in_bffr_main[15]==0xBB)"
 D G "buffer_flash" 6 74 " (in_bffr_main[7]==0x73)"
 D G "START_ADCS_MISSION" 6 75 " (in_bffr_main[1]==0x73)"
 D G "ADCS_SENSOR_SIZE" 6 76 "100" "for testing additional 6byte for checking duty"
-V G "ADCS_SENSOR_DATA" 6 79 "int8[100]" `1325 
-V G "ADCS_ACK" 6 80 "int8" `1326 
-V G "ADCS_ACK_COMMING" 6 81 "int8" `1327 
+V G "ADCS_SENSOR_DATA" 6 79 "int8[100]" `1329 
+V G "ADCS_ACK" 6 80 "int8" `1330 
+V G "ADCS_ACK_COMMING" 6 81 "int8" `1331 
 D G "ATTEMPT_TIME" 6 82 "8"
 D G "EX_PANEL_THRESHHOLD" 6 85 "0x14"
 D G "HIGH_SAMP_TIMES" 6 86 "12" "for 2 hours"
 D G "Reset_size" 6 89 "11" "1byte ack, 4byte time, 10byte sensor"
-V G "RESET_DATA" 6 90 "int8" `1328 
-V G "reset_bffr" 6 91 "int8[11]" `1329 
-V G "reset_flag" 6 92 "int8" `1330 
+V G "RESET_DATA" 6 90 "int8" `1332 
+V G "reset_bffr" 6 91 "int8[11]" `1333 
+V G "reset_flag" 6 92 "int8" `1334 
 D G "FLASH_ADD_SIZE" 6 95 "41" "10 kinds of address(40byte), 1 flag(1byte), 1 WRITING COUNTER(2byte)"
 D G "FLAG_INFO_SIZE" 6 96 "16"
-V G "sec_add_bfr" 6 97 "int8[41]" `1331 
-V G "flag_info_bffr" 6 98 "int8[16]" `1332 
+V G "sec_add_bfr" 6 97 "int8[41]" `1335 
+V G "flag_info_bffr" 6 98 "int8[16]" `1336 
 F N "CURRENT_FLAG_STATUS" 6 100 ""
 C L "CURRENT_FLAG_STATUS" 6 1 1 "FUNCTION"
-F G "CURRENT_FLAG_STATUS" 6 101 "void()" `1333 
+F G "CURRENT_FLAG_STATUS" 6 101 "void()" `1337 
 F N "CURRENT_ADDRESS_OF_FLASH" 6 117 ""
 C L "CURRENT_ADDRESS_OF_FLASH" 6 1 1 "FUNCTION"
-F G "CURRENT_ADDRESS_OF_FLASH" 6 118 "void()" `1347 
+F G "CURRENT_ADDRESS_OF_FLASH" 6 118 "void()" `1351 
 F N "ERASE_EEPROM_INFO" 6 134 ""
-F G "ERASE_EEPROM_INFO" 6 135 "void()" `1360 
+F G "ERASE_EEPROM_INFO" 6 135 "void()" `1364 
 C L "ERASE_EEPROM_INFO" 6 1 1 "FUNCTION"
 F N "WRITE_FLAG_to_EEPROM" 6 140 ""
 C L "WRITE_FLAG_to_EEPROM" 6 1 1 "FUNCTION"
-F G "WRITE_FLAG_to_EEPROM" 6 141 "void()" `1361  "total programming memory size is 128KB"
+F G "WRITE_FLAG_to_EEPROM" 6 141 "void()" `1365  "total programming memory size is 128KB"
 C L "WRITE_FLAG_to_EEPROM" 6 1 1 "FUNCTION"
-V L "data" 6 144 "int16" `1362 
+V L "data" 6 144 "int16" `1366 
 C L "MAKE_FLAG_from_EEPROM" 6 1 7 "FUNCTION"
 F N "MAKE_FLAG_from_EEPROM" 6 188 ""
 C L "MAKE_FLAG_from_EEPROM" 6 1 1 "FUNCTION"
-F G "MAKE_FLAG_from_EEPROM" 6 189 "void()" `1364 
+F G "MAKE_FLAG_from_EEPROM" 6 189 "void()" `1368 
 F N "TAKE_AD_INFO_from_EEPROM" 6 223 ""
 C L "TAKE_AD_INFO_from_EEPROM" 6 1 1 "FUNCTION"
-F G "TAKE_AD_INFO_from_EEPROM" 6 224 "void()" `1375 
-V L "DATA_high" 6 225 "int16" `1376 
-V L "DATA_low" 6 226 "int16" `1377 
-V L "data" 6 227 "int32" `1378 
+F G "TAKE_AD_INFO_from_EEPROM" 6 224 "void()" `1379 
+V L "DATA_high" 6 225 "int16" `1380 
+V L "DATA_low" 6 226 "int16" `1381 
+V L "data" 6 227 "int32" `1382 
 F N "STORE_FLAG_INFO" 6 235 ""
 C L "STORE_FLAG_INFO" 6 1 1 "FUNCTION"
-F G "STORE_FLAG_INFO" 6 236 "void()" `1379 
+F G "STORE_FLAG_INFO" 6 236 "void()" `1383 
 C L "STORE_FLAG_INFO" 6 1 1 "FUNCTION"
 C L "STORE_FLAG_INFO" 6 1 1 "FUNCTION"
-V L "num" 6 258 "int8" `1380 
+V L "num" 6 258 "int8" `1384 
 C L "STORE_FLAG_INFO" 6 1 1 "FUNCTION"
 F N "RESET_FLAG_DATA" 6 287 ""
-F G "RESET_FLAG_DATA" 6 288 "void()" `1386  "BC_ATTEMPT_FLAG = 0;"
+F G "RESET_FLAG_DATA" 6 288 "void()" `1390  "BC_ATTEMPT_FLAG = 0;"
 C L "RESET_FLAG_DATA" 6 1 5 "FUNCTION"
 F N "READ_WRTITING_ADDRESS_LOCATION" 6 309 ""
 C L "READ_WRTITING_ADDRESS_LOCATION" 6 1 1 "FUNCTION"
-F G "READ_WRTITING_ADDRESS_LOCATION" 6 310 "void()" `1387  "if you can't find it use the initial value (si no lo encuentra usa el valor inicial)"
-V L "i" 6 311 "int8" `1388 
-V L "ad_location_bfr" 6 312 "int8[4]" `1389 
+F G "READ_WRTITING_ADDRESS_LOCATION" 6 310 "void()" `1391  "if you can't find it use the initial value (si no lo encuentra usa el valor inicial)"
+V L "i" 6 311 "int8" `1392 
+V L "ad_location_bfr" 6 312 "int8[4]" `1393 
 C L "READ_WRTITING_ADDRESS_LOCATION" 6 1 1 "FUNCTION"
 C L "READ_WRTITING_ADDRESS_LOCATION" 6 1 1 "FUNCTION"
 C L "READ_WRTITING_ADDRESS_LOCATION" 6 1 1 "FUNCTION"
@@ -2168,57 +2174,57 @@ C L "READ_WRTITING_ADDRESS_LOCATION" 6 1 1 "FUNCTION"
 C L "READ_WRTITING_ADDRESS_LOCATION" 6 1 1 "FUNCTION"
 F N "CHANGE_ADDRESS_WRITING_LOCATION" 6 359 ""
 C L "CHANGE_ADDRESS_WRITING_LOCATION" 6 1 1 "FUNCTION"
-F G "CHANGE_ADDRESS_WRITING_LOCATION" 6 360 "void()" `1391 
-V L "AD_COUNTER" 6 361 "int32" `1392 
+F G "CHANGE_ADDRESS_WRITING_LOCATION" 6 360 "void()" `1395 
+V L "AD_COUNTER" 6 361 "int32" `1396 
 C L "CHANGE_ADDRESS_WRITING_LOCATION" 6 1 1 "FUNCTION"
 C L "CHANGE_ADDRESS_WRITING_LOCATION" 6 1 1 "FUNCTION"
 C L "CHANGE_ADDRESS_WRITING_LOCATION" 6 1 1 "FUNCTION"
 C L "CHANGE_ADDRESS_WRITING_LOCATION" 6 1 1 "FUNCTION"
 C L "CHANGE_ADDRESS_WRITING_LOCATION" 6 1 1 "FUNCTION"
 C L "CHANGE_ADDRESS_WRITING_LOCATION" 6 1 1 "FUNCTION"
-V L "address_place" 6 374 "int8[4]" `1394 
+V L "address_place" 6 374 "int8[4]" `1398 
 C L "CHANGE_ADDRESS_WRITING_LOCATION" 6 1 1 "FUNCTION"
 C L "CHANGE_ADDRESS_WRITING_LOCATION" 6 1 1 "FUNCTION"
-V L "i" 6 382 "int8" `1395 
+V L "i" 6 382 "int8" `1399 
 C L "CHANGE_ADDRESS_WRITING_LOCATION" 6 1 1 "FUNCTION"
 C L "CHANGE_ADDRESS_WRITING_LOCATION" 6 1 1 "FUNCTION"
 C L "CHANGE_ADDRESS_WRITING_LOCATION" 6 1 1 "FUNCTION"
 C L "CHANGE_ADDRESS_WRITING_LOCATION" 6 1 1 "FUNCTION"
 F N "TAKE_FLAG_INFO_FROM_OF" 6 404 ""
 C L "TAKE_FLAG_INFO_FROM_OF" 6 1 1 "FUNCTION"
-F G "TAKE_FLAG_INFO_FROM_OF" 6 405 "void()" `1399 
-V L "num" 6 406 "int8" `1400 
+F G "TAKE_FLAG_INFO_FROM_OF" 6 405 "void()" `1403 
+V L "num" 6 406 "int8" `1404 
 C L "TAKE_FLAG_INFO_FROM_OF" 6 1 2 "FUNCTION"
 F N "STORE_ADRESS_DATA_TO_FLASH" 6 414 ""
 C L "STORE_ADRESS_DATA_TO_FLASH" 6 1 1 "FUNCTION"
-F G "STORE_ADRESS_DATA_TO_FLASH" 6 415 "void()" `1401 
+F G "STORE_ADRESS_DATA_TO_FLASH" 6 415 "void()" `1405 
 C L "STORE_ADRESS_DATA_TO_FLASH" 6 1 1 "FUNCTION"
 C L "STORE_ADRESS_DATA_TO_FLASH" 6 1 1 "FUNCTION"
 C L "STORE_ADRESS_DATA_TO_FLASH" 6 1 1 "FUNCTION"
 C L "STORE_ADRESS_DATA_TO_FLASH" 6 1 1 "FUNCTION"
 C L "STORE_ADRESS_DATA_TO_FLASH" 6 1 1 "FUNCTION"
-V L "num" 6 474 "int8" `1403 
+V L "num" 6 474 "int8" `1407 
 C L "STORE_ADRESS_DATA_TO_FLASH" 6 1 1 "FUNCTION"
 C L "STORE_ADRESS_DATA_TO_FLASH" 6 1 1 "FUNCTION"
 C L "STORE_ADRESS_DATA_TO_FLASH" 6 1 1 "FUNCTION"
 C L "STORE_ADRESS_DATA_TO_FLASH" 6 1 1 "FUNCTION"
 F N "TAKE_ADDRESS_DATA_FROM_OF" 6 502 ""
 C L "TAKE_ADDRESS_DATA_FROM_OF" 6 1 1 "FUNCTION"
-F G "TAKE_ADDRESS_DATA_FROM_OF" 6 503 "void()" `1405 
-V L "num" 6 505 "int8" `1406 
+F G "TAKE_ADDRESS_DATA_FROM_OF" 6 503 "void()" `1409 
+V L "num" 6 505 "int8" `1410 
 F N "TAKE_ADDRESS_DATA_FROM_SCF" 6 512 ""
-F G "TAKE_ADDRESS_DATA_FROM_SCF" 6 513 "void()" `1407 
-V L "num" 6 515 "int8" `1408 
+F G "TAKE_ADDRESS_DATA_FROM_SCF" 6 513 "void()" `1411 
+V L "num" 6 515 "int8" `1412 
 F N "TAKE_ADDRESS_DATA_FROM_SMF" 6 523 ""
-F G "TAKE_ADDRESS_DATA_FROM_SMF" 6 524 "void()" `1409 
-V L "num" 6 526 "int8" `1410 
+F G "TAKE_ADDRESS_DATA_FROM_SMF" 6 524 "void()" `1413 
+V L "num" 6 526 "int8" `1414 
 F N "MAKE_FLAG_INFO" 6 533 ""
 C L "MAKE_FLAG_INFO" 6 1 1 "FUNCTION"
-F G "MAKE_FLAG_INFO" 6 534 "void()" `1411 
+F G "MAKE_FLAG_INFO" 6 534 "void()" `1415 
 C L "MAKE_FLAG_INFO" 6 1 1 "FUNCTION"
 F N "MAKE_ADDRESS_DATA" 6 558 ""
 C L "MAKE_ADDRESS_DATA" 6 1 1 "FUNCTION"
-F G "MAKE_ADDRESS_DATA" 6 559 "void()" `1412  "sec_add_bfr[] vector que contiene los datos de direcciones"
+F G "MAKE_ADDRESS_DATA" 6 559 "void()" `1416  "sec_add_bfr[] vector que contiene los datos de direcciones"
 C L "MAKE_ADDRESS_DATA" 6 1 1 "FUNCTION"
 C L "MAKE_ADDRESS_DATA" 6 1 1 "FUNCTION"
 C L "MAKE_ADDRESS_DATA" 6 1 1 "FUNCTION"
@@ -2231,10 +2237,10 @@ C L "MAKE_ADDRESS_DATA" 6 1 1 "FUNCTION"
 C L "MAKE_ADDRESS_DATA" 6 1 1 "FUNCTION"
 F N "CHECK_FLAG_INFO" 6 585 ""
 C L "CHECK_FLAG_INFO" 6 1 1 "FUNCTION"
-F G "CHECK_FLAG_INFO" 6 586 "void()" `1413 
-V L "checksum" 6 587 "int8" `1414 
+F G "CHECK_FLAG_INFO" 6 586 "void()" `1417 
+V L "checksum" 6 587 "int8" `1418 
 C L "CHECK_FLAG_INFO" 6 1 1 "FUNCTION"
-V L "num" 6 589 "int8" `1415 
+V L "num" 6 589 "int8" `1419 
 C L "CHECK_FLAG_INFO" 6 1 1 "FUNCTION"
 C L "CHECK_FLAG_INFO" 6 1 1 "FUNCTION"
 C L "CHECK_FLAG_INFO" 6 1 1 "FUNCTION"
@@ -2244,10 +2250,10 @@ C L "CHECK_FLAG_INFO" 6 1 1 "FUNCTION"
 C L "CHECK_FLAG_INFO" 6 1 1 "FUNCTION"
 F N "CHECK_ADDRESS_DATA" 6 612 ""
 C L "CHECK_ADDRESS_DATA" 6 1 1 "FUNCTION"
-F G "CHECK_ADDRESS_DATA" 6 613 "void()" `1417 
-V L "checksum" 6 614 "int8" `1418 
+F G "CHECK_ADDRESS_DATA" 6 613 "void()" `1421 
+V L "checksum" 6 614 "int8" `1422 
 C L "CHECK_ADDRESS_DATA" 6 1 1 "FUNCTION"
-V L "num" 6 616 "int8" `1419 
+V L "num" 6 616 "int8" `1423 
 C L "CHECK_ADDRESS_DATA" 6 1 1 "FUNCTION"
 C L "CHECK_ADDRESS_DATA" 6 1 1 "FUNCTION"
 C L "CHECK_ADDRESS_DATA" 6 1 1 "FUNCTION"
@@ -2261,13 +2267,10 @@ C L "CHECK_ADDRESS_DATA" 6 1 1 "FUNCTION"
 C L "CHECK_ADDRESS_DATA" 6 1 1 "FUNCTION"
 C L "MEMORY_ERASE" 6 1 5 "FUNCTION"
 F N "MEMORY_ERASE" 6 685 ""
-F G "MEMORY_ERASE" 6 686 "void()" `1426 
+F G "MEMORY_ERASE" 6 686 "void()" `1430 
 C L "MEMORY_ERASE" 6 1 1 "FUNCTION"
 C L "MEMORY_ERASE" 6 1 1 "FUNCTION"
-V L "num" 6 701 "int8" `1428 
-C L "MEMORY_ERASE" 6 1 1 "FUNCTION"
-C L "MEMORY_ERASE" 6 1 1 "FUNCTION"
-C L "MEMORY_ERASE" 6 1 1 "FUNCTION"
+V L "num" 6 701 "int8" `1432 
 C L "MEMORY_ERASE" 6 1 1 "FUNCTION"
 C L "MEMORY_ERASE" 6 1 1 "FUNCTION"
 C L "MEMORY_ERASE" 6 1 1 "FUNCTION"
@@ -2294,12 +2297,15 @@ C L "MEMORY_ERASE" 6 1 1 "FUNCTION"
 C L "MEMORY_ERASE" 6 1 1 "FUNCTION"
 C L "MEMORY_ERASE" 6 1 1 "FUNCTION"
 C L "MEMORY_ERASE" 6 1 1 "FUNCTION"
-V L "t" 6 746 "int8" `1430 
+C L "MEMORY_ERASE" 6 1 1 "FUNCTION"
+C L "MEMORY_ERASE" 6 1 1 "FUNCTION"
+C L "MEMORY_ERASE" 6 1 1 "FUNCTION"
+V L "t" 6 746 "int8" `1434 
 C L "MEMORY_ERASE" 6 1 1 "FUNCTION"
 C L "LOOP_SAT_LOG" 6 1 7 "FUNCTION"
 F N "LOOP_SAT_LOG" 6 773 ""
 C L "LOOP_SAT_LOG" 6 1 1 "FUNCTION"
-F G "LOOP_SAT_LOG" 6 774 "void()" `1438 
+F G "LOOP_SAT_LOG" 6 774 "void()" `1442 
 C L "LOOP_SAT_LOG" 6 1 1 "FUNCTION"
 C L "LOOP_SAT_LOG" 6 1 1 "FUNCTION"
 C L "LOOP_SAT_LOG" 6 1 1 "FUNCTION"
@@ -2312,7 +2318,7 @@ C L "LOOP_SAT_LOG" 6 1 1 "FUNCTION"
 C L "LOOP_SAT_LOG" 6 1 1 "FUNCTION"
 F N "LOOP_CAM_ADDRESS" 6 792 ""
 C L "LOOP_CAM_ADDRESS" 6 1 1 "FUNCTION"
-F G "LOOP_CAM_ADDRESS" 6 793 "void()" `1439 
+F G "LOOP_CAM_ADDRESS" 6 793 "void()" `1443 
 C L "LOOP_CAM_ADDRESS" 6 1 1 "FUNCTION"
 C L "LOOP_CAM_ADDRESS" 6 1 1 "FUNCTION"
 C L "LOOP_CAM_ADDRESS" 6 1 1 "FUNCTION"
@@ -2323,8 +2329,8 @@ C L "LOOP_CAM_ADDRESS" 6 1 1 "FUNCTION"
 C L "LOOP_CAM_ADDRESS" 6 1 1 "FUNCTION"
 F N "LOOP_FAB_HK_ADDRESS" 6 811 ""
 C L "LOOP_FAB_HK_ADDRESS" 6 1 1 "FUNCTION"
-F G "LOOP_FAB_HK_ADDRESS" 6 812 "void()" `1440 
-V L "checksum" 6 813 "int32" `1441 
+F G "LOOP_FAB_HK_ADDRESS" 6 812 "void()" `1444 
+V L "checksum" 6 813 "int32" `1445 
 C L "LOOP_FAB_HK_ADDRESS" 6 1 1 "FUNCTION"
 C L "LOOP_FAB_HK_ADDRESS" 6 1 1 "FUNCTION"
 C L "LOOP_FAB_HK_ADDRESS" 6 1 1 "FUNCTION"
@@ -2337,8 +2343,8 @@ C L "LOOP_FAB_HK_ADDRESS" 6 1 1 "FUNCTION"
 C L "LOOP_FAB_HK_ADDRESS" 6 1 1 "FUNCTION"
 F N "LOOP_FAB_CW_ADDRESS" 6 842 ""
 C L "LOOP_FAB_CW_ADDRESS" 6 1 1 "FUNCTION"
-F G "LOOP_FAB_CW_ADDRESS" 6 843 "void()" `1443 
-V L "checksum" 6 844 "int32" `1444 
+F G "LOOP_FAB_CW_ADDRESS" 6 843 "void()" `1447 
+V L "checksum" 6 844 "int32" `1448 
 C L "LOOP_FAB_CW_ADDRESS" 6 1 1 "FUNCTION"
 C L "LOOP_FAB_CW_ADDRESS" 6 1 1 "FUNCTION"
 C L "LOOP_FAB_CW_ADDRESS" 6 1 1 "FUNCTION"
@@ -2350,14 +2356,14 @@ C L "LOOP_FAB_CW_ADDRESS" 6 1 1 "FUNCTION"
 C L "LOOP_FAB_CW_ADDRESS" 6 1 1 "FUNCTION"
 C L "LOOP_FAB_CW_ADDRESS" 6 1 1 "FUNCTION"
 F N "LOOP_ADCS_SENSOR_ADDRESS" 6 875 ""
-F G "LOOP_ADCS_SENSOR_ADDRESS" 6 876 "void()" `1446 
+F G "LOOP_ADCS_SENSOR_ADDRESS" 6 876 "void()" `1450 
 C L "LOOP_ADCS_SENSOR_ADDRESS" 6 1 1 "FUNCTION"
 C L "LOOP_ADCS_SENSOR_ADDRESS" 6 1 1 "FUNCTION"
 C L "LOOP_ADCS_SENSOR_ADDRESS" 6 1 1 "FUNCTION"
 C L "LOOP_ADCS_SENSOR_ADDRESS" 6 1 1 "FUNCTION"
 C L "LOOP_ADCS_SENSOR_ADDRESS" 6 1 1 "FUNCTION"
 C L "LOOP_ADCS_SENSOR_ADDRESS" 6 1 1 "FUNCTION"
-V L "i" 6 893 "int8" `1448 
+V L "i" 6 893 "int8" `1452 
 C L "LOOP_ADCS_SENSOR_ADDRESS" 6 1 1 "FUNCTION"
 C L "LOOP_ADCS_SENSOR_ADDRESS" 6 1 1 "FUNCTION"
 C L "LOOP_ADCS_SENSOR_ADDRESS" 6 1 1 "FUNCTION"
@@ -2365,8 +2371,8 @@ C L "LOOP_ADCS_SENSOR_ADDRESS" 6 1 1 "FUNCTION"
 C L "LOOP_ADCS_SENSOR_ADDRESS" 6 1 1 "FUNCTION"
 C L "LOOP_ADCS_SENSOR_ADDRESS" 6 1 1 "FUNCTION"
 F N "LOOP_DC_STATUS_ADDRESS" 6 915 ""
-F G "LOOP_DC_STATUS_ADDRESS" 6 916 "void()" `1449 
-V L "checksum" 6 917 "int32" `1450 
+F G "LOOP_DC_STATUS_ADDRESS" 6 916 "void()" `1453 
+V L "checksum" 6 917 "int32" `1454 
 C L "LOOP_DC_STATUS_ADDRESS" 6 1 1 "FUNCTION"
 C L "LOOP_DC_STATUS_ADDRESS" 6 1 1 "FUNCTION"
 C L "LOOP_DC_STATUS_ADDRESS" 6 1 1 "FUNCTION"
@@ -2379,7 +2385,7 @@ C L "LOOP_DC_STATUS_ADDRESS" 6 1 1 "FUNCTION"
 C L "LOOP_DC_STATUS_ADDRESS" 6 1 1 "FUNCTION"
 C L "LOOP_DC_STATUS_ADDRESS" 6 1 1 "FUNCTION"
 F N "LOOP_HIGH_SAMP_HK_ADDRESS" 6 946 ""
-F G "LOOP_HIGH_SAMP_HK_ADDRESS" 6 947 "void()" `1452 
+F G "LOOP_HIGH_SAMP_HK_ADDRESS" 6 947 "void()" `1456 
 C L "LOOP_HIGH_SAMP_HK_ADDRESS" 6 1 1 "FUNCTION"
 C L "LOOP_HIGH_SAMP_HK_ADDRESS" 6 1 1 "FUNCTION"
 C L "LOOP_HIGH_SAMP_HK_ADDRESS" 6 1 1 "FUNCTION"
@@ -2399,20 +2405,20 @@ C L "LOOP_HIGH_SAMP_HK_ADDRESS" 6 1 1 "FUNCTION"
 C L "LOOP_HIGH_SAMP_HK_ADDRESS" 6 1 1 "FUNCTION"
 C L "LOOP_HIGH_SAMP_HK_ADDRESS" 6 1 1 "FUNCTION"
 C L "LOOP_HIGH_SAMP_HK_ADDRESS" 6 1 1 "FUNCTION"
-V G "MISSION_STATUS" 7 2 "int8" `1454 
-V G "currenttime" 7 3 "int16" `1455 
-V G "command" 7 4 "int8[9]" `1456 
-V G "reset_time_data" 7 5 "int8[11]" `1457 
-V G "PINO_DATA" 7 6 "int8[39]" `1458 
-V G "test_data" 7 7 "int8[11]" `1459 
-V G "address_data" 7 8 "int32[4]" `1460 
-V G "address" 7 9 "int32" `1461 
-V G "RTUC" 7 10 "int8[8]" `1462 
-V G "Down" 7 11 "int8[81]" `1463 
-V G "RTDC" 7 12 "int8[9]" `1464 
-V G "dummy" 7 13 "int8[1]" `1465 
-V G "Finish_sign" 7 14 "int8[1]" `1466 
-V G "i" 7 15 "int8" `1467 
+V G "MISSION_STATUS" 7 2 "int8" `1458 
+V G "currenttime" 7 3 "int16" `1459 
+V G "command" 7 4 "int8[9]" `1460 
+V G "reset_time_data" 7 5 "int8[11]" `1461 
+V G "PINO_DATA" 7 6 "int8[39]" `1462 
+V G "test_data" 7 7 "int8[11]" `1463 
+V G "address_data" 7 8 "int32[4]" `1464 
+V G "address" 7 9 "int32" `1465 
+V G "RTUC" 7 10 "int8[8]" `1466 
+V G "Down" 7 11 "int8[81]" `1467 
+V G "RTDC" 7 12 "int8[9]" `1468 
+V G "dummy" 7 13 "int8[1]" `1469 
+V G "Finish_sign" 7 14 "int8[1]" `1470 
+V G "i" 7 15 "int8" `1471 
 F N "Turn_On_CAM" 7 16 ""
 F G "Turn_On_CAM" 7 17 "void()" `1176 
 F N "Turn_Off_CAM" 7 21 ""
@@ -2421,10 +2427,10 @@ F N "Flash_Memory_Access" 7 26 ""
 F G "Flash_Memory_Access" 7 27 "void()" `1179 
 F N "PINO_test" 7 43 ""
 F G "PINO_test" 7 44 "void()" `1180 
-V L "num" 7 46 "int32" `1468 
+V L "num" 7 46 "int32" `1472 
 C L "PINO_test" 7 2 1 "FUNCTION"
 C L "PINO_test" 7 2 1 "FUNCTION"
-V L "i" 7 56 "int8" `1469 
+V L "i" 7 56 "int8" `1473 
 C L "PINO_test" 7 2 1 "FUNCTION"
 C L "PINO_test" 7 2 1 "FUNCTION"
 C L "PINO_test" 7 2 1 "FUNCTION"
@@ -2435,16 +2441,16 @@ C L "PINO_test" 7 2 1 "FUNCTION"
 F N "GET_RESET_DATA" 7 183 ""
 C L "GET_RESET_DATA" 7 2 1 "FUNCTION"
 F G "GET_RESET_DATA" 7 184 "void()" `1181 
-V L "dayh" 7 188 "int8" `1487 
-V L "dayl" 7 189 "int8" `1488 
-V L "hr" 7 190 "int8" `1489 
-V L "min" 7 191 "int8" `1490 
-V L "sec" 7 192 "int8" `1491 
-V L "j" 7 193 "int8" `1492 
-V L "i" 7 194 "int8" `1493 
+V L "dayh" 7 188 "int8" `1491 
+V L "dayl" 7 189 "int8" `1492 
+V L "hr" 7 190 "int8" `1493 
+V L "min" 7 191 "int8" `1494 
+V L "sec" 7 192 "int8" `1495 
+V L "j" 7 193 "int8" `1496 
+V L "i" 7 194 "int8" `1497 
 C L "GET_RESET_DATA" 7 2 1 "FUNCTION"
 C L "GET_RESET_DATA" 7 2 1 "FUNCTION"
-V L "num" 7 205 "int8" `1494 
+V L "num" 7 205 "int8" `1498 
 C L "GET_RESET_DATA" 7 2 1 "FUNCTION"
 C L "GET_RESET_DATA" 7 2 2 "FUNCTION"
 C L "GET_RESET_DATA" 7 2 1 "FUNCTION"
@@ -2453,14 +2459,14 @@ C L "GET_RESET_DATA" 7 2 1 "FUNCTION"
 F N "waiting" 8 1 ""
 V L "counterval" 8 1 "int32" `1175  "about 200000 : 1s"
 F G "waiting" 8 2 "void(int32 counterval)" `1174 
-V L "num" 8 3 "int32" `1497 
+V L "num" 8 3 "int32" `1501 
 C L "DELETE_RESET" 8 8 1 "FUNCTION"
 F N "DELETE_RESET" 8 11 ""
 C L "DELETE_RESET" 8 8 1 "FUNCTION"
-F G "DELETE_RESET" 8 12 "void()" `1498 
-V L "num" 8 13 "int8" `1499 
+F G "DELETE_RESET" 8 12 "void()" `1502 
+V L "num" 8 13 "int8" `1503 
 F N "SEND_CMD_FOR_RESET_SATELLITE" 8 20 ""
-F G "SEND_CMD_FOR_RESET_SATELLITE" 8 21 "void()" `1500 
+F G "SEND_CMD_FOR_RESET_SATELLITE" 8 21 "void()" `1504 
 C L "SEND_CMD_FOR_RESET_SATELLITE" 8 8 2 "FUNCTION"
 C L "SEND_CMD_FOR_RESET_SATELLITE" 8 8 2 "FUNCTION"
 C L "SEND_CMD_FOR_RESET_SATELLITE" 8 8 1 "FUNCTION"
@@ -2468,12 +2474,12 @@ C L "SEND_CMD_FOR_RESET_SATELLITE" 8 8 1 "FUNCTION"
 C L "SEND_CMD_FOR_RESET_SATELLITE" 8 8 1 "FUNCTION"
 C L "SEND_CMD_FOR_RESET_SATELLITE" 8 8 1 "FUNCTION"
 C L "SEND_CMD_FOR_RESET_SATELLITE" 8 8 1 "FUNCTION"
-V L "i" 8 33 "int8" `1506 
+V L "i" 8 33 "int8" `1510 
 C L "SEND_CMD_FOR_RESET_SATELLITE" 8 8 1 "FUNCTION"
 C L "SEND_CMD_FOR_RESET_SATELLITE" 8 8 6 "FUNCTION"
 F N "RESET_SATELLITE" 8 51 ""
 C L "RESET_SATELLITE" 8 8 1 "FUNCTION"
-F G "RESET_SATELLITE" 8 52 "void()" `1508 
+F G "RESET_SATELLITE" 8 52 "void(int8 data2,int8 data3)" `1512 
 C L "RESET_SATELLITE" 8 8 1 "FUNCTION"
 C L "RESET_SATELLITE" 8 8 1 "FUNCTION"
 C L "RESET_SATELLITE" 8 8 1 "FUNCTION"
@@ -2481,16 +2487,16 @@ F N "COLLECT_RESET_DATA" 8 62 ""
 C L "COLLECT_RESET_DATA" 8 8 1 "FUNCTION"
 F G "COLLECT_RESET_DATA" 8 63 "void()" `1178 
 C L "COLLECT_RESET_DATA" 8 8 1 "FUNCTION"
-V L "m" 8 66 "int8" `1509 
+V L "m" 8 66 "int8" `1513 
 C L "COLLECT_RESET_DATA" 8 8 1 "FUNCTION"
 C L "COLLECT_RESET_DATA" 8 8 1 "FUNCTION"
 D G "logdata_size" 8 81 "11"
-V G "satellitelog" 8 82 "int8[11]" `1510 
+V G "satellitelog" 8 82 "int8[11]" `1514 
 F N "SAVE_SAT_LOG" 8 84 ""
-V L "data1" 8 84 "int8" `1512 
-V L "data2" 8 84 "int8" `1513 
-V L "data3" 8 84 "int8" `1514 
-F G "SAVE_SAT_LOG" 8 85 "void(int8 data1,int8 data2,int8 data3)" `1511 
+V L "data1" 8 84 "int8" `1516 
+V L "data2" 8 84 "int8" `1517 
+V L "data3" 8 84 "int8" `1518 
+F G "SAVE_SAT_LOG" 8 85 "void(int8 data1,int8 data2,int8 data3,int8 PORT_NUM)" `1515 
 C L "SAVE_SAT_LOG" 8 8 1 "FUNCTION"
 C L "SAVE_SAT_LOG" 8 8 1 "FUNCTION"
 C L "SAVE_SAT_LOG" 8 8 1 "FUNCTION"
@@ -2498,7 +2504,7 @@ C L "SAVE_SAT_LOG" 8 8 1 "FUNCTION"
 C L "SAVE_SAT_LOG" 8 8 1 "FUNCTION"
 C L "SAVE_SAT_LOG" 8 8 1 "FUNCTION"
 C L "SAVE_SAT_LOG" 8 8 1 "FUNCTION"
-V L "i" 8 107 "int8" `1515 
+V L "i" 8 107 "int8" `1519 
 C L "SAVE_SAT_LOG" 8 8 1 "FUNCTION"
 C L "SAVE_SAT_LOG" 8 8 1 "FUNCTION"
 C L "WRITE_ENABLE_OF" 4 6 1 "FUNCTION"
@@ -2509,43 +2515,43 @@ f G "WRITE_ENABLE_SCF" 4 9 "void()" `1183
 F N "WRITE_ENABLE_SMF" 4 10 ""
 f G "WRITE_ENABLE_SMF" 4 10 "void()" `1184 
 F N "sector_erase_OF" 4 12 ""
-V L "sector_address" 4 12 "int32" `1518 
+V L "sector_address" 4 12 "int32" `1522 
 f G "sector_erase_OF" 4 12 "void(int32 sector_address)" `1185 
 F N "sector_erase_SCF" 4 13 ""
-V L "sector_address" 4 13 "int32" `1518 
+V L "sector_address" 4 13 "int32" `1522 
 f G "sector_erase_SCF" 4 13 "void(int32 sector_address)" `1188 
 F N "sector_erase_SMF" 4 14 ""
-V L "sector_address" 4 14 "int32" `1518 
+V L "sector_address" 4 14 "int32" `1522 
 f G "sector_erase_SMF" 4 14 "void(int32 sector_address)" `1191 
 F N "SUBSECTOR_4KB_ERASE_OF" 4 16 ""
-V L "sector_address" 4 16 "int32" `1518 
+V L "sector_address" 4 16 "int32" `1522 
 f G "SUBSECTOR_4KB_ERASE_OF" 4 16 "void(int32 sector_address)" `1194 
 F N "SUBSECTOR_4KB_ERASE_SCF" 4 17 ""
-V L "sector_address" 4 17 "int32" `1518 
+V L "sector_address" 4 17 "int32" `1522 
 f G "SUBSECTOR_4KB_ERASE_SCF" 4 17 "void(int32 sector_address)" `1197 
 F N "SUBSECTOR_4KB_ERASE_SMF" 4 18 ""
-V L "sector_address" 4 18 "int32" `1518 
+V L "sector_address" 4 18 "int32" `1522 
 f G "SUBSECTOR_4KB_ERASE_SMF" 4 18 "void(int32 sector_address)" `1200 
 F N "SUBSECTOR_32KB_ERASE_OF" 4 20 ""
-V L "sector_address" 4 20 "int32" `1518 
+V L "sector_address" 4 20 "int32" `1522 
 f G "SUBSECTOR_32KB_ERASE_OF" 4 20 "void(int32 sector_address)" `1203 
 F N "SUBSECTOR_32KB_ERASE_SCF" 4 21 ""
-V L "sector_address" 4 21 "int32" `1518 
+V L "sector_address" 4 21 "int32" `1522 
 f G "SUBSECTOR_32KB_ERASE_SCF" 4 21 "void(int32 sector_address)" `1206 
 F N "SUBSECTOR_32KB_ERASE_SMF" 4 22 ""
-V L "sector_address" 4 22 "int32" `1518 
+V L "sector_address" 4 22 "int32" `1522 
 f G "SUBSECTOR_32KB_ERASE_SMF" 4 22 "void(int32 sector_address)" `1209 
 F N "WRITE_DATA_BYTE_OF" 4 24 ""
 V L "page_address" 4 24 "int32" `1222 
-V L "data" 4 24 "int8" `1519 
+V L "data" 4 24 "int8" `1523 
 f G "WRITE_DATA_BYTE_OF" 4 24 "void(int32 page_address,int8 data)" `1221 
 F N "WRITE_DATA_BYTE_SCF" 4 25 ""
 V L "page_address" 4 25 "int32" `1226 
-V L "data" 4 25 "int8" `1519 
+V L "data" 4 25 "int8" `1523 
 f G "WRITE_DATA_BYTE_SCF" 4 25 "void(int32 page_address,int8 data)" `1225 
 F N "WRITE_DATA_BYTE_SMF" 4 26 ""
 V L "page_address" 4 26 "int32" `1230 
-V L "data" 4 26 "int8" `1519 
+V L "data" 4 26 "int8" `1523 
 f G "WRITE_DATA_BYTE_SMF" 4 26 "void(int32 page_address,int8 data)" `1229 
 F N "READ_CHIP_ID_OF" 4 28 ""
 f G "READ_CHIP_ID_OF" 4 28 "int8()" `1233 
@@ -2560,95 +2566,95 @@ f G "READ_STATUS_REGISTER_SCF" 4 33 "int8()" `1241
 F N "READ_STATUS_REGISTER_SMF" 4 34 ""
 f G "READ_STATUS_REGISTER_SMF" 4 34 "int8()" `1243 
 F N "READ_DATA_BYTE_OF" 4 36 ""
-V L "address" 4 36 "int32" `1518 
+V L "address" 4 36 "int32" `1522 
 f G "READ_DATA_BYTE_OF" 4 36 "int8(int32 address)" `1245 
 F N "READ_DATA_BYTE_SCF" 4 37 ""
-V L "address" 4 37 "int32" `1518 
+V L "address" 4 37 "int32" `1522 
 f G "READ_DATA_BYTE_SCF" 4 37 "int8(int32 address)" `1249 
 F N "READ_DATA_BYTE_SMF" 4 38 ""
-V L "address" 4 38 "int32" `1518 
+V L "address" 4 38 "int32" `1522 
 f G "READ_DATA_BYTE_SMF" 4 38 "int8(int32 address)" `1253 
 F N "TRANSFER_DATA_256byte_OF" 4 40 ""
-V L "ADRESS" 4 40 "int32" `1518 
-V L "PORT_NUM" 4 40 "int8" `1519 
-f G "TRANSFER_DATA_256byte_OF" 4 40 "void(int32 ADRESS,int8 PORT_NUM)" `1517 
+V L "ADRESS" 4 40 "int32" `1522 
+V L "PORT_NUM" 4 40 "int8" `1523 
+f G "TRANSFER_DATA_256byte_OF" 4 40 "void(int32 ADRESS,int8 PORT_NUM,int32 ADRESS,int8 PORT_NUM)" `1521 
 F N "TRANSFER_DATA_256byte_SCF" 4 41 ""
-V L "ADRESS" 4 41 "int32" `1521 
-V L "PORT_NUM" 4 41 "int8" `1522 
-f G "TRANSFER_DATA_256byte_SCF" 4 41 "void(int32 ADRESS,int8 PORT_NUM)" `1520 
+V L "ADRESS" 4 41 "int32" `1525 
+V L "PORT_NUM" 4 41 "int8" `1526 
+f G "TRANSFER_DATA_256byte_SCF" 4 41 "void(int32 ADRESS,int8 PORT_NUM,int32 ADDRES,int32 data_byte)" `1524 
 F N "TRANSFER_DATA_256byte_SMF" 4 42 ""
-V L "ADRESS" 4 42 "int32" `1524 
-V L "PORT_NUM" 4 42 "int8" `1525 
-f G "TRANSFER_DATA_256byte_SMF" 4 42 "void(int32 ADRESS,int8 PORT_NUM)" `1523 
+V L "ADRESS" 4 42 "int32" `1528 
+V L "PORT_NUM" 4 42 "int8" `1529 
+f G "TRANSFER_DATA_256byte_SMF" 4 42 "void(int32 ADRESS,int8 PORT_NUM,int32 ADDRES,int32 data_byte)" `1527 
 F N "WRITE_DATA_NBYTE_OF" 4 44 ""
-V L "ADDRES" 4 44 "int32" `1527 
-V L "data_byte" 4 44 "int32" `1528 
-f G "WRITE_DATA_NBYTE_OF" 4 44 "void(int32 ADDRES,int32 data_byte)" `1526 
+V L "ADDRES" 4 44 "int32" `1531 
+V L "data_byte" 4 44 "int32" `1532 
+f G "WRITE_DATA_NBYTE_OF" 4 44 "void(int32 ADDRES,int32 data_byte,int32 ADDRES,int32 data_byte)" `1530 
 F N "WRITE_DATA_NBYTE_SCF" 4 45 ""
-V L "ADDRES" 4 45 "int32" `1530 
-V L "data_byte" 4 45 "int32" `1531 
-f G "WRITE_DATA_NBYTE_SCF" 4 45 "void(int32 ADDRES,int32 data_byte)" `1529 
+V L "ADDRES" 4 45 "int32" `1534 
+V L "data_byte" 4 45 "int32" `1535 
+f G "WRITE_DATA_NBYTE_SCF" 4 45 "void(int32 ADDRES,int32 data_byte,int32 TRANSFER_DATA_NBYTE_SMFtoOF,int32 FROM_ADRESS,int32 data_byte)" `1533 
 F N "WRITE_DATA_NBYTE_SMF" 4 46 ""
-V L "ADDRES" 4 46 "int32" `1533 
-V L "data_byte" 4 46 "int32" `1534 
-f G "WRITE_DATA_NBYTE_SMF" 4 46 "void(int32 ADDRES,int32 data_byte)" `1532 
+V L "ADDRES" 4 46 "int32" `1537 
+V L "data_byte" 4 46 "int32" `1538 
+f G "WRITE_DATA_NBYTE_SMF" 4 46 "void(int32 ADDRES,int32 data_byte)" `1536 
 F N "TRANSFER_DATA_NBYTE_TOPC_OF" 4 48 ""
 V L "ADRESS" 4 48 "int32" `1258 
-V L "data_byte" 4 48 "int32" `1537 
+V L "data_byte" 4 48 "int32" `1541 
 f G "TRANSFER_DATA_NBYTE_TOPC_OF" 4 48 "void(int32 address,int32 data_byte)" `1257  "for testing"
 F N "TRANSFER_DATA_NBYTE_TOPC_SCF" 4 49 ""
 V L "ADRESS" 4 49 "int32" `1262 
-V L "data_byte" 4 49 "int32" `1537 
+V L "data_byte" 4 49 "int32" `1541 
 f G "TRANSFER_DATA_NBYTE_TOPC_SCF" 4 49 "void(int32 ADRESS,int32 data_byte)" `1261  "for testing"
 F N "TRANSFER_DATA_NBYTE_TOPC_SMF" 4 50 ""
 V L "ADRESS" 4 50 "int32" `1270 
-V L "data_byte" 4 50 "int32" `1537 
+V L "data_byte" 4 50 "int32" `1541 
 f G "TRANSFER_DATA_NBYTE_TOPC_SMF" 4 50 "void(int32 ADRESS,int32 data_byte)" `1269  "for testing"
 F N "TRANSFER_DATA_NBYTE_OFtoSCF" 4 52 ""
-V L "FROM_ADRESS" 4 52 "int32" `1536 
-V L "TO_ADRESS" 4 52 "int32" `1537 
-V L "data_byte" 4 52 "int32" `1538 
-f G "TRANSFER_DATA_NBYTE_OFtoSCF" 4 52 "void(int32 FROM_ADRESS,int32 TO_ADRESS,int32 data_byte)" `1535  "transfer data from MAIN FLASH to COM FLASH"
+V L "FROM_ADRESS" 4 52 "int32" `1540 
+V L "TO_ADRESS" 4 52 "int32" `1541 
+V L "data_byte" 4 52 "int32" `1542 
+f G "TRANSFER_DATA_NBYTE_OFtoSCF" 4 52 "void(int32 FROM_ADRESS,int32 TO_ADRESS,int32 data_byte)" `1539  "transfer data from MAIN FLASH to COM FLASH"
 F N "TRANSFER_DATA_NBYTE_SCFtoOF" 4 53 ""
-V L "FROM_ADRESS" 4 53 "int32" `1540 
-V L "TO_ADRESS" 4 53 "int32" `1541 
-V L "data_byte" 4 53 "int32" `1542 
-f G "TRANSFER_DATA_NBYTE_SCFtoOF" 4 53 "void(int32 FROM_ADRESS,int32 TO_ADRESS,int32 data_byte)" `1539  "transfer data from COM FLASH to MAIN FLASH"
+V L "FROM_ADRESS" 4 53 "int32" `1544 
+V L "TO_ADRESS" 4 53 "int32" `1545 
+V L "data_byte" 4 53 "int32" `1546 
+f G "TRANSFER_DATA_NBYTE_SCFtoOF" 4 53 "void(int32 FROM_ADRESS,int32 TO_ADRESS,int32 data_byte)" `1543  "transfer data from COM FLASH to MAIN FLASH"
 F N "TRANSFER_DATA_NBYTE_OFtoSMF" 4 54 ""
-V L "FROM_ADRESS" 4 54 "int32" `1544 
-V L "TO_ADRESS" 4 54 "int32" `1545 
-V L "data_byte" 4 54 "int32" `1546 
-f G "TRANSFER_DATA_NBYTE_OFtoSMF" 4 54 "void(int32 FROM_ADRESS,int32 TO_ADRESS,int32 data_byte)" `1543  "transfer data from MAIN FLASH to MISSION FLASH"
+V L "FROM_ADRESS" 4 54 "int32" `1548 
+V L "TO_ADRESS" 4 54 "int32" `1549 
+V L "data_byte" 4 54 "int32" `1550 
+f G "TRANSFER_DATA_NBYTE_OFtoSMF" 4 54 "void(int32 FROM_ADRESS,int32 TO_ADRESS,int32 data_byte)" `1547  "transfer data from MAIN FLASH to MISSION FLASH"
 F N "TRANSFER_DATA_NBYTE_SMFtoOF" 4 55 ""
-V L "FROM_ADRESS" 4 55 "int32" `1274 
-V L "TO_ADRESS" 4 55 "int32" `1275 
-V L "data_byte" 4 55 "int32" `1550 
-f G "TRANSFER_DATA_NBYTE_SMFtoOF" 4 55 "void(int32 FROM_ADRESS,int32 TO_ADRESS,int32 data_byte)" `1273  "transfer data from MISSION FLASH to MAIN FLASH"
+V L "FROM_ADRESS" 4 55 "int32" `1278 
+V L "TO_ADRESS" 4 55 "int32" `1279 
+V L "data_byte" 4 55 "int32" `1554 
+f G "TRANSFER_DATA_NBYTE_SMFtoOF" 4 55 "void(int32 FROM_ADRESS,int32 TO_ADRESS,int32 data_byte)" `1277  "transfer data from MISSION FLASH to MAIN FLASH"
 F N "TRANSFER_DATA_NBYTE_SMFtoSCF" 4 56 ""
-V L "FROM_ADRESS" 4 56 "int32" `1279 
-V L "TO_ADRESS" 4 56 "int32" `1280 
-V L "data_byte" 4 56 "int32" `1550 
-f G "TRANSFER_DATA_NBYTE_SMFtoSCF" 4 56 "void(int32 FROM_ADRESS,int32 TO_ADRESS,int32 data_byte)" `1278  "transfer data from MISSION FLASH to COM FLASH"
+V L "FROM_ADRESS" 4 56 "int32" `1283 
+V L "TO_ADRESS" 4 56 "int32" `1284 
+V L "data_byte" 4 56 "int32" `1554 
+f G "TRANSFER_DATA_NBYTE_SMFtoSCF" 4 56 "void(int32 FROM_ADRESS,int32 TO_ADRESS,int32 data_byte)" `1282  "transfer data from MISSION FLASH to COM FLASH"
 F N "TRANSFER_DATA_NBYTE_SCFtoSMF" 4 57 ""
-V L "FROM_ADRESS" 4 57 "int32" `1548 
-V L "TO_ADRESS" 4 57 "int32" `1549 
-V L "data_byte" 4 57 "int32" `1550 
-f G "TRANSFER_DATA_NBYTE_SCFtoSMF" 4 57 "void(int32 FROM_ADRESS,int32 TO_ADRESS,int32 data_byte)" `1547  "transfer data from COM FLASH to MISSION FLASH"
+V L "FROM_ADRESS" 4 57 "int32" `1552 
+V L "TO_ADRESS" 4 57 "int32" `1553 
+V L "data_byte" 4 57 "int32" `1554 
+f G "TRANSFER_DATA_NBYTE_SCFtoSMF" 4 57 "void(int32 FROM_ADRESS,int32 TO_ADRESS,int32 data_byte)" `1551  "transfer data from COM FLASH to MISSION FLASH"
 F N "TRANSFER_DATA_NBYTE_OF" 4 59 ""
-V L "FROM_ADRESS" 4 59 "int32" `1552 
-V L "TO_ADRESS" 4 59 "int32" `1553 
-V L "data_byte" 4 59 "int32" `1554 
-f G "TRANSFER_DATA_NBYTE_OF" 4 59 "void(int32 FROM_ADRESS,int32 TO_ADRESS,int32 data_byte)" `1551  "for testing"
+V L "FROM_ADRESS" 4 59 "int32" `1556 
+V L "TO_ADRESS" 4 59 "int32" `1557 
+V L "data_byte" 4 59 "int32" `1558 
+f G "TRANSFER_DATA_NBYTE_OF" 4 59 "void(int32 FROM_ADRESS,int32 TO_ADRESS,int32 data_byte)" `1555  "for testing"
 C L "TRANSFER_DATA_NBYTE_OF" 4 6 1 "FUNCTION"
 F N "UART4_RXD" 0 4 ""
-F G "UART4_RXD" 0 5 "void()" `1555 
+F G "UART4_RXD" 0 5 "void()" `1559 
 C L "UART4_RXD" 0 6 1 "FUNCTION"
 C L "UART4_RXD" 0 6 1 "FUNCTION"
 C L "UART4_RXD" 0 6 1 "FUNCTION"
 C L "UART4_RXD" 0 6 1 "FUNCTION"
 C L "UART4_RXD" 0 6 1 "FUNCTION"
 F N "MAIN" 0 16 ""
-F G "MAIN" 0 17 "void()" `1556  "settings();"
+F G "MAIN" 0 17 "void()" `1560  "settings();"
 C L "MAIN" 0 6 1 "FUNCTION"
 C L "MAIN" 0 6 1 "FUNCTION"
 F B "reset_cpu" 0 0

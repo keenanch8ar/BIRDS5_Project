@@ -185,9 +185,10 @@ D11_L35=[79071]Started Editing.
 D11_L36=[79757]Stopped Editing.
 D11_L37=[79757]Project Closed.
 D12=30-06-2021
-D12_L=2
+D12_L=3
 D12_L1=[61818]Project Opened.
 D12_L2=[61866]Started Editing.
+D12_L3=[62166]Stopped Editing.
 
 [Opened Files]
 1=BIRDS5_OBC.c
@@ -196,7 +197,7 @@ t1=1
 t2=17
 Count=17
 3=mainpic_function.c
-t3=17
+t3=64
 4=mainpic_function.h
 t4=1
 5=flash_ memory_ MT25QL01GBBB_OF.c
@@ -229,7 +230,7 @@ t17=1
 Type=4
 
 [defines]
-buildcount=95
+buildcount=96
 [Units]
 Count=1
 1=BIRDS5_OBC (main)
