@@ -1,0 +1,26 @@
+ÀÄBIRDS5_OBC
+   ÃÄMAIN  0/622  Ram=1
+   ³  ÃÄ@cinit1  (Inline)  Ram=0
+   ³  ÃÄ@PSTRINGC_115200_31766_31767  0/42  Ram=3
+   ³  ÃÄ@PSTRINGC_115200_31766_31767  0/42  Ram=3
+   ³  ÃÄ@PSTRINGC_115200_31766_31767  0/42  Ram=3
+   ³  ÃÄ@delay_ms1  0/42  Ram=1
+   ³  ÀÄPINO_test  0/134  Ram=4
+   ³     ÃÄ@PSTRINGC_115200_31766_31767  0/42  Ram=3
+   ³     ÃÄGET_RESET_DATA  0/356  Ram=11
+   ³     ³  ÃÄCOLLECT_RESET_DATA  0/72  Ram=1
+   ³     ³  ³  ÃÄDELETE_RESET  0/36  Ram=3
+   ³     ³  ³  ÃÄ@PUTCHARI_BIU_3  0/12  Ram=0
+   ³     ³  ³  ÃÄ@delay_ms1  0/42  Ram=1
+   ³     ³  ³  ÀÄwaiting  0/64  Ram=8
+   ³     ³  ÃÄ@PSTRINGC_115200_31766_31767  0/42  Ram=3
+   ³     ³  ÃÄ@PRINTF_X_115200_31766_31767  0/70  Ram=2
+   ³     ³  ÃÄ@PRINTF_X_115200_31766_31767  0/70  Ram=2
+   ³     ³  ÃÄ@PUTCHAR_6_  0/72  Ram=1
+   ³     ³  ÀÄ@PSTRINGC_115200_31766_31767  0/42  Ram=3
+   ³     ÃÄ@PSTRINGC_115200_31766_31767  0/42  Ram=3
+   ³     ÃÄ@PUTCHARI_BIU_1  0/10  Ram=0
+   ³     ÀÄ@PUTCHARI_BIU_3  0/12  Ram=0
+   ÀÄUART4_RXD  0/76  Ram=4
+      ÃÄ@GETCH_BIU_3  0/28  Ram=0
+      ÀÄ@DIV88  0/46  Ram=3

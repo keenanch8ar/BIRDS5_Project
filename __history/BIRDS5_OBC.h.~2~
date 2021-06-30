@@ -1,0 +1,4 @@
+#include <18F67J94.h>
+#device ADC=16
+#use delay(crystal=20000000)
+#use rs232(baud=115200,parity=N,UART1,bits=8,stream=pc)

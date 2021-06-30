@@ -1,0 +1,4159 @@
+CCS PCH C Compiler, Version 5.050, 5967               29-Jun-21 21:58
+
+               Filename:   C:\Users\keena\Dropbox\SEIC Courses\BIRDs Project\OBC\Code\BIRDS5_OBC\BIRDS5_OBC.lst
+
+               ROM used:   3168 bytes (2%)
+                           Largest free fragment is 65520
+               RAM used:   364 (10%) at main() level
+                           389 (11%) worst case
+               Stack used: 7 locations (3 in main + 4 for interrupts)
+               Stack size: 31
+
+*
+00000:  NOP   
+00002:  GOTO   09F4
+*
+00008:  NOP   
+0000A:  NOP   
+0000C:  NOP   
+0000E:  NOP   
+00010:  NOP   
+00012:  NOP   
+00014:  NOP   
+00016:  NOP   
+00018:  MOVWF  04
+0001A:  MOVFF  FD8,05
+0001E:  MOVFF  FE0,06
+00022:  MOVLB  0
+00024:  MOVFF  FE9,0C
+00028:  MOVFF  FEA,07
+0002C:  MOVFF  FE1,08
+00030:  MOVFF  FE2,09
+00034:  MOVFF  FD9,0A
+00038:  MOVFF  FDA,0B
+0003C:  MOVFF  FF3,12
+00040:  MOVFF  FF4,13
+00044:  MOVFF  FFA,14
+00048:  MOVFF  FF5,15
+0004C:  MOVFF  FF6,16
+00050:  MOVFF  FF7,17
+00054:  MOVFF  FF8,18
+00058:  MOVFF  FFB,19
+0005C:  MOVFF  00,0E
+00060:  MOVFF  01,0F
+00064:  MOVFF  02,10
+00068:  MOVFF  03,11
+0006C:  BTFSS  F61.7
+0006E:  GOTO   0078
+00072:  BTFSC  FA6.7
+00074:  GOTO   05EC
+00078:  MOVFF  0E,00
+0007C:  MOVFF  0F,01
+00080:  MOVFF  10,02
+00084:  MOVFF  11,03
+00088:  MOVFF  0C,FE9
+0008C:  MOVFF  07,FEA
+00090:  BSF    07.7
+00092:  MOVFF  08,FE1
+00096:  MOVFF  09,FE2
+0009A:  MOVFF  0A,FD9
+0009E:  MOVFF  0B,FDA
+000A2:  MOVFF  12,FF3
+000A6:  MOVFF  13,FF4
+000AA:  MOVFF  14,FFA
+000AE:  MOVFF  15,FF5
+000B2:  MOVFF  16,FF6
+000B6:  MOVFF  17,FF7
+000BA:  MOVFF  18,FF8
+000BE:  MOVFF  19,FFB
+000C2:  MOVF   04,W
+000C4:  MOVFF  06,FE0
+000C8:  MOVFF  05,FD8
+000CC:  RETFIE 0
+.................... #include <BIRDS5_OBC.h> 
+.................... #include <18F67J94.h> 
+.................... //////////// Standard Header file for the PIC18F67J94 device //////////////// 
+.................... /////////////////////////////////////////////////////////////////////////// 
+.................... ////        (C) Copyright 1996, 2014 Custom Computer Services          //// 
+.................... //// This source code may only be used by licensed users of the CCS C  //// 
+.................... //// compiler.  This source code may only be distributed to other      //// 
+.................... //// licensed users of the CCS C compiler.  No other use, reproduction //// 
+.................... //// or distribution is permitted without written permission.          //// 
+.................... //// Derivative programs created using this software in object code    //// 
+.................... //// form are not restricted in any way.                               //// 
+.................... /////////////////////////////////////////////////////////////////////////// 
+.................... #device PIC18F67J94 
+000CE:  DATA 0D,0A
+000D0:  DATA 50,41
+000D2:  DATA 53,53
+000D4:  DATA 45,44
+000D6:  DATA 20,44
+000D8:  DATA 41,59
+000DA:  DATA 53,3A
+000DC:  DATA 25,78
+000DE:  DATA 0D,0A
+000E0:  DATA 00,00
+000E2:  DATA 52,45
+000E4:  DATA 53,45
+000E6:  DATA 52,56
+000E8:  DATA 45,20
+000EA:  DATA 43,48
+000EC:  DATA 45,43
+000EE:  DATA 4B,3A
+000F0:  DATA 25,78
+000F2:  DATA 0D,0A
+000F4:  DATA 00,00
+000F6:  DATA 4B,69
+000F8:  DATA 6C,6C
+000FA:  DATA 20,46
+000FC:  DATA 4C,41
+000FE:  DATA 47,20
+00100:  DATA 4D,41
+00102:  DATA 49,4E
+00104:  DATA 3A,25
+00106:  DATA 78,0D
+00108:  DATA 0A,00
+0010A:  DATA 4B,69
+0010C:  DATA 6C,6C
+0010E:  DATA 20,46
+00110:  DATA 4C,41
+00112:  DATA 47,20
+00114:  DATA 46,41
+00116:  DATA 42,3A
+00118:  DATA 25,78
+0011A:  DATA 0D,0A
+0011C:  DATA 00,00
+0011E:  DATA 41,55
+00120:  DATA 54,4F
+00122:  DATA 20,48
+00124:  DATA 49,47
+00126:  DATA 48,20
+00128:  DATA 53,41
+0012A:  DATA 4D,50
+0012C:  DATA 4C,49
+0012E:  DATA 4E,47
+00130:  DATA 3A,25
+00132:  DATA 78,0D
+00134:  DATA 0A,00
+00136:  DATA 41,55
+00138:  DATA 54,4F
+0013A:  DATA 20,43
+0013C:  DATA 41,4D
+0013E:  DATA 3A,25
+00140:  DATA 78,0D
+00142:  DATA 0A,00
+00144:  DATA 41,55
+00146:  DATA 54,4F
+00148:  DATA 20,4D
+0014A:  DATA 42,50
+0014C:  DATA 3A,25
+0014E:  DATA 78,0D
+00150:  DATA 0A,00
+00152:  DATA 41,55
+00154:  DATA 54,4F
+00156:  DATA 20,41
+00158:  DATA 44,43
+0015A:  DATA 53,3A
+0015C:  DATA 25,78
+0015E:  DATA 0D,0A
+00160:  DATA 00,00
+00162:  DATA 41,4E
+00164:  DATA 54,45
+00166:  DATA 4E,4E
+00168:  DATA 41,20
+0016A:  DATA 44,45
+0016C:  DATA 50,4C
+0016E:  DATA 4F,59
+00170:  DATA 3A,25
+00172:  DATA 78,0D
+00174:  DATA 0A,00
+00176:  DATA 41,4E
+00178:  DATA 54,45
+0017A:  DATA 4E,4E
+0017C:  DATA 41,20
+0017E:  DATA 44,45
+00180:  DATA 50,4C
+00182:  DATA 4F,59
+00184:  DATA 20,41
+00186:  DATA 54,54
+00188:  DATA 45,4D
+0018A:  DATA 50,54
+0018C:  DATA 3A,25
+0018E:  DATA 78,0D
+00190:  DATA 0A,00
+00192:  DATA 55,50
+00194:  DATA 4C,49
+00196:  DATA 4E,4B
+00198:  DATA 20,53
+0019A:  DATA 55,43
+0019C:  DATA 43,45
+0019E:  DATA 53,53
+001A0:  DATA 3A,25
+001A2:  DATA 78,0D
+001A4:  DATA 0A,0D
+001A6:  DATA 0A,00
+001A8:  DATA 0D,0A
+001AA:  DATA 41,44
+001AC:  DATA 44,20
+001AE:  DATA 49,4E
+001B0:  DATA 46,4F
+001B2:  DATA 20,41
+001B4:  DATA 44,44
+001B6:  DATA 52,45
+001B8:  DATA 53,53
+001BA:  DATA 3A,25
+001BC:  DATA 6C,78
+001BE:  DATA 0D,0A
+001C0:  DATA 0D,0A
+001C2:  DATA 00,00
+001C4:  DATA 46,4C
+001C6:  DATA 41,47
+001C8:  DATA 20,44
+001CA:  DATA 41,54
+001CC:  DATA 41,20
+001CE:  DATA 41,44
+001D0:  DATA 44,52
+001D2:  DATA 45,53
+001D4:  DATA 53,3A
+001D6:  DATA 25,78
+001D8:  DATA 25,78
+001DA:  DATA 25,78
+001DC:  DATA 25,78
+001DE:  DATA 0D,0A
+001E0:  DATA 00,00
+001E2:  DATA 52,45
+001E4:  DATA 53,45
+001E6:  DATA 52,56
+001E8:  DATA 41,54
+001EA:  DATA 49,4F
+001EC:  DATA 4E,20
+001EE:  DATA 54,41
+001F0:  DATA 42,4C
+001F2:  DATA 45,20
+001F4:  DATA 41,44
+001F6:  DATA 44,52
+001F8:  DATA 45,53
+001FA:  DATA 53,3A
+001FC:  DATA 25,78
+001FE:  DATA 25,78
+00200:  DATA 25,78
+00202:  DATA 25,78
+00204:  DATA 0D,0A
+00206:  DATA 00,00
+00208:  DATA 53,41
+0020A:  DATA 54,45
+0020C:  DATA 4C,4C
+0020E:  DATA 49,54
+00210:  DATA 45,20
+00212:  DATA 4C,4F
+00214:  DATA 47,20
+00216:  DATA 41,44
+00218:  DATA 44,52
+0021A:  DATA 45,53
+0021C:  DATA 53,3A
+0021E:  DATA 25,78
+00220:  DATA 25,78
+00222:  DATA 25,78
+00224:  DATA 25,78
+00226:  DATA 0D,0A
+00228:  DATA 00,00
+0022A:  DATA 43,41
+0022C:  DATA 4D,20
+0022E:  DATA 41,44
+00230:  DATA 44,52
+00232:  DATA 45,53
+00234:  DATA 53,3A
+00236:  DATA 25,78
+00238:  DATA 25,78
+0023A:  DATA 25,78
+0023C:  DATA 25,78
+0023E:  DATA 0D,0A
+00240:  DATA 00,00
+00242:  DATA 46,41
+00244:  DATA 42,20
+00246:  DATA 48,4B
+00248:  DATA 20,41
+0024A:  DATA 44,44
+0024C:  DATA 52,45
+0024E:  DATA 53,53
+00250:  DATA 3A,25
+00252:  DATA 78,25
+00254:  DATA 78,25
+00256:  DATA 78,25
+00258:  DATA 78,0D
+0025A:  DATA 0A,00
+0025C:  DATA 46,41
+0025E:  DATA 42,20
+00260:  DATA 43,57
+00262:  DATA 20,41
+00264:  DATA 44,44
+00266:  DATA 52,45
+00268:  DATA 53,53
+0026A:  DATA 3A,25
+0026C:  DATA 78,25
+0026E:  DATA 78,25
+00270:  DATA 78,25
+00272:  DATA 78,0D
+00274:  DATA 0A,00
+00276:  DATA 41,44
+00278:  DATA 43,53
+0027A:  DATA 20,53
+0027C:  DATA 45,4E
+0027E:  DATA 53,4F
+00280:  DATA 52,20
+00282:  DATA 41,44
+00284:  DATA 44,52
+00286:  DATA 45,53
+00288:  DATA 53,3A
+0028A:  DATA 25,78
+0028C:  DATA 25,78
+0028E:  DATA 25,78
+00290:  DATA 25,78
+00292:  DATA 0D,0A
+00294:  DATA 00,00
+00296:  DATA 41,44
+00298:  DATA 43,53
+0029A:  DATA 20,54
+0029C:  DATA 4C,45
+0029E:  DATA 20,41
+002A0:  DATA 44,44
+002A2:  DATA 52,45
+002A4:  DATA 53,53
+002A6:  DATA 3A,25
+002A8:  DATA 78,25
+002AA:  DATA 78,25
+002AC:  DATA 78,25
+002AE:  DATA 78,0D
+002B0:  DATA 0A,00
+002B2:  DATA 4D,49
+002B4:  DATA 53,53
+002B6:  DATA 49,4F
+002B8:  DATA 4E,20
+002BA:  DATA 42,4F
+002BC:  DATA 53,53
+002BE:  DATA 20,41
+002C0:  DATA 44,44
+002C2:  DATA 52,45
+002C4:  DATA 53,53
+002C6:  DATA 3A,25
+002C8:  DATA 78,25
+002CA:  DATA 78,25
+002CC:  DATA 78,25
+002CE:  DATA 78,0D
+002D0:  DATA 0A,00
+002D2:  DATA 48,49
+002D4:  DATA 47,48
+002D6:  DATA 20,53
+002D8:  DATA 41,4D
+002DA:  DATA 50,20
+002DC:  DATA 48,4B
+002DE:  DATA 20,41
+002E0:  DATA 44,44
+002E2:  DATA 52,45
+002E4:  DATA 53,53
+002E6:  DATA 3A,25
+002E8:  DATA 78,25
+002EA:  DATA 78,25
+002EC:  DATA 78,25
+002EE:  DATA 78,0D
+002F0:  DATA 0A,00
+002F2:  DATA 57,52
+002F4:  DATA 49,54
+002F6:  DATA 45,20
+002F8:  DATA 25,6C
+002FA:  DATA 78,20
+002FC:  DATA 54,49
+002FE:  DATA 4D,45
+00300:  DATA 53,0D
+00302:  DATA 0A,00
+00304:  DATA 0D,0A
+00306:  DATA 50,41
+00308:  DATA 53,53
+0030A:  DATA 45,44
+0030C:  DATA 20,44
+0030E:  DATA 41,59
+00310:  DATA 53,3A
+00312:  DATA 25,6C
+00314:  DATA 78,0D
+00316:  DATA 0A,00
+00318:  DATA 52,45
+0031A:  DATA 53,45
+0031C:  DATA 52,56
+0031E:  DATA 45,20
+00320:  DATA 43,48
+00322:  DATA 45,43
+00324:  DATA 4B,3A
+00326:  DATA 25,78
+00328:  DATA 0D,0A
+0032A:  DATA 00,00
+0032C:  DATA 4B,69
+0032E:  DATA 6C,6C
+00330:  DATA 20,46
+00332:  DATA 4C,41
+00334:  DATA 47,20
+00336:  DATA 4D,41
+00338:  DATA 49,4E
+0033A:  DATA 3A,25
+0033C:  DATA 78,0D
+0033E:  DATA 0A,00
+00340:  DATA 4B,69
+00342:  DATA 6C,6C
+00344:  DATA 20,46
+00346:  DATA 4C,41
+00348:  DATA 47,20
+0034A:  DATA 46,41
+0034C:  DATA 42,3A
+0034E:  DATA 25,78
+00350:  DATA 0D,0A
+00352:  DATA 00,00
+00354:  DATA 41,55
+00356:  DATA 54,4F
+00358:  DATA 20,48
+0035A:  DATA 49,47
+0035C:  DATA 48,20
+0035E:  DATA 53,41
+00360:  DATA 4D,50
+00362:  DATA 4C,49
+00364:  DATA 4E,47
+00366:  DATA 3A,25
+00368:  DATA 78,0D
+0036A:  DATA 0A,00
+0036C:  DATA 41,55
+0036E:  DATA 54,4F
+00370:  DATA 20,43
+00372:  DATA 41,4D
+00374:  DATA 3A,25
+00376:  DATA 78,0D
+00378:  DATA 0A,00
+0037A:  DATA 41,55
+0037C:  DATA 54,4F
+0037E:  DATA 20,4D
+00380:  DATA 42,50
+00382:  DATA 3A,25
+00384:  DATA 78,0D
+00386:  DATA 0A,00
+00388:  DATA 41,55
+0038A:  DATA 54,4F
+0038C:  DATA 20,41
+0038E:  DATA 44,43
+00390:  DATA 53,3A
+00392:  DATA 25,78
+00394:  DATA 0D,0A
+00396:  DATA 00,00
+00398:  DATA 41,4E
+0039A:  DATA 54,45
+0039C:  DATA 4E,4E
+0039E:  DATA 41,20
+003A0:  DATA 44,45
+003A2:  DATA 50,4C
+003A4:  DATA 4F,59
+003A6:  DATA 3A,25
+003A8:  DATA 78,0D
+003AA:  DATA 0A,00
+003AC:  DATA 55,50
+003AE:  DATA 4C,49
+003B0:  DATA 4E,4B
+003B2:  DATA 20,53
+003B4:  DATA 55,43
+003B6:  DATA 43,45
+003B8:  DATA 53,53
+003BA:  DATA 3A,25
+003BC:  DATA 78,0D
+003BE:  DATA 0A,0D
+003C0:  DATA 0A,00
+003C2:  DATA 46,4C
+003C4:  DATA 41,47
+003C6:  DATA 20,49
+003C8:  DATA 4E,46
+003CA:  DATA 4F,20
+003CC:  DATA 53,54
+003CE:  DATA 4F,52
+003D0:  DATA 45,44
+003D2:  DATA 20,49
+003D4:  DATA 4E,20
+003D6:  DATA 46,4C
+003D8:  DATA 41,53
+003DA:  DATA 48,0D
+003DC:  DATA 0A,00
+003DE:  DATA 0D,0A
+003E0:  DATA 61,64
+003E2:  DATA 64,72
+003E4:  DATA 65,73
+003E6:  DATA 73,20
+003E8:  DATA 69,6E
+003EA:  DATA 66,6F
+003EC:  DATA 20,6C
+003EE:  DATA 6F,63
+003F0:  DATA 61,74
+003F2:  DATA 69,6F
+003F4:  DATA 6E,3A
+003F6:  DATA 25,6C
+003F8:  DATA 78,0D
+003FA:  DATA 0A,00
+003FC:  DATA 41,44
+003FE:  DATA 20,43
+00400:  DATA 4F,55
+00402:  DATA 4E,54
+00404:  DATA 45,52
+00406:  DATA 3A,25
+00408:  DATA 6C,78
+0040A:  DATA 0D,0A
+0040C:  DATA 00,00
+0040E:  DATA 43,48
+00410:  DATA 41,4E
+00412:  DATA 47,45
+00414:  DATA 44,20
+00416:  DATA 4D,45
+00418:  DATA 4D,4F
+0041A:  DATA 52,59
+0041C:  DATA 20,41
+0041E:  DATA 44,44
+00420:  DATA 52,45
+00422:  DATA 53,53
+00424:  DATA 3A,00
+00426:  DATA 0D,0A
+00428:  DATA 53,74
+0042A:  DATA 6F,72
+0042C:  DATA 65,69
+0042E:  DATA 6E,67
+00430:  DATA 20,41
+00432:  DATA 64,64
+00434:  DATA 72,65
+00436:  DATA 73,73
+00438:  DATA 20,44
+0043A:  DATA 61,74
+0043C:  DATA 61,20
+0043E:  DATA 69,6E
+00440:  DATA 20,46
+00442:  DATA 6C,61
+00444:  DATA 73,68
+00446:  DATA 0D,0A
+00448:  DATA 00,00
+0044A:  DATA 41,44
+0044C:  DATA 44,52
+0044E:  DATA 45,53
+00450:  DATA 53,20
+00452:  DATA 44,41
+00454:  DATA 54,41
+00456:  DATA 20,53
+00458:  DATA 54,4F
+0045A:  DATA 52,45
+0045C:  DATA 20,44
+0045E:  DATA 4F,4E
+00460:  DATA 45,3A
+00462:  DATA 25,6C
+00464:  DATA 78,0D
+00466:  DATA 0A,00
+00468:  DATA 46,4C
+0046A:  DATA 41,53
+0046C:  DATA 48,20
+0046E:  DATA 4D,45
+00470:  DATA 4D,4F
+00472:  DATA 52,59
+00474:  DATA 20,45
+00476:  DATA 52,41
+00478:  DATA 53,45
+0047A:  DATA 20,53
+0047C:  DATA 54,41
+0047E:  DATA 52,54
+00480:  DATA 0D,0A
+00482:  DATA 00,00
+00484:  DATA 46,4C
+00486:  DATA 41,53
+00488:  DATA 48,20
+0048A:  DATA 4D,45
+0048C:  DATA 4D,4F
+0048E:  DATA 52,59
+00490:  DATA 20,45
+00492:  DATA 52,41
+00494:  DATA 53,45
+00496:  DATA 20,44
+00498:  DATA 4F,4E
+0049A:  DATA 45,0D
+0049C:  DATA 0A,00
+0049E:  DATA 52,65
+004A0:  DATA 6D,61
+004A2:  DATA 69,6E
+004A4:  DATA 69,6E
+004A6:  DATA 67,20
+004A8:  DATA 74,69
+004AA:  DATA 6D,65
+004AC:  DATA 3A,20
+004AE:  DATA 25,64
+004B0:  DATA 20,20
+004B2:  DATA 0D,00
+004B4:  DATA 65,72
+004B6:  DATA 61,73
+004B8:  DATA 69,6E
+004BA:  DATA 67,20
+004BC:  DATA 6E,65
+004BE:  DATA 78,74
+004C0:  DATA 20,73
+004C2:  DATA 65,63
+004C4:  DATA 74,6F
+004C6:  DATA 72,0D
+004C8:  DATA 0A,00
+004CA:  DATA 65,72
+004CC:  DATA 61,73
+004CE:  DATA 69,6E
+004D0:  DATA 67,20
+004D2:  DATA 6E,65
+004D4:  DATA 78,74
+004D6:  DATA 20,73
+004D8:  DATA 65,63
+004DA:  DATA 74,6F
+004DC:  DATA 72,0D
+004DE:  DATA 0A,00
+004E0:  DATA 65,72
+004E2:  DATA 61,73
+004E4:  DATA 69,6E
+004E6:  DATA 67,20
+004E8:  DATA 6E,65
+004EA:  DATA 78,74
+004EC:  DATA 20,73
+004EE:  DATA 65,63
+004F0:  DATA 74,6F
+004F2:  DATA 72,0D
+004F4:  DATA 0A,00
+004F6:  DATA 65,72
+004F8:  DATA 61,73
+004FA:  DATA 69,6E
+004FC:  DATA 67,20
+004FE:  DATA 6E,65
+00500:  DATA 78,74
+00502:  DATA 20,73
+00504:  DATA 65,63
+00506:  DATA 74,6F
+00508:  DATA 72,0D
+0050A:  DATA 0A,00
+0050C:  DATA 65,72
+0050E:  DATA 61,73
+00510:  DATA 69,6E
+00512:  DATA 67,20
+00514:  DATA 6E,65
+00516:  DATA 78,74
+00518:  DATA 20,73
+0051A:  DATA 65,63
+0051C:  DATA 74,6F
+0051E:  DATA 72,0D
+00520:  DATA 0A,00
+00522:  DATA 43,6F
+00524:  DATA 6D,6D
+00526:  DATA 61,6E
+00528:  DATA 64,20
+0052A:  DATA 52,65
+0052C:  DATA 63,69
+0052E:  DATA 65,76
+00530:  DATA 65,64
+00532:  DATA 0D,0A
+00534:  DATA 00,00
+00536:  DATA 43,6F
+00538:  DATA 6D,6D
+0053A:  DATA 61,6E
+0053C:  DATA 64,20
+0053E:  DATA 32,20
+00540:  DATA 52,65
+00542:  DATA 63,69
+00544:  DATA 65,76
+00546:  DATA 65,64
+00548:  DATA 0D,0A
+0054A:  DATA 00,00
+0054C:  DATA 0D,0A
+0054E:  DATA 52,45
+00550:  DATA 53,45
+00552:  DATA 54,20
+00554:  DATA 44,41
+00556:  DATA 54,41
+00558:  DATA 20,4F
+0055A:  DATA 42,54
+0055C:  DATA 41,49
+0055E:  DATA 4E,45
+00560:  DATA 44,0D
+00562:  DATA 0A,00
+00564:  DATA 0D,0A
+00566:  DATA 52,45
+00568:  DATA 53,45
+0056A:  DATA 54,20
+0056C:  DATA 44,41
+0056E:  DATA 54,41
+00570:  DATA 20,4E
+00572:  DATA 4F,20
+00574:  DATA 4F,42
+00576:  DATA 54,41
+00578:  DATA 49,4E
+0057A:  DATA 45,44
+0057C:  DATA 0D,0A
+0057E:  DATA 00,00
+00580:  DATA 52,65
+00582:  DATA 61,64
+00584:  DATA 79,20
+00586:  DATA 66,6F
+00588:  DATA 72,20
+0058A:  DATA 72,65
+0058C:  DATA 73,65
+0058E:  DATA 74,00
+00590:  DATA 4C,4F
+00592:  DATA 47,20
+00594:  DATA 73,61
+00596:  DATA 76,69
+00598:  DATA 6E,67
+0059A:  DATA 20,64
+0059C:  DATA 6F,6E
+0059E:  DATA 65,0D
+005A0:  DATA 0A,00
+*
+005BE:  MOVLB  1
+005C0:  MOVF   x83,W
+005C2:  CLRF   01
+005C4:  SUBWF  x82,W
+005C6:  BC    05CE
+005C8:  MOVFF  182,00
+005CC:  BRA    05E6
+005CE:  CLRF   00
+005D0:  MOVLW  08
+005D2:  MOVWF  x84
+005D4:  RLCF   x82,F
+005D6:  RLCF   00,F
+005D8:  MOVF   x83,W
+005DA:  SUBWF  00,W
+005DC:  BTFSC  FD8.0
+005DE:  MOVWF  00
+005E0:  RLCF   01,F
+005E2:  DECFSZ x84,F
+005E4:  BRA    05D4
+005E6:  MOVLB  0
+005E8:  GOTO   0622 (RETURN)
+*
+00638:  DATA 53,74
+0063A:  DATA 61,72
+0063C:  DATA 74,20
+0063E:  DATA 4F,70
+00640:  DATA 65,72
+00642:  DATA 61,74
+00644:  DATA 69,6E
+00646:  DATA 67,0D
+00648:  DATA 0A,00
+0064A:  DATA 0D,0A
+0064C:  DATA 48,65
+0064E:  DATA 6C,6C
+00650:  DATA 6F,20
+00652:  DATA 57,6F
+00654:  DATA 72,6C
+00656:  DATA 64,0D
+00658:  DATA 0A,00
+0065A:  DATA 4F,70
+0065C:  DATA 65,72
+0065E:  DATA 61,74
+00660:  DATA 69,6E
+00662:  DATA 67,0D
+00664:  DATA 0A,00
+00666:  TBLRD*+
+00668:  MOVF   FF5,F
+0066A:  BZ    068E
+0066C:  MOVFF  FF6,177
+00670:  MOVFF  FF7,178
+00674:  MOVFF  FF8,179
+00678:  MOVF   FF5,W
+0067A:  BTFSS  F9E.4
+0067C:  BRA    067A
+0067E:  MOVWF  FAD
+00680:  MOVFF  177,FF6
+00684:  MOVFF  178,FF7
+00688:  MOVFF  179,FF8
+0068C:  BRA    0666
+0068E:  RETURN 0
+*
+00772:  MOVLB  1
+00774:  BTFSC  x79.7
+00776:  BRA    0798
+00778:  MOVLW  0F
+0077A:  MOVWF  00
+0077C:  SWAPF  x78,W
+0077E:  ANDWF  00,F
+00780:  MOVLW  0A
+00782:  SUBWF  00,W
+00784:  BC    078C
+00786:  MOVLW  30
+00788:  ADDWF  00,F
+0078A:  BRA    0790
+0078C:  MOVF   x79,W
+0078E:  ADDWF  00,F
+00790:  MOVF   00,W
+00792:  BTFSS  F9E.4
+00794:  BRA    0792
+00796:  MOVWF  FAD
+00798:  MOVLW  0F
+0079A:  ANDWF  x78,F
+0079C:  MOVLW  0A
+0079E:  SUBWF  x78,W
+007A0:  BC    07A6
+007A2:  MOVLW  30
+007A4:  BRA    07AA
+007A6:  BCF    x79.7
+007A8:  MOVF   x79,W
+007AA:  ADDWF  x78,F
+007AC:  MOVF   x78,W
+007AE:  BTFSS  F9E.4
+007B0:  BRA    07AE
+007B2:  MOVWF  FAD
+007B4:  MOVLB  0
+007B6:  RETURN 0
+....................  
+.................... #list 
+....................  
+.................... #FUSES NOWDT, NOBROWNOUT, NOPROTECT 
+.................... #use delay(crystal=16Mhz, clock=16Mhz) 
+*
+00690:  MOVLW  01
+00692:  MOVWF  FEA
+00694:  MOVLW  78
+00696:  MOVWF  FE9
+00698:  MOVF   FEF,W
+0069A:  BZ    06B8
+0069C:  MOVLW  05
+0069E:  MOVWF  01
+006A0:  CLRF   00
+006A2:  DECFSZ 00,F
+006A4:  BRA    06A2
+006A6:  DECFSZ 01,F
+006A8:  BRA    06A0
+006AA:  MOVLW  2E
+006AC:  MOVWF  00
+006AE:  DECFSZ 00,F
+006B0:  BRA    06AE
+006B2:  BRA    06B4
+006B4:  DECFSZ FEF,F
+006B6:  BRA    069C
+006B8:  RETURN 0
+.................... #include<PIC18F67J94_registers.h> 
+.................... #byte ADCBUF0H = 0xFC3 
+.................... #byte ADCBUF0L = 0xFC2 
+.................... #byte ADCON1H = 0xFC1 
+.................... #bit    FORM0 = ADCON1H.0 
+.................... #bit    FORM1 = ADCON1H.1 
+.................... #bit    MODE12 = ADCON1H.2 
+.................... #bit    DMAEN = ADCON1H.3 
+.................... #bit    DMABM = ADCON1H.4 
+.................... #bit    ADSIDL = ADCON1H.5 
+.................... #bit    ADFRZ = ADCON1H.6 
+.................... #bit    ADON = ADCON1H.7 
+.................... #byte ADCON1L = 0xFC0 
+.................... #bit    DONE = ADCON1L.0 
+.................... #bit    SAMP = ADCON1L.1 
+.................... #bit    ASAM = ADCON1L.2 
+.................... #bit    SIMSAM = ADCON1L.3 
+.................... #bit    SSRC0 = ADCON1L.4 
+.................... #bit    SSRC1 = ADCON1L.5 
+.................... #bit    SSRC2 = ADCON1L.6 
+.................... #bit    SSRC3 = ADCON1L.7 
+.................... #byte TRISG = 0xF98 
+.................... #byte TRISF = 0xF97 
+.................... #byte TRISE = 0xF96 
+.................... #byte TRISD = 0xF95 
+.................... #byte TRISC = 0xF94 
+.................... #byte TRISB = 0xF93 
+....................  
+.................... #byte TRISA = 0xF92 
+.................... #bit    TRISA0 = TRISA.0 
+.................... #bit    TRISA1 = TRISA.1 
+.................... #bit    TRISA2 = TRISA.2 
+....................  
+....................  
+.................... #byte LATG = 0xF8F 
+.................... #byte LATF = 0xF8E 
+.................... #byte LATE = 0xF8D 
+.................... #byte LATD = 0xF8C 
+.................... #byte LATC = 0xF8B 
+.................... #byte LATB = 0xF8A 
+....................  
+.................... #byte LATA = 0xF89 
+.................... #bit    LATA0 = LATA.0 
+.................... #bit    LATA1 = LATA.1 
+.................... #bit    LATA2 = LATA.2 
+.................... #bit    LATA3 = LATA.3 
+....................  
+.................... #byte PORTG = 0xF86 
+.................... #bit    RG0 = PORTG.0 
+.................... #bit    RG1 = PORTG.1 
+.................... #bit    RG2 = PORTG.2 
+.................... #bit    RG3 = PORTG.3 
+.................... #bit    RG4 = PORTG.4 
+.................... #bit    RG6 = PORTG.6 
+.................... #bit    RG7 = PORTG.7 
+.................... #byte PORTF = 0xF85 
+.................... #bit    RF2 = PORTF.2 
+.................... #bit    RF3 = PORTF.3 
+.................... #bit    RF4 = PORTF.4 
+.................... #bit    RF5 = PORTF.5 
+.................... #bit    RF6 = PORTF.6 
+.................... #bit    RF7 = PORTF.7 
+.................... #byte PORTE = 0xF84 
+.................... #byte PORTD = 0xF83 
+.................... #byte PORTC = 0xF82 
+.................... #bit    RC0 = PORTC.0 
+.................... #bit    RC1 = PORTC.1 
+.................... #bit    RC2 = PORTC.2 
+.................... #bit    RC3 = PORTC.3 
+.................... #bit    RC4 = PORTC.4 
+.................... #bit    RC5 = PORTC.5 
+.................... #bit    RC6 = PORTC.6 
+.................... #bit    RC7 = PORTC.7 
+.................... #byte PORTB = 0xF81 
+.................... #byte PORTA = 0xF80 
+.................... #bit    RA0 = PORTA.0 
+.................... #bit    RA1 = PORTA.1 
+.................... #bit    RA2 = PORTA.2 
+.................... #bit    RA3 = PORTA.3 
+.................... #bit    RA4 = PORTA.4 
+.................... #bit    RA5 = PORTA.5 
+.................... #bit    RA6 = PORTA.6 
+.................... #bit    RA7 = PORTA.7 
+.................... #byte TRISVP = 0xF73 
+.................... #byte LATVP = 0xF72 
+.................... #byte PORTVP = 0xF71 
+.................... #byte WPUB = 0xF62 
+.................... #byte ALRMVALH = 0xF59 
+.................... #byte ALRMVALL = 0xF58 
+.................... #byte ANCFG = 0xF01 
+.................... #bit    VBGEN = ANCFG.0 
+.................... #bit    VBG2EN = ANCFG.1 
+.................... #bit    VBG6EN = ANCFG.2 
+.................... #byte ODCON1 = 0xEEB 
+.................... #bit    SSP1OD = ODCON1.0 
+.................... #bit    SSP2OD = ODCON1.1 
+.................... #bit    USART1OD = ODCON1.2 
+.................... #bit    USART2OD = ODCON1.3 
+.................... #bit    USART3OD = ODCON1.4 
+.................... #bit    USART4OD = ODCON1.5 
+.................... #bit    ECCP1OD = ODCON1.6 
+.................... #bit    ECCP2OD = ODCON1.7 
+.................... #byte ODCON2 = 0xEEA 
+.................... #bit    ECCP3OD = ODCON2.0 
+.................... #bit    CCP4OD = ODCON2.1 
+.................... #bit    CCP5OD = ODCON2.2 
+.................... #bit    CCP6OD = ODCON2.3 
+.................... #bit    CCP7OD = ODCON2.4 
+.................... #bit    CCP8OD = ODCON2.5 
+.................... #bit    CCP9OD = ODCON2.6 
+.................... #bit    CCP10OD = ODCON2.7 
+.................... #byte ADCON2H = 0xE8D 
+.................... #bit    CHPS0 = ADCON2H.0 
+.................... #bit    CHPS1 = ADCON2H.1 
+.................... #bit    CSCNA = ADCON2H.2 
+.................... #bit    BUFREGEN = ADCON2H.3 
+.................... #bit    OFFCAL = ADCON2H.4 
+.................... #bit    NVCFG0 = ADCON2H.5 
+.................... #bit    PVCFG0 = ADCON2H.6 
+.................... #bit    PVCFG1 = ADCON2H.7 
+.................... #byte ADCON2L = 0xE8C 
+.................... #bit    ALTS = ADCON2L.0 
+.................... #bit    BUFM = ADCON2L.1 
+.................... #bit    SMPI0 = ADCON2L.2 
+.................... #bit    SMPI1 = ADCON2L.3 
+.................... #bit    SMPI2 = ADCON2L.4 
+.................... #bit    SMPI3 = ADCON2L.5 
+.................... #bit    SMPI4 = ADCON2L.6 
+.................... #bit    BUFS = ADCON2L.7 
+.................... #byte ADCON3H = 0xE8B 
+.................... #bit    SAMC0 = ADCON3H.0 
+.................... #bit    SAMC1 = ADCON3H.1 
+.................... #bit    SAMC2 = ADCON3H.2 
+.................... #bit    SAMC3 = ADCON3H.3 
+.................... #bit    SAMC4 = ADCON3H.4 
+.................... #bit    PUMPEN = ADCON3H.5 
+.................... #bit    EXTSAM = ADCON3H.6 
+.................... #bit    ADRC = ADCON3H.7 
+.................... #byte ADCON3L = 0xE8A 
+.................... #byte ADCON5H = 0xE89 
+.................... #bit    ASINTMD0 = ADCON5H.0 
+.................... #bit    ASINTMD1 = ADCON5H.1 
+.................... #bit    VREGSREQ = ADCON5H.3 
+.................... #bit    BGREQ = ADCON5H.4 
+.................... #bit    CTMUREQ = ADCON5H.5 
+.................... #bit    LPENA = ADCON5H.6 
+.................... #bit    ASENA = ADCON5H.7 
+.................... #byte ADCON5L = 0xE88 
+.................... #bit    CM0 = ADCON5L.0 
+.................... #bit    CM1 = ADCON5L.1 
+.................... #bit    WM0 = ADCON5L.2 
+.................... #bit    WM1 = ADCON5L.3 
+.................... #byte ADCHS0H = 0xE87 
+.................... #bit    CH0SB0 = ADCHS0H.0 
+.................... #bit    CH0SB1 = ADCHS0H.1 
+.................... #bit    CH0SB2 = ADCHS0H.2 
+.................... #bit    CH0SB3 = ADCHS0H.3 
+.................... #bit    CH0SB4 = ADCHS0H.4 
+.................... #bit    CH0NB0 = ADCHS0H.5 
+.................... #bit    CH0NB1 = ADCHS0H.6 
+.................... #bit    CH0NB2 = ADCHS0H.7 
+.................... #byte ADCHS0L = 0xE86 
+.................... #bit    CH0SA0 = ADCHS0L.0 
+.................... #bit    CH0SA1 = ADCHS0L.1 
+.................... #bit    CH0SA2 = ADCHS0L.2 
+.................... #bit    CH0SA3 = ADCHS0L.3 
+.................... #bit    CH0SA4 = ADCHS0L.4 
+.................... #bit    CH0NA0 = ADCHS0L.5 
+.................... #bit    CH0NA1 = ADCHS0L.6 
+.................... #bit    CH0NA2 = ADCHS0L.7 
+.................... #byte ADCSS1H = 0xE85 
+.................... #bit    CSS24 = ADCSS1H.0 
+.................... #bit    CSS25 = ADCSS1H.1 
+.................... #bit    CSS26 = ADCSS1H.2 
+.................... #bit    CSS27 = ADCSS1H.3 
+.................... #bit    CSS28 = ADCSS1H.4 
+.................... #bit    CSS29 = ADCSS1H.5 
+.................... #bit    CSS30 = ADCSS1H.6 
+.................... #bit    CSS31 = ADCSS1H.7 
+.................... #byte ADCSS1L = 0xE84 
+.................... #bit    CSS16 = ADCSS1L.0 
+.................... #bit    CSS17 = ADCSS1L.1 
+.................... #bit    CSS18 = ADCSS1L.2 
+.................... #bit    CSS19 = ADCSS1L.3 
+.................... #bit    CSS20 = ADCSS1L.4 
+.................... #bit    CSS21 = ADCSS1L.5 
+.................... #bit    CSS22 = ADCSS1L.6 
+.................... #bit    CSS23 = ADCSS1L.7 
+.................... #byte ADCSS0H = 0xE83 
+.................... #bit    CSS8 = ADCSS0H.0 
+.................... #bit    CSS9 = ADCSS0H.1 
+.................... #bit    CSS10 = ADCSS0H.2 
+.................... #bit    CSS11 = ADCSS0H.3 
+.................... #bit    CSS12 = ADCSS0H.4 
+.................... #bit    CSS13 = ADCSS0H.5 
+.................... #bit    CSS14 = ADCSS0H.6 
+.................... #bit    CSS15 = ADCSS0H.7 
+.................... #byte ADCSS0L = 0xE82 
+.................... #byte ADCHIT1H = 0xE81 
+.................... #bit    CHH24 = ADCHIT1H.0 
+.................... #bit    CHH25 = ADCHIT1H.1 
+.................... #bit    CHH26 = ADCHIT1H.2 
+.................... #bit    CHH27 = ADCHIT1H.3 
+.................... #bit    CHH28 = ADCHIT1H.4 
+.................... #bit    CHH29 = ADCHIT1H.5 
+.................... #bit    CHH30 = ADCHIT1H.6 
+.................... #bit    CHH31 = ADCHIT1H.7 
+.................... #byte ADCHIT1L = 0xE80 
+.................... #bit    CHH16 = ADCHIT1L.0 
+.................... #bit    CHH17 = ADCHIT1L.1 
+.................... #bit    CHH18 = ADCHIT1L.2 
+.................... #bit    CHH19 = ADCHIT1L.3 
+.................... #bit    CHH20 = ADCHIT1L.4 
+.................... #bit    CHH21 = ADCHIT1L.5 
+.................... #bit    CHH22 = ADCHIT1L.6 
+.................... #bit    CHH23 = ADCHIT1L.7 
+.................... #byte ADCHIT0H = 0xE7F 
+.................... #bit    CHH8 = ADCHIT0H.0 
+.................... #bit    CHH9 = ADCHIT0H.1 
+.................... #bit    CHH10 = ADCHIT0H.2 
+.................... #bit    CHH11 = ADCHIT0H.3 
+.................... #bit    CHH12 = ADCHIT0H.4 
+.................... #bit    CHH13 = ADCHIT0H.5 
+.................... #bit    CHH14 = ADCHIT0H.6 
+.................... #bit    CHH15 = ADCHIT0H.7 
+.................... #byte ADCHIT0L = 0xE7E 
+.................... #byte ADCTMUEN1H = 0xE7D 
+.................... #bit    CTUMEN24 = ADCTMUEN1H.0 
+.................... #bit    CTUMEN25 = ADCTMUEN1H.1 
+.................... #bit    CTUMEN26 = ADCTMUEN1H.2 
+.................... #bit    CTUMEN27 = ADCTMUEN1H.3 
+.................... #bit    CTUMEN28 = ADCTMUEN1H.4 
+.................... #bit    CTUMEN29 = ADCTMUEN1H.5 
+.................... #bit    CTMUEN30 = ADCTMUEN1H.6 
+.................... #bit    CTMUEN31 = ADCTMUEN1H.7 
+.................... #byte ADCTMUEN1L = 0xE7C 
+.................... #bit    CTUMEN16 = ADCTMUEN1L.0 
+.................... #bit    CTUMEN17 = ADCTMUEN1L.1 
+.................... #bit    CTUMEN18 = ADCTMUEN1L.2 
+.................... #bit    CTUMEN19 = ADCTMUEN1L.3 
+.................... #bit    CTMUEN20 = ADCTMUEN1L.4 
+.................... #bit    CTMUEN21 = ADCTMUEN1L.5 
+.................... #bit    CTMUEN22 = ADCTMUEN1L.6 
+.................... #bit    CTMUEN23 = ADCTMUEN1L.7 
+.................... #byte ADCTMUEN0H = 0xE7B 
+.................... #bit    CTMUEN8 = ADCTMUEN0H.0 
+.................... #bit    CTMUEN9 = ADCTMUEN0H.1 
+.................... #bit    CTMUEN10 = ADCTMUEN0H.2 
+.................... #bit    CTMUEN11 = ADCTMUEN0H.3 
+.................... #bit    CTMUEN12 = ADCTMUEN0H.4 
+.................... #bit    CTMUEN13 = ADCTMUEN0H.5 
+.................... #bit    CTMUEN14 = ADCTMUEN0H.6 
+.................... #bit    CTMUEN15 = ADCTMUEN0H.7 
+.................... #byte ADCTMUEN0L = 0xE7A 
+.................... #byte ADCBUF25H = 0xE79 
+.................... #byte ADCBUF25L = 0xE78 
+.................... #byte ADCBUF24H = 0xE77 
+.................... #byte ADCBUF24L = 0xE76 
+.................... #byte ADCBUF23H = 0xE75 
+.................... #byte ADCBUF23L = 0xE74 
+.................... #byte ADCBUF22H = 0xE73 
+.................... #byte ADCBUF22L = 0xE72 
+.................... #byte ADCBUF21H = 0xE71 
+.................... #byte ADCBUF21L = 0xE70 
+.................... #byte ADCBUF20H = 0xE6F 
+.................... #byte ADCBUF20L = 0xE6E 
+.................... #byte ADCBUF19H = 0xE6D 
+.................... #byte ADCBUF19L = 0xE6C 
+.................... #byte ADCBUF18H = 0xE6B 
+.................... #byte ADCBUF18L = 0xE6A 
+.................... #byte ADCBUF17H = 0xE69 
+.................... #byte ADCBUF17L = 0xE68 
+.................... #byte ADCBUF16H = 0xE67 
+.................... #byte ADCBUF16L = 0xE66 
+.................... #byte ADCBUF15H = 0xE65 
+.................... #byte ADCBUF15L = 0xE64 
+.................... #byte ADCBUF14H = 0xE63 
+.................... #byte ADCBUF14L = 0xE62 
+.................... #byte ADCBUF13H = 0xE61 
+.................... #byte ADCBUF13L = 0xE60 
+.................... #byte ADCBUF12H = 0xE5F 
+.................... #byte ADCBUF12L = 0xE5E 
+.................... #byte ADCBUF11H = 0xE5D 
+.................... #byte ADCBUF11L = 0xE5C 
+.................... #byte ADCBUF10H = 0xE5B 
+.................... #byte ADCBUF10L = 0xE5A 
+.................... #byte ADCBUF9H = 0xE59 
+.................... #byte ADCBUF9L = 0xE58 
+.................... #byte ADCBUF8H = 0xE57 
+.................... #byte ADCBUF8L = 0xE56 
+.................... #byte ADCBUF7H = 0xE55 
+.................... #byte ADCBUF7L = 0xE54 
+.................... #byte ADCBUF6H = 0xE53 
+.................... #byte ADCBUF6L = 0xE52 
+.................... #byte ADCBUF5H = 0xE51 
+.................... #byte ADCBUF5L = 0xE50 
+.................... #byte ADCBUF4H = 0xE4F 
+.................... #byte ADCBUF4L = 0xE4E 
+.................... #byte ADCBUF3H = 0xE4D 
+.................... #byte ADCBUF3L = 0xE4C 
+.................... #byte ADCBUF2H = 0xE4B 
+.................... #byte ADCBUF2L = 0xE4A 
+.................... #byte ADCBUF1H = 0xE49 
+.................... #byte ADCBUF1L = 0xE48 
+.................... #byte ANCON1 = 0xE47 
+.................... #byte ANCON2 = 0xE46 
+.................... #bit    ANSEL8 = ANCON2.0 
+.................... #bit    ANSEL9 = ANCON2.1 
+.................... #bit    ANSEL10 = ANCON2.2 
+.................... #bit    ANSEL11 = ANCON2.3 
+.................... #bit    ANSEL12 = ANCON2.4 
+.................... #bit    ANSEL13 = ANCON2.5 
+.................... #bit    ANSEL14 = ANCON2.6 
+.................... #bit    ANSEL15 = ANCON2.7 
+.................... #byte ANCON3 = 0xE45 
+.................... #bit    ANSEL16 = ANCON3.0 
+.................... #bit    ANSEL17 = ANCON3.1 
+.................... #bit    ANSEL18 = ANCON3.2 
+.................... #bit    ANSEL19 = ANCON3.3 
+.................... #bit    ANSEL20 = ANCON3.4 
+.................... #bit    ANSEL21 = ANCON3.5 
+.................... #bit    ANSEL22 = ANCON3.6 
+.................... #bit    ANSEL23 = ANCON3.7 
+....................  
+....................  
+.................... #device HIGH_INTS=TRUE 
+....................  
+.................... //-------------UART and SPI Setting-------------------------------------------------------------------------------------- 
+....................  
+.................... #pin_select TX1=PIN_C6                                                           //TX PIN EXT +/- 6v 
+.................... #pin_select RX1=PIN_C7                                                           //RX PIN EXT +/- 6V 
+.................... #use rs232(baud=115200,parity=N,UART1,bits=8,stream=pc)                      // MAIN to Ext +/- 6v 
+*
+00964:  BTFSS  F9E.4
+00966:  BRA    0964
+00968:  MOVWF  FAD
+0096A:  GOTO   09EA (RETURN)
+....................  
+.................... #pin_select TX2=PIN_D3 
+.................... #pin_select RX2=PIN_D2 
+.................... #use rs232(baud=9600,parity=N,UART2,bits=8,stream=com,ERRORS)                           //UART Main to COM PIC 
+....................  
+.................... #pin_select TX4=PIN_E3   
+.................... #pin_select RX4=PIN_F2 
+.................... #use rs232(baud=9600,parity=N,UART4,bits=8,stream=reset,ERRORS)                         //UART MAIN to RESET PIC 
+*
+005A2:  BTFSS  FA6.7
+005A4:  BRA    05A2
+005A6:  MOVLB  E
+005A8:  MOVFF  EFF,1B
+005AC:  MOVFF  EFA,01
+005B0:  BTFSS  1B.1
+005B2:  BRA    05B8
+005B4:  BCF    xFF.4
+005B6:  BSF    xFF.4
+005B8:  MOVLB  0
+005BA:  GOTO   0604 (RETURN)
+*
+006DE:  BTFSS  FA6.6
+006E0:  BRA    06DE
+006E2:  MOVLB  E
+006E4:  MOVWF  xF9
+006E6:  MOVLB  0
+006E8:  RETURN 0
+....................  
+.................... #pin_select TX3=PIN_E5   
+.................... #pin_select RX3=PIN_E4 
+.................... #use rs232(baud=9600,parity=N,UART3,bits=8,stream=fab,ERRORS)                           //UART MAIN to FAB PIC 
+....................  
+....................  
+.................... #use rs232(baud=9600,parity=N,xmit=pin_G2,rcv=pin_G3,bits=8,stream=IMGCLS,ERRORS)       //UART MAIN to IMGCLS 
+.................... #use rs232(baud=9600,parity=N,xmit=pin_G0,rcv=pin_G1,bits=8,stream=DC,ERRORS)           //UART MAIN to MB DCM 
+*
+007B8:  BCF    F98.0
+007BA:  BCF    F8F.0
+007BC:  MOVLW  08
+007BE:  MOVWF  01
+007C0:  BRA    07C2
+007C2:  NOP   
+007C4:  BSF    01.7
+007C6:  BRA    07E8
+007C8:  BCF    01.7
+007CA:  MOVLB  1
+007CC:  RRCF   x78,F
+007CE:  MOVLB  0
+007D0:  BTFSC  FD8.0
+007D2:  BSF    F8F.0
+007D4:  BTFSS  FD8.0
+007D6:  BCF    F8F.0
+007D8:  BSF    01.6
+007DA:  BRA    07E8
+007DC:  BCF    01.6
+007DE:  DECFSZ 01,F
+007E0:  BRA    07CA
+007E2:  BRA    07E4
+007E4:  NOP   
+007E6:  BSF    F8F.0
+007E8:  MOVLW  84
+007EA:  MOVWF  FE9
+007EC:  DECFSZ FE9,F
+007EE:  BRA    07EC
+007F0:  BRA    07F2
+007F2:  NOP   
+007F4:  BTFSC  01.7
+007F6:  BRA    07C8
+007F8:  BTFSC  01.6
+007FA:  BRA    07DC
+007FC:  GOTO   0934 (RETURN)
+....................  
+....................  
+.................... #use spi(MASTER, CLK=PIN_E1, DI=PIN_E0, DO=PIN_E6,  BAUD=1000000, BITS=8, STREAM=MAIN_FM, MODE=0)        //MAIN flash memory port 
+.................... #use spi(MASTER, CLK=PIN_B2, DI=PIN_B5, DO=PIN_B4,  BAUD=1000000, BITS=8, STREAM=COM_FM, MODE=0)         //COM flash memory port 
+.................... #use spi(MASTER, CLK=PIN_A3, DI=PIN_A0, DO=PIN_A1,  BAUD=1000000, BITS=8, STREAM=MISSION_FM, MODE=0)     //MISSION flash memory port 
+....................  
+....................  
+....................  
+.................... //-------------mainpic_function.c----------------------------------------------------------------------------------------- 
+....................  
+.................... void Check_UART(); 
+.................... void waiting(int32 counterval); 
+....................  
+.................... /////////////CAM MISSION///////////// 
+.................... void Turn_On_CAM(); 
+.................... void Turn_Off_CAM(); 
+....................  
+.................... /////////////RESET SENSOR collection///////////// 
+.................... void COLLECT_RESET_DATA(); 
+....................  
+.................... /////////////Testing Stuff///////////// 
+.................... void Flash_Memory_Access(); 
+.................... void PINO_test(); 
+.................... void GET_RESET_DATA(); 
+....................  
+....................  
+.................... #include <mainpic_function.h> 
+.................... #include<flash_ memory_ MT25QL01GBBB_OF.c> //all flash memory 
+.................... #define SPIPORT MAIN_FM 
+.................... #define SPIPORT_2 COM_FM 
+.................... #define SPIPORT_3 MISSION_FM 
+....................  
+.................... #define CS_PIN PIN_E2 
+.................... #define CS_PIN_2 PIN_B3 
+.................... #define CS_PIN_3 PIN_A2 
+....................  
+.................... #define READ_ID              0x9F 
+.................... #define READ_STATUS_REG      0x05  
+.................... #define READ_DATA_BYTES      0x13  //0x03 for byte 
+.................... #define ENABLE_WRITE         0x06 
+.................... #define WRITE_PAGE           0x12  //0x02 for 3byte 
+.................... #define ERASE_SECTOR         0xDC  //0xD8 for 3byte 
+.................... #define ERASE_4KB_SUBSECTOR  0x21 
+.................... #define ERASE_32KB_SUBSECTOR 0x5C 
+.................... #define DIE_ERASE            0xC4 
+....................  
+....................  
+....................  
+.................... void WRITE_ENABLE_OF(){ 
+....................  output_low(CS_PIN); 
+....................   
+....................  ///////////////////////////////////////////////////////////// 
+....................  //delay_ms(2); 
+....................  spi_xfer(SPIPORT,ENABLE_WRITE);                //Send 0x06 
+....................  ///////////////////////////////////////////////////////////// 
+....................   
+....................  output_high(CS_PIN);   
+....................  return; 
+.................... } 
+....................  
+....................  
+.................... void WRITE_ENABLE_SCF(){ 
+....................  output_low(CS_PIN_2); 
+....................   
+....................  ///////////////////////////////////////////////////////////// 
+....................  //delay_ms(2); 
+....................  spi_xfer(SPIPORT_2,ENABLE_WRITE);                //Send 0x06 
+....................  ///////////////////////////////////////////////////////////// 
+....................   
+....................  output_high(CS_PIN_2);   
+....................  return; 
+.................... } 
+....................  
+....................  
+.................... void WRITE_ENABLE_SMF(){ 
+....................  output_low(CS_PIN_3); 
+....................   
+....................  ///////////////////////////////////////////////////////////// 
+....................  //delay_ms(2); 
+....................  spi_xfer(SPIPORT_3,ENABLE_WRITE);                //Send 0x06 
+....................  ///////////////////////////////////////////////////////////// 
+....................   
+....................  output_high(CS_PIN_3);   
+....................  return; 
+.................... } 
+....................  
+....................  
+.................... void sector_erase_OF(unsigned int32 sector_address)                              //borra un sector de la flash 
+.................... { 
+....................    unsigned int8 adsress[4]; 
+....................     
+....................    adsress[0]  = (unsigned int8)((sector_address>>24) & 0xFF);                   // 0x _ _ 00 00 00 
+....................    adsress[1]  = (unsigned int8)((sector_address>>16) & 0xFF);                   // 0x 00 _ _ 00 00 
+....................    adsress[2]  = (unsigned int8)((sector_address>>8) & 0xFF);                    // 0x 00 00 _ _ 00 
+....................    adsress[3]  = (unsigned int8)((sector_address) & 0xFF);                       // 0x 00 00 00 _ _ 
+....................     
+....................     
+....................    WRITE_ENABLE_OF(); 
+....................    output_low(CS_PIN);                                                           //lower the CS PIN 
+....................    delay_us(2); 
+....................     
+....................    /////////////////////////////////////////////////////////////////// 
+....................    spi_xfer(SPIPORT,ERASE_SECTOR);                                               //SECTOR ERASE COMAND   (0xDC) 
+....................     
+....................    spi_xfer(SPIPORT,adsress[0]);    
+....................    spi_xfer(SPIPORT,adsress[1]);     
+....................    spi_xfer(SPIPORT,adsress[2]);     
+....................    spi_xfer(SPIPORT,adsress[3]); 
+....................    ////////////////////////////////////////////////////////////////// 
+....................     
+....................    delay_us(2); 
+....................    output_high(CS_PIN);                                                          //take CS PIN higher back 
+....................    //delay_ms(1000); 
+....................    delay_ms(750); 
+....................     
+....................    return; 
+.................... } 
+....................  
+....................  
+.................... void sector_erase_SCF(unsigned int32 sector_address) 
+.................... { 
+....................    unsigned int8 adsress[4]; 
+....................     
+....................    adsress[0]  = (unsigned int8)((sector_address>>24) & 0xFF);                   // 0x _ _ 00 00 00 
+....................    adsress[1]  = (unsigned int8)((sector_address>>16) & 0xFF);                   // 0x 00 _ _ 00 00 
+....................    adsress[2]  = (unsigned int8)((sector_address>>8) & 0xFF);                    // 0x 00 00 _ _ 00 
+....................    adsress[3]  = (unsigned int8)((sector_address) & 0xFF);                       // 0x 00 00 00 _ _ 
+....................     
+....................     
+....................    WRITE_ENABLE_SCF(); 
+....................    output_low(CS_PIN_2);                                                         //lower the CS PIN 
+....................    delay_us(2); 
+....................     
+....................    /////////////////////////////////////////////////////////////////// 
+....................    spi_xfer(SPIPORT_2,ERASE_SECTOR);                                             //SECTOR ERASE COMAND   (0xDC) 
+....................     
+....................    spi_xfer(SPIPORT_2,adsress[0]);    
+....................    spi_xfer(SPIPORT_2,adsress[1]);     
+....................    spi_xfer(SPIPORT_2,adsress[2]);     
+....................    spi_xfer(SPIPORT_2,adsress[3]); 
+....................    ////////////////////////////////////////////////////////////////// 
+....................     
+....................    delay_us(2); 
+....................    output_high(CS_PIN_2);                                                        //take CS PIN higher back 
+....................    //delay_ms(1000); 
+....................    delay_ms(750); 
+....................     
+....................    return; 
+.................... } 
+....................  
+....................  
+.................... void sector_erase_SMF(unsigned int32 sector_address) 
+.................... { 
+....................    unsigned int8 adsress[4]; 
+....................     
+....................    adsress[0]  = (unsigned int8)((sector_address>>24) & 0xFF);   // 0x _ _ 00 00 00 
+....................    adsress[1]  = (unsigned int8)((sector_address>>16) & 0xFF);   // 0x 00 _ _ 00 00 
+....................    adsress[2]  = (unsigned int8)((sector_address>>8) & 0xFF);    // 0x 00 00 _ _ 00 
+....................    adsress[3]  = (unsigned int8)((sector_address) & 0xFF);       // 0x 00 00 00 _ _ 
+....................     
+....................     
+....................    WRITE_ENABLE_SMF(); 
+....................    output_low(CS_PIN_3);             //lower the CS PIN 
+....................    delay_us(2); 
+....................     
+....................    /////////////////////////////////////////////////////////////////// 
+....................    spi_xfer(SPIPORT_3,ERASE_SECTOR); //SECTOR ERASE COMAND   (0xDC) 
+....................     
+....................    spi_xfer(SPIPORT_3,adsress[0]);    
+....................    spi_xfer(SPIPORT_3,adsress[1]);     
+....................    spi_xfer(SPIPORT_3,adsress[2]);     
+....................    spi_xfer(SPIPORT_3,adsress[3]); 
+....................    ////////////////////////////////////////////////////////////////// 
+....................     
+....................    delay_us(2); 
+....................    output_high(CS_PIN_3);           //take CS PIN higher back 
+....................    //delay_ms(1000);   
+....................    delay_ms(750); 
+....................    return; 
+.................... } 
+....................  
+....................  
+.................... void SUBSECTOR_4KB_ERASE_OF(unsigned int32 sector_address)                       //Funcion que borra un sector de 4KB de la Main Flash 
+.................... {                                                                                //Recibe la direccion del sector que se quiere borrar 
+....................    unsigned int8 adsress[4]; 
+....................     
+....................    adsress[0]  = (unsigned int8)((sector_address>>24) & 0xFF);                   // 0x _ _ 00 00 00 
+....................    adsress[1]  = (unsigned int8)((sector_address>>16) & 0xFF);                   // 0x 00 _ _ 00 00 
+....................    adsress[2]  = (unsigned int8)((sector_address>>8) & 0xFF);                    // 0x 00 00 _ _ 00 
+....................    adsress[3]  = (unsigned int8)((sector_address) & 0xFF);                       // 0x 00 00 00 _ _ 
+....................     
+....................     
+....................    WRITE_ENABLE_OF();                                                            //Funcion que habilita escritura en Own Flash 
+....................    output_low(CS_PIN);                                                           //lower the CS PIN 
+....................    delay_us(2); 
+....................     
+....................    /////////////////////////////////////////////////////////////////// 
+....................    spi_xfer(SPIPORT,ERASE_4KB_SUBSECTOR);                                        //SECTOR ERASE COMAND   (0xDC) 
+....................     
+....................    spi_xfer(SPIPORT,adsress[0]);                                                 //Se le pasa la direccion del sector a borrar 
+....................    spi_xfer(SPIPORT,adsress[1]);     
+....................    spi_xfer(SPIPORT,adsress[2]);     
+....................    spi_xfer(SPIPORT,adsress[3]); 
+....................    ////////////////////////////////////////////////////////////////// 
+....................     
+....................    delay_us(2); 
+....................    output_high(CS_PIN);                                                          //take CS PIN higher back 
+....................    delay_ms(100);   
+....................     
+....................    return; 
+.................... } 
+....................  
+....................  
+.................... void SUBSECTOR_4KB_ERASE_SCF(unsigned int32 sector_address)                      //Funcion que borra un sector de 4KB de la COM Flash 
+.................... { 
+....................    unsigned int8 adsress[4]; 
+....................     
+....................    adsress[0]  = (unsigned int8)((sector_address>>24) & 0xFF);                   // 0x _ _ 00 00 00 
+....................    adsress[1]  = (unsigned int8)((sector_address>>16) & 0xFF);                   // 0x 00 _ _ 00 00 
+....................    adsress[2]  = (unsigned int8)((sector_address>>8) & 0xFF);                    // 0x 00 00 _ _ 00 
+....................    adsress[3]  = (unsigned int8)((sector_address) & 0xFF);                       // 0x 00 00 00 _ _ 
+....................     
+....................     
+....................    WRITE_ENABLE_SCF();                                                           //Funcion que habilita escritura en COM Flash 
+....................    output_low(CS_PIN_2);                                                         //lower the CS PIN 
+....................    delay_us(2); 
+....................     
+....................    /////////////////////////////////////////////////////////////////// 
+....................    spi_xfer(SPIPORT_2,ERASE_4KB_SUBSECTOR); //SECTOR ERASE COMAND   (0xDC) 
+....................     
+....................    spi_xfer(SPIPORT_2,adsress[0]);    
+....................    spi_xfer(SPIPORT_2,adsress[1]);     
+....................    spi_xfer(SPIPORT_2,adsress[2]);     
+....................    spi_xfer(SPIPORT_2,adsress[3]); 
+....................    ////////////////////////////////////////////////////////////////// 
+....................     
+....................    delay_us(2); 
+....................    output_high(CS_PIN_2);                                                        //take CS PIN higher back 
+....................    delay_ms(10);   
+....................     
+....................    return; 
+.................... } 
+....................  
+....................  
+.................... void SUBSECTOR_4KB_ERASE_SMF(unsigned int32 sector_address)                      //Funcion que borra un sector de 4KB de la Mission Flash 
+.................... { 
+....................    unsigned int8 adsress[4]; 
+....................     
+....................    adsress[0]  = (unsigned int8)((sector_address>>24) & 0xFF);                   // 0x _ _ 00 00 00 
+....................    adsress[1]  = (unsigned int8)((sector_address>>16) & 0xFF);                   // 0x 00 _ _ 00 00 
+....................    adsress[2]  = (unsigned int8)((sector_address>>8) & 0xFF);                    // 0x 00 00 _ _ 00 
+....................    adsress[3]  = (unsigned int8)((sector_address) & 0xFF);                       // 0x 00 00 00 _ _ 
+....................     
+....................     
+....................    WRITE_ENABLE_SMF();                                                           //Funcion que habilita escritura en Mission Flash 
+....................    output_low(CS_PIN_3);                                                         //lower the CS PIN 
+....................    delay_us(2); 
+....................     
+....................    /////////////////////////////////////////////////////////////////// 
+....................    spi_xfer(SPIPORT_3,ERASE_4KB_SUBSECTOR);                                      //SECTOR ERASE COMAND   (0xDC) 
+....................     
+....................    spi_xfer(SPIPORT_3,adsress[0]);    
+....................    spi_xfer(SPIPORT_3,adsress[1]);     
+....................    spi_xfer(SPIPORT_3,adsress[2]);     
+....................    spi_xfer(SPIPORT_3,adsress[3]); 
+....................    ////////////////////////////////////////////////////////////////// 
+....................     
+....................    delay_us(2); 
+....................    output_high(CS_PIN_3);                                                        //take CS PIN higher back 
+....................    delay_ms(1000);   
+....................     
+....................    return; 
+.................... } 
+....................  
+....................  
+.................... void SUBSECTOR_32KB_ERASE_OF(unsigned int32 sector_address) 
+.................... { 
+....................    unsigned int8 adsress[4]; 
+....................     
+....................    adsress[0]  = (unsigned int8)((sector_address>>24) & 0xFF);   // 0x _ _ 00 00 00 
+....................    adsress[1]  = (unsigned int8)((sector_address>>16) & 0xFF);   // 0x 00 _ _ 00 00 
+....................    adsress[2]  = (unsigned int8)((sector_address>>8) & 0xFF);    // 0x 00 00 _ _ 00 
+....................    adsress[3]  = (unsigned int8)((sector_address) & 0xFF);       // 0x 00 00 00 _ _ 
+....................     
+....................     
+....................    WRITE_ENABLE_OF(); 
+....................    output_low(CS_PIN);             //lower the CS PIN 
+....................    delay_us(2); 
+....................     
+....................    /////////////////////////////////////////////////////////////////// 
+....................    spi_xfer(SPIPORT,ERASE_32KB_SUBSECTOR); //SECTOR ERASE COMAND   (0xDC) 
+....................     
+....................    spi_xfer(SPIPORT,adsress[0]);    
+....................    spi_xfer(SPIPORT,adsress[1]);     
+....................    spi_xfer(SPIPORT,adsress[2]);     
+....................    spi_xfer(SPIPORT,adsress[3]); 
+....................    ////////////////////////////////////////////////////////////////// 
+....................     
+....................    delay_us(2); 
+....................    output_high(CS_PIN);           //take CS PIN higher back 
+....................    delay_ms(1000);   
+....................     
+....................    return; 
+.................... } 
+....................  
+....................  
+.................... void SUBSECTOR_32KB_ERASE_SCF(unsigned int32 sector_address) 
+.................... { 
+....................    unsigned int8 adsress[4]; 
+....................     
+....................    adsress[0]  = (unsigned int8)((sector_address>>24) & 0xFF);   // 0x _ _ 00 00 00 
+....................    adsress[1]  = (unsigned int8)((sector_address>>16) & 0xFF);   // 0x 00 _ _ 00 00 
+....................    adsress[2]  = (unsigned int8)((sector_address>>8) & 0xFF);    // 0x 00 00 _ _ 00 
+....................    adsress[3]  = (unsigned int8)((sector_address) & 0xFF);       // 0x 00 00 00 _ _ 
+....................     
+....................     
+....................    WRITE_ENABLE_SCF(); 
+....................    output_low(CS_PIN_2);             //lower the CS PIN 
+....................    delay_us(2); 
+....................     
+....................    /////////////////////////////////////////////////////////////////// 
+....................    spi_xfer(SPIPORT_2,ERASE_32KB_SUBSECTOR); //SECTOR ERASE COMAND   (0xDC) 
+....................     
+....................    spi_xfer(SPIPORT_2,adsress[0]);    
+....................    spi_xfer(SPIPORT_2,adsress[1]);     
+....................    spi_xfer(SPIPORT_2,adsress[2]);     
+....................    spi_xfer(SPIPORT_2,adsress[3]); 
+....................    ////////////////////////////////////////////////////////////////// 
+....................     
+....................    delay_us(2); 
+....................    output_high(CS_PIN_2);           //take CS PIN higher back 
+....................    delay_ms(1000);   
+....................     
+....................    return; 
+.................... } 
+....................  
+....................  
+.................... void SUBSECTOR_32KB_ERASE_SMF(unsigned int32 sector_address) 
+.................... { 
+....................    unsigned int8 adsress[4]; 
+....................     
+....................    adsress[0]  = (unsigned int8)((sector_address>>24) & 0xFF);   // 0x _ _ 00 00 00 
+....................    adsress[1]  = (unsigned int8)((sector_address>>16) & 0xFF);   // 0x 00 _ _ 00 00 
+....................    adsress[2]  = (unsigned int8)((sector_address>>8) & 0xFF);    // 0x 00 00 _ _ 00 
+....................    adsress[3]  = (unsigned int8)((sector_address) & 0xFF);       // 0x 00 00 00 _ _ 
+....................     
+....................     
+....................    WRITE_ENABLE_SMF(); 
+....................    output_low(CS_PIN_3);             //lower the CS PIN 
+....................    delay_us(2); 
+....................     
+....................    /////////////////////////////////////////////////////////////////// 
+....................    spi_xfer(SPIPORT_3,ERASE_32KB_SUBSECTOR); //SECTOR ERASE COMAND   (0xDC) 
+....................     
+....................    spi_xfer(SPIPORT_3,adsress[0]);    
+....................    spi_xfer(SPIPORT_3,adsress[1]);     
+....................    spi_xfer(SPIPORT_3,adsress[2]);     
+....................    spi_xfer(SPIPORT_3,adsress[3]); 
+....................    ////////////////////////////////////////////////////////////////// 
+....................     
+....................    delay_us(2); 
+....................    output_high(CS_PIN_3);           //take CS PIN higher back 
+....................    delay_ms(1000);   
+....................     
+....................    return; 
+.................... } 
+....................  
+....................  
+.................... void ALL_SECTOR_ERASE_OF() 
+.................... { 
+....................    int32 ADDRESS = 0; 
+....................    for(int16 i = 0; i < 2048; i++) 
+....................    { 
+....................       sector_erase_OF(ADDRESS); 
+....................       ADDRESS = ADDRESS + 65536; 
+....................    } 
+.................... } 
+....................  
+....................  
+.................... void ALL_SECTOR_ERASE_SCF() 
+.................... { 
+....................    int32 ADRESS = 0; 
+....................    for(int16 i = 0; i < 2048; i++) 
+....................    { 
+....................       sector_erase_SCF(ADRESS); 
+....................       ADRESS = ADRESS + 65536; 
+....................    } 
+.................... } 
+....................  
+....................  
+.................... void ALL_SECTOR_ERASE_SMF() 
+.................... { 
+....................    int32 ADRESS = 0; 
+....................    for(int16 i = 0; i < 2048; i++) 
+....................    { 
+....................       sector_erase_SMF(ADRESS); 
+....................       ADRESS = ADRESS + 65536; 
+....................    } 
+.................... } 
+....................  
+....................  
+.................... void WRITE_DATA_BYTE_OF(unsigned int32 page_address, int8 data)                  //Funcion que escribe un Byte en la Main Flash 
+.................... { 
+....................    unsigned int8 adsress[4]; 
+....................     
+....................    //Byte extraction 
+....................    adsress[0]  = (unsigned int8)((page_address>>24) & 0xFF);                     // 0x _ _ 00 00 00 
+....................    adsress[1]  = (unsigned int8)((page_address>>16) & 0xFF);                     // 0x 00 _ _ 00 00 
+....................    adsress[2]  = (unsigned int8)((page_address>>8) & 0xFF);                      // 0x 00 00 _ _ 00 
+....................    adsress[3]  = (unsigned int8)((page_address) & 0xFF);                         // 0x 00 00 00 _ _ 
+....................     
+....................    WRITE_ENABLE_OF(); 
+....................    output_low(CS_PIN);                                                           //lower the CS PIN 
+....................    //delay_us(2); 
+....................     
+....................    //////////////////////////////////////////////////////////////// 
+....................    spi_xfer(SPIPORT,WRITE_PAGE);                                                 //PAGE WRITE COMAND  (0x12) 
+....................    
+....................    spi_xfer(SPIPORT,adsress[0]);     
+....................    spi_xfer(SPIPORT,adsress[1]);     
+....................    spi_xfer(SPIPORT,adsress[2]);     
+....................    spi_xfer(SPIPORT,adsress[3]); 
+....................     
+....................    spi_xfer(SPIPORT,data);  
+....................    //////////////////////////////////////////////////////////////// 
+....................     
+....................    output_high(CS_PIN);                                                          //take CS PIN higher back 
+....................  
+....................    //delay_us(5);   
+....................     
+....................    return; 
+.................... } 
+....................  
+....................  
+.................... void WRITE_DATA_BYTE_SCF(unsigned int32 page_address, int8 data)                 //Funcion que escribe un Byte en la COM Flash 
+.................... { 
+....................    unsigned int8 adsress[4]; 
+....................     
+....................    //Byte extraction 
+....................    adsress[0]  = (unsigned int8)((page_address>>24) & 0xFF);                     // 0x _ _ 00 00 00 
+....................    adsress[1]  = (unsigned int8)((page_address>>16) & 0xFF);                     // 0x 00 _ _ 00 00 
+....................    adsress[2]  = (unsigned int8)((page_address>>8) & 0xFF);                      // 0x 00 00 _ _ 00 
+....................    adsress[3]  = (unsigned int8)((page_address) & 0xFF);                         // 0x 00 00 00 _ _ 
+....................     
+....................    WRITE_ENABLE_SCF(); 
+....................    output_low(CS_PIN_2);                                                         //lower the CS PIN 
+....................    //delay_us(2); 
+....................     
+....................    //////////////////////////////////////////////////////////////// 
+....................    spi_xfer(SPIPORT_2,WRITE_PAGE);                                               //PAGE WRITE COMAND  (0x12) 
+....................    
+....................    spi_xfer(SPIPORT_2,adsress[0]);     
+....................    spi_xfer(SPIPORT_2,adsress[1]);     
+....................    spi_xfer(SPIPORT_2,adsress[2]);     
+....................    spi_xfer(SPIPORT_2,adsress[3]); 
+....................     
+....................    spi_xfer(SPIPORT_2,data);  
+....................    //////////////////////////////////////////////////////////////// 
+....................     
+....................    output_high(CS_PIN_2);                                                        //take CS PIN higher back 
+....................  
+....................    //delay_us(5);   
+....................     
+....................    return; 
+.................... } 
+....................  
+....................  
+.................... void WRITE_DATA_BYTE_SMF(unsigned int32 page_address, int8 data)                 //Funcion que escribe un Byte en la Mission Flash 
+.................... { 
+....................    unsigned int8 adsress[4]; 
+....................     
+....................    //Byte extraction 
+....................    adsress[0]  = (unsigned int8)((page_address>>24) & 0xFF);                     // 0x _ _ 00 00 00 
+....................    adsress[1]  = (unsigned int8)((page_address>>16) & 0xFF);                     // 0x 00 _ _ 00 00 
+....................    adsress[2]  = (unsigned int8)((page_address>>8) & 0xFF);                      // 0x 00 00 _ _ 00 
+....................    adsress[3]  = (unsigned int8)((page_address) & 0xFF);                         // 0x 00 00 00 _ _ 
+....................     
+....................    WRITE_ENABLE_SMF(); 
+....................    output_low(CS_PIN_3);                                                         //lower the CS PIN 
+....................    //delay_us(2); 
+....................     
+....................    //////////////////////////////////////////////////////////////// 
+....................    spi_xfer(SPIPORT_3,WRITE_PAGE);                                               //PAGE WRITE COMAND  (0x12) 
+....................    
+....................    spi_xfer(SPIPORT_3,adsress[0]);     
+....................    spi_xfer(SPIPORT_3,adsress[1]);     
+....................    spi_xfer(SPIPORT_3,adsress[2]);     
+....................    spi_xfer(SPIPORT_3,adsress[3]); 
+....................     
+....................    spi_xfer(SPIPORT_3,data);  
+....................    //////////////////////////////////////////////////////////////// 
+....................     
+....................    output_high(CS_PIN_3);                                                        //take CS PIN higher back 
+....................  
+....................    //delay_us(10);   
+....................     
+....................    return; 
+.................... } 
+....................  
+....................  
+.................... int8 READ_CHIP_ID_OF() 
+.................... { 
+....................  output_low(CS_PIN);           //lower the CS PIN 
+....................   
+....................  //////////////////////////////////////////////////////////////// 
+....................  int8 chip_id; 
+....................  spi_xfer(SPIPORT,READ_ID);    //READ ID COMAND   (0x9F) 
+....................  chip_id = spi_xfer(SPIPORT); 
+....................  //////////////////////////////////////////////////////////////// 
+....................   
+....................  output_high(CS_PIN);         //take CS PIN higher back 
+....................  return chip_id; 
+.................... } 
+....................  
+....................  
+.................... int8 READ_CHIP_ID_SCF() 
+.................... { 
+....................  output_low(CS_PIN_2);           //lower the CS PIN 
+....................   
+....................  //////////////////////////////////////////////////////////////// 
+....................  int8 chip_id; 
+....................  spi_xfer(SPIPORT_2,READ_ID);    //READ ID COMAND   (0x9F) 
+....................  chip_id = spi_xfer(SPIPORT_2); 
+....................  //////////////////////////////////////////////////////////////// 
+....................   
+....................  output_high(CS_PIN_2);         //take CS PIN higher back 
+....................  return chip_id; 
+.................... } 
+....................  
+....................  
+.................... int8 READ_CHIP_ID_SMF() 
+.................... { 
+....................  output_low(CS_PIN_3);           //lower the CS PIN 
+....................   
+....................  //////////////////////////////////////////////////////////////// 
+....................  int8 chip_id; 
+....................  spi_xfer(SPIPORT_3,READ_ID);    //READ ID COMAND   (0x9F) 
+....................  chip_id = spi_xfer(SPIPORT_3); 
+....................  //////////////////////////////////////////////////////////////// 
+....................   
+....................  output_high(CS_PIN_3);         //take CS PIN higher back 
+....................  return chip_id; 
+.................... } 
+....................  
+....................  
+.................... int8 READ_STATUS_REGISTER_OF() 
+.................... { 
+....................  output_low(CS_PIN);           //lower the CS PIN 
+....................   
+....................  ///////////////////////////////////////////////////////////////// 
+....................  int8 status_reg; 
+....................  spi_xfer(SPIPORT,READ_STATUS_REG); //READ STATUS REGISTER COMAND  (0x05) 
+....................  status_reg = spi_xfer(SPIPORT); 
+....................  ///////////////////////////////////////////////////////////////// 
+....................   
+....................  output_high(CS_PIN);         //take CS PIN higher back 
+....................  return status_reg; 
+.................... } 
+....................  
+....................  
+.................... int8 READ_STATUS_REGISTER_SCF() 
+.................... { 
+....................  output_low(CS_PIN_2);           //lower the CS PIN 
+....................   
+....................  ///////////////////////////////////////////////////////////////// 
+....................  int8 status_reg; 
+....................  spi_xfer(SPIPORT_2,READ_STATUS_REG); //READ STATUS REGISTER COMAND  (0x05) 
+....................  status_reg = spi_xfer(SPIPORT_2); 
+....................  ///////////////////////////////////////////////////////////////// 
+....................   
+....................  output_high(CS_PIN_2);         //take CS PIN higher back 
+....................  return status_reg; 
+.................... } 
+.................... int8 READ_STATUS_REGISTER_SMF() 
+.................... { 
+....................  output_low(CS_PIN_3);           //lower the CS PIN 
+....................   
+....................  ///////////////////////////////////////////////////////////////// 
+....................  int8 status_reg; 
+....................  spi_xfer(SPIPORT_3,READ_STATUS_REG); //READ STATUS REGISTER COMAND  (0x05) 
+....................  status_reg = spi_xfer(SPIPORT_3); 
+....................  ///////////////////////////////////////////////////////////////// 
+....................   
+....................  output_high(CS_PIN_3);         //take CS PIN higher back 
+....................  return status_reg; 
+.................... } 
+....................  
+....................  
+.................... int8 READ_DATA_BYTE_OF(unsigned INT32 ADDRESS) 
+.................... { 
+....................  
+....................  unsigned int8 address_OF[4]; 
+....................    //Byte extraction 
+....................    address_OF[0]  = (unsigned int8)((ADDRESS>>24) & 0xFF);                          // 0x _ _ 00 00 00 
+....................    address_OF[1]  = (unsigned int8)((ADDRESS>>16) & 0xFF);                          // 0x 00 _ _ 00 00 
+....................    address_OF[2]  = (unsigned int8)((ADDRESS>>8) & 0xFF);                           // 0x 00 00 _ _ 00 
+....................    address_OF[3]  = (unsigned int8)((ADDRESS) & 0xFF);                              // 0x 00 00 00 _ _ 
+....................     
+....................  output_low(CS_PIN);                                                             //lower the CS PIN 
+....................   
+....................  ////////////////////////////////////////////////////////////////// 
+....................  int8 data; 
+....................  spi_xfer(SPIPORT,READ_DATA_BYTES);                                              //READ DATA COMAND   (0x13) 
+....................   
+....................  spi_xfer(SPIPORT,address_OF[0]); 
+....................  spi_xfer(SPIPORT,address_OF[1]); 
+....................  spi_xfer(SPIPORT,address_OF[2]); 
+....................  spi_xfer(SPIPORT,address_OF[3]); 
+....................  data = spi_xfer(SPIPORT); 
+....................  ////////////////////////////////////////////////////////////////// 
+....................   
+....................  output_high(CS_PIN);                                                            //take CS PIN higher back 
+....................  return data; 
+....................   
+.................... } 
+....................  
+....................  
+.................... int8 READ_DATA_BYTE_SCF(unsigned INT32 ADDRESS) 
+.................... { 
+....................  
+....................  unsigned int8 adsress[4]; 
+....................    //Byte extraction 
+....................    adsress[0]  = (unsigned int8)((ADDRESS>>24) & 0xFF);                          // 0x _ _ 00 00 00 
+....................    adsress[1]  = (unsigned int8)((ADDRESS>>16) & 0xFF);                          // 0x 00 _ _ 00 00 
+....................    adsress[2]  = (unsigned int8)((ADDRESS>>8) & 0xFF);                           // 0x 00 00 _ _ 00 
+....................    adsress[3]  = (unsigned int8)((ADDRESS) & 0xFF);                              // 0x 00 00 00 _ _ 
+....................     
+....................  output_low(CS_PIN_2);                                                           //lower the CS PIN 
+....................   
+....................  ////////////////////////////////////////////////////////////////// 
+....................  int8 data; 
+....................  spi_xfer(SPIPORT_2,READ_DATA_BYTES);                                            //READ DATA COMAND   (0x13) 
+....................   
+....................  spi_xfer(SPIPORT_2,adsress[0]); 
+....................  spi_xfer(SPIPORT_2,adsress[1]); 
+....................  spi_xfer(SPIPORT_2,adsress[2]); 
+....................  spi_xfer(SPIPORT_2,adsress[3]); 
+....................  data = spi_xfer(SPIPORT_2); 
+....................  ////////////////////////////////////////////////////////////////// 
+....................   
+....................  output_high(CS_PIN_2);                                                          //take CS PIN higher back 
+....................  return data; 
+....................   
+.................... } 
+....................  
+....................  
+.................... int8 READ_DATA_BYTE_SMF(unsigned INT32 ADDRESS) 
+.................... { 
+....................  
+....................  unsigned int8 adsress[4]; 
+....................    //Byte extraction 
+....................    adsress[0]  = (unsigned int8)((ADDRESS>>24) & 0xFF);                          // 0x _ _ 00 00 00 
+....................    adsress[1]  = (unsigned int8)((ADDRESS>>16) & 0xFF);                          // 0x 00 _ _ 00 00 
+....................    adsress[2]  = (unsigned int8)((ADDRESS>>8) & 0xFF);                           // 0x 00 00 _ _ 00 
+....................    adsress[3]  = (unsigned int8)((ADDRESS) & 0xFF);                              // 0x 00 00 00 _ _ 
+....................     
+....................  output_low(CS_PIN_3);                                                           //lower the CS PIN 
+....................   
+....................  ////////////////////////////////////////////////////////////////// 
+....................  int8 data; 
+....................  spi_xfer(SPIPORT_3,READ_DATA_BYTES);                                            //READ DATA COMAND   (0x13) 
+....................   
+....................  spi_xfer(SPIPORT_3,adsress[0]); 
+....................  spi_xfer(SPIPORT_3,adsress[1]); 
+....................  spi_xfer(SPIPORT_3,adsress[2]); 
+....................  spi_xfer(SPIPORT_3,adsress[3]); 
+....................  data = spi_xfer(SPIPORT_3); 
+....................  ////////////////////////////////////////////////////////////////// 
+....................   
+....................  output_high(CS_PIN_3);                                                          //take CS PIN higher back 
+....................  return data; 
+....................   
+.................... } 
+....................  
+....................  
+.................... /* 
+.................... void TRANSFER_DATA_256byte_OF(unsigned INT32 ADRESS, int PORT_NUM) //read and send the specified data 
+.................... { 
+....................    unsigned long int i; 
+....................     
+....................    switch(PORT_NUM) 
+....................    { 
+....................       case 1: 
+....................          for (i=0 ; i < 256 ; i++) 
+....................          { 
+....................             fputc(READ_DATA_BYTE_OF(ADRESS),PC); 
+....................             ADRESS++; 
+....................          } 
+....................          break; 
+....................       case 2: 
+....................          for (i=0 ; i < 256 ; i++) 
+....................          { 
+....................             fputc(READ_DATA_BYTE_OF(ADRESS),reset); 
+....................             ADRESS++; 
+....................          } 
+....................          break; 
+....................       case 3: 
+....................          for (i=0 ; i < 256 ; i++) 
+....................          { 
+....................             fputc(READ_DATA_BYTE_OF(ADRESS),com); 
+....................             ADRESS++; 
+....................          } 
+....................          break; 
+....................    } 
+....................    return;  
+.................... } 
+.................... void TRANSFER_DATA_256byte_SCF(unsigned INT32 ADRESS, int PORT_NUM) //read and send the specified data 
+.................... { 
+....................    unsigned long int i; 
+....................     
+....................    switch(PORT_NUM) 
+....................    { 
+....................       case 1: 
+....................          for (i=0 ; i < 256 ; i++) 
+....................          { 
+....................             fputc(READ_DATA_BYTE_SCF(ADRESS),PC); 
+....................             ADRESS++; 
+....................          } 
+....................          break; 
+....................       case 2: 
+....................          for (i=0 ; i < 256 ; i++) 
+....................          { 
+....................             fputc(READ_DATA_BYTE_SCF(ADRESS),reset); 
+....................             ADRESS++; 
+....................          } 
+....................          break; 
+....................       case 3: 
+....................          for (i=0 ; i < 256 ; i++) 
+....................          { 
+....................             fputc(READ_DATA_BYTE_SCF(ADRESS),com); 
+....................             ADRESS++; 
+....................          } 
+....................          break; 
+....................    } 
+....................     return;   
+.................... } 
+.................... void TRANSFER_DATA_256byte_SMF(unsigned INT32 ADRESS, int PORT_NUM) //read and send the specified data 
+.................... { 
+....................    unsigned long int i; 
+....................     
+....................    switch(PORT_NUM) 
+....................    { 
+....................       case 1: 
+....................          for (i=0 ; i < 256 ; i++) 
+....................          { 
+....................             fputc(READ_DATA_BYTE_SMF(ADRESS),PC); 
+....................             ADRESS++; 
+....................          } 
+....................          break; 
+....................       case 2: 
+....................          for (i=0 ; i < 256 ; i++) 
+....................          { 
+....................             fputc(READ_DATA_BYTE_SMF(ADRESS),reset); 
+....................             ADRESS++; 
+....................          } 
+....................          break; 
+....................       case 3: 
+....................          for (i=0 ; i < 256 ; i++) 
+....................          { 
+....................             fputc(READ_DATA_BYTE_SMF(ADRESS),com); 
+....................             ADRESS++; 
+....................          } 
+....................          break; 
+....................    } 
+....................     return;   
+.................... } 
+....................  
+.................... void WRITE_DATA_NBYTE_OF(unsigned INT32 ADDRES,int32 data_byte) //read and send the specified data 
+.................... { 
+....................    for (int32 i=0 ; i < data_byte ; i++) 
+....................    { 
+....................       WRITE_DATA_BYTE_OF(ADDRES,0x77); 
+....................       ADDRES++; 
+....................    } 
+....................    return; 
+.................... } 
+.................... void WRITE_DATA_NBYTE_SCF(unsigned INT32 ADDRES,int32 data_byte) //read and send the specified data 
+.................... { 
+....................    for (int32 i=0 ; i < data_byte ; i++) 
+....................    { 
+....................       WRITE_DATA_BYTE_SCF(ADDRES,0x69); 
+....................       ADDRES++; 
+....................    } 
+....................    return; 
+.................... } 
+.................... void WRITE_DATA_NBYTE_SMF(unsigned INT32 ADDRES,int32 data_byte) //read and send the specified data 
+.................... { 
+....................    for (int32 i=0 ; i < data_byte ; i++) 
+....................    { 
+....................       WRITE_DATA_BYTE_SMF(ADDRES,0x55); 
+....................       ADDRES++; 
+....................    } 
+....................    return; 
+.................... } 
+.................... */ 
+....................  
+....................  
+.................... void TRANSFER_DATA_NBYTE_TOPC_OF(unsigned INT32 ADDRESS,int32 data_byte)          //read and send the specified data 
+.................... { 
+....................    for (int32 i=0 ; i < data_byte ; i++) 
+....................    { 
+....................       fputc(READ_DATA_BYTE_OF(ADDRESS),PC); 
+....................       ADDRESS++; 
+....................    } 
+....................    return; 
+.................... } 
+....................  
+....................  
+.................... void TRANSFER_DATA_NBYTE_TOPC_SCF(unsigned INT32 ADRESS,int32 data_byte)         //read and send the specified data 
+.................... { 
+....................    for (int32 i=0 ; i < data_byte ; i++) 
+....................    { 
+....................       fprintf(PC,"%x",READ_DATA_BYTE_SCF(ADRESS)); 
+....................       ADRESS++; 
+....................    } 
+....................    return; 
+.................... } 
+....................  
+....................  
+.................... void TRANSFER_DATA_NBYTE_TOPC_SMF(unsigned INT32 ADRESS,int32 data_byte)         //read and send the specified data 
+.................... { 
+....................    for (int32 i=0 ; i < data_byte ; i++) 
+....................    { 
+....................       fputc(READ_DATA_BYTE_SMF(ADRESS),PC); 
+....................       ADRESS++; 
+....................    } 
+....................    return; 
+.................... } 
+....................  
+....................  
+.................... /* 
+.................... void TRANSFER_DATA_NBYTE_OFtoSCF(unsigned INT32 FROM_ADRESS,unsigned INT32 TO_ADRESS,int32 data_byte) //transfer data from MAIN FLASH to COM FLASH 
+.................... { 
+....................    for (int32 i=0 ; i < data_byte ; i++) 
+....................    { 
+....................       WRITE_DATA_BYTE_SCF(TO_ADRESS,READ_DATA_BYTE_OF(FROM_ADRESS)); 
+....................       FROM_ADRESS++; 
+....................       TO_ADRESS++; 
+....................    } 
+....................    return; 
+.................... } 
+.................... void TRANSFER_DATA_NBYTE_SCFtoOF(unsigned INT32 FROM_ADRESS,unsigned INT32 TO_ADRESS,int32 data_byte) //transfer data from COM FLASH to MAIN FLASH 
+.................... { 
+....................    for (int32 i=0 ; i < data_byte ; i++) 
+....................    { 
+....................       WRITE_DATA_BYTE_OF(TO_ADRESS,READ_DATA_BYTE_SCF(FROM_ADRESS)); 
+....................       FROM_ADRESS++; 
+....................       TO_ADRESS++; 
+....................    } 
+....................    return; 
+.................... } 
+.................... void TRANSFER_DATA_NBYTE_OFtoSMF(unsigned INT32 FROM_ADRESS,unsigned INT32 TO_ADRESS,int32 data_byte) //transfer data from MAIN FLASH to MISSION FLASH 
+.................... { 
+....................    for (int32 i=0 ; i < data_byte ; i++) 
+....................    { 
+....................       WRITE_DATA_BYTE_SMF(TO_ADRESS,READ_DATA_BYTE_OF(FROM_ADRESS)); 
+....................       FROM_ADRESS++; 
+....................       TO_ADRESS++; 
+....................    } 
+....................    return; 
+.................... }*/ 
+....................  
+....................  
+.................... void TRANSFER_DATA_NBYTE_SMFtoOF(unsigned INT32 FROM_ADRESS,unsigned INT32 TO_ADRESS,int32 data_byte) //transfer data from MISSION FLASH to MAIN FLASH 
+.................... { 
+....................    for (int32 i=0 ; i < data_byte ; i++) 
+....................    { 
+....................       WRITE_DATA_BYTE_OF(TO_ADRESS,READ_DATA_BYTE_SMF(FROM_ADRESS)); 
+....................       FROM_ADRESS++; 
+....................       TO_ADRESS++; 
+....................    } 
+....................    return; 
+.................... } 
+....................  
+....................  
+.................... void TRANSFER_DATA_NBYTE_SMFtoSCF(unsigned INT32 FROM_ADRESS,unsigned INT32 TO_ADRESS,int32 data_byte) //transfer data from MISSION FLASH to COM FLASH 
+.................... { 
+....................    for (int32 i=0 ; i < data_byte ; i++) 
+....................    { 
+....................       WRITE_DATA_BYTE_SCF(TO_ADRESS,READ_DATA_BYTE_SMF(FROM_ADRESS)); 
+....................       FROM_ADRESS++; 
+....................       TO_ADRESS++; 
+....................    } 
+....................    return; 
+.................... }/* 
+.................... void TRANSFER_DATA_NBYTE_SCFtoSMF(unsigned INT32 FROM_ADRESS,unsigned INT32 TO_ADRESS,int32 data_byte) //transfer data from COM FLASH to MISSION FLASH 
+.................... { 
+....................    for (int32 i=0 ; i < data_byte ; i++) 
+....................    { 
+....................       WRITE_DATA_BYTE_SMF(TO_ADRESS,READ_DATA_BYTE_SCF(FROM_ADRESS)); 
+....................       FROM_ADRESS++; 
+....................       TO_ADRESS++; 
+....................    } 
+....................    return; 
+.................... } 
+.................... void TRANSFER_DATA_NBYTE_SCF(unsigned INT32 FROM_ADRESS,unsigned INT32 TO_ADRESS,int32 data_byte) //read and send the specified data 
+.................... { 
+....................    for (int32 i=0 ; i < data_byte ; i++) 
+....................    { 
+....................       WRITE_DATA_BYTE_SMF(TO_ADRESS,READ_DATA_BYTE_SCF(FROM_ADRESS)); 
+....................       FROM_ADRESS++; 
+....................       TO_ADRESS++; 
+....................    } 
+....................    return; 
+.................... } 
+.................... */ 
+....................  
+....................  
+....................  
+.................... #include<MEMORY_OPERATION.c> 
+.................... //-------------------------ADDRESS (PREVIOUS)---------------------------------- 
+.................... //!/////////////////previous////////////////////////////// 
+.................... //!Static int32 ADCS_SENSOR_ADDRESS = 65536*500; 
+.................... //!Static int32 FAB_HK_ADDRESS = 65536 * 200; 
+.................... //!Static int32 FAB_CW_ADDRESS = 65536 * 50; 
+.................... //!Static int32 FAB_CW_ADDRESS_FOR_MF = 65536; //sector1 
+.................... //!Static int32 HIGH_SAMP_HK_ADDRESS = 65536 * 1800; 
+.................... //!Static int32 CAM_ADDRESS = 65536; 
+.................... //!Static int32 DC_STATUS_ADDRESS = 65536*300; 
+.................... //!/////////////////////////////////////////////////////// 
+.................... #define SECT 65536                                                               //1 Sector = 65536 Bytes 
+....................  
+.................... Static int32 ADD_INFO_ADDRESS = 4096;                                            //for keeping the address data to flash memory 
+.................... Static int32 ADDRESS_WRITING_COUNTER = 0;                                        //if address writing more than 30000 times, change the store address 
+....................  
+.................... Static int32 FLAG_DATA_ADDRESS = SECT*4;                                         //1sector 
+.................... Static int32 RSV_DATA_ADDRESS=SECT*5;                                            //1sector 
+.................... Static int32 SAT_LOG = SECT*6;                                                   //2sector 
+.................... Static int32 CAM_ADDRESS = SECT*8;                                               //90sector 
+.................... Static int32 FAB_HK_ADDRESS = SECT*98;                                           //1000sector 
+.................... Static int32 FAB_CW_ADDRESS = SECT*1098;                                         //40sector 
+.................... Static int32 ADCS_SENSOR_ADDRESS = SECT*1138;                                    //500sector 
+.................... Static int32 ADCS_TLE_ADDRESS = SECT*1637;                                       //1sector (el ultimo no utilizado por ADCS data) 
+.................... Static int32 DC_STATUS_ADDRESS = SECT*1638;                                      //1sector 
+.................... Static int32 HIGH_SAMP_HK_ADDRESS = SECT*1639;                                   //409sector 
+.................... Static int32 FLAG_ADDRESS_EEPROM = 0x18000;                                      //from 75 percent of the programming memory 
+.................... Static int32 FLASH_AD_ADDRESS_EEPROM = 0x18000 + 28;                             //after flag info 
+....................                                                                                  //Definicion de direcciones de espacio de memoria (fin) 
+.................... #define FLAG_DATA_ADDRESS_END  SECT*5-26                                         //considera la longitud de cada dato para determinar la direccion de finalizacion 
+.................... #define RSV_DATA_ADDRESS_END  SECT*6-160 
+.................... #define SAT_LOG_END  SECT*8-22 
+.................... #define CAM_ADDRESS_END  SECT*98-SECT*2 
+.................... #define FAB_HK_ADDRESS_END  SECT*1098-SECT-248 
+.................... #define FAB_CW_ADDRESS_END  SECT*1138-10 
+.................... #define FAB_CW_ADDRESS_FOR_MF_END FAB_CW_ADDRESS_END 
+.................... #define ADCS_SENSOR_ADDRESS_END  SECT*1638-408000                                //408000 is for 2 hour data(85*3600*2/1.5) 
+.................... #define ADCS_TLE_ADDRESS_END  SECT*1638-TLE_size 
+.................... #define DC_STATUS_ADDRESS_END SECT*1639-415 
+.................... #define HIGH_SAMP_HK_ADDRESS_END  SECT*2047-178560                               //178560 is for 2 hour data(124*3600*2/5) 
+....................                                                                                  //Flags definition 
+.................... int8 BC_ATTEMPT_FLAG = 0; 
+.................... int16 PASSED_DAYS = 0; 
+.................... int8 RESERVE_CHECK = 0; 
+.................... int8 RESERVE_MIN_FLAG = 0; 
+.................... int8 RESERVE_TARGET_FLAG = 0; 
+.................... int8 MISSION_CONTENTS = 0; 
+.................... int8 MISSION_DETAIL = 0; 
+.................... int8 RESERVE_ADDRESS_1 = 0; 
+.................... int8 RESERVE_ADDRESS_2 = 0; 
+.................... int8 RESERVE_ADDRESS_3 = 0; 
+.................... int8 RESERVE_ADDRESS_4 = 0; 
+.................... int8 RESERVE_PACKET_NUM = 0; 
+.................... int8 Kill_FLAG_MAIN = 0; 
+.................... int8 Kill_FLAG_FAB = 0; 
+.................... int8 FIRST_HSSC_DONE = 0; 
+.................... int8 AUTO_CAM_DONE = 0; 
+.................... int8 AUTO_MBP_DONE = 0; 
+.................... int8 AUTO_ADCS_DONE = 0; 
+.................... int8 ANT_DEP_STATUS = 0; 
+.................... int8 UPLINK_SUCCESS = 0; 
+....................  
+.................... int8 RESERVE_SEC_FLAG = 0; 
+....................  
+.................... //--------MAIN PIC Buffer------------------------------------------------------ 
+.................... int8 CMD_FROM_PC[8] = {}; 
+.................... unsigned int8 in_bffr_main[16] = {}; 
+.................... int8 COM_DATA= 0; 
+.................... static int8 CW_IDENTIFIER = 0; 
+.................... int8 OPERATION_MODE = 0x00; 
+.................... int8 PC_DATA = 0;                                   
+.................... int8 COM_ONEBYTE_COMMAND = 0;                                                    //for GS testing 
+....................  
+.................... #define buffer_from_com  (in_bffr_main[0]==0xAA) && (in_bffr_main[15]==0xBB) 
+.................... #define buffer_flash  (in_bffr_main[7]==0x73) 
+.................... #define START_ADCS_MISSION  (in_bffr_main[1]==0x73) 
+.................... #define ADCS_SENSOR_SIZE 100                                                      //for testing additional 6byte for checking duty 
+....................  
+....................  
+.................... int8 ADCS_SENSOR_DATA[ADCS_SENSOR_SIZE] = {}; 
+.................... int8 ADCS_ACK = 0; 
+.................... int8 ADCS_ACK_COMMING = 0;                                                       //for Checking ACK from ADCS 
+.................... #define ATTEMPT_TIME 8 
+....................  
+....................  
+.................... #define EX_PANEL_THRESHHOLD 0x14 
+.................... #define HIGH_SAMP_TIMES 12                                                       //for 2 hours 
+....................  
+.................... //----------RESET-------------------------------------------------------------- 
+.................... #define Reset_size 11                                                            //1byte ack, 4byte time, 10byte sensor 
+.................... int8 RESET_DATA = 0; 
+.................... int8 reset_bffr[Reset_size] = {}; 
+.................... int8 reset_flag = 0; 
+....................  
+.................... //---------OTHER FUNCTION------------------------------------------------------ 
+.................... #define FLASH_ADD_SIZE 41                                                        //10 kinds of address(40byte), 1 flag(1byte), 1 WRITING COUNTER(2byte) 
+.................... #define FLAG_INFO_SIZE 16 
+.................... unsigned int8 sec_add_bfr[FLASH_ADD_SIZE] = {};                                  //vector utilizado para almacenar las direcciones leidas de la flash 
+.................... unsigned int8 flag_info_bffr[FLAG_INFO_SIZE] = {}; 
+....................  
+.................... void CURRENT_FLAG_STATUS()                                                      //Print on PC port current flag status 
+.................... { 
+....................    fprintf(PC,"\r\nPASSED DAYS:%x\r\n",PASSED_DAYS); 
+....................    fprintf(PC,"RESERVE CHECK:%x\r\n",RESERVE_CHECK); 
+....................    fprintf(PC,"Kill FLAG MAIN:%x\r\n",Kill_FLAG_MAIN); 
+....................    fprintf(PC,"Kill FLAG FAB:%x\r\n",Kill_FLAG_FAB); 
+....................    fprintf(PC,"AUTO HIGH SAMPLING:%x\r\n",FIRST_HSSC_DONE); 
+....................    fprintf(PC,"AUTO CAM:%x\r\n",AUTO_CAM_DONE); 
+....................    fprintf(PC,"AUTO MBP:%x\r\n",AUTO_MBP_DONE); 
+....................    fprintf(PC,"AUTO ADCS:%x\r\n",AUTO_ADCS_DONE); 
+....................    fprintf(PC,"ANTENNA DEPLOY:%x\r\n",ANT_DEP_STATUS); 
+....................    fprintf(PC,"ANTENNA DEPLOY ATTEMPT:%x\r\n",BC_ATTEMPT_FLAG); 
+....................    fprintf(PC,"UPLINK SUCCESS:%x\r\n\r\n",UPLINK_SUCCESS); 
+....................    return; 
+.................... } 
+....................  
+....................  
+.................... void CURRENT_ADDRESS_OF_FLASH()                                                  //imprime la asignacion de direcciones de la Flash memory 
+.................... {   
+....................    fprintf(PC,"\r\nADD INFO ADDRESS:%lx\r\n\r\n",ADD_INFO_ADDRESS); 
+....................    fprintf(PC,"FLAG DATA ADDRESS:%x%x%x%x\r\n",FLAG_DATA_ADDRESS>>24,FLAG_DATA_ADDRESS>>16,FLAG_DATA_ADDRESS>>8,FLAG_DATA_ADDRESS); 
+....................    fprintf(PC,"RESERVATION TABLE ADDRESS:%x%x%x%x\r\n",RSV_DATA_ADDRESS>>24,RSV_DATA_ADDRESS>>16,RSV_DATA_ADDRESS>>8,RSV_DATA_ADDRESS); 
+....................    fprintf(PC,"SATELLITE LOG ADDRESS:%x%x%x%x\r\n",SAT_LOG>>24,SAT_LOG>>16,SAT_LOG>>8,SAT_LOG); 
+....................    fprintf(PC,"CAM ADDRESS:%x%x%x%x\r\n",CAM_ADDRESS>>24,CAM_ADDRESS>>16,CAM_ADDRESS>>8,CAM_ADDRESS); 
+....................    fprintf(PC,"FAB HK ADDRESS:%x%x%x%x\r\n",FAB_HK_ADDRESS>>24,FAB_HK_ADDRESS>>16,FAB_HK_ADDRESS>>8,FAB_HK_ADDRESS); 
+....................    fprintf(PC,"FAB CW ADDRESS:%x%x%x%x\r\n",FAB_CW_ADDRESS>>24,FAB_CW_ADDRESS>>16,FAB_CW_ADDRESS>>8,FAB_CW_ADDRESS); 
+....................    fprintf(PC,"ADCS SENSOR ADDRESS:%x%x%x%x\r\n",ADCS_SENSOR_ADDRESS>>24,ADCS_SENSOR_ADDRESS>>16,ADCS_SENSOR_ADDRESS>>8,ADCS_SENSOR_ADDRESS); 
+....................    fprintf(PC,"ADCS TLE ADDRESS:%x%x%x%x\r\n",ADCS_TLE_ADDRESS>>24,ADCS_TLE_ADDRESS>>16,ADCS_TLE_ADDRESS>>8,ADCS_TLE_ADDRESS); 
+....................    fprintf(PC,"MISSION BOSS ADDRESS:%x%x%x%x\r\n",DC_STATUS_ADDRESS>>24,DC_STATUS_ADDRESS>>16,DC_STATUS_ADDRESS>>8,DC_STATUS_ADDRESS); 
+....................    fprintf(PC,"HIGH SAMP HK ADDRESS:%x%x%x%x\r\n",HIGH_SAMP_HK_ADDRESS>>24,HIGH_SAMP_HK_ADDRESS>>16,HIGH_SAMP_HK_ADDRESS>>8,HIGH_SAMP_HK_ADDRESS); 
+....................    fprintf(PC,"WRITE %lx TIMES\r\n",ADDRESS_WRITING_COUNTER); 
+....................    return; 
+.................... } 
+....................  
+.................... void ERASE_EEPROM_INFO() 
+.................... { 
+....................    erase_program_eeprom(FLAG_ADDRESS_EEPROM);//erase 512byte(from 0x18000 to 0x181ff) 
+....................    return; 
+.................... } 
+....................  
+.................... void WRITE_FLAG_to_EEPROM()                                                      //saves the flags in the EEPROM from the address 0x18000 (75%) 
+.................... { 
+.................... //total programming memory size is 128KB 
+.................... //start writing the important flag from 75 percent of the programming memory(from the address of 96KB --> 0x18000) 
+....................    int16 DATA; 
+....................    DATA = (int16)BC_ATTEMPT_FLAG; 
+....................    WRITE_PROGRAM_EEPROM(FLAG_ADDRESS_EEPROM, DATA); 
+....................    DATA = (int16)PASSED_DAYS; 
+....................    WRITE_PROGRAM_EEPROM(FLAG_ADDRESS_EEPROM+2, DATA); 
+....................    DATA = (int16)RESERVE_CHECK; 
+....................    WRITE_PROGRAM_EEPROM(FLAG_ADDRESS_EEPROM+4, DATA); 
+....................    DATA = (int16)RESERVE_MIN_FLAG; 
+....................    WRITE_PROGRAM_EEPROM(FLAG_ADDRESS_EEPROM+6, DATA); 
+....................    DATA = (int16)RESERVE_TARGET_FLAG; 
+....................    WRITE_PROGRAM_EEPROM(FLAG_ADDRESS_EEPROM+8, DATA); 
+....................    DATA = (int16)MISSION_CONTENTS; 
+....................    WRITE_PROGRAM_EEPROM(FLAG_ADDRESS_EEPROM+10, DATA); 
+....................    DATA = (int16)MISSION_DETAIL; 
+....................    WRITE_PROGRAM_EEPROM(FLAG_ADDRESS_EEPROM+12, DATA); 
+....................    DATA = (int16)Kill_FLAG_MAIN; 
+....................    WRITE_PROGRAM_EEPROM(FLAG_ADDRESS_EEPROM+14, DATA); 
+....................    DATA = (int16)Kill_FLAG_FAB; 
+....................    WRITE_PROGRAM_EEPROM(FLAG_ADDRESS_EEPROM+16, DATA); 
+....................    DATA = (int16)FIRST_HSSC_DONE; 
+....................    WRITE_PROGRAM_EEPROM(FLAG_ADDRESS_EEPROM+18, DATA); 
+....................    DATA = (int16)AUTO_CAM_DONE; 
+....................    WRITE_PROGRAM_EEPROM(FLAG_ADDRESS_EEPROM+20, DATA); 
+....................    DATA = (int16)AUTO_MBP_DONE; 
+....................    WRITE_PROGRAM_EEPROM(FLAG_ADDRESS_EEPROM+22, DATA); 
+....................    DATA = (int16)AUTO_ADCS_DONE; 
+....................    WRITE_PROGRAM_EEPROM(FLAG_ADDRESS_EEPROM+24, DATA); 
+....................    DATA = (int16)ANT_DEP_STATUS; 
+....................    WRITE_PROGRAM_EEPROM(FLAG_ADDRESS_EEPROM+26, DATA); 
+....................    DATA = (int16)UPLINK_SUCCESS; 
+....................    WRITE_PROGRAM_EEPROM(FLAG_ADDRESS_EEPROM+28, DATA); 
+....................    return; 
+.................... } 
+.................... /* 
+.................... void WRITE_AD_INFO_to_EEPROM() 
+.................... { 
+....................    int16 DATA; 
+....................    DATA = BC_ATTEMPT_FLAG >> 16; 
+....................    WRITE_PROGRAM_EEPROM(FLASH_AD_ADDRESS_EEPROM, DATA); 
+....................    DATA = BC_ATTEMPT_FLAG; 
+....................    WRITE_PROGRAM_EEPROM(FLASH_AD_ADDRESS_EEPROM+2, DATA); 
+....................    return; 
+.................... } 
+.................... */ 
+.................... void MAKE_FLAG_from_EEPROM()                                                     //toma de la eeprom la info de los flags y los carga en sus variables respectivas 
+.................... { 
+....................    if((READ_PROGRAM_EEPROM(FLAG_ADDRESS_EEPROM)!=0xffff)&&(READ_PROGRAM_EEPROM(FLAG_ADDRESS_EEPROM+26)!=0xffff)) 
+....................    { 
+....................       BC_ATTEMPT_FLAG = (int8)READ_PROGRAM_EEPROM(FLAG_ADDRESS_EEPROM); 
+....................       PASSED_DAYS = (int16)READ_PROGRAM_EEPROM(FLAG_ADDRESS_EEPROM+2); 
+....................       RESERVE_CHECK = (int8)READ_PROGRAM_EEPROM(FLAG_ADDRESS_EEPROM+4); 
+....................       RESERVE_MIN_FLAG = (int8)READ_PROGRAM_EEPROM(FLAG_ADDRESS_EEPROM+6); 
+....................       RESERVE_TARGET_FLAG = (int8)READ_PROGRAM_EEPROM(FLAG_ADDRESS_EEPROM+8); 
+....................       MISSION_CONTENTS = (int8)READ_PROGRAM_EEPROM(FLAG_ADDRESS_EEPROM+10); 
+....................       MISSION_DETAIL = (int8)READ_PROGRAM_EEPROM(FLAG_ADDRESS_EEPROM+12); 
+....................       Kill_FLAG_MAIN = (int8)READ_PROGRAM_EEPROM(FLAG_ADDRESS_EEPROM+14); 
+....................       Kill_FLAG_FAB = (int8)READ_PROGRAM_EEPROM(FLAG_ADDRESS_EEPROM+16); 
+....................       FIRST_HSSC_DONE = (int8)READ_PROGRAM_EEPROM(FLAG_ADDRESS_EEPROM+18); 
+....................       AUTO_CAM_DONE = (int8)READ_PROGRAM_EEPROM(FLAG_ADDRESS_EEPROM+20); 
+....................       AUTO_MBP_DONE = (int8)READ_PROGRAM_EEPROM(FLAG_ADDRESS_EEPROM+22); 
+....................       AUTO_ADCS_DONE = (int8)READ_PROGRAM_EEPROM(FLAG_ADDRESS_EEPROM+24); 
+....................       ANT_DEP_STATUS = (int8)READ_PROGRAM_EEPROM(FLAG_ADDRESS_EEPROM+26); 
+....................       UPLINK_SUCCESS = (int8)READ_PROGRAM_EEPROM(FLAG_ADDRESS_EEPROM+28); 
+....................    } 
+....................     
+....................    fprintf(PC,"\r\nPASSED DAYS:%lx\r\n",PASSED_DAYS); 
+....................    fprintf(PC,"RESERVE CHECK:%x\r\n",RESERVE_CHECK); 
+....................    fprintf(PC,"Kill FLAG MAIN:%x\r\n",Kill_FLAG_MAIN); 
+....................    fprintf(PC,"Kill FLAG FAB:%x\r\n",Kill_FLAG_FAB); 
+....................    fprintf(PC,"AUTO HIGH SAMPLING:%x\r\n",FIRST_HSSC_DONE); 
+....................    fprintf(PC,"AUTO CAM:%x\r\n",AUTO_CAM_DONE); 
+....................    fprintf(PC,"AUTO MBP:%x\r\n",AUTO_MBP_DONE); 
+....................    fprintf(PC,"AUTO ADCS:%x\r\n",AUTO_ADCS_DONE); 
+....................    fprintf(PC,"ANTENNA DEPLOY:%x\r\n",ANT_DEP_STATUS); 
+....................    fprintf(PC,"UPLINK SUCCESS:%x\r\n\r\n",UPLINK_SUCCESS); 
+....................     
+....................    return; 
+.................... } 
+....................  
+.................... void TAKE_AD_INFO_from_EEPROM()                                                  //Reads address data from de program memory 
+.................... { 
+....................    int16 DATA_high = READ_PROGRAM_EEPROM(FLASH_AD_ADDRESS_EEPROM);                
+....................    int16 DATA_low = READ_PROGRAM_EEPROM(FLASH_AD_ADDRESS_EEPROM+2); 
+....................    int32 DATA = (((int32)DATA_high<<16) | (int32)DATA_low); 
+....................    if(DATA != 0xffffffff) 
+....................    { 
+....................       ADD_INFO_ADDRESS = DATA;                                                    
+....................    } 
+....................    return; 
+.................... } 
+....................  
+.................... void STORE_FLAG_INFO()                                                           //save flag data to flash memory 
+.................... { 
+....................    flag_info_bffr[0] = BC_ATTEMPT_FLAG; 
+....................    flag_info_bffr[1] = PASSED_DAYS >> 8; 
+....................    flag_info_bffr[2] = PASSED_DAYS; 
+....................    flag_info_bffr[3] = RESERVE_CHECK; 
+....................    flag_info_bffr[4] = RESERVE_TARGET_FLAG; 
+....................    flag_info_bffr[5] = RESERVE_MIN_FLAG; 
+....................    flag_info_bffr[6] = MISSION_CONTENTS; 
+....................    flag_info_bffr[7] = MISSION_DETAIL; 
+....................    flag_info_bffr[8] = Kill_FLAG_MAIN; 
+....................    flag_info_bffr[9] = Kill_FLAG_FAB; 
+....................    flag_info_bffr[10] = FIRST_HSSC_DONE; 
+....................    flag_info_bffr[11] = AUTO_CAM_DONE; 
+....................    flag_info_bffr[12] = AUTO_MBP_DONE; 
+....................    flag_info_bffr[13] = AUTO_ADCS_DONE; 
+....................    flag_info_bffr[14] = ANT_DEP_STATUS; 
+....................    flag_info_bffr[15] = UPLINK_SUCCESS; 
+....................     
+....................    output_low(PIN_A5);                                                           //CAM_MUX MAINSIDE 
+....................    output_low(PIN_C4);                                                           //COM_MUX MAINSIDE 
+....................    SUBSECTOR_4KB_ERASE_OF(FLAG_DATA_ADDRESS); 
+....................    delay_ms(200); 
+....................    for(int8 num = 0; num < FLAG_INFO_SIZE; num++) 
+....................    { 
+....................       WRITE_DATA_BYTE_OF(FLAG_DATA_ADDRESS + num,flag_info_bffr[num]); 
+....................       delay_us(10); 
+....................    } 
+....................    delay_ms(10); 
+....................    SUBSECTOR_4KB_ERASE_SCF(FLAG_DATA_ADDRESS); 
+....................    delay_ms(200); 
+....................    for(num = 0; num < FLAG_INFO_SIZE; num++) 
+....................    { 
+....................       WRITE_DATA_BYTE_SCF(FLAG_DATA_ADDRESS + num,flag_info_bffr[num]); 
+....................       delay_us(10); 
+....................    } 
+....................    delay_ms(10); 
+....................    SUBSECTOR_4KB_ERASE_SMF(FLAG_DATA_ADDRESS); 
+....................    delay_ms(200); 
+....................    for(num = 0; num < FLAG_INFO_SIZE; num++) 
+....................    { 
+....................       WRITE_DATA_BYTE_SMF(FLAG_DATA_ADDRESS + num,flag_info_bffr[num]); 
+....................       delay_us(10); 
+....................    } 
+....................     
+....................    output_high(PIN_C4);                                                          //COM_MUX COMSIDE 
+....................     
+....................    fprintf(PC,"FLAG INFO STORED IN FLASH\r\n"); 
+....................    return; 
+....................     
+.................... } 
+....................  
+.................... void RESET_FLAG_DATA() 
+.................... { 
+....................    //BC_ATTEMPT_FLAG = 0; 
+....................    PASSED_DAYS = 0; 
+....................    //RESERVE_CHECK = 0; 
+....................    //RESERVE_MIN_FLAG = 0; 
+....................    //RESERVE_TARGET_FLAG = 0; 
+....................    //MISSION_CONTENTS = 0; 
+....................    //MISSION_DETAIL = 0; 
+....................    Kill_FLAG_MAIN = 0; 
+....................    Kill_FLAG_FAB = 0; 
+....................    FIRST_HSSC_DONE = 0; 
+....................    AUTO_CAM_DONE = 0; 
+....................    AUTO_MBP_DONE = 0; 
+....................    AUTO_ADCS_DONE = 0; 
+....................    ANT_DEP_STATUS = 0; 
+....................    UPLINK_SUCCESS = 0; 
+....................    STORE_FLAG_INFO(); 
+....................    WRITE_FLAG_to_EEPROM(); 
+....................    return; 
+.................... } 
+....................  
+.................... void READ_WRTITING_ADDRESS_LOCATION()                                            //load the variable ADD_INFO_ADDRESS, look for the data in OF, SCF, SMF and EEPROM (carga la variable ADD_INFO_ADDRESS, busca el dato en OF, SCF, SMF y EEPROM) 
+.................... {                                                                                //if you can't find it use the initial value (si no lo encuentra usa el valor inicial) 
+....................    int i; 
+....................    int8 ad_location_bfr[4]; 
+....................    output_low(PIN_C4);                                                           //Main side 
+....................    output_low(PIN_A5);                                                           //Main side 
+....................    if(READ_DATA_BYTE_OF(0) == 0xff)                                              //this means there is no address data in OBC Flash 
+....................    { 
+....................       if(READ_DATA_BYTE_SCF(0) == 0xff)                                          //this means there is no address data in Shared COM Flash 
+....................       { 
+....................          if(READ_DATA_BYTE_SMF(0) == 0xff)                                       //if all memory was empty, location should be initial value 
+....................          { 
+....................             TAKE_AD_INFO_from_EEPROM();                                          //if inside of eeprom is also empty, use the initial value 
+....................             ad_location_bfr[0] = ADD_INFO_ADDRESS >> 24; 
+....................             ad_location_bfr[1] = ADD_INFO_ADDRESS >> 16; 
+....................             ad_location_bfr[2] = ADD_INFO_ADDRESS >> 8; 
+....................             ad_location_bfr[3] = ADD_INFO_ADDRESS; 
+....................          }else{ 
+....................             ad_location_bfr[0] = READ_DATA_BYTE_SMF(0); 
+....................             ad_location_bfr[1] = READ_DATA_BYTE_SMF(1); 
+....................             ad_location_bfr[2] = READ_DATA_BYTE_SMF(2); 
+....................             ad_location_bfr[3] = READ_DATA_BYTE_SMF(3); 
+....................             ADD_INFO_ADDRESS = make32(ad_location_bfr[0],ad_location_bfr[1],ad_location_bfr[2],ad_location_bfr[3]); 
+....................          } 
+....................       }else{ 
+....................          ad_location_bfr[0] = READ_DATA_BYTE_SCF(0); 
+....................          ad_location_bfr[1] = READ_DATA_BYTE_SCF(1); 
+....................          ad_location_bfr[2] = READ_DATA_BYTE_SCF(2); 
+....................          ad_location_bfr[3] = READ_DATA_BYTE_SCF(3); 
+....................          ADD_INFO_ADDRESS = make32(ad_location_bfr[0],ad_location_bfr[1],ad_location_bfr[2],ad_location_bfr[3]); 
+....................       } 
+....................    }else{ 
+....................       ad_location_bfr[0] = READ_DATA_BYTE_OF(0); 
+....................       ad_location_bfr[1] = READ_DATA_BYTE_OF(1); 
+....................       ad_location_bfr[2] = READ_DATA_BYTE_OF(2); 
+....................       ad_location_bfr[3] = READ_DATA_BYTE_OF(3); 
+....................       ADD_INFO_ADDRESS = make32(ad_location_bfr[0],ad_location_bfr[1],ad_location_bfr[2],ad_location_bfr[3]); 
+....................    } 
+....................     
+....................    for(i = 0; i < 4; i++)                                                        //store the subsector(location) information 
+....................    { 
+....................       WRITE_DATA_BYTE_OF(i,ad_location_bfr[i]); 
+....................       WRITE_DATA_BYTE_SCF(i,ad_location_bfr[i]); 
+....................       WRITE_DATA_BYTE_SMF(i,ad_location_bfr[i]); 
+....................    } 
+....................    output_high(PIN_C4); 
+....................    fprintf(PC,"\r\naddress info location:%lx\r\n",ADD_INFO_ADDRESS); 
+....................    return; 
+.................... } 
+....................  
+.................... void CHANGE_ADDRESS_WRITING_LOCATION()                                           //cambia la direccion de escritura de address locations cuando se superan los 95.000 ciclos 
+.................... { 
+....................    int32 AD_COUNTER = make32(READ_DATA_BYTE_OF(ADD_INFO_ADDRESS+37),READ_DATA_BYTE_OF(ADD_INFO_ADDRESS+38),READ_DATA_BYTE_OF(ADD_INFO_ADDRESS+39),READ_DATA_BYTE_OF(ADD_INFO_ADDRESS+40));//check counter value 
+....................    fprintf(PC,"AD COUNTER:%lx\r\n",AD_COUNTER); 
+....................    if((AD_COUNTER > 95000) && (AD_COUNTER != 0xffffffff)) 
+....................    { 
+....................       output_low(PIN_A5);                                                        //CAM_MUX MAINSIDE 
+....................       output_low(PIN_C4);                                                        //COM_MUX MAINSIDE 
+....................       SUBSECTOR_4KB_ERASE_OF(0); 
+....................       SUBSECTOR_4KB_ERASE_SCF(0); 
+....................       SUBSECTOR_4KB_ERASE_SMF(0); 
+....................       ADDRESS_WRITING_COUNTER = 0;                                               //reset counter 
+....................       ADD_INFO_ADDRESS = ADD_INFO_ADDRESS + 0x00001000;                          //use next subsector 
+....................       output_high(PIN_C4);                                                       //COM_MUX COMSIDE 
+....................        
+....................       unsigned int8 address_place[4] = {}; 
+....................       address_place[0] = ADD_INFO_ADDRESS >> 24; 
+....................       address_place[1] = ADD_INFO_ADDRESS >> 16; 
+....................       address_place[2] = ADD_INFO_ADDRESS >> 8; 
+....................       address_place[3] = ADD_INFO_ADDRESS; 
+....................        
+....................       output_low(PIN_A5);                                                        //CAM_MUX MAINSIDE 
+....................       output_low(PIN_C4);                                                        //COM_MUX MAINSIDE 
+....................       for(int i = 0; i < 4; i++)                                                 //store the new subsector(location) information 
+....................       { 
+....................          WRITE_DATA_BYTE_OF(i,address_place[i]);                                 //se le pasa direccion y dato 
+....................          delay_us(10); 
+....................          WRITE_DATA_BYTE_SCF(i,address_place[i]); 
+....................          delay_us(10); 
+....................          WRITE_DATA_BYTE_SMF(i,address_place[i]); 
+....................          delay_us(10); 
+....................       } 
+....................       output_high(PIN_C4);                                                       //COM_MUX COMSIDE 
+....................        
+....................       fprintf(PC,"CHANGED MEMORY ADDRESS:"); 
+....................       for(i = 0; i < 4; i++)                                                     //store the subsector(location) information 
+....................       { 
+....................          fprintf(PC,"%x",READ_DATA_BYTE_OF(i)); 
+....................       } 
+....................       fprintf(PC,"\r\n"); 
+....................    } 
+....................     
+....................    return; 
+.................... } 
+....................  
+.................... void TAKE_FLAG_INFO_FROM_OF()                                                    //Funcion que lee de memoria el dato de los FLAGS 
+.................... { 
+....................    for(int8 num = 0; num < FLAG_INFO_SIZE; num++) 
+....................    { 
+....................       flag_info_bffr[num] = READ_DATA_BYTE_OF(FLAG_DATA_ADDRESS + num);          //guarda los datos en el vector flag_info_bffr[] 
+....................       //delay_ms(1); 
+....................    } 
+....................    return; 
+.................... } 
+....................  
+.................... void STORE_ADRESS_DATA_TO_FLASH()                                                //save the address data in a new sector if the R / W cycle is reached 
+.................... { 
+....................    fprintf(PC,"\r\nStoreing Address Data in Flash\r\n"); 
+....................    ADDRESS_WRITING_COUNTER++;                                                    //contador de escrituras en una direccion 
+....................    CHANGE_ADDRESS_WRITING_LOCATION();                                            //cambia la direccion del lugar de escritura si se superan 95000 ciclos 
+....................    sec_add_bfr[0] = FLAG_DATA_ADDRESS >> 24;                                     //se carga el array sec_add_bfr[] con los datos de las direcciones 
+....................    sec_add_bfr[1] = FLAG_DATA_ADDRESS >> 16; 
+....................    sec_add_bfr[2] = FLAG_DATA_ADDRESS >> 8; 
+....................    sec_add_bfr[3] = FLAG_DATA_ADDRESS; 
+....................        
+....................    sec_add_bfr[4] = RSV_DATA_ADDRESS >> 24; 
+....................    sec_add_bfr[5] = RSV_DATA_ADDRESS >> 16; 
+....................    sec_add_bfr[6] = RSV_DATA_ADDRESS >> 8; 
+....................    sec_add_bfr[7] = RSV_DATA_ADDRESS; 
+....................     
+....................    sec_add_bfr[8] = SAT_LOG >> 24; 
+....................    sec_add_bfr[9] = SAT_LOG >> 16; 
+....................    sec_add_bfr[10] = SAT_LOG >> 8; 
+....................    sec_add_bfr[11] = SAT_LOG; 
+....................     
+....................    sec_add_bfr[12] = CAM_ADDRESS >> 24; 
+....................    sec_add_bfr[13] = CAM_ADDRESS >> 16; 
+....................    sec_add_bfr[14] = CAM_ADDRESS >> 8; 
+....................    sec_add_bfr[15] = CAM_ADDRESS; 
+....................     
+....................    sec_add_bfr[16] = FAB_HK_ADDRESS >> 24; 
+....................    sec_add_bfr[17] = FAB_HK_ADDRESS >> 16; 
+....................    sec_add_bfr[18] = FAB_HK_ADDRESS >> 8; 
+....................    sec_add_bfr[19] = FAB_HK_ADDRESS; 
+....................     
+....................    sec_add_bfr[20] = FAB_CW_ADDRESS >> 24; 
+....................    sec_add_bfr[21] = FAB_CW_ADDRESS >> 16; 
+....................    sec_add_bfr[22] = FAB_CW_ADDRESS >> 8; 
+....................    sec_add_bfr[23] = FAB_CW_ADDRESS; 
+....................     
+....................    sec_add_bfr[24] = ADCS_SENSOR_ADDRESS >> 24; 
+....................    sec_add_bfr[25] = ADCS_SENSOR_ADDRESS >> 16; 
+....................    sec_add_bfr[26] = ADCS_SENSOR_ADDRESS >> 8; 
+....................    sec_add_bfr[27] = ADCS_SENSOR_ADDRESS; 
+....................     
+....................    sec_add_bfr[28] = DC_STATUS_ADDRESS >> 24; 
+....................    sec_add_bfr[29] = DC_STATUS_ADDRESS >> 16; 
+....................    sec_add_bfr[30] = DC_STATUS_ADDRESS >> 8; 
+....................    sec_add_bfr[31] = DC_STATUS_ADDRESS; 
+....................     
+....................    sec_add_bfr[32] = HIGH_SAMP_HK_ADDRESS >> 24; 
+....................    sec_add_bfr[33] = HIGH_SAMP_HK_ADDRESS >> 16; 
+....................    sec_add_bfr[34] = HIGH_SAMP_HK_ADDRESS >> 8; 
+....................    sec_add_bfr[35] = HIGH_SAMP_HK_ADDRESS; 
+....................     
+....................    sec_add_bfr[36] = BC_ATTEMPT_FLAG; 
+....................     
+....................     
+....................    sec_add_bfr[37] = ADDRESS_WRITING_COUNTER >> 24; 
+....................    sec_add_bfr[38] = ADDRESS_WRITING_COUNTER >> 16; 
+....................    sec_add_bfr[39] = ADDRESS_WRITING_COUNTER >> 8; 
+....................    sec_add_bfr[40] = ADDRESS_WRITING_COUNTER; 
+....................     
+....................    output_low(PIN_A5);                                                           //CAM_MUX MAINSIDE 
+....................    output_low(PIN_C4);                                                           //COM_MUX MAINSIDE 
+....................    int8 num = 0; 
+....................    SUBSECTOR_4KB_ERASE_OF(ADD_INFO_ADDRESS); 
+....................    delay_ms(200); 
+....................    for(num = 0; num < FLASH_ADD_SIZE; num++)                                     //guarda todos los datos de direcciones en OBC FLASH 
+....................    { 
+....................       WRITE_DATA_BYTE_OF(ADD_INFO_ADDRESS + num,sec_add_bfr[num]); 
+....................       delay_us(10); 
+....................    } 
+....................    SUBSECTOR_4KB_ERASE_SCF(ADD_INFO_ADDRESS); 
+....................    delay_ms(200); 
+....................    for(num = 0; num < FLASH_ADD_SIZE; num++)                                     //guarda todos los datos de direcciones en COM FLASH 
+....................    { 
+....................       WRITE_DATA_BYTE_SCF(ADD_INFO_ADDRESS + num,sec_add_bfr[num]); 
+....................       delay_us(10); 
+....................    } 
+....................    SUBSECTOR_4KB_ERASE_SMF(ADD_INFO_ADDRESS); 
+....................    delay_ms(200); 
+....................    for(num = 0; num < FLASH_ADD_SIZE; num++)                                     //guarda todos los datos de direcciones en MISSION FLASH 
+....................    { 
+....................       WRITE_DATA_BYTE_SMF(ADD_INFO_ADDRESS + num,sec_add_bfr[num]); 
+....................       delay_us(10); 
+....................    } 
+....................    output_high(PIN_C4);                                                          //COM_MUX COMSIDE 
+....................    
+....................    fprintf(PC,"ADDRESS DATA STORE DONE:%lx\r\n",ADD_INFO_ADDRESS); 
+....................    return; 
+.................... } 
+....................  
+.................... void TAKE_ADDRESS_DATA_FROM_OF()                                                 //Funcion que toma de la memoria las direcciones almacenadas en los primeros lugares 
+.................... {   
+....................     
+....................    for(int8 num = 0; num < FLASH_ADD_SIZE; num++) 
+....................    { 
+....................       sec_add_bfr[num] = READ_DATA_BYTE_OF(ADD_INFO_ADDRESS + num); 
+....................    } 
+....................    return; 
+.................... } 
+....................  
+.................... void TAKE_ADDRESS_DATA_FROM_SCF() 
+.................... {   
+....................    output_low(PIN_C4);   
+....................    for(int8 num = 0; num < FLASH_ADD_SIZE; num++) 
+....................    { 
+....................       sec_add_bfr[num] = READ_DATA_BYTE_SCF(ADD_INFO_ADDRESS + num); 
+....................    } 
+....................    output_high(PIN_C4); 
+....................    return; 
+.................... } 
+....................  
+.................... void TAKE_ADDRESS_DATA_FROM_SMF() 
+.................... {   
+....................    output_low(PIN_A5);   
+....................    for(int8 num = 0; num < FLASH_ADD_SIZE; num++) 
+....................    { 
+....................       sec_add_bfr[num] = READ_DATA_BYTE_SMF(ADD_INFO_ADDRESS + num); 
+....................    } 
+....................    return; 
+.................... } 
+....................  
+.................... void MAKE_FLAG_INFO()                                                            //Guarda en cada variable la informacion de flags recuperadas de memoria 
+.................... { 
+....................    BC_ATTEMPT_FLAG     = flag_info_bffr[0]; 
+....................    PASSED_DAYS         = make16(flag_info_bffr[1],flag_info_bffr[2]); 
+....................    RESERVE_CHECK       = flag_info_bffr[3]; 
+....................    RESERVE_TARGET_FLAG = flag_info_bffr[4]; 
+....................    RESERVE_MIN_FLAG    = flag_info_bffr[5]; 
+....................    MISSION_CONTENTS    = flag_info_bffr[6]; 
+....................    MISSION_DETAIL      = flag_info_bffr[7]; 
+....................    Kill_FLAG_MAIN      = flag_info_bffr[8]; 
+....................    Kill_FLAG_FAB       = flag_info_bffr[9]; 
+....................    FIRST_HSSC_DONE     = flag_info_bffr[10]; 
+....................    AUTO_CAM_DONE       = flag_info_bffr[11]; 
+....................    AUTO_MBP_DONE       = flag_info_bffr[12]; 
+....................    AUTO_ADCS_DONE      = flag_info_bffr[13]; 
+....................    ANT_DEP_STATUS      = flag_info_bffr[14]; 
+....................    UPLINK_SUCCESS      = flag_info_bffr[15]; 
+....................    if(PASSED_DAYS == 0xffff) 
+....................    { 
+....................       COLLECT_RESET_DATA();                                                      //funcion que envia el comando 0x28 al reset PIC y carga reset_bffr[] 
+....................       PASSED_DAYS = make16(reset_bffr[4],reset_bffr[5]); 
+....................    } 
+....................    return; 
+.................... } 
+....................                                                                              
+.................... void MAKE_ADDRESS_DATA()                                                         //Funcion que separa los datos de direcciones en cada variable correspondiente 
+.................... {                                                                                //sec_add_bfr[] vector que contiene los datos de direcciones 
+....................  
+....................  
+....................    FLAG_DATA_ADDRESS = make32(sec_add_bfr[0],sec_add_bfr[1],sec_add_bfr[2],sec_add_bfr[3]);//FLAG_DATA_ADDRESS_1 | FLAG_DATA_ADDRESS_2 | FLAG_DATA_ADDRESS_3 | FLAG_DATA_ADDRESS_4; 
+....................     
+....................    RSV_DATA_ADDRESS = make32(sec_add_bfr[4],sec_add_bfr[5],sec_add_bfr[6],sec_add_bfr[7]);//RSV_DATA_ADDRESS_1| RSV_DATA_ADDRESS_2 | RSV_DATA_ADDRESS_3 | RSV_DATA_ADDRESS_4; 
+....................     
+....................    SAT_LOG = make32(sec_add_bfr[8],sec_add_bfr[9],sec_add_bfr[10],sec_add_bfr[11]);//SAT_LOG_1 | SAT_LOG_2 | SAT_LOG_3 | SAT_LOG_4; 
+....................     
+....................    CAM_ADDRESS = make32(sec_add_bfr[12],sec_add_bfr[13],sec_add_bfr[14],sec_add_bfr[15]);//CAM_ADDRESS_1 | CAM_ADDRESS_2 | CAM_ADDRESS_3 | CAM_ADDRESS_4; 
+....................     
+....................    FAB_HK_ADDRESS = make32(sec_add_bfr[16],sec_add_bfr[17],sec_add_bfr[18],sec_add_bfr[19]);//FAB_HK_ADDRESS_1 | FAB_HK_ADDRESS_2 | FAB_HK_ADDRESS_3 | FAB_HK_ADDRESS_4; 
+....................  
+....................    FAB_CW_ADDRESS = make32(sec_add_bfr[20],sec_add_bfr[21],sec_add_bfr[22],sec_add_bfr[23]);//FAB_CW_ADDRESS_1| FAB_CW_ADDRESS_2 | FAB_CW_ADDRESS_3 | FAB_CW_ADDRESS_4; 
+....................     
+....................    ADCS_SENSOR_ADDRESS = make32(sec_add_bfr[24],sec_add_bfr[25],sec_add_bfr[26],sec_add_bfr[27]);//ADCS_SENSOR_ADDRESS_1 | ADCS_SENSOR_ADDRESS_2 | ADCS_SENSOR_ADDRESS_3 | ADCS_SENSOR_ADDRESS_4; 
+....................     
+....................    DC_STATUS_ADDRESS = make32(sec_add_bfr[28],sec_add_bfr[29],sec_add_bfr[30],sec_add_bfr[31]);//DC_STATUS_ADDRESS_1 | DC_STATUS_ADDRESS_2 | DC_STATUS_ADDRESS_3 | DC_STATUS_ADDRESS_4; 
+....................     
+....................    HIGH_SAMP_HK_ADDRESS = make32(sec_add_bfr[32],sec_add_bfr[33],sec_add_bfr[34],sec_add_bfr[35]);//HIGH_SAMP_HK_ADDRESS = HIGH_SAMP_HK_ADDRESS_1 | HIGH_SAMP_HK_ADDRESS_2 | HIGH_SAMP_HK_ADDRESS_3 | HIGH_SAMP_HK_ADDRESS_4; 
+....................     
+....................    ADDRESS_WRITING_COUNTER = make32(sec_add_bfr[36],sec_add_bfr[37],sec_add_bfr[38],sec_add_bfr[39]);//ADDRESS_WRITING_COUNTER_1 | ADDRESS_WRITING_COUNTER_2 
+....................     
+....................    return; 
+.................... } 
+....................  
+.................... void CHECK_FLAG_INFO()                                                           //funcion que imprime los datos de los flags y los separa en cada variable 
+.................... { 
+....................    int8 checksum = 0; 
+....................    TAKE_FLAG_INFO_FROM_OF();                                                     //funcion que lee de la Main flash el estado de los flags y carga el array flag_info_bffr 
+....................    for(int8 num = 0; num < FLAG_INFO_SIZE; num++) 
+....................    { 
+....................       if(flag_info_bffr[num] == 0xff)                                            //si la informacion recuperada es 0xff (no hay informacion) incrementa el checksum 
+....................       { 
+....................          checksum++; 
+....................       } 
+....................    } 
+....................    //fprintf(PC,"%d",checksum); 
+....................     
+....................    if((flag_info_bffr[0]!=0xff)&&(flag_info_bffr[FLAG_INFO_SIZE-1]!=0xff))       //if something stored 
+....................    { 
+....................       for(num = 0; num < FLAG_INFO_SIZE; num++)                                  //imprime la informacion de los flags 
+....................       { 
+....................          fprintf(PC,"%x",flag_info_bffr[num]); 
+....................       } 
+....................       MAKE_FLAG_INFO();                                                          //separa el estado de los flags en cada variable 
+....................    }else{                                                                        //if nothing stored 
+....................       MAKE_FLAG_from_EEPROM();                                                   //lee de la eeprom el estado de los flags 
+....................    } 
+....................    checksum = 0; 
+....................    return; 
+.................... } 
+....................  
+.................... void CHECK_ADDRESS_DATA()                                                        //imprime los datos de direcciones y los separa en cada variable correspondiente 
+.................... { 
+....................    int8 checksum = 0; 
+....................    TAKE_ADDRESS_DATA_FROM_OF();                                                  //craga el array sec_add_bfr[] con address location info y lo imprime                                                   
+....................    for(int8 num = 37; num < 41; num++)                                           //check the data of last 4 byte 
+....................    { 
+....................       if(sec_add_bfr[num] == 0xff)                                               //if nothing, count checksum 
+....................       { 
+....................          checksum++; 
+....................       } 
+....................    } 
+....................     
+....................    if(checksum != 4)                                                             //if something stored (if last 4 byte were not 0xff) 
+....................    { 
+....................       for(num = 0; num < FLASH_ADD_SIZE; num++) 
+....................       { 
+....................          fprintf(PC,"%x",sec_add_bfr[num]);                                      //imprime el contenido de sec_add_bfr[] que contiene las direcciones 
+....................       } 
+....................       fprintf(PC,"\r\n"); 
+....................       MAKE_ADDRESS_DATA();                                                       //los separa en las variables correspondientes a cada direccion 
+....................    }else{                                                                        //if there is nothing, check from SCF 
+....................       output_low(PIN_C4); 
+....................       TAKE_ADDRESS_DATA_FROM_SCF(); 
+....................       output_high(PIN_C4); 
+....................       checksum = 0; 
+....................       for(num = 37; num < 41; num++)                                             //check the data of last 4 byte 
+....................       { 
+....................          if(sec_add_bfr[num] == 0xff)                                            //if nothing, count checksum 
+....................          { 
+....................             checksum++; 
+....................          } 
+....................       } 
+....................       if(checksum != 4) 
+....................       { 
+....................          for(num = 0; num < FLASH_ADD_SIZE; num++) 
+....................          { 
+....................             fprintf(PC,"%x",sec_add_bfr[num]); 
+....................          } 
+....................          fprintf(PC,"\r\n"); 
+....................          MAKE_ADDRESS_DATA(); 
+....................       }else{                                                                     //if there is nothing, check from SMF 
+....................          output_low(PIN_A5); 
+....................          TAKE_ADDRESS_DATA_FROM_SMF(); 
+....................          checksum = 0; 
+....................          for(num = 37; num < 41; num++)                                          //check the data of last 4 byte 
+....................          { 
+....................             if(sec_add_bfr[num] == 0xff)                                         //if nothing, count checksum 
+....................             { 
+....................                checksum++; 
+....................             } 
+....................          } 
+....................          if(checksum != 4) 
+....................          { 
+....................             for(num = 0; num < FLASH_ADD_SIZE; num++) 
+....................             { 
+....................                fprintf(PC,"%x",sec_add_bfr[num]); 
+....................             } 
+....................             fprintf(PC,"\r\n"); 
+....................             MAKE_ADDRESS_DATA(); 
+....................          } 
+....................       } 
+....................    }   
+....................    checksum = 0;   
+....................    return; 
+.................... } 
+....................  
+.................... ////////////////////////// 
+.................... //FAB_HK_ADDRESS        // 
+.................... //FAB_CW_ADDRESS        // 
+.................... //ADCS_SENSOR_ADDRESS   // 
+.................... //CAM_ADDRESS           // 
+.................... //DC_STATUS_ADDRESS     // 
+.................... ////////////////////////// 
+.................... void MEMORY_ERASE() 
+.................... { 
+....................    fprintf(PC,"FLASH MEMORY ERASE START\r\n"); 
+....................     
+....................    output_low(PIN_A5);                                                           //CAM_MUX MAINSIDE 
+....................    output_low(PIN_C4);                                                           //COM_MUX MAINSIDE 
+....................     
+....................    sector_erase_OF(0); 
+....................    sector_erase_SCF(0); 
+....................    sector_erase_SMF(0); 
+....................     
+....................    sector_erase_OF(FAB_CW_ADDRESS); 
+....................    sector_erase_SCF(FAB_CW_ADDRESS); 
+....................    sector_erase_SMF(FAB_CW_ADDRESS); 
+....................     
+....................     
+....................    for(int8 num = 0; num < 5; num++) 
+....................    { 
+....................       sector_erase_OF(FLAG_DATA_ADDRESS + SECT*num);                             //65536*num 
+....................       sector_erase_OF(CAM_ADDRESS + SECT*num);                                   //65536*num 
+....................       sector_erase_OF(FAB_HK_ADDRESS + SECT*num);                                //65536*num 
+....................       sector_erase_OF(ADCS_SENSOR_ADDRESS + SECT*num);                           //65536*num 
+....................       sector_erase_OF(DC_STATUS_ADDRESS + SECT*num);                             //65536*num 
+....................       sector_erase_OF(HIGH_SAMP_HK_ADDRESS + SECT*num);                          //65536*num 
+....................        
+....................       sector_erase_SCF(FLAG_DATA_ADDRESS + SECT*num);                            //65536*num 
+....................       sector_erase_SCF(CAM_ADDRESS + SECT*num);                                  //65536*num 
+....................       sector_erase_SCF(FAB_HK_ADDRESS + SECT*num);                               //65536*num 
+....................       sector_erase_SCF(ADCS_SENSOR_ADDRESS + SECT*num);                          //65536*num 
+....................       sector_erase_SCF(DC_STATUS_ADDRESS + SECT*num);                            //65536*num 
+....................       sector_erase_SCF(HIGH_SAMP_HK_ADDRESS + SECT*num);                         //65536*num 
+....................        
+....................       sector_erase_SMF(FLAG_DATA_ADDRESS + SECT*num);                            //65536*num 
+....................       sector_erase_SMF(CAM_ADDRESS + SECT*num);                                  //65536*num 
+....................       sector_erase_SMF(FAB_HK_ADDRESS + SECT*num);                               //65536*num 
+....................       sector_erase_SMF(ADCS_SENSOR_ADDRESS + SECT*num);                          //65536*num 
+....................       sector_erase_SMF(DC_STATUS_ADDRESS + SECT*num);                            //65536*num 
+....................       sector_erase_SMF(HIGH_SAMP_HK_ADDRESS + SECT*num);                         //65536*num 
+....................    } 
+....................    for(num = 5; num < 10; num++) 
+....................    { 
+....................       sector_erase_OF(CAM_ADDRESS + SECT*num);                                   //65536*num 
+....................       sector_erase_OF(FAB_HK_ADDRESS + SECT*num);                                //65536*num 
+....................       sector_erase_OF(HIGH_SAMP_HK_ADDRESS + SECT*num);                          //65536*num 
+....................        
+....................       sector_erase_SCF(CAM_ADDRESS + SECT*num);                                  //65536*num 
+....................       sector_erase_SCF(FAB_HK_ADDRESS + SECT*num);                               //65536*num 
+....................       sector_erase_SCF(HIGH_SAMP_HK_ADDRESS + SECT*num);                         //65536*num 
+....................        
+....................       sector_erase_SMF(CAM_ADDRESS + SECT*num);                                  //65536*num 
+....................       sector_erase_SMF(FAB_HK_ADDRESS + SECT*num);                               //65536*num 
+....................       sector_erase_SMF(HIGH_SAMP_HK_ADDRESS + SECT*num);                         //65536*num 
+....................    } 
+....................     
+....................    sector_erase_OF(0x06650000);                                                  //erase ADCS TLE address 
+....................    sector_erase_SCF(0x06650000); 
+....................    sector_erase_SMF(0x06650000); 
+....................     
+....................    output_high(PIN_C4);                                                          //COM_MUX COMSIDE 
+....................    delay_ms(10000); 
+....................    fprintf(PC,"FLASH MEMORY ERASE DONE\r\n"); 
+....................    for(int t=60; t>0; t--){ 
+....................    fprintf(PC,"Remaining time: %d  \r", t); 
+....................    delay_ms(1000); 
+....................    } 
+....................    //delay_ms(60000); 
+....................    return; 
+.................... } 
+.................... /* 
+.................... //@@@@@@@@@@@@@@@@@@MISSION LOOP@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@ 
+.................... void LOOP_FLAG_DATA_ADDRESS() 
+.................... { 
+....................     
+....................    if(FLAG_DATA_ADDRESS > FLAG_DATA_ADDRESS_END) 
+....................    { 
+....................    } 
+....................    return; 
+.................... } 
+....................  
+.................... void LOOP_RSV_DATA_ADDRESS() 
+.................... { 
+....................    if(RSV_DATA_ADDRESS > RSV_DATA_ADDRESS_END) 
+....................    { 
+....................        
+....................    } 
+....................    return; 
+.................... } 
+.................... */ 
+.................... void LOOP_SAT_LOG()                                                              //hace un loop en las posiciones de memoria para almacenar SAT_LOG 
+.................... { 
+....................    if(SAT_LOG >= SAT_LOG_END)                                                    //si la posicion de escritura de SAT_LOG alcanza a SAT_LOG_END 
+....................    { 
+....................       sector_erase_OF(SECT*7);                                                   //borra un sector de la MAIN flash, 65536*7 
+....................        
+....................       output_low(PIN_C4);                                                        //COM_MUX MAINSIDE 
+....................       sector_erase_SCF(SECT*7);                                                  //borra un sector de la COM flash,65536*7 
+....................       output_high(PIN_C4);                                                       //CAM_MUX MAINSIDE 
+....................        
+....................       output_low(PIN_A5);                                                        //CAM_MUX MAINSIDE 
+....................       sector_erase_SMF(SECT*7);                                                  //borra un sector de la MISSION flash,65536*7 
+....................       SAT_LOG = SECT*7;                                                          //Cambia la direccion de SAT_LOG y mantiene el primer sector,65536*7 
+....................       STORE_ADRESS_DATA_TO_FLASH();                                              //guarda los datos de direcciones, sera en un nuevo sector si se cumple el ciclo de R/W 
+....................    } 
+....................    //output_high(PIN_C4);//COM_MUX COMSIDE 
+....................    return; 
+.................... } 
+....................  
+.................... void LOOP_CAM_ADDRESS()                                                          //hace un loop en las posiciones de memoria para almacenar CAM data 
+.................... { 
+....................    if(CAM_ADDRESS >= CAM_ADDRESS_END)                                            //si la posicion de escritura de CAM alcanza a CAM_ADDRESS_END 
+....................    { 
+....................       sector_erase_OF(SECT*9);                                                   //borra 1 sector de la MAIN flash, 65536*9 
+....................        
+....................       output_low(PIN_C4);                                                        //COM_MUX MAINSIDE 
+....................       sector_erase_SCF(SECT*9);                                                  //borra 1 sector de la COM flash, 65536*9 
+....................       output_high(PIN_C4);                                                       //COM_MUX COMSIDE 
+....................        
+....................       output_low(PIN_A5);                                                        //CAM_MUX MAINSIDE 
+....................       sector_erase_SMF(SECT*9);                                                  //borra 1 sector de la MISSION flash, 65536*9 
+....................        
+....................       CAM_ADDRESS = SECT*9;                                                      //CAM address se ubica ahora en el comienzo del espacio designado a CAM 
+....................       STORE_ADRESS_DATA_TO_FLASH(); 
+....................    } 
+....................    return; 
+.................... } 
+....................  
+.................... void LOOP_FAB_HK_ADDRESS()                                                       //Rota las posiciones de guardado de los datos si llega al final del espacio asignado                                                        
+.................... { 
+....................    int32 checksum = FAB_HK_ADDRESS && 0x0000ffff; 
+....................    if(FAB_HK_ADDRESS >= FAB_HK_ADDRESS_END)                                       
+....................    { 
+....................       sector_erase_OF(SECT*98); 
+....................        
+....................       output_low(PIN_C4);                                                        //COM_MUX MAINSIDE 
+....................       sector_erase_SCF(SECT*98); 
+....................       output_high(PIN_C4);                                                       //COM_MUX COMSIDE 
+....................        
+....................       output_low(PIN_A5);                                                        //CAM_MUX MAINSIDE 
+....................       sector_erase_SMF(SECT*98); 
+....................        
+....................       FAB_HK_ADDRESS = 65536*8;                                                  //la nueva direccion vuelve a ser el comienzo del espacio asignado 
+....................       STORE_ADRESS_DATA_TO_FLASH();                                              //guarda los datos de direcciones y en un nuevo sector si se cumple el ciclo de R/W 
+....................    }else if(65536 - checksum < 119){                                             //if value will be close to the sector 
+....................       fprintf(PC,"erasing next sector\r\n"); 
+....................        
+....................       sector_erase_OF(FAB_HK_ADDRESS + SECT);                                    //erase next sector in advance 
+....................        
+....................       output_low(PIN_C4);                                                        //COM_MUX MAINSIDE 
+....................       sector_erase_SCF(FAB_HK_ADDRESS + SECT); 
+....................       output_high(PIN_C4);                                                       //COM_MUX COMSIDE 
+....................        
+....................       output_low(PIN_A5);                                                        //CAM_MUX MAINSIDE 
+....................       sector_erase_SMF(FAB_HK_ADDRESS + SECT); 
+....................    } 
+....................    return; 
+.................... } 
+....................  
+.................... void LOOP_FAB_CW_ADDRESS()                                                       //Rota las posiciones de guardado de los datos si llega al final del espacio asignado  
+.................... { 
+....................    int32 checksum = FAB_CW_ADDRESS && 0x0000ffff; 
+....................    if(FAB_CW_ADDRESS >= FAB_CW_ADDRESS_END) 
+....................    {   
+....................       sector_erase_OF(SECT*1098); 
+....................        
+....................       output_low(PIN_C4);                                                        //COM_MUX MAINSIDE 
+....................       sector_erase_SCF(SECT*1098); 
+....................       output_high(PIN_C4);                                                       //COM_MUX COMSIDE 
+....................        
+....................       output_low(PIN_A5);                                                        //CAM_MUX MAINSIDE 
+....................       sector_erase_SMF(SECT*1098); 
+....................        
+....................       FAB_CW_ADDRESS = SECT*1098; 
+....................       STORE_ADRESS_DATA_TO_FLASH(); 
+....................    }else if(SECT - checksum < 5){                                                //if value will be close to the sector 
+....................       fprintf(PC,"erasing next sector\r\n"); 
+....................        
+....................       sector_erase_OF(FAB_CW_ADDRESS + SECT);                                    //erase next sector in advance 
+....................        
+....................       output_low(PIN_C4);                                                        //COM_MUX MAINSIDE 
+....................       sector_erase_SCF(FAB_CW_ADDRESS + SECT);                                   //erase next sector in advance 
+....................       output_high(PIN_C4);                                                       //COM_MUX COMSIDE 
+....................        
+....................       output_low(PIN_A5);                                                        //CAM_MUX MAINSIDE 
+....................       sector_erase_SMF(FAB_CW_ADDRESS + SECT);                                   //erase next sector in advance 
+....................        
+....................    } 
+....................    return; 
+.................... } 
+....................  
+....................  
+.................... void LOOP_ADCS_SENSOR_ADDRESS() 
+.................... { 
+....................    if(ADCS_SENSOR_ADDRESS >= ADCS_SENSOR_ADDRESS_END)                            //for 15min operation, data size will be more than 1sector 
+....................    { 
+....................       sector_erase_OF(SECT*1140); 
+....................        
+....................       output_low(PIN_C4);                                                        //COM_MUX MAINSIDE 
+....................       sector_erase_SCF(SECT*1140); 
+....................       output_high(PIN_C4);                                                       //COM_MUX COMSIDE 
+....................        
+....................       output_low(PIN_A5);                                                        //CAM_MUX MAINSIDE 
+....................       sector_erase_SMF(SECT*1140); 
+....................        
+....................       ADCS_SENSOR_ADDRESS = SECT*1140;                                           //keep first 2 sector forever 
+....................       STORE_ADRESS_DATA_TO_FLASH(); 
+....................    }else{                                                                        //if value will be close to the sector 
+....................       fprintf(PC,"erasing next sector\r\n"); 
+....................        
+....................       int i; 
+....................       for(i = 1; i < 10; i++) 
+....................       { 
+....................          sector_erase_OF(ADCS_SENSOR_ADDRESS + SECT*i);                          //erase next sector in advance 
+....................       } 
+....................        
+....................       output_low(PIN_C4);                                                        //COM_MUX MAINSIDE 
+....................       for(i = 1; i < 10; i++) 
+....................       { 
+....................          sector_erase_SCF(ADCS_SENSOR_ADDRESS + SECT*i);                         //erase next sector in advance 
+....................       } 
+....................       output_high(PIN_C4);                                                       //COM_MUX COMSIDE 
+....................        
+....................       output_low(PIN_A5);                                                        //CAM_MUX MAINSIDE 
+....................       for(i = 1; i < 10; i++) 
+....................       { 
+....................          sector_erase_SMF(ADCS_SENSOR_ADDRESS + SECT*i);                         //erase next sector in advance 
+....................       } 
+....................    } 
+....................    return; 
+.................... } 
+....................  
+.................... void LOOP_DC_STATUS_ADDRESS() 
+.................... { 
+....................    int32 checksum = DC_STATUS_ADDRESS && 0x00000fff; 
+....................    if(DC_STATUS_ADDRESS >= DC_STATUS_ADDRESS_END) 
+....................    { 
+....................       SUBSECTOR_4KB_ERASE_OF(SECT*1639+4096); 
+....................        
+....................       output_low(PIN_C4);                                                        //COM_MUX MAINSIDE 
+....................       SUBSECTOR_4KB_ERASE_SCF(SECT*16394096); 
+....................       output_high(PIN_C4);                                                       //COM_MUX COMSIDE 
+....................        
+....................       output_low(PIN_A5);                                                        //CAM_MUX MAINSIDE 
+....................       SUBSECTOR_4KB_ERASE_SMF(SECT*1639+4096); 
+....................        
+....................       DC_STATUS_ADDRESS = SECT*1639+4096;                                        //keep first 1 SUBSECTOR forever 
+....................       STORE_ADRESS_DATA_TO_FLASH(); 
+....................    }else if(4096 - checksum < 800){                                              //if value will be close to the sector 
+....................       fprintf(PC,"erasing next sector\r\n"); 
+....................        
+....................       SUBSECTOR_4KB_ERASE_OF(DC_STATUS_ADDRESS + 4096);                          //erase next SUBSECTOR in advance 
+....................        
+....................       output_low(PIN_C4);                                                        //COM_MUX MAINSIDE 
+....................       SUBSECTOR_4KB_ERASE_SCF(DC_STATUS_ADDRESS + 4096);                         //erase next SUBSECTOR in advance 
+....................       output_high(PIN_C4);                                                       //COM_MUX COMSIDE 
+....................        
+....................       output_low(PIN_A5);                                                        //CAM_MUX MAINSIDE 
+....................       SUBSECTOR_4KB_ERASE_SMF(DC_STATUS_ADDRESS + 4096);                         //erase next SUBSECTOR in advance 
+....................    } 
+....................    return; 
+.................... } 
+....................  
+.................... void LOOP_HIGH_SAMP_HK_ADDRESS() 
+.................... { 
+....................    if(HIGH_SAMP_HK_ADDRESS >= HIGH_SAMP_HK_ADDRESS_END)                          //for 15min operation, data size will be more than 2sector 
+....................    { 
+....................       sector_erase_OF(SECT*1642);                                                //delet from 066A0000 (keep first 3 sectors) 
+....................        
+....................       output_low(PIN_C4);                                                        //COM_MUX MAINSIDE 
+....................       sector_erase_SCF(SECT*1642); 
+....................       output_high(PIN_C4);                                                       //COM_MUX COMSIDE 
+....................        
+....................       output_low(PIN_A5);                                                        //CAM_MUX MAINSIDE 
+....................       sector_erase_SMF(SECT*1642); 
+....................        
+....................       HIGH_SAMP_HK_ADDRESS = SECT*1642;                                          //keep first 3 sector forever 
+....................    }else{                                                                        //if value will be close to the sector 
+....................       fprintf(PC,"erasing next sector\r\n"); 
+....................        
+....................       sector_erase_OF(HIGH_SAMP_HK_ADDRESS + SECT);                              //erase next sector in advance 
+....................       sector_erase_OF(HIGH_SAMP_HK_ADDRESS + SECT*2);                            //erase next sector in advance 
+....................       sector_erase_OF(HIGH_SAMP_HK_ADDRESS + SECT*3);                            //erase next sector in advance 
+....................        
+....................       output_low(PIN_C4);                                                        //COM_MUX MAINSIDE 
+....................       sector_erase_SCF(HIGH_SAMP_HK_ADDRESS + SECT);                             //erase next sector in advance 
+....................       sector_erase_SCF(HIGH_SAMP_HK_ADDRESS + SECT*2);                           //erase next sector in advance 
+....................       sector_erase_SCF(HIGH_SAMP_HK_ADDRESS + SECT*3);                           //erase next sector in advance 
+....................       output_high(PIN_C4);                                                       //COM_MUX COMSIDE 
+....................        
+....................       output_low(PIN_A5);                                                        //CAM_MUX MAINSIDE 
+....................       sector_erase_SMF(HIGH_SAMP_HK_ADDRESS + SECT);                             //erase next sector in advance 
+....................       sector_erase_SMF(HIGH_SAMP_HK_ADDRESS + SECT*2);                           //erase next sector in advance 
+....................       sector_erase_SMF(HIGH_SAMP_HK_ADDRESS + SECT*3);                           //erase next sector in advance 
+....................    } 
+....................    return; 
+.................... } 
+....................  
+....................  
+....................  
+.................... #include<mainpic_function.c> 
+....................  
+.................... int8 MISSION_STATUS = 0;                                                         //MISSION STATUS FLAGS 
+.................... static int16 currenttime = 0; 
+.................... BYTE command[1]; 
+.................... int8 reset_time_data[11] = {}; 
+.................... BYTE PINO_DATA[17] = {0x00}; 
+.................... int8 test_data[11] = {0}; 
+....................  
+....................  
+.................... void Turn_On_CAM() 
+.................... { 
+....................    output_high(PIN_D7); 
+....................    return; 
+.................... } 
+....................  
+....................  
+.................... void Turn_Off_CAM() 
+.................... { 
+....................    output_low(PIN_D7); 
+....................    return; 
+.................... } 
+....................  
+.................... void Flash_Memory_Access() 
+.................... { 
+....................       sector_erase_OF(0x00000000); 
+....................       WRITE_DATA_BYTE_OF(0x00000000,0x01); 
+....................       TRANSFER_DATA_NBYTE_TOPC_OF(0x00000000,1); 
+....................       delay_ms(1000); 
+....................        
+....................       sector_erase_OF(0x00000000); 
+....................       WRITE_DATA_BYTE_OF(0x00000000,0x02); 
+....................       TRANSFER_DATA_NBYTE_TOPC_OF(0x00000000,1); 
+....................       delay_ms(1000); 
+....................        
+....................       sector_erase_OF(0x00000000); 
+....................       WRITE_DATA_BYTE_OF(0x00000000,0x03); 
+....................       TRANSFER_DATA_NBYTE_TOPC_OF(0x00000000,1); 
+....................       delay_ms(1000); 
+.................... } 
+....................  
+.................... void PINO_Test() 
+.................... { 
+....................    int32 num; 
+....................    while(TRUE) 
+....................    { 
+....................       command[0] = 0x00; 
+*
+0096E:  MOVLB  1
+00970:  CLRF   x38
+....................     
+....................       for(num = 0; num < 100; num++)                                                       
+00972:  CLRF   x6E
+00974:  CLRF   x6D
+00976:  CLRF   x6C
+00978:  CLRF   x6B
+0097A:  MOVF   x6E,F
+0097C:  BNZ   09AC
+0097E:  MOVF   x6D,F
+00980:  BNZ   09AC
+00982:  MOVF   x6C,F
+00984:  BNZ   09AC
+00986:  MOVF   x6B,W
+00988:  SUBLW  63
+0098A:  BNC   09AC
+....................          {                                                                        
+....................            if(kbhit(PC))                                                       //Devuelve verdadero si un caracter ha sido recibido 
+0098C:  BTFSS  F9E.5
+0098E:  BRA    099A
+....................            {                                                                     //y espera en el buffer para ser leido 
+....................                command[0] = fgetc(PC);                                           //Lee el caracter del buffer, UART receive from main pic 
+00990:  BTFSS  F9E.5
+00992:  BRA    0990
+00994:  MOVFF  FAE,138
+....................                break; 
+00998:  BRA    09AC
+....................            }                                                                                                                                          
+0099A:  MOVLW  01
+0099C:  ADDWF  x6B,F
+0099E:  BTFSC  FD8.0
+009A0:  INCF   x6C,F
+009A2:  BTFSC  FD8.2
+009A4:  INCF   x6D,F
+009A6:  BTFSC  FD8.2
+009A8:  INCF   x6E,F
+009AA:  BRA    097A
+....................          } 
+....................       switch(command[0]) 
+009AC:  MOVF   x38,W
+009AE:  XORLW  9F
+009B0:  MOVLB  0
+009B2:  BZ    09BA
+009B4:  XORLW  0E
+009B6:  BZ    09CC
+009B8:  BRA    09EE
+....................       { 
+....................          case 0x9F: 
+....................             fprintf(PC,"Command Recieved\r\n"); 
+009BA:  MOVLW  22
+009BC:  MOVWF  FF6
+009BE:  MOVLW  05
+009C0:  MOVWF  FF7
+009C2:  MOVLW  00
+009C4:  MOVWF  FF8
+009C6:  RCALL  0666
+....................             GET_RESET_DATA(); 
+009C8:  BRA    0800
+....................             break; 
+009CA:  BRA    09EE
+....................          case 0x91: 
+....................             reset_time_data[0] = 0x82; 
+009CC:  MOVLW  82
+009CE:  MOVLB  1
+009D0:  MOVWF  x39
+....................             fprintf(PC,"Command 2 Recieved\r\n"); 
+009D2:  MOVLW  36
+009D4:  MOVWF  FF6
+009D6:  MOVLW  05
+009D8:  MOVWF  FF7
+009DA:  MOVLW  00
+009DC:  MOVWF  FF8
+009DE:  MOVLB  0
+009E0:  RCALL  0666
+....................             fputc(reset_time_data[0],PC); 
+009E2:  MOVLB  1
+009E4:  MOVF   x39,W
+009E6:  MOVLB  0
+009E8:  BRA    0964
+....................             fputc(0x91, reset); 
+009EA:  MOVLW  91
+009EC:  RCALL  06DE
+....................             break; 
+....................       } 
+009EE:  BRA    096E
+....................    } 
+009F0:  GOTO   0C5E (RETURN)
+.................... } 
+....................  
+.................... void GET_RESET_DATA()                                                            //funcion que carga el array HKDATA con los datos del Reset PIC 
+.................... { 
+....................    RESET_DATA = 0; 
+*
+00800:  CLRF   xED
+....................    int8 dayh; 
+....................    int8 dayl; 
+....................    int8 hr; 
+....................    int8 min; 
+....................    int8 sec; 
+....................    int8 j; 
+....................    for(int i = 0; i < 6; i++) 
+00802:  MOVLB  1
+00804:  CLRF   x75
+00806:  MOVF   x75,W
+00808:  SUBLW  05
+0080A:  BNC   0822
+....................    { 
+....................       COLLECT_RESET_DATA(); 
+0080C:  MOVLB  0
+0080E:  BRA    072A
+....................       if(reset_bffr[0] == 0x8e) 
+00810:  MOVF   xEE,W
+00812:  SUBLW  8E
+00814:  BNZ   081C
+....................       { 
+....................          break; 
+00816:  MOVLB  1
+00818:  BRA    0822
+0081A:  MOVLB  0
+....................       } 
+0081C:  MOVLB  1
+0081E:  INCF   x75,F
+00820:  BRA    0806
+....................    }    
+....................    if(RESET_bffr[0] == 0x8e)                                                     //si el byte de cabecera es el correcto 
+00822:  MOVLB  0
+00824:  MOVF   xEE,W
+00826:  SUBLW  8E
+00828:  BTFSS  FD8.2
+0082A:  BRA    094E
+....................    { 
+....................       fprintf(PC,"\r\nRESET DATA OBTAINED\r\n"); 
+0082C:  MOVLW  4C
+0082E:  MOVWF  FF6
+00830:  MOVLW  05
+00832:  MOVWF  FF7
+00834:  MOVLW  00
+00836:  MOVWF  FF8
+00838:  RCALL  0666
+....................       for(int num = 0; num < 5; num++)                                           //carga el array HKDATA con timedata en las posiciones 2 al 6 
+0083A:  MOVLB  1
+0083C:  CLRF   x76
+0083E:  MOVF   x76,W
+00840:  SUBLW  04
+00842:  BNC   089E
+....................       { 
+....................          reset_time_data[num] = reset_bffr[num + 1]; 
+00844:  CLRF   03
+00846:  MOVF   x76,W
+00848:  ADDLW  39
+0084A:  MOVWF  01
+0084C:  MOVLW  01
+0084E:  ADDWFC 03,F
+00850:  MOVFF  03,178
+00854:  MOVLW  01
+00856:  ADDWF  x76,W
+00858:  CLRF   03
+0085A:  ADDLW  EE
+0085C:  MOVWF  FE9
+0085E:  MOVLW  00
+00860:  ADDWFC 03,W
+00862:  MOVWF  FEA
+00864:  MOVFF  FEF,179
+00868:  MOVFF  178,FEA
+0086C:  MOVFF  01,FE9
+00870:  MOVFF  179,FEF
+....................          //fputc(reset_bffr[num + 1], DC); 
+....................          fprintf(PC,"%x,",reset_bffr[num + 1]); 
+00874:  MOVLW  01
+00876:  ADDWF  x76,W
+00878:  CLRF   03
+0087A:  ADDLW  EE
+0087C:  MOVWF  FE9
+0087E:  MOVLW  00
+00880:  ADDWFC 03,W
+00882:  MOVWF  FEA
+00884:  MOVFF  FEF,178
+00888:  MOVLW  57
+0088A:  MOVWF  x79
+0088C:  MOVLB  0
+0088E:  RCALL  0772
+00890:  MOVLW  2C
+00892:  BTFSS  F9E.4
+00894:  BRA    0892
+00896:  MOVWF  FAD
+00898:  MOVLB  1
+0089A:  INCF   x76,F
+0089C:  BRA    083E
+....................       } 
+....................       sec = reset_time_data[0]; 
+0089E:  MOVFF  139,173
+....................       min = reset_time_data[1]; 
+008A2:  MOVFF  13A,172
+....................       hr = reset_time_data[2]; 
+008A6:  MOVFF  13B,171
+....................       dayl = reset_time_data[3]; 
+008AA:  MOVFF  13C,170
+....................       dayh = reset_time_data[4]; 
+008AE:  MOVFF  13D,16F
+....................       fprintf(PC,"\r\n"); 
+008B2:  MOVLW  0D
+008B4:  BTFSS  F9E.4
+008B6:  BRA    08B4
+008B8:  MOVWF  FAD
+008BA:  MOVLW  0A
+008BC:  BTFSS  F9E.4
+008BE:  BRA    08BC
+008C0:  MOVWF  FAD
+....................        
+....................       PINO_DATA[0] = 0x81; 
+008C2:  MOVLW  81
+008C4:  MOVWF  x44
+....................        
+....................       PINO_DATA[1] = reset_time_data[0]; 
+008C6:  MOVFF  139,145
+....................       PINO_DATA[2] = reset_time_data[1]; 
+008CA:  MOVFF  13A,146
+....................       PINO_DATA[3] = reset_time_data[2]; 
+008CE:  MOVFF  13B,147
+....................       PINO_DATA[4] = reset_time_data[3]; 
+008D2:  MOVFF  13C,148
+....................       PINO_DATA[5] = reset_time_data[4]; 
+008D6:  MOVFF  13D,149
+....................        
+....................       PINO_DATA[6] = 0x01; 
+008DA:  MOVLW  01
+008DC:  MOVWF  x4A
+....................       PINO_DATA[7] = 0x01; 
+008DE:  MOVWF  x4B
+....................       PINO_DATA[8] = 0x01; 
+008E0:  MOVWF  x4C
+....................       PINO_DATA[9] = 0x01; 
+008E2:  MOVWF  x4D
+....................       PINO_DATA[10] = 0x01; 
+008E4:  MOVWF  x4E
+....................       PINO_DATA[11] = 0x01; 
+008E6:  MOVWF  x4F
+....................       PINO_DATA[12] = 0x01; 
+008E8:  MOVWF  x50
+....................       PINO_DATA[13] = 0x01; 
+008EA:  MOVWF  x51
+....................       PINO_DATA[14] = 0x01; 
+008EC:  MOVWF  x52
+....................       PINO_DATA[15] = 0x01; 
+008EE:  MOVWF  x53
+....................       PINO_DATA[16] = 0x01; 
+008F0:  MOVWF  x54
+....................        
+.................... //!      for (num = 1; num < 6; num++) 
+.................... //!      { 
+.................... //!         PINO_DATA[num] = reset_time_data[num]; 
+.................... //!      } 
+.................... //!       
+.................... //!      for (j = 0x06; num < 0x17; num++) 
+.................... //!      { 
+.................... //!         PINO_DATA[j] = j; 
+.................... //!      } 
+.................... //!       
+....................       for (j = 0; j < 17; j++) 
+008F2:  CLRF   x74
+008F4:  MOVF   x74,W
+008F6:  SUBLW  10
+008F8:  BNC   093A
+....................       { 
+....................          fprintf(PC,"%x,",PINO_DATA[j]); 
+008FA:  CLRF   03
+008FC:  MOVF   x74,W
+008FE:  ADDLW  44
+00900:  MOVWF  FE9
+00902:  MOVLW  01
+00904:  ADDWFC 03,W
+00906:  MOVWF  FEA
+00908:  MOVFF  FEF,178
+0090C:  MOVLW  57
+0090E:  MOVWF  x79
+00910:  MOVLB  0
+00912:  RCALL  0772
+00914:  MOVLW  2C
+00916:  BTFSS  F9E.4
+00918:  BRA    0916
+0091A:  MOVWF  FAD
+....................          fputc(PINO_DATA[j], DC); 
+0091C:  CLRF   03
+0091E:  MOVLB  1
+00920:  MOVF   x74,W
+00922:  ADDLW  44
+00924:  MOVWF  FE9
+00926:  MOVLW  01
+00928:  ADDWFC 03,W
+0092A:  MOVWF  FEA
+0092C:  MOVFF  FEF,178
+00930:  MOVLB  0
+00932:  BRA    07B8
+00934:  MOVLB  1
+00936:  INCF   x74,F
+00938:  BRA    08F4
+....................       } 
+....................       fprintf(PC,"\r\n"); 
+0093A:  MOVLW  0D
+0093C:  BTFSS  F9E.4
+0093E:  BRA    093C
+00940:  MOVWF  FAD
+00942:  MOVLW  0A
+00944:  BTFSS  F9E.4
+00946:  BRA    0944
+00948:  MOVWF  FAD
+....................        
+....................  
+....................    }else{ 
+0094A:  BRA    095E
+0094C:  MOVLB  0
+....................       fprintf(PC,"\r\nRESET DATA NO OBTAINED\r\n"); 
+0094E:  MOVLW  64
+00950:  MOVWF  FF6
+00952:  MOVLW  05
+00954:  MOVWF  FF7
+00956:  MOVLW  00
+00958:  MOVWF  FF8
+0095A:  RCALL  0666
+0095C:  MOVLB  1
+....................    } 
+....................    return; 
+0095E:  MOVLB  0
+00960:  GOTO   09EE (RETURN)
+.................... } 
+....................  
+.................... #include<SATELLITE_LOG.c> 
+.................... void waiting(int32 counterval)                                                   //about 200000 : 1s 
+.................... { 
+....................    for(int32 num = 0; num < counterval; num++) 
+*
+006EA:  MOVLB  1
+006EC:  CLRF   x7F
+006EE:  CLRF   x7E
+006F0:  CLRF   x7D
+006F2:  CLRF   x7C
+006F4:  MOVF   x7F,W
+006F6:  SUBWF  x7B,W
+006F8:  BNC   0724
+006FA:  BNZ   0712
+006FC:  MOVF   x7E,W
+006FE:  SUBWF  x7A,W
+00700:  BNC   0724
+00702:  BNZ   0712
+00704:  MOVF   x7D,W
+00706:  SUBWF  x79,W
+00708:  BNC   0724
+0070A:  BNZ   0712
+0070C:  MOVF   x78,W
+0070E:  SUBWF  x7C,W
+00710:  BC    0724
+....................    {} 
+00712:  MOVLW  01
+00714:  ADDWF  x7C,F
+00716:  BTFSC  FD8.0
+00718:  INCF   x7D,F
+0071A:  BTFSC  FD8.2
+0071C:  INCF   x7E,F
+0071E:  BTFSC  FD8.2
+00720:  INCF   x7F,F
+00722:  BRA    06F4
+....................    return; 
+00724:  MOVLB  0
+00726:  GOTO   075A (RETURN)
+.................... } 
+....................  
+.................... //--------RESET Function--------------------------------------------- 
+....................  
+....................  
+.................... void DELETE_RESET()                                                              //funcion que pone a cero el vector reset_bffr[] 
+.................... { 
+....................    for(int8 num = 0; num < Reset_size; num++) 
+*
+006BA:  MOVLB  1
+006BC:  CLRF   x78
+006BE:  MOVF   x78,W
+006C0:  SUBLW  0A
+006C2:  BNC   06D8
+....................    { 
+....................       reset_bffr[num] = 0; 
+006C4:  CLRF   03
+006C6:  MOVF   x78,W
+006C8:  ADDLW  EE
+006CA:  MOVWF  FE9
+006CC:  MOVLW  00
+006CE:  ADDWFC 03,W
+006D0:  MOVWF  FEA
+006D2:  CLRF   FEF
+006D4:  INCF   x78,F
+006D6:  BRA    06BE
+....................    } 
+....................    return; 
+006D8:  MOVLB  0
+006DA:  GOTO   072C (RETURN)
+.................... } 
+....................  
+.................... void SEND_CMD_FOR_RESET_SATELLITE() 
+.................... {   
+....................    STORE_FLAG_INFO();                                                            //save flag data to flash memory 
+....................    //Save_RSV();                                                                   //save in flash memory reserve_table[] content 
+....................    STORE_ADRESS_DATA_TO_FLASH(); 
+.................... // while(true) 
+.................... // { 
+....................       //fputc(0x27,PC); 
+....................       fprintf(PC,"%x,",READ_DATA_BYTE_OF(FAB_HK_ADDRESS-122));                   //sec 
+....................       fprintf(PC,"%x,",READ_DATA_BYTE_OF(FAB_HK_ADDRESS-121));                   //min 
+....................       fprintf(PC,"%x,",READ_DATA_BYTE_OF(FAB_HK_ADDRESS-120));                   //hou 
+....................       fprintf(PC,"%x",READ_DATA_BYTE_OF(FAB_HK_ADDRESS-119));                    //day H 
+....................       fprintf(PC,"%x\r\n",READ_DATA_BYTE_OF(FAB_HK_ADDRESS-118));                //day L 
+....................         for(int i = 0; i<100; i++) 
+....................         { 
+....................          fputc(0x27,reset);                                                      //send command for satellite reset 
+....................          delay_ms(10); 
+....................         } 
+....................       //delay_ms(100);//if it is needed 
+.................... //!      fputc(READ_DATA_BYTE_OF(FAB_HK_ADDRESS-122),reset); 
+.................... //!      fputc(READ_DATA_BYTE_OF(FAB_HK_ADDRESS-121),reset); 
+.................... //!      fputc(READ_DATA_BYTE_OF(FAB_HK_ADDRESS-120),reset); 
+.................... //!      fputc(READ_DATA_BYTE_OF(FAB_HK_ADDRESS-119),reset); 
+.................... //!      fputc(READ_DATA_BYTE_OF(FAB_HK_ADDRESS-118),reset); 
+....................       RESET_DATA = 0; 
+....................       fprintf(PC,"Ready for reset"); 
+....................       delay_ms(1000); 
+.................... // } 
+....................    return; 
+.................... } 
+....................  
+.................... void RESET_SATELLITE()                                                           //if get reset command from reset, prepare for resetting 
+.................... { 
+....................    if(reset_flag == 1)                                                           //get ready for reset satellite 
+....................    { 
+....................       SEND_CMD_FOR_RESET_SATELLITE();                                            //store flag, save RSV, store Address, send command and wait for reset 
+....................    } 
+....................    DELETE_RESET();                                                               //load zero in reset_bffr[] 
+....................    RESET_DATA = 0; 
+....................    return; 
+.................... } 
+....................  
+.................... void COLLECT_RESET_DATA()                                                        //funcion que envia el comando 0x28 al reset PIC y carga reset_bffr[] 
+.................... { 
+....................    DELETE_RESET();                                                               //pone a cero todas las posiciones del vector 
+*
+0072A:  BRA    06BA
+....................    RESET_DATA = 0; 
+0072C:  CLRF   xED
+....................    for(int m=0; m<10; m++) 
+0072E:  MOVLB  1
+00730:  CLRF   x77
+00732:  MOVF   x77,W
+00734:  SUBLW  09
+00736:  BNC   076C
+....................    { 
+....................       fputc(0x28,reset);                                                            //Envia el comando 0x28 en el puerto del reset PIC 
+00738:  MOVLW  28
+0073A:  MOVLB  0
+0073C:  RCALL  06DE
+....................       delay_ms(10); 
+0073E:  MOVLW  0A
+00740:  MOVLB  1
+00742:  MOVWF  x78
+00744:  MOVLB  0
+00746:  RCALL  0690
+....................       waiting(10000);                                                               //wait aprox 0.5s para que el RESET PIC envie los datos por el UART (interrupcion) 
+00748:  MOVLB  1
+0074A:  CLRF   x7B
+0074C:  CLRF   x7A
+0074E:  MOVLW  27
+00750:  MOVWF  x79
+00752:  MOVLW  10
+00754:  MOVWF  x78
+00756:  MOVLB  0
+00758:  BRA    06EA
+....................          if(RESET_bffr[0] == 0x8e) 
+0075A:  MOVF   xEE,W
+0075C:  SUBLW  8E
+0075E:  BNZ   0766
+....................          { 
+....................          break; 
+00760:  MOVLB  1
+00762:  BRA    076C
+00764:  MOVLB  0
+....................          } 
+00766:  MOVLB  1
+00768:  INCF   x77,F
+0076A:  BRA    0732
+....................    } 
+....................    return; 
+0076C:  MOVLB  0
+0076E:  GOTO   0810 (RETURN)
+.................... } 
+....................  
+....................  
+.................... //@@@@@@@@@@@for satellite log@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@ 
+.................... #define logdata_size 11 
+.................... int8 satellitelog[logdata_size] = {}; 
+....................  
+.................... void SAVE_SAT_LOG(int8 data1, int8 data2, int8 data3) 
+.................... { 
+....................    LOOP_SAT_LOG();                                                               //hace un loop en las posiciones de memoria para almacenar SAT_LOG 
+....................    RESET_DATA = 0; 
+....................    COLLECT_RESET_DATA();                                                         //carga el RESET_bffr[] con los datos del reset PIC 
+....................    if(RESET_bffr[0] == 0x8e) 
+....................    { 
+....................       satellitelog[0] = 0xda;                                                    //header of the satellite log 
+....................       satellitelog[1] = 0xda;                                                    //header of the satellite log 
+....................     
+....................       satellitelog[2] = RESET_bffr[1]; 
+....................       satellitelog[3] = RESET_bffr[2]; 
+....................       satellitelog[4] = RESET_bffr[3]; 
+....................       satellitelog[5] = RESET_bffr[4]; 
+....................       satellitelog[6] = RESET_bffr[5]; 
+....................        
+....................       satellitelog[7] = data1; 
+....................       satellitelog[8] = data2; 
+....................       satellitelog[9] = data3; 
+....................       satellitelog[10] = 0xef;                                                   //footer, fin del array 
+....................        
+....................       output_low(PIN_A5);                                                        //CAM_MUX main side 
+....................       output_low(PIN_C4);                                                        //COM_MUX main side 
+....................       for(int i = 0; i < logdata_size; i++)                                      //guarda el dato en las tres Flash en la posicion de memoria indicada por SAT_LOG  
+....................       { 
+....................          WRITE_DATA_BYTE_OF(SAT_LOG + i,satellitelog[i]); 
+....................          WRITE_DATA_BYTE_SCF(SAT_LOG + i,satellitelog[i]); 
+....................          WRITE_DATA_BYTE_SMF(SAT_LOG + i,satellitelog[i]); 
+....................       } 
+....................       output_high(PIN_C4);                                                       //COM_MUX COM side 
+....................       SAT_LOG = SAT_LOG + logdata_size; 
+....................       fprintf(PC,"LOG saving done\r\n"); 
+....................    } 
+....................     
+....................    return; 
+.................... } 
+....................  
+....................  
+....................  
+....................  
+.................... //----------Flash_memory_MT25QL01GBBB_OF.c------------------------------------- 
+....................  
+.................... void WRITE_ENABLE_OF(); 
+.................... void WRITE_ENABLE_SCF(); 
+.................... void WRITE_ENABLE_SMF(); 
+....................  
+.................... void sector_erase_OF(unsigned int32 sector_address); 
+.................... void sector_erase_SCF(unsigned int32 sector_address); 
+.................... void sector_erase_SMF(unsigned int32 sector_address); 
+....................  
+.................... void SUBSECTOR_4KB_ERASE_OF(unsigned int32 sector_address); 
+.................... void SUBSECTOR_4KB_ERASE_SCF(unsigned int32 sector_address); 
+.................... void SUBSECTOR_4KB_ERASE_SMF(unsigned int32 sector_address); 
+....................  
+.................... void SUBSECTOR_32KB_ERASE_OF(unsigned int32 sector_address); 
+.................... void SUBSECTOR_32KB_ERASE_SCF(unsigned int32 sector_address); 
+.................... void SUBSECTOR_32KB_ERASE_SMF(unsigned int32 sector_address); 
+....................  
+.................... void WRITE_DATA_BYTE_OF(unsigned int32 page_address, int8 data); 
+.................... void WRITE_DATA_BYTE_SCF(unsigned int32 page_address, int8 data); 
+.................... void WRITE_DATA_BYTE_SMF(unsigned int32 page_address, int8 data); 
+....................  
+.................... int8 READ_CHIP_ID_OF(); 
+.................... int8 READ_CHIP_ID_SCF(); 
+.................... int8 READ_CHIP_ID_SMF(); 
+....................  
+.................... int8 READ_STATUS_REGISTER_OF(); 
+.................... int8 READ_STATUS_REGISTER_SCF(); 
+.................... int8 READ_STATUS_REGISTER_SMF(); 
+....................  
+.................... int8 READ_DATA_BYTE_OF(unsigned INT32 ADDRESS); 
+.................... int8 READ_DATA_BYTE_SCF(unsigned INT32 ADDRESS); 
+.................... int8 READ_DATA_BYTE_SMF(unsigned INT32 ADDRESS); 
+....................  
+.................... void TRANSFER_DATA_256byte_OF(unsigned INT32 ADRESS, int PORT_NUM); 
+.................... void TRANSFER_DATA_256byte_SCF(unsigned INT32 ADRESS, int PORT_NUM); 
+.................... void TRANSFER_DATA_256byte_SMF(unsigned INT32 ADRESS, int PORT_NUM); 
+....................  
+.................... void WRITE_DATA_NBYTE_OF(unsigned INT32 ADDRES,int32 data_byte); 
+.................... void WRITE_DATA_NBYTE_SCF(unsigned INT32 ADDRES,int32 data_byte); 
+.................... void WRITE_DATA_NBYTE_SMF(unsigned INT32 ADDRES,int32 data_byte); 
+....................  
+.................... void TRANSFER_DATA_NBYTE_TOPC_OF(unsigned INT32 ADRESS,int32 data_byte); //for testing 
+.................... void TRANSFER_DATA_NBYTE_TOPC_SCF(unsigned INT32 ADRESS,int32 data_byte); //for testing 
+.................... void TRANSFER_DATA_NBYTE_TOPC_SMF(unsigned INT32 ADRESS,int32 data_byte); //for testing 
+....................  
+.................... void TRANSFER_DATA_NBYTE_OFtoSCF(unsigned INT32 FROM_ADRESS,unsigned INT32 TO_ADRESS,int32 data_byte); //transfer data from MAIN FLASH to COM FLASH 
+.................... void TRANSFER_DATA_NBYTE_SCFtoOF(unsigned INT32 FROM_ADRESS,unsigned INT32 TO_ADRESS,int32 data_byte); //transfer data from COM FLASH to MAIN FLASH 
+.................... void TRANSFER_DATA_NBYTE_OFtoSMF(unsigned INT32 FROM_ADRESS,unsigned INT32 TO_ADRESS,int32 data_byte); //transfer data from MAIN FLASH to MISSION FLASH 
+.................... void TRANSFER_DATA_NBYTE_SMFtoOF(unsigned INT32 FROM_ADRESS,unsigned INT32 TO_ADRESS,int32 data_byte); //transfer data from MISSION FLASH to MAIN FLASH 
+.................... void TRANSFER_DATA_NBYTE_SMFtoSCF(unsigned INT32 FROM_ADRESS,unsigned INT32 TO_ADRESS,int32 data_byte); //transfer data from MISSION FLASH to COM FLASH 
+.................... void TRANSFER_DATA_NBYTE_SCFtoSMF(unsigned INT32 FROM_ADRESS,unsigned INT32 TO_ADRESS,int32 data_byte); //transfer data from COM FLASH to MISSION FLASH 
+....................  
+.................... void TRANSFER_DATA_NBYTE_OF(unsigned INT32 FROM_ADRESS,unsigned INT32 TO_ADRESS,int32 data_byte); //for testing 
+....................  
+.................... //void sector_erase(unsigned int32 sector_address);  //this is for sector erase 
+....................  
+....................  
+.................... //----------------------------------------------------------------------------- 
+....................  
+....................  
+....................  
+....................  
+.................... #INT_rda4                                                                        //Reset PIC Interrupt, RS232 receive data available in buffer 4 
+.................... void UART4_RXD(void) 
+.................... { 
+....................    reset_bffr[RESET_DATA] = fgetc(reset);                                        //loads the reset_bffr array with the data sent by the Reset PIC (carga el array reset_bffr con los datos enviados por el Reset PIC) 
+*
+005EC:  CLRF   03
+005EE:  MOVF   xED,W
+005F0:  ADDLW  EE
+005F2:  MOVWF  FE9
+005F4:  MOVLW  00
+005F6:  ADDWFC 03,W
+005F8:  MOVWF  FEA
+005FA:  MOVFF  FEA,183
+005FE:  MOVFF  FE9,182
+00602:  BRA    05A2
+00604:  MOVFF  183,FEA
+00608:  MOVFF  182,FE9
+0060C:  MOVFF  01,FEF
+....................    RESET_DATA = ((RESET_DATA + 1) % RESET_size);                                 //when the data is obtained in position 11 RESET_DATA = 0 (cuando se obtenga el dato en la posicion 11 RESET_DATA=0) 
+00610:  MOVLW  01
+00612:  ADDWF  xED,W
+00614:  MOVLB  1
+00616:  MOVWF  x81
+00618:  MOVWF  x82
+0061A:  MOVLW  0B
+0061C:  MOVWF  x83
+0061E:  MOVLB  0
+00620:  BRA    05BE
+00622:  MOVFF  00,ED
+....................    if(reset_bffr[0] == 0xaa)                                                     //get ready for reset satellite 
+00626:  MOVF   xEE,W
+00628:  SUBLW  AA
+0062A:  BNZ   0632
+....................    { 
+....................       reset_flag = 1;                                                            //raise flag to reset (pone a alto bandera para reseteo) 
+0062C:  MOVLW  01
+0062E:  MOVWF  xF9
+....................       RESET_DATA = 0;                                                            //position indicator within reset_data vector (indicador de posicion dentro del vector reset_data) 
+00630:  CLRF   xED
+....................    } 
+....................     
+00632:  BCF    FA6.7
+00634:  GOTO   0078
+.................... }  
+....................  
+.................... void main() 
+*
+009F4:  CLRF   FF8
+009F6:  BCF    FA9.7
+009F8:  BSF    FD0.7
+009FA:  BSF    07.7
+009FC:  MOVLB  E
+009FE:  MOVLW  55
+00A00:  MOVWF  F7E
+00A02:  MOVLW  AA
+00A04:  MOVWF  F7E
+00A06:  BCF    F66.6
+00A08:  MOVLW  F4
+00A0A:  MOVWF  x2A
+00A0C:  MOVLW  F5
+00A0E:  MOVWF  x2B
+00A10:  MOVLW  F8
+00A12:  MOVWF  x2C
+00A14:  MOVLW  F9
+00A16:  MOVWF  x2D
+00A18:  MOVLW  01
+00A1A:  MOVWF  x1B
+00A1C:  MOVLW  20
+00A1E:  MOVWF  x1D
+00A20:  MOVLW  30
+00A22:  MOVWF  x22
+00A24:  MOVLW  20
+00A26:  MOVWF  x24
+00A28:  MOVLW  55
+00A2A:  MOVWF  F7E
+00A2C:  MOVLW  AA
+00A2E:  MOVWF  F7E
+00A30:  BSF    F66.6
+00A32:  CLRF   F9B
+00A34:  CLRF   F64
+00A36:  CLRF   F65
+00A38:  CLRF   F66
+00A3A:  MOVLW  02
+00A3C:  MOVWF  FD3
+00A3E:  BSF    F67.3
+00A40:  MOVLW  22
+00A42:  MOVWF  FAF
+00A44:  MOVLW  00
+00A46:  MOVLB  F
+00A48:  MOVWF  x30
+00A4A:  MOVLW  A6
+00A4C:  MOVWF  FAC
+00A4E:  MOVLW  90
+00A50:  MOVWF  FAB
+00A52:  CLRF   1B
+00A54:  BSF    x31.3
+00A56:  MOVLW  A0
+00A58:  MOVWF  x1F
+00A5A:  MOVLW  01
+00A5C:  MOVWF  x20
+00A5E:  MOVLW  A6
+00A60:  MOVWF  x32
+00A62:  MOVLW  90
+00A64:  MOVWF  x33
+00A66:  MOVLB  E
+00A68:  BSF    xFD.3
+00A6A:  MOVLW  A0
+00A6C:  MOVWF  xFB
+00A6E:  MOVLW  01
+00A70:  MOVWF  xFC
+00A72:  MOVLW  A6
+00A74:  MOVWF  xFE
+00A76:  MOVLW  90
+00A78:  MOVWF  xFF
+00A7A:  MOVLB  F
+00A7C:  BSF    x2D.3
+00A7E:  MOVLW  A0
+00A80:  MOVWF  x2B
+00A82:  MOVLW  01
+00A84:  MOVWF  x2C
+00A86:  MOVLW  A6
+00A88:  MOVWF  x2E
+00A8A:  MOVLW  90
+00A8C:  MOVWF  x2F
+00A8E:  BCF    F98.2
+00A90:  BSF    F8F.2
+00A92:  BCF    F98.0
+00A94:  BSF    F8F.0
+00A96:  BSF    F96.0
+00A98:  BCF    F96.6
+00A9A:  BCF    F96.1
+00A9C:  BCF    F8D.1
+00A9E:  BSF    F93.5
+00AA0:  BCF    F93.4
+00AA2:  BCF    F93.2
+00AA4:  BCF    F8A.2
+00AA6:  BSF    F92.0
+00AA8:  BCF    F92.1
+00AAA:  BCF    F92.3
+00AAC:  BCF    F89.3
+00AAE:  CLRF   1F
+00AB0:  CLRF   1E
+00AB2:  MOVLW  10
+00AB4:  MOVWF  1D
+00AB6:  CLRF   1C
+00AB8:  CLRF   23
+00ABA:  CLRF   22
+00ABC:  CLRF   21
+00ABE:  CLRF   20
+00AC0:  CLRF   27
+00AC2:  MOVLW  04
+00AC4:  MOVWF  26
+00AC6:  CLRF   25
+00AC8:  CLRF   24
+00ACA:  CLRF   2B
+00ACC:  MOVLW  05
+00ACE:  MOVWF  2A
+00AD0:  CLRF   29
+00AD2:  CLRF   28
+00AD4:  CLRF   2F
+00AD6:  MOVLW  06
+00AD8:  MOVWF  2E
+00ADA:  CLRF   2D
+00ADC:  CLRF   2C
+00ADE:  CLRF   33
+00AE0:  MOVLW  08
+00AE2:  MOVWF  32
+00AE4:  CLRF   31
+00AE6:  CLRF   30
+00AE8:  CLRF   37
+00AEA:  MOVLW  62
+00AEC:  MOVWF  36
+00AEE:  CLRF   35
+00AF0:  CLRF   34
+00AF2:  MOVLW  04
+00AF4:  MOVWF  3B
+00AF6:  MOVLW  4A
+00AF8:  MOVWF  3A
+00AFA:  CLRF   39
+00AFC:  CLRF   38
+00AFE:  MOVLW  04
+00B00:  MOVWF  3F
+00B02:  MOVLW  72
+00B04:  MOVWF  3E
+00B06:  CLRF   3D
+00B08:  CLRF   3C
+00B0A:  MOVLW  06
+00B0C:  MOVWF  43
+00B0E:  MOVLW  65
+00B10:  MOVWF  42
+00B12:  CLRF   41
+00B14:  CLRF   40
+00B16:  MOVLW  06
+00B18:  MOVWF  47
+00B1A:  MOVLW  66
+00B1C:  MOVWF  46
+00B1E:  CLRF   45
+00B20:  CLRF   44
+00B22:  MOVLW  06
+00B24:  MOVWF  4B
+00B26:  MOVLW  67
+00B28:  MOVWF  4A
+00B2A:  CLRF   49
+00B2C:  CLRF   48
+00B2E:  CLRF   4F
+00B30:  MOVLW  01
+00B32:  MOVWF  4E
+00B34:  MOVLW  80
+00B36:  MOVWF  4D
+00B38:  CLRF   4C
+00B3A:  CLRF   53
+00B3C:  MOVLW  01
+00B3E:  MOVWF  52
+00B40:  MOVLW  80
+00B42:  MOVWF  51
+00B44:  MOVLW  1C
+00B46:  MOVWF  50
+00B48:  CLRF   54
+00B4A:  CLRF   56
+00B4C:  CLRF   55
+00B4E:  CLRF   57
+00B50:  CLRF   58
+00B52:  CLRF   59
+00B54:  CLRF   5A
+00B56:  CLRF   5B
+00B58:  CLRF   5C
+00B5A:  CLRF   5D
+00B5C:  CLRF   5E
+00B5E:  CLRF   5F
+00B60:  MOVLB  0
+00B62:  CLRF   x60
+00B64:  CLRF   x61
+00B66:  CLRF   x62
+00B68:  CLRF   x63
+00B6A:  CLRF   x64
+00B6C:  CLRF   x65
+00B6E:  CLRF   x66
+00B70:  CLRF   x67
+00B72:  CLRF   x68
+00B74:  CLRF   x69
+00B76:  CLRF   x82
+00B78:  CLRF   x83
+00B7A:  CLRF   x84
+00B7C:  CLRF   x85
+00B7E:  CLRF   x86
+00B80:  CLRF   xEB
+00B82:  CLRF   xEC
+00B84:  CLRF   xED
+00B86:  CLRF   xF9
+00B88:  MOVLB  1
+00B8A:  CLRF   x34
+00B8C:  CLRF   x33
+00B8E:  CLRF   x35
+00B90:  CLRF   x37
+00B92:  CLRF   x36
+00B94:  MOVLB  E
+00B96:  CLRF   xD9
+00B98:  CLRF   xDA
+00B9A:  CLRF   x45
+00B9C:  CLRF   x46
+00B9E:  CLRF   x47
+00BA0:  BCF    x8D.7
+00BA2:  BCF    x8D.6
+00BA4:  BCF    x8D.5
+00BA6:  MOVLB  1
+00BA8:  CLRF   x88
+00BAA:  MOVLB  F
+00BAC:  CLRF   x53
+00BAE:  CLRF   x38
+00BB0:  CLRF   x37
+00BB2:  BRA    0BCA
+00BB4:  DATA 18,40
+00BB6:  DATA 6A,00
+00BB8:  DATA 64,40
+00BBA:  DATA 87,00
+00BBC:  DATA 0B,40
+00BBE:  DATA EE,00
+00BC0:  DATA 39,40
+00BC2:  DATA FA,00
+00BC4:  DATA 32,41
+00BC6:  DATA 39,00
+00BC8:  DATA 00,00
+00BCA:  MOVLW  00
+00BCC:  MOVWF  FF8
+00BCE:  MOVLW  0B
+00BD0:  MOVWF  FF7
+00BD2:  MOVLW  B4
+00BD4:  MOVWF  FF6
+00BD6:  TBLRD*+
+00BD8:  MOVF   FF5,W
+00BDA:  MOVWF  00
+00BDC:  XORLW  00
+00BDE:  BZ    0C06
+00BE0:  TBLRD*+
+00BE2:  MOVF   FF5,W
+00BE4:  MOVWF  01
+00BE6:  BTFSC  FE8.7
+00BE8:  BRA    0BF4
+00BEA:  ANDLW  0F
+00BEC:  MOVWF  FEA
+00BEE:  TBLRD*+
+00BF0:  MOVFF  FF5,FE9
+00BF4:  BTFSC  01.6
+00BF6:  TBLRD*+
+00BF8:  BTFSS  01.6
+00BFA:  TBLRD*+
+00BFC:  MOVFF  FF5,FEE
+00C00:  DCFSNZ 00,F
+00C02:  BRA    0BD6
+00C04:  BRA    0BF8
+00C06:  CLRF   FF8
+.................... { 
+....................    //settings(); 
+....................    set_tris_b(0b11010000); 
+00C08:  MOVLW  D0
+00C0A:  MOVWF  F93
+....................    enable_interrupts(global); 
+00C0C:  MOVLW  C0
+00C0E:  IORWF  FF2,F
+....................    enable_interrupts(INT_rda4); 
+00C10:  BSF    F61.7
+....................    fprintf(PC,"Start Operating\r\n"); 
+00C12:  MOVLW  38
+00C14:  MOVWF  FF6
+00C16:  MOVLW  06
+00C18:  MOVWF  FF7
+00C1A:  MOVLW  00
+00C1C:  MOVWF  FF8
+00C1E:  MOVLB  0
+00C20:  RCALL  0666
+....................    output_high(PIN_A5);  //MUX MISSION SIDE 
+00C22:  BCF    F92.5
+00C24:  BSF    F89.5
+....................    output_low(PIN_A5); //MUX MAIN SIDE 
+00C26:  BCF    F92.5
+00C28:  BCF    F89.5
+....................     
+....................    while(TRUE) 
+....................    { 
+....................       fprintf(PC,"\r\nHello World\r\n"); 
+00C2A:  MOVLW  4A
+00C2C:  MOVWF  FF6
+00C2E:  MOVLW  06
+00C30:  MOVWF  FF7
+00C32:  MOVLW  00
+00C34:  MOVWF  FF8
+00C36:  RCALL  0666
+....................       fprintf(PC,"Operating\r\n"); 
+00C38:  MOVLW  5A
+00C3A:  MOVWF  FF6
+00C3C:  MOVLW  06
+00C3E:  MOVWF  FF7
+00C40:  MOVLW  00
+00C42:  MOVWF  FF8
+00C44:  RCALL  0666
+....................       delay_ms(2500); 
+00C46:  MOVLW  0A
+00C48:  MOVLB  1
+00C4A:  MOVWF  x6B
+00C4C:  MOVLW  FA
+00C4E:  MOVWF  x78
+00C50:  MOVLB  0
+00C52:  RCALL  0690
+00C54:  MOVLB  1
+00C56:  DECFSZ x6B,F
+00C58:  BRA    0C4C
+....................       PINO_Test(); 
+00C5A:  MOVLB  0
+00C5C:  BRA    096E
+00C5E:  BRA    0C2A
+....................    } 
+....................  
+.................... } 
+00C60:  SLEEP 
+
+Configuration Fuses:
+   Word  1: F6A0   STVREN NOXINST NODEBUG NOBROWNOUT BORV18 NOPROTECT
+   Word  2: FFA2   PR SOSC_DIG CLOCKOUT IESO NOPLL
+   Word  3: F032   HS
+   Word  4: F7FF   WPFP WPDIS WPEND NOWPCFG
+   Word  5: FF03   T5G_IS_T5G CINA_DEFAULT IOL1WAY LS48MHZ MSSP2MSK7 MSSPMSK7
+   Word  6: FCFF   WDTWIN_25% WDTCLK_FRC WDT32768 NOWDT WINDIS WPRES128
+   Word  7: F01D   NOVREGSLEEP VBATBOR DSBOR DS_SW
+   Word  8: F3F8   DSWDT_25DAYS DSWDT DSWDTOSC_INT

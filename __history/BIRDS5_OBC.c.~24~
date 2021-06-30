@@ -1,0 +1,19 @@
+#include <BIRDS5_OBC.h>
+
+
+void main()
+{
+
+   while(TRUE)
+   {
+      //fprintf(PC,"\r\nHello World\r\n");
+      output_high(PIN_G2);
+      //Turn_On_CAM();
+      delay_ms(10000);
+      output_high(PIN_G3);
+      output_low(PIN_G2);
+      
+      delay_ms(10000);
+   }
+
+}

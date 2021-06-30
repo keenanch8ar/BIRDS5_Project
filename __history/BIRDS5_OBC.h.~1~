@@ -1,0 +1,4 @@
+#include <18F67J94.h>
+#device ADC=16
+#use delay(crystal=20000000)
+

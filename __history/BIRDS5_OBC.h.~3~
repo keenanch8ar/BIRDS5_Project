@@ -1,0 +1,6 @@
+#include <18F67J94.h>
+#device ADC=16
+#use delay(crystal=20000000)
+#pin_select TX1=PIN_C6                                                           //TX PIN EXT +/- 6v
+#pin_select RX1=PIN_C7                                                           //RX PIN EXT +/- 6V
+#use rs232(baud=115200,parity=N,UART1,bits=8,stream=pc)  

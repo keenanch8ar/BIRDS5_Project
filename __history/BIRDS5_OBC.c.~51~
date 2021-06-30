@@ -1,0 +1,22 @@
+#include <BIRDS5_OBC.h>
+
+void main()
+{
+   //settings();
+   fprintf(PC,"Start Operating\r\n");
+   output_high(PIN_A5);  //MUX MISSION SIDE
+   
+   while(TRUE)
+   {
+      fprintf(PC,"\r\nHello World\r\n");
+      //output_high(PIN_G2);
+      //delay_ms(10000);
+      //Turn_On_CAM();
+      fprintf(PC,"Operating\r\n");
+      delay_ms(2500);
+      //Turn_Off_CAM();
+      //output_low(PIN_G2);
+      //delay_ms(10000);
+   }
+
+}

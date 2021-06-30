@@ -1,0 +1,49 @@
+#include <BIRDS5_OBC.h>
+
+#int_timer0                                                                      // TMR0 Interrupt
+void intval()
+{   
+   static int32 counter = 0; // the variable is activated as global, it maintains its value when entering and exiting the function
+   statis int32 nowtime = 0;
+   counter++;                                                                    // increases every 16.384ms (se incrementa cada 16.384ms)
+   if (counter > 60)                                                             // the counters within the if are incremented approx every 1s (los contadores dentro del if se incrementan aprox cada 1s)
+   {
+      counter = 0;
+      nowtime++;
+
+      if(nowtime > 0)
+      {
+         fprintf(PC,"%ld",nowtime);
+         FAB_FLAG++;                                                             // time counter in seconds, at 90 seconds it requests data from the FAB (contador de tiempo en segundos, a los 90 segundos pide datos al FAB)
+         RESERVE_SEC_FLAG++;                                                     // timer in seconds (used in Table)
+         currenttime++;                                                          // timer in seconds (Reset Function)
+         fprintf(PC,"currenttime:%ld \r\n", currenttime);                      // Check TMR0 operation
+         fprintf(PC,"Done\r\n");
+      }
+      if(RESERVE_SEC_FLAG > 59)                                                  // the counters inside the if are incremented every 60s (los contadores dentro del if se incrementan cada 60s)
+      {
+         RESERVE_SEC_FLAG = 0;
+         RESERVE_MIN_FLAG++;                                                     //time counter in minutes (used in Table) (contador de tiempo en minutos (used in Table))
+      }
+   }
+}
+
+void main()
+{
+   //settings();
+   fprintf(PC,"Start Operating\r\n");
+   output_high(PIN_A5);  //MUX MISSION SIDE
+   
+   while(TRUE)
+   {
+      fprintf(PC,"\r\nHello World\r\n");
+      //output_high(PIN_G2);
+      //Turn_On_CAM();
+      //delay_ms(10000);
+      fprintf(PC,"Operating\r\n");
+      delay_ms(2500);
+      //output_low(PIN_G2);
+      //delay_ms(10000);
+   }
+
+}
