@@ -103,19 +103,9 @@ void PINO_Test()
             switch(command[5]){
                case 0x04:
                   SUBSECTOR_4KB_ERASE_SMF(address);
-                  fprintf(fab, "Erased 4kb\r\n");
-                  break;
                case 0x32:
                   SUBSECTOR_32KB_ERASE_SMF(address);
-                  fprintf(fab, "Erased 32kb\r\n");
-                  break;
-               case 0x64:
-                  sector_erase_SMF(address);
-                  fprintf(fab, "Erased 64kb\r\n");
-                  break;
             }
-         fprintf(fab, "Finish 0x16\r\n");
-         break;
          
          /* case 0x91:
          reset_time_data[0] = 0x82;
@@ -173,15 +163,6 @@ void PINO_Test()
          output_high (sel);
          fprintf(fab, "Finish 0x93\r\n");
          
-         case 0x94:
-         fprintf (fab, "Start 0x94\r\n") ;
-         for (i = 0; i < 5; i++)
-         {
-            GET_RESET_DATA ();
-            delay_ms(5000);
-         }
-         fprintf (fab, "Finish 0x94\r\n") ;
-         break;
          
          case 0x9B:
          fprintf (fab, "Start 0x9B\r\n") ;
@@ -196,8 +177,6 @@ void PINO_Test()
          GET_RESET_DATA ();
          fprintf (fab, "Finish 0x9F\r\n") ;
          break;
-         
-
       }
    }
 }
@@ -263,7 +242,7 @@ void GET_RESET_DATA()                                                           
       //fprintf (fab, "\r\n") ;
       
       }else{
-      fprintf (fab, "\r\nRESET DATA NOT OBTAINED\r\n") ;
+      fprintf (fab, "\r\nRESET DATA NO OBTAINED\r\n") ;
    }
    return;
 }
