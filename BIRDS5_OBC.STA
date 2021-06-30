@@ -1,9 +1,9 @@
 
-ROM used:   5650/131056 (4%)
-            5650/131056 (4%) including unused fragments
+ROM used:   5908/131056 (5%)
+            5908/131056 (5%) including unused fragments
 
             1.4 Average locations per line
-            5.0 Average locations per statement
+            5.2 Average locations per statement
 
 RAM used:   515/3578 (14%) at main() level
             551/3578 (15%) worst case
@@ -20,10 +20,10 @@ Lines Stmts  %   Files
    65     0   0  mainpic_function.h
   890   320  28  flash_ memory_ MT25QL01GBBB_OF.c
   982   580  51  MEMORY_OPERATION.c
-  250   144  13  mainpic_function.c
+  271   160  14  mainpic_function.c
   123    66   6  SATELLITE_LOG.c
 ----- -----
- 4150  1128 Total
+ 4171  1144 Total
 
 Page ROM  %  RAM    Vol Diff  Functions:
 ---- --- --- ---    --- ----  ----------
@@ -36,7 +36,7 @@ Page ROM  %  RAM    Vol Diff  Functions:
 0     76   1    1             @GETCH_6_
 0     60   1    5             @SPI_XFER_3
 0     24   0    0     69  1.9  WRITE_ENABLE_SMF
-0    146   1   13    798  5.1  sector_erase_SMF
+0    144   1   13    798  5.1  sector_erase_SMF
 0    146   1   13    798  5.1  SUBSECTOR_4KB_ERASE_SMF
 0    146   1   13    798  5.1  SUBSECTOR_32KB_ERASE_SMF
 0    116   1   14    774  5.2  WRITE_DATA_BYTE_SMF
@@ -91,7 +91,7 @@ Page ROM  %  RAM    Vol Diff  Functions:
 0     22   0    0    676  6.6  @const1451
 0     22   0    0    857  5.7  @const1455
 0     22   0    0     24  1.0  @const1457
-0   1564  14    9   5052  8.4  PINO_test
+0   1742  15    9   5772  8.4  PINO_test
 0     14   0    0             @const1474
 0     46   0    3             @PSTRINGC_9600_31781_31780
 0     14   0    0             @const1476
@@ -109,38 +109,44 @@ Page ROM  %  RAM    Vol Diff  Functions:
 0     14   0    0             @const1488
 0     14   0    0             @const1489
 0     14   0    0   1623  7.8  @const1490
-0    276   2   11   1623  7.8  GET_RESET_DATA
-0     28   0    0     82  3.6  @const1500
+0     14   0    0   1623  7.8  @const1491
+0     14   0    0             @const1492
+0     14   0    0     82  3.6  @const1493
+0     14   0    0     82  3.6  @const1494
+0     14   0    0   1623  7.8  @const1495
+0     14   0    0    646  4.7  @const1496
+0    274   2   11   1623  7.8  GET_RESET_DATA
+0     28   0    0    104  3.7  @const1506
 0     64   1    8     82  3.6  waiting
 0     36   0    3    104  3.7  DELETE_RESET
-0     16   0    0     78  2.6  @const1511
+0     16   0    0    251  5.6  @const1517
 0     72   1    1    251  5.6  COLLECT_RESET_DATA
-0     18   0    0    176  4.0  @const1520
+0     18   0    0    253  2.2  @const1526
 0     76   1    4    176  4.0  UART4_RXD
-0    636   6    1    253  2.2  MAIN
-0     18   0    0             @const1563
-0     16   0    0             @const1564
-0     12   0    0             @const1565
+0    636   5    1    253  2.2  MAIN
+0     18   0    0             @const1569
+0     16   0    0             @const1570
+0     12   0    0    253  2.2  @const1571
  Inline         0             @cinit1
 
 Program metrics:
-    Functions               29
-    Statements              1128
-    Comments                1043
-    Volume (V)              33651
-    Difficulty (D)          135.8
-    Effort to implement (E) 4571040
-    Time to implement (T)   70 hours, 32 minutes
-    Est Delivered Bugs (B)  9
-    Cyclomatic Complexity   55
-    Maintainability (MI)    81
+    Functions               35
+    Statements              1144
+    Comments                1035
+    Volume (V)              43410
+    Difficulty (D)          167.6
+    Effort to implement (E) 7276974
+    Time to implement (T)   112 hours, 18 minutes
+    Est Delivered Bugs (B)  13
+    Cyclomatic Complexity   73
+    Maintainability (MI)    119
 
  Segment     Used  Free
 -----------  ----  ----
 00000-00004     6  0  
 00006-00006     0  2  
 00008-000CC   198  0  
-000CE-0FFFE  5446  59884  
+000CE-0FFFE  5704  59626  
 10000-1FFEE     0  65520  
 
 

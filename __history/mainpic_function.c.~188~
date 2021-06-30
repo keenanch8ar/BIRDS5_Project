@@ -263,7 +263,7 @@ void GET_RESET_DATA()                                                           
       //fprintf (fab, "\r\n") ;
       
       }else{
-      fprintf (fab, "\r\nRESET DATA NOT OBTAINED\r\n") ;
+      fprintf (fab, "\r\nRESET DATA NO OBTAINED\r\n") ;
    }
    return;
 }

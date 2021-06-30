@@ -50,14 +50,14 @@ void PINO_Test()
       
       for (num = 0; num < 100; num++)
       {
-         if (kbhit (fab))
+         if (kbhit (fab))   //Devuelve verdadero si un caracter ha sido recibido
          {
-
+            //y espera en el buffer para ser leido
             for (int i = 0; i < 9; i++)
             {
                fprintf (fab, "Get command\r\n") ;
                command[i] = fgetc (fab);
-            }
+            }//Lee el caracter del buffer, UART receive from main pic
             break;
          }
       }
@@ -65,7 +65,7 @@ void PINO_Test()
       {
          case 0x13:
          fprintf (fab, "Start 0x13\r\n") ;
-         output_low (PIN_A5);
+         output_low (PIN_A5); //Main side
          address_data[0] = command[1]<<24;
          address_data[1] = command[2]<<16;
          address_data[2] = command[3]<<8;
@@ -76,7 +76,7 @@ void PINO_Test()
          
          break;
          
-         case 0x14:
+         case 0x14://Main side
          output_low (PIN_A5) ;
          fprintf (fab, "Start 0x14\r\n") ;
          address_data[0] = command[1]<<24;
@@ -103,19 +103,9 @@ void PINO_Test()
             switch(command[5]){
                case 0x04:
                   SUBSECTOR_4KB_ERASE_SMF(address);
-                  fprintf(fab, "Erased 4kb\r\n");
-                  break;
                case 0x32:
                   SUBSECTOR_32KB_ERASE_SMF(address);
-                  fprintf(fab, "Erased 32kb\r\n");
-                  break;
-               case 0x64:
-                  sector_erase_SMF(address);
-                  fprintf(fab, "Erased 64kb\r\n");
-                  break;
             }
-         fprintf(fab, "Finish 0x16\r\n");
-         break;
          
          /* case 0x91:
          reset_time_data[0] = 0x82;
@@ -123,7 +113,7 @@ void PINO_Test()
          //fputc (reset_time_data[0], PC) ;
          fputc (0x91, reset);
          break; */
-         case 0x91:
+         case 0x91://Finish
          fprintf (fab, "Start 0x91\r\n");
          for (i = 0; i < 9; i++)
          {
@@ -173,15 +163,6 @@ void PINO_Test()
          output_high (sel);
          fprintf(fab, "Finish 0x93\r\n");
          
-         case 0x94:
-         fprintf (fab, "Start 0x94\r\n") ;
-         for (i = 0; i < 5; i++)
-         {
-            GET_RESET_DATA ();
-            delay_ms(5000);
-         }
-         fprintf (fab, "Finish 0x94\r\n") ;
-         break;
          
          case 0x9B:
          fprintf (fab, "Start 0x9B\r\n") ;
@@ -196,8 +177,6 @@ void PINO_Test()
          GET_RESET_DATA ();
          fprintf (fab, "Finish 0x9F\r\n") ;
          break;
-         
-
       }
    }
 }
@@ -220,7 +199,7 @@ void GET_RESET_DATA()                                                           
          break;
       }
    }
-   if (RESET_bffr[0] == 0x8e)
+   if (RESET_bffr[0] == 0x8e)   //si el byte de cabecera es el correcto
    {
       // fprintf (PC, "\r\nRESET DATA OBTAINED\r\n") ;
       for (int num = 0; num < 5; num++)   //carga el array HKDATA con timedata en las posiciones 2 al 6
@@ -263,7 +242,7 @@ void GET_RESET_DATA()                                                           
       //fprintf (fab, "\r\n") ;
       
       }else{
-      fprintf (fab, "\r\nRESET DATA NOT OBTAINED\r\n") ;
+      fprintf (fab, "\r\nRESET DATA NO OBTAINED\r\n") ;
    }
    return;
 }
