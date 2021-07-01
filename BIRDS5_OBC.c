@@ -21,12 +21,12 @@ void main()
    enable_interrupts(INT_rda4);
    fprintf(PC,"Start Operating\r\n");
    output_high(PIN_A5);  //MUX MISSION SIDE
-   output_low(PIN_A5); //MUX MAIN SIDE
-   
+   //output_low(PIN_A5); //MUX MAIN SIDE
+   output_high(sel);
    while(TRUE)
    {
-      fprintf(PC,"\r\nHello World\r\n");
-      fprintf(PC,"Operating\r\n");
+      fprintf(fab,"\r\nHello World\r\n");
+      fprintf(fab,"Operating\r\n");
       delay_ms(2500);
       PINO_Test();
    }
