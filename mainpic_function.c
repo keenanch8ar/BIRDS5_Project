@@ -6,7 +6,9 @@ int8 reset_time_data[11] = {};
 BYTE PINO_DATA[39] = {0x00};
 int8 test_data[11] = {0};
 unsigned int32 address_data[4];
+unsigned int32 packet_data[2];
 unsigned int32 address;
+unsigned int32 packet;
 BYTE RTUC[8];
 BYTE Down[81];
 BYTE RTDC[9];
@@ -41,18 +43,20 @@ void Flash_Memory_Access()
    delay_ms (1000);
 }
 
-int one_sec_counter(){
-   int counter;
+void ten_sec_counter(){
+   int counter=0;
+   int sec=0;
 
-   while(1)
-   {
+
       counter++; //16.384ms for one increment
       if(counter>60)
       {
          counter = 0;
-         return 1;
+         sec++;
       }
-   }
+      else if(sec>9){
+         break;
+      }
 }
 
 void PINO_Test()
@@ -78,7 +82,27 @@ void PINO_Test()
       }
       switch (command[0])
       {
-         case 0x13://Get the data from Flash Memory 2
+         case 0x12:
+         fprintf (fab, "Start 0x12\r\n") ;
+         output_low (PIN_A5);
+         address_data[0] = command[1]<<24;
+         address_data[1] = command[2]<<16;
+         address_data[2] = command[3]<<8;
+         address_data[3] = command[4];
+         address = address_data[0] + address_data[1] + address_data[2] + address_data[3];
+         packet_data[0] = command[5]<<8;
+         packet_data[1] = command[6];
+         packet = (packet_data[0] + packet_data[1])*81;
+
+         //fputc(command[5] + command[6], fab);
+         TRANSFER_DATA_NBYTE_TOFAB_SMF(address, packet);
+         //TRANSFER_DATA_NBYTE_TOFAB_SMF(address,81);
+         
+         fprintf (fab, "Finish 0x12\r\n") ;
+         break;
+         
+         
+         /*case 0x13://Get the data from Flash Memory 2
          fprintf (fab, "Start 0x13\r\n") ;
          output_low (PIN_A5);
          address_data[0] = command[1]<<24;
@@ -89,7 +113,7 @@ void PINO_Test()
          TRANSFER_DATA_NBYTE_TOFAB_SMF(address, command[5] + command[6]);
          fprintf (fab, "Finish 0x13\r\n") ;
          
-         break;
+         break;*/
          
          case 0x14://Uplink command to write the data on Flash Memory 2
          output_low (PIN_A5) ;//Main side
@@ -99,7 +123,7 @@ void PINO_Test()
          address_data[2] = command[3]<<8;
          address_data[3] = command[4];
          address = address_data[0] + address_data[1] + address_data[2] + address_data[3];
-         sector_erase_SMF (address);
+         //sector_erase_SMF (address);
          WRITE_DATA_BYTE_SMF (address, command[5]) ;
          WRITE_DATA_BYTE_SMF (address + 1, command[6]) ;
          WRITE_DATA_BYTE_SMF (address + 2, command[7]) ;
@@ -153,7 +177,7 @@ void PINO_Test()
             PINO_DATA[i] = command[i];
          }
          
-         for (i = 0; i<24; i++)
+         for (i = 0; i<39; i++)
          {
             fputc (PINO_DATA[i], DC);
          }
@@ -167,7 +191,7 @@ void PINO_Test()
             PINO_data[i] = command[i];
          }
          
-         for (i = 0; i<24; i++)
+         for (i = 0; i<39; i++)
          {
             fputc (PINO_DATA[i], DC);
          }
@@ -220,11 +244,17 @@ void PINO_Test()
          
          int a=0;
          fprintf (fab, "Start 0x9F\r\n") ;
-         GET_RESET_DATA ();
-         while(a<12){//Do "GET_RESET_DATA()" during 2mins;
-            a = a + one_sec_counter();
-            GET_RESET_DATA ();
+         
+         for(a=0; a<12; a++){
+            GET_RESET_DATA();
+            delay_ms(10000);
          }
+         
+         /*GET_RESET_DATA ();
+         while(a<12){//Do "GET_RESET_DATA()" during 2mins;
+            a = a + ten_sec_counter();
+            GET_RESET_DATA ();
+         }*/
          fprintf (fab, "Finish 0x9F\r\n") ;
          break;
          
@@ -291,7 +321,7 @@ void GET_RESET_DATA()                                                           
          
          fputc (PINO_DATA[j], DC);
       }
-      fputc (Finish_sign[0], DC);
+      //fputc (Finish_sign[0], DC);
       
       //fprintf (fab, "\r\n") ;
       
