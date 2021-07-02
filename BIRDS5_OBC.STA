@@ -1,123 +1,152 @@
 
-ROM used:   3168/131056 (2%)
-            3168/131056 (2%) including unused fragments
+ROM used:   5908/131056 (5%)
+            5908/131056 (5%) including unused fragments
 
-            0.8 Average locations per line
-            3.0 Average locations per statement
+            1.4 Average locations per line
+            5.2 Average locations per statement
 
-RAM used:   364/3578 (10%) at main() level
-            389/3578 (11%) worst case
+RAM used:   515/3578 (14%) at main() level
+            551/3578 (15%) worst case
 
-Stack used: 7 worst case (3 in main + 4 for interrupts)
+Stack used: 0 worst case (0 in main + 0 for interrupts)
 Stack size: 31
 
 Lines Stmts  %   Files
 ----- ----- ---  -----
    35    18   2  BIRDS5_OBC.c
-   57     0   0  BIRDS5_OBC.h
- 1421     0   0  ..\..\..\..\..\..\..\..\Program Files (x86)\PICC\Devices\18F67J94.h
+   61     0   0  BIRDS5_OBC.h
+ 1421     0   0  ..\..\..\..\Program Files (x86)\PICC\Devices\18F67J94.h
   323     0   0  PIC18F67J94_registers.h
    65     0   0  mainpic_function.h
-  880   315  30  flash_ memory_ MT25QL01GBBB_OF.c
-  982   580  55  MEMORY_OPERATION.c
-  148    80   8  mainpic_function.c
+  890   320  28  flash_ memory_ MT25QL01GBBB_OF.c
+  982   580  51  MEMORY_OPERATION.c
+  271   160  14  mainpic_function.c
   123    66   6  SATELLITE_LOG.c
 ----- -----
- 4034  1059 Total
+ 4171  1144 Total
 
 Page ROM  %  RAM    Vol Diff  Functions:
 ---- --- --- ---    --- ----  ----------
-0     42   1    1             @delay_ms1
-0     10   0    0             @PUTCHARI_BIU_1
-0     12   0    0             @PUTCHARI_BIU_3
+0     42   0    1             @delay_ms1
+0     14   0    0             @PUTCHARI_BIU_3
 0     28   0    0             @GETCH_BIU_3
-0     72   1    1             @PUTCHAR_6_
-0     70   1    2             @PRINTF_X_115200_31766_31767
-0     20   0    0             @const1334
-0     20   0    0   1511  2.9  @const1337
+0     12   0    0             @PUTCHARI_BIU_4
+0     28   0    0             @GETCH_BIU_4
+0     70   1    1             @PUTCHAR_6_
+0     76   1    1             @GETCH_6_
+0     60   1    5             @SPI_XFER_3
+0     24   0    0     69  1.9  WRITE_ENABLE_SMF
+0    144   1   13    798  5.1  sector_erase_SMF
+0    146   1   13    798  5.1  SUBSECTOR_4KB_ERASE_SMF
+0    146   1   13    798  5.1  SUBSECTOR_32KB_ERASE_SMF
+0    116   1   14    774  5.2  WRITE_DATA_BYTE_SMF
+0    126   1   14    762  5.2  READ_DATA_BYTE_SMF
+0    114   1   13    163  4.5  TRANSFER_DATA_NBYTE_TOFAB_SMF
 0     20   0    0             @const1338
-0     20   0    0             @const1339
-0     24   0    0             @const1340
-0     14   0    0             @const1341
-0     14   0    0             @const1342
-0     16   0    0             @const1343
-0     20   0    0             @const1344
-0     28   0    0             @const1345
-0     22   0    0             @const1346
-0     28   0    0             @const1348
-0     30   0    0             @const1349
-0     38   1    0     22  1.3  @const1350
-0     34   1    0   1428  4.0  @const1351
-0     24   0    0             @const1352
-0     26   0    0   1730  5.5  @const1353
-0     26   0    0             @const1354
-0     32   1    0             @const1355
-0     28   0    0             @const1356
-0     32   1    0             @const1357
-0     32   1    0             @const1358
-0     18   0    0             @const1359
-0     20   0    0    219  5.3  @const1365
-0     20   0    0   1633  5.8  @const1366
-0     20   0    0             @const1367
-0     20   0    0             @const1368
-0     24   0    0             @const1369
-0     14   0    0    219  2.3  @const1370
-0     14   0    0   2085  6.9  @const1371
-0     16   0    0             @const1372
-0     20   0    0   1541  7.9  @const1373
-0     22   0    0             @const1374
-0     28   0    0             @const1381
-0     42   1    3   3557  5.9  @PSTRINGC_115200_31766_31767
-0     30   0    0    127  4.2  @const1390
-0     18   0    0    149  4.3  @const1393
-0     24   0    0    737  4.3  @const1396
-0     36   1    0             @const1402
-0     30   0    0             @const1404
-0     28   0    0             @const1427
-0     26   0    0    876  7.1  @const1429
-0     22   0    0             @const1431
-0     46   1    3    676  6.6  @DIV88
-0     22   0    0    224  6.7  @const1442
-0     22   0    0    907  5.3  @const1445
-0     22   0    0             @const1447
-0     22   0    0   1008  7.3  @const1451
-0     22   0    0             @const1453
-0    134   2    4    552  7.0  PINO_test
-0     20   0    0             @const1461
-0     22   0    0             @const1462
-0    356   6   11   2145  7.7  GET_RESET_DATA
-0     24   0    0             @const1470
-0     28   0    0    104  3.7  @const1476
+0     20   0    0             @const1341
+0     20   0    0             @const1342
+0     20   0    0             @const1343
+0     24   0    0             @const1344
+0     14   0    0             @const1345
+0     14   0    0             @const1346
+0     16   0    0             @const1347
+0     20   0    0             @const1348
+0     28   0    0             @const1349
+0     22   0    0   1511  2.9  @const1350
+0     28   0    0             @const1352
+0     30   0    0             @const1353
+0     38   0    0             @const1354
+0     34   0    0             @const1355
+0     24   0    0             @const1356
+0     26   0    0             @const1357
+0     26   0    0             @const1358
+0     32   0    0             @const1359
+0     28   0    0             @const1360
+0     32   0    0             @const1361
+0     32   0    0             @const1362
+0     18   0    0     22  1.3  @const1363
+0     20   0    0             @const1369
+0     20   0    0             @const1370
+0     20   0    0             @const1371
+0     20   0    0             @const1372
+0     24   0    0             @const1373
+0     14   0    0             @const1374
+0     14   0    0             @const1375
+0     16   0    0             @const1376
+0     20   0    0             @const1377
+0     22   0    0    219  5.3  @const1378
+0     28   0    0             @const1385
+0     42   0    3    219  2.3  @PSTRINGC_115200_31766_31767
+0     30   0    0   1541  7.9  @const1394
+0     18   0    0             @const1397
+0     24   0    0             @const1400
+0     36   0    0             @const1406
+0     30   0    0    127  4.2  @const1408
+0     28   0    0             @const1431
+0     26   0    0             @const1433
+0     22   0    0             @const1435
+0     46   0    3             @DIV88
+0     22   0    0    632  6.6  @const1446
+0     22   0    0    876  7.1  @const1449
+0     22   0    0    676  6.6  @const1451
+0     22   0    0    857  5.7  @const1455
+0     22   0    0     24  1.0  @const1457
+0   1742  15    9   5772  8.4  PINO_test
+0     14   0    0             @const1474
+0     46   0    3             @PSTRINGC_9600_31781_31780
+0     14   0    0             @const1476
+0     14   0    0             @const1477
+0     14   0    0             @const1478
+0     14   0    0             @const1479
+0     14   0    0             @const1480
+0     14   0    0             @const1481
+0     14   0    0             @const1482
+0     14   0    0             @const1483
+0     14   0    0             @const1484
+0     14   0    0             @const1485
+0     14   0    0             @const1486
+0     14   0    0             @const1487
+0     14   0    0             @const1488
+0     14   0    0             @const1489
+0     14   0    0   1623  7.8  @const1490
+0     14   0    0   1623  7.8  @const1491
+0     14   0    0             @const1492
+0     14   0    0     82  3.6  @const1493
+0     14   0    0     82  3.6  @const1494
+0     14   0    0   1623  7.8  @const1495
+0     14   0    0    646  4.7  @const1496
+0    274   2   11   1623  7.8  GET_RESET_DATA
+0     28   0    0    104  3.7  @const1506
 0     64   1    8     82  3.6  waiting
-0     36   1    3    104  3.7  DELETE_RESET
-0     16   0    0    251  5.6  @const1487
+0     36   0    3    104  3.7  DELETE_RESET
+0     16   0    0    251  5.6  @const1517
 0     72   1    1    251  5.6  COLLECT_RESET_DATA
-0     18   0    0    253  2.2  @const1496
+0     18   0    0    253  2.2  @const1526
 0     76   1    4    176  4.0  UART4_RXD
-0    622  10    1    253  2.2  MAIN
-0     18   0    0    253  2.2  @const1539
-0     16   0    0             @const1540
-0     12   0    0    253  2.2  @const1541
- Inline         0    253  2.2  @cinit1
+0    636   5    1    253  2.2  MAIN
+0     18   0    0             @const1569
+0     16   0    0             @const1570
+0     12   0    0    253  2.2  @const1571
+ Inline         0             @cinit1
 
 Program metrics:
-    Functions               31
-    Statements              1059
-    Comments                1030
-    Volume (V)              39661
-    Difficulty (D)          148.1
-    Effort to implement (E) 5873274
-    Time to implement (T)   90 hours, 38 minutes
-    Est Delivered Bugs (B)  11
-    Cyclomatic Complexity   48
-    Maintainability (MI)    100
+    Functions               35
+    Statements              1144
+    Comments                1035
+    Volume (V)              43410
+    Difficulty (D)          167.6
+    Effort to implement (E) 7276974
+    Time to implement (T)   112 hours, 18 minutes
+    Est Delivered Bugs (B)  13
+    Cyclomatic Complexity   73
+    Maintainability (MI)    119
 
  Segment     Used  Free
 -----------  ----  ----
 00000-00004     6  0  
 00006-00006     0  2  
 00008-000CC   198  0  
-000CE-0FFFE  2964  62366  
+000CE-0FFFE  5704  59626  
 10000-1FFEE     0  65520  
 
 
