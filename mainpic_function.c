@@ -40,6 +40,21 @@ void Flash_Memory_Access()
    TRANSFER_DATA_NBYTE_TOPC_OF (0x00000000, 1) ;
    delay_ms (1000);
 }
+
+int one_sec_counter(){
+   int counter;
+
+   while(1)
+   {
+      counter++; //16.384ms for one increment
+      if(counter>60)
+      {
+         counter = 0;
+         return 1;
+      }
+   }
+}
+
 void PINO_Test()
 {
    dummy[0] = 0x01;
@@ -55,7 +70,7 @@ void PINO_Test()
 
             for (int i = 0; i < 9; i++)
             {
-               fprintf (fab, "Get command\r\n") ;
+               //fprintf (fab, "Get command\r\n") ;
                command[i] = fgetc (fab);
             }
             break;
@@ -63,7 +78,7 @@ void PINO_Test()
       }
       switch (command[0])
       {
-         case 0x13:
+         case 0x13://Get the data from Flash Memory 2
          fprintf (fab, "Start 0x13\r\n") ;
          output_low (PIN_A5);
          address_data[0] = command[1]<<24;
@@ -76,8 +91,8 @@ void PINO_Test()
          
          break;
          
-         case 0x14:
-         output_low (PIN_A5) ;
+         case 0x14://Uplink command to write the data on Flash Memory 2
+         output_low (PIN_A5) ;//Main side
          fprintf (fab, "Start 0x14\r\n") ;
          address_data[0] = command[1]<<24;
          address_data[1] = command[2]<<16;
@@ -92,7 +107,7 @@ void PINO_Test()
          fprintf (fab, "Finish 0x14\r\n");
          break;
          
-         case 0x16:
+         case 0x16://Erase the data on Flash Memory 2
          output_low (PIN_A5);
          fprintf(fab, "Start 0x16\r\n");
          address_data[0] = command[1]<<24;
@@ -103,19 +118,18 @@ void PINO_Test()
             switch(command[5]){
                case 0x04:
                   SUBSECTOR_4KB_ERASE_SMF(address);
-                  fprintf(fab, "Erased 4kb\r\n");
+                  fprintf(fab, "Finish 0x16\r\n");
                   break;
                case 0x32:
                   SUBSECTOR_32KB_ERASE_SMF(address);
-                  fprintf(fab, "Erased 32kb\r\n");
+                  fprintf(fab, "Finish 0x16\r\n");
                   break;
-               case 0x64:
-                  sector_erase_SMF(address);
-                  fprintf(fab, "Erased 64kb\r\n");
+               case 0xFF:
+                  SECTOR_ERASE_SMF(address);
+                  fprintf(fab, "Finish 0x16\r\n");
                   break;
             }
-         fprintf(fab, "Finish 0x16\r\n");
-         break;
+            break;
          
          /* case 0x91:
          reset_time_data[0] = 0x82;
@@ -123,7 +137,16 @@ void PINO_Test()
          //fputc (reset_time_data[0], PC) ;
          fputc (0x91, reset);
          break; */
-         case 0x91:
+
+         case 0x90://Turn off PINO
+         fprintf (fab, "Start 0x90\r\n") ;
+         output_high (hvs);
+         fprintf (fab, "Finish 0x90\r\n");
+         output_low (PINO_power);
+         output_low (sel);
+         break;
+         
+         case 0x91://PINO Real Time Uplink Command
          fprintf (fab, "Start 0x91\r\n");
          for (i = 0; i < 9; i++)
          {
@@ -137,7 +160,7 @@ void PINO_Test()
          fprintf (fab, "Finish 0x91\r\n") ;
          break;
          
-         case 0x92:
+         case 0x92://PINO Real Time Downlink Command
          fprintf (fab, "Start 0x92\r\n") ;
          for (i = 0; i < 9; i++)
          {
@@ -167,12 +190,14 @@ void PINO_Test()
             }
          }
          
-         case 0x93:
+         case 0x9E: //Turn on PINO
          fprintf(fab, "Start 0x93\r\n");
          output_high (PINO_power);
          output_high (sel);
          fprintf(fab, "Finish 0x93\r\n");
-         
+
+         break;
+   
          case 0x94:
          fprintf (fab, "Start 0x94\r\n") ;
          for (i = 0; i < 5; i++)
@@ -191,9 +216,15 @@ void PINO_Test()
          output_low (sel);
          break;
          
-         case 0x9F:
+         case 0x9F://Time and attitude information
+         
+         int a=0;
          fprintf (fab, "Start 0x9F\r\n") ;
          GET_RESET_DATA ();
+         while(a<12){//Do "GET_RESET_DATA()" during 2mins;
+            a = a + one_sec_counter();
+            GET_RESET_DATA ();
+         }
          fprintf (fab, "Finish 0x9F\r\n") ;
          break;
          
@@ -201,6 +232,9 @@ void PINO_Test()
       }
    }
 }
+
+
+
 void GET_RESET_DATA()                                                            //funcion que carga el array HKDATA con los datos del Reset PIC
 {
    dummy[0] = 0x11;
@@ -248,10 +282,9 @@ void GET_RESET_DATA()                                                           
       for(i=6; i<39; i++)
       {
          PINO_DATA[i] = 0x01;
+
       }
-      
-      
-      
+
       for (j = 0; j < 39; j++)
       {
          //fprintf (fab, " % x, ", PINO_DATA[j]) ;
