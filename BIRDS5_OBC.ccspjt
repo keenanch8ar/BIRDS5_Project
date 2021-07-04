@@ -203,29 +203,30 @@ D12_L12=[64975]Started Editing.
 D12_L13=[66284]Stopped Editing.
 D12_L14=[70817]Project Closed.
 D13=04-07-2021
-D13_L=2
+D13_L=3
 D13_L1=[65908]Project Opened.
 D13_L2=[67029]Project Closed.
+D13_L3=[67301]Project Opened.
 
 [Opened Files]
-1=BIRDS5_OBC.h
-t1=9
-2=mainpic_function.c
-t2=9
+1=BIRDS5_OBC.c
+t1=1
+2=BIRDS5_OBC.h
+t2=1
 Count=9
-3=mainpic_function.h
-t3=8
-4=flash_ memory_ MT25QL01GBBB_OF.c
-t4=784
-5=..\..\..\..\..\..\..\..\Program Files (x86)\PICC\Devices\18F67J94.h
+3=mainpic_function.c
+t3=1
+4=mainpic_function.h
+t4=1
+5=flash_ memory_ MT25QL01GBBB_OF.c
 t5=1
-6=MEMORY_OPERATION.c
-t6=173
-7=SATELLITE_LOG.c
-t7=25
-8=PIC18F67J94_registers.h
+6=..\..\..\..\..\..\..\..\Program Files (x86)\PICC\Devices\18F67J94.h
+t6=1
+7=MEMORY_OPERATION.c
+t7=1
+8=SATELLITE_LOG.c
 t8=1
-9=BIRDS5_OBC.c
+9=PIC18F67J94_registers.h
 t9=1
 10=..\SEIC Courses\BIRDs Project\OBC\Code\BIRDS5_OBC\PIC18F67J94_registers.h
 t10=1
@@ -247,7 +248,7 @@ t17=1
 Type=4
 
 [defines]
-buildcount=101
+buildcount=102
 [Units]
 Count=1
 1=BIRDS5_OBC (main)

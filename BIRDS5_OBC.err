@@ -1,4 +1,4 @@
->>> Warning 203 "C:\Users\keena\Dropbox\BIRDS5_Project\mainpic_function.c" Line 152(1,1): Condition always TRUE
+>>> Warning 203 "C:\Users\keena\Dropbox\BIRDS5_Project\mainpic_function.c" Line 199(1,1): Condition always TRUE
 >>> Warning 202 "C:\Users\keena\Dropbox\BIRDS5_Project\MEMORY_OPERATION.c" Line 48(6,23): Variable never used:   RESERVE_ADDRESS_1
 >>> Warning 202 "C:\Users\keena\Dropbox\BIRDS5_Project\MEMORY_OPERATION.c" Line 49(6,23): Variable never used:   RESERVE_ADDRESS_2
 >>> Warning 202 "C:\Users\keena\Dropbox\BIRDS5_Project\MEMORY_OPERATION.c" Line 50(6,23): Variable never used:   RESERVE_ADDRESS_3
@@ -18,8 +18,8 @@
 >>> Warning 202 "C:\Users\keena\Dropbox\BIRDS5_Project\mainpic_function.c" Line 2(6,20): Variable never used:   MISSION_STATUS
 >>> Warning 202 "C:\Users\keena\Dropbox\BIRDS5_Project\mainpic_function.c" Line 3(14,25): Variable never used:   currenttime
 >>> Warning 202 "C:\Users\keena\Dropbox\BIRDS5_Project\mainpic_function.c" Line 7(6,15): Variable never used:   test_data
->>> Warning 202 "C:\Users\keena\Dropbox\BIRDS5_Project\mainpic_function.c" Line 10(6,10): Variable never used:   RTUC
->>> Warning 202 "C:\Users\keena\Dropbox\BIRDS5_Project\mainpic_function.c" Line 12(6,10): Variable never used:   RTDC
-      Memory usage:   ROM=5%      RAM=14% - 15%
+>>> Warning 202 "C:\Users\keena\Dropbox\BIRDS5_Project\mainpic_function.c" Line 12(6,10): Variable never used:   RTUC
+>>> Warning 202 "C:\Users\keena\Dropbox\BIRDS5_Project\mainpic_function.c" Line 14(6,10): Variable never used:   RTDC
+      Memory usage:   ROM=5%      RAM=15% - 16%
       0 Errors,  22 Warnings.
 Build Successful.
