@@ -52,7 +52,6 @@ Mkfile.old
 dkms.conf
 
 # PIC C Compiler files
-*.ccspjt
 *.cof
 *.err
 *.esym
@@ -62,9 +61,3 @@ dkms.conf
 *.tre
 *.xsym
 __history/
-/__history
-/__history/*
-**/__history
-__history/**/*
-__history/*
-/__history/
