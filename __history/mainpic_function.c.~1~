@@ -374,6 +374,7 @@ void MULT_SPEC_Test()
             }
             
             fprintf (PC, "Finish 0x23\r\n");
+           
          break;
          
          case 0x24: //Turn on CAM1 RPi trigger at specific time from RESET_PIC time information
@@ -413,7 +414,8 @@ void MULT_SPEC_Test()
                   }
             }
             result = 1;
-            fprintf (PC, "Finish 0x24\r\n");    
+            fprintf (PC, "Finish 0x24\r\n");
+            
          break;
          
          /////////////////////FOR CAM2 RPi on MB2////////////////////////////////
@@ -442,7 +444,8 @@ void MULT_SPEC_Test()
             //output_high(); Turn on DIO for trigger
             //delay_ms(10000);
             //output_low(); Turn off DIO for trigger
-            fprintf (PC, "Finish 0x32\r\n");   
+            fprintf (PC, "Finish 0x32\r\n");
+            
          break;
          
          case 0x33: 
