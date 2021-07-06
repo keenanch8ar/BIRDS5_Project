@@ -346,6 +346,7 @@ void MULT_SPEC_Test()
             fprintf (PC, "Start 0x21\r\n") ;
             //output_low(); Turn off DIO for MULTSPEC CAM1
             fprintf (PC, "Finish 0x21\r\n");
+            
          break;
          
          case 0x22: //Turn on CAM1 RPi trigger
@@ -355,7 +356,8 @@ void MULT_SPEC_Test()
             //output_high(); Turn on DIO for trigger
             //delay_ms(10000);
             //output_low(); Turn off DIO for trigger
-            fprintf (PC, "Finish 0x22\r\n"); 
+            fprintf (PC, "Finish 0x22\r\n");
+            
          break;
          
          case 0x23:
@@ -363,7 +365,9 @@ void MULT_SPEC_Test()
             //Capture in mode 1
             //(1 image, captured immediately, saved to specified address) 
             //eg. 23 is command, 00 02 06 08 is the address location, 01 is number of images to capture, 00 00 00 for remaining unused command bytes (command: 23 00 02 06 08 01 00 00 00)
+            
             fprintf (PC, "Start 0x23\r\n") ;
+            
             output_high (PIN_A5); //SFM2 mission side access
             
             for (i = 1; i < 9; i++)
@@ -374,7 +378,7 @@ void MULT_SPEC_Test()
             }
             
             fprintf (PC, "Finish 0x23\r\n");
-           
+            
          break;
          
          case 0x24: //Turn on CAM1 RPi trigger at specific time from RESET_PIC time information
