@@ -464,6 +464,7 @@ void MULT_SPEC_Test()
             }
             
             fprintf (PC, "Finish 0x33\r\n");
+            
          break;
          
          case 0x34: //Turn on CAM1 RPi trigger at specific time from RESET_PIC time information
@@ -503,7 +504,8 @@ void MULT_SPEC_Test()
                   }
             }
             result = 1;
-            fprintf (PC, "Finish 0x34\r\n");    
+            fprintf (PC, "Finish 0x34\r\n");
+            
          break;
    
       }
