@@ -486,8 +486,7 @@ void MULT_SPEC_Test()
                delay_ms(20);
                result = trigger_time_data % command_time_data;
             
-               if (result = 0)
-               
+               if (result = 0)            
                   {
                      fprintf(PC, "Trigger time occurred\r\n");
                      //output_high(); Turn on DIO for MULTSPEC CAM1

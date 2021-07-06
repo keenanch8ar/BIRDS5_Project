@@ -24,9 +24,7 @@ void main()
    output_high(PIN_A5);  //MUX MISSION SIDE
    //output_low(PIN_A5); //MUX MAIN SIDE
    output_high(sel);
-   
-   
-   
+
    while(TRUE)
    { 
       fprintf(fab,"\r\nHello World\r\n");
@@ -34,7 +32,4 @@ void main()
       delay_ms(2500);
       MULT_SPEC_test();  
    }
-
-
-
 }
