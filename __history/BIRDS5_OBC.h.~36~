@@ -55,6 +55,5 @@ void Flash_Memory_Access();
 void PINO_test();
 void GET_RESET_DATA();
 void MULT_SPEC_test();
-void GET_TIME();
-void IMGCLS_test();
+void OBTAIN_TIME();
 #include <mainpic_function.h>

@@ -32,6 +32,7 @@ void Turn_Off_CAM()
    return;
 }
 
+
 void Flash_Memory_Access()
 {
    sector_erase_OF (0x00000000);
@@ -585,7 +586,7 @@ void IMGCLS_Test()
          break;
          
          
-         case 0x80: //Turn on IMGCLS RPi DIO for MOSFET on RAB to power RPI from 5V line
+         case 0x80: //Turn on CAM1 RPi DIO for MOSFET on MB1 to power RPI from 5V
          
             output_high (PIN_A5); //SFM2 mission side access
             fprintf (PC, "Start 0x20\r\n") ;
@@ -593,7 +594,7 @@ void IMGCLS_Test()
             fprintf (PC, "Finish 0x20\r\n"); 
          break;
          
-         case 0x81: //Turn off IMGCLS RPi for MOSFET on RAB to power RPI from 5V
+         case 0x81: //Turn off CAM1 RPi for MOSFET on MB1 to power RPI from 5V
          
             output_high (PIN_A5); //SFM2 mission side access
             fprintf (PC, "Start 0x21\r\n") ;
