@@ -64,3 +64,5 @@ dkms.conf
 _history/
 /_history
 /_history/*
+**/_history
+_history/**/*
