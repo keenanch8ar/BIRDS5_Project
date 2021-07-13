@@ -305,8 +305,39 @@ void MULT_SPEC_Test()
          fprintf (PC, "Finish 0x12\r\n") ;
          break;
          
+         case 0x13://Uplink command to write the data on Flash Memory 2
+         output_high (PIN_A5) ;//Mission side
+         fprintf (PC, "Start 0x14\r\n") ;
+         address_data[0] = command[1]<<24;
+         address_data[1] = command[2]<<16;
+         address_data[2] = command[3]<<8;
+         address_data[3] = command[4];
+         address = address_data[0] + address_data[1] + address_data[2] + address_data[3];
+         //sector_erase_SMF (address);
+         WRITE_DATA_BYTE_SMF (address, command[5]) ;
+         WRITE_DATA_BYTE_SMF (address + 1, command[6]) ;
+         WRITE_DATA_BYTE_SMF (address + 2, command[7]) ;
+         WRITE_DATA_BYTE_SMF (address + 3, command[8]) ;
+         fprintf (PC, "Finish 0x14\r\n");
+         break;
          
-         case 0x16://Erase the data on SFM2 at the given address. Specify how much data to erase eg. 16 00 01 02 03 FF will erase the entire 64kB sector at address 00010203
+         case 0x14://Uplink command to write the data on Flash Memory 2
+         output_low (PIN_A5) ;//Main side
+         fprintf (PC, "Start 0x14\r\n") ;
+         address_data[0] = command[1]<<24;
+         address_data[1] = command[2]<<16;
+         address_data[2] = command[3]<<8;
+         address_data[3] = command[4];
+         address = address_data[0] + address_data[1] + address_data[2] + address_data[3];
+         //sector_erase_SMF (address);
+         WRITE_DATA_BYTE_SMF (address, command[5]) ;
+         WRITE_DATA_BYTE_SMF (address + 1, command[6]) ;
+         WRITE_DATA_BYTE_SMF (address + 2, command[7]) ;
+         WRITE_DATA_BYTE_SMF (address + 3, command[8]) ;
+         fprintf (PC, "Finish 0x14\r\n");
+         break;
+         
+         case 0x16://Erase the data on SFM2 at the given address. Specify how much data to erase eg. 16 00 01 02 03 FF 00 00 will erase the entire 64kB sector at address 00010203
          output_low (PIN_A5);
          fprintf(PC, "Start 0x16\r\n");
          address_data[0] = command[1]<<24;
@@ -314,18 +345,24 @@ void MULT_SPEC_Test()
          address_data[2] = command[3]<<8;
          address_data[3] = command[4];
          address = address_data[0] + address_data[1] + address_data[2] + address_data[3];
-            switch(command[5]){
+         packet_data[0] = command[5]<<8;
+         packet_data[1] = command[6];
+         packet = (packet_data[0] + packet_data[1])*81;
+            switch(command[7]){
                case 0x04:
                   SUBSECTOR_4KB_ERASE_SMF(address);
-                  fprintf(PC, "Finish 0x16\r\n");
+                  fprintf(PC, "Finish 0x16 4KB Erase\r\n");
+                  TRANSFER_DATA_NBYTE_TOPC_SMF(address, packet);
                   break;
                case 0x32:
                   SUBSECTOR_32KB_ERASE_SMF(address);
-                  fprintf(PC, "Finish 0x16\r\n");
+                  TRANSFER_DATA_NBYTE_TOPC_SMF(address, packet);
+                  fprintf(PC, "Finish 0x16 32KB Erase\r\n");
                   break;
                case 0xFF:
                   SECTOR_ERASE_SMF(address);
-                  fprintf(PC, "Finish 0x16\r\n");
+                  TRANSFER_DATA_NBYTE_TOPC_SMF(address, packet);
+                  fprintf(PC, "Finish 0x16 Sector Erase\r\n");
                   break;
             }
          break;
