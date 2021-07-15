@@ -15,10 +15,12 @@ BYTE Finish_sign[1];
 int8 command_time_data[5];
 int8 j;
 int i;
-
 int result = 1;
+///////////////////////Uplink command Format////////////////////
 
-
+/*
+command[]
+*/
 void Turn_On_CAM()
 
 {
@@ -268,16 +270,7 @@ void PINO_Test()
             delay_ms(10000);
          }
          
-
-         /*GET_RESET_DATA ();
-         while(a<12){//Do "GET_RESET_DATA()" during 2mins;
-            a = a + ten_sec_counter();
-            GET_RESET_DATA ();
-         }*/
-
-         fprintf (fab, "Finish 0x9F\r\n") ;
          fprintf (fab, "Finish 0x9C\r\n") ;
-
          break;
          
 
@@ -733,7 +726,7 @@ void GET_RESET_DATA()
          PINO_DATA[i] = 0x01;
 
       }
-      fprintf(fab,"Send Data\r\n");
+      printf(fab,"Send Data\r\n");
 
       for (j = 0; j < 39; j++)
       {
