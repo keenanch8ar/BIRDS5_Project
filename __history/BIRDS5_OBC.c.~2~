@@ -1,4 +1,3 @@
-#include <BIRDS5_OBC.h>
 
 #INT_rda4                                                                        //Reset PIC Interrupt, RS232 receive data available in buffer 4
 void UART4_RXD(void)
@@ -15,26 +14,21 @@ void UART4_RXD(void)
 
 void main()
 {
+
    //settings();
    set_tris_b(0b11010000);
    enable_interrupts(global);
    enable_interrupts(INT_rda4);
-   //fprintf(PC,"Start Operating\r\n");
-   fprintf(fab,"Start Operating\r\n");
+   fprintf(PC,"Start Operating\r\n");
    output_high(PIN_A5);  //MUX MISSION SIDE
    //output_low(PIN_A5); //MUX MAIN SIDE
    output_high(sel);
+
    while(TRUE)
-   {
+   { 
       fprintf(fab,"\r\nHello World\r\n");
       fprintf(fab,"Operating\r\n");
       delay_ms(2500);
-<<<<<<< Updated upstream
-      PINO_Test();
-=======
-      //MULT_SPEC_test();  
-      PINO_test();
->>>>>>> Stashed changes
+      MULT_SPEC_test();  
    }
-
 }
