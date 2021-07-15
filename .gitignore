@@ -62,4 +62,6 @@ dkms.conf
 *.tre
 *.xsym
 __history/
+/__history
+__history/*
 
