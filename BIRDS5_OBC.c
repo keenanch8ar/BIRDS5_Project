@@ -15,6 +15,7 @@ void UART4_RXD(void)
 
 void main()
 {
+
    //settings();
    set_tris_b(0b11010000);
    enable_interrupts(global);
@@ -24,17 +25,16 @@ void main()
    output_high(PIN_A5);  //MUX MISSION SIDE
    //output_low(PIN_A5); //MUX MAIN SIDE
    output_high(sel);
+
    while(TRUE)
-   {
+   { 
       fprintf(fab,"\r\nHello World\r\n");
       fprintf(fab,"Operating\r\n");
       delay_ms(2500);
-<<<<<<< Updated upstream
-      PINO_Test();
-=======
-      //MULT_SPEC_test();  
-      PINO_test();
->>>>>>> Stashed changes
-   }
 
+      PINO_Test();
+
+      MULT_SPEC_test();  
+
+   }
 }

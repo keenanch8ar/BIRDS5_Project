@@ -17,7 +17,6 @@
 #define DIE_ERASE            0xC4
 
 
-
 void WRITE_ENABLE_OF(){
  output_low(CS_PIN);
  

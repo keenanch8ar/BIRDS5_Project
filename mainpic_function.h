@@ -60,5 +60,4 @@ void TRANSFER_DATA_NBYTE_OF(unsigned INT32 FROM_ADRESS,unsigned INT32 TO_ADRESS,
 
 //void sector_erase(unsigned int32 sector_address);  //this is for sector erase
 
-
 //-----------------------------------------------------------------------------

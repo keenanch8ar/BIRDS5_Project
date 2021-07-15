@@ -50,13 +50,16 @@ modules.order
 Module.symvers
 Mkfile.old
 dkms.conf
-BIRDS5_OBC.ccspjt
-BIRDS5_OBC.cof
-BIRDS5_OBC.err
-BIRDS5_OBC.esym
-BIRDS5_OBC.lst
-BIRDS5_OBC.STA
-BIRDS5_OBC.sym
-BIRDS5_OBC.tre
-BIRDS5_OBC.xsym
-BIRDS5_OBC.ccspjt
+
+# PIC C Compiler files
+*.ccspjt
+*.cof
+*.err
+*.esym
+*.lst
+*.STA
+*.sym
+*.tre
+*.xsym
+__history/
+
