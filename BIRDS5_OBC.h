@@ -24,7 +24,6 @@
 #use rs232(baud=9600,parity=N,UART3,bits=8,stream=fab,ERRORS)                           //UART MAIN to FAB PIC
 
 
-#use rs232(baud=9600,parity=N,xmit=pin_G2,rcv=pin_G3,bits=8,stream=IMGCLS,ERRORS)       //UART MAIN to IMGCLS
 #use rs232(baud=9600,parity=N,xmit=pin_G0,rcv=pin_G1,bits=8,stream=DC,ERRORS)           //UART MAIN to MB DCM
 
 
@@ -54,7 +53,7 @@ void COLLECT_RESET_DATA();
 void Flash_Memory_Access();
 void PINO_test();
 void GET_RESET_DATA();
-void MULT_SPEC_test();
+void MULT_SPEC_Test();
 void GET_TIME();
 void IMGCLS_test();
 #include <mainpic_function.h>

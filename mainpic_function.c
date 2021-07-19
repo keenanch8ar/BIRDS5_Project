@@ -393,7 +393,7 @@ void MULT_SPEC_Test()
          
             output_high (PIN_A5); //SFM2 mission side access
             fprintf (PC, "Start 0x20\r\n") ;
-            //output_high(); Turn on DIO for MULTSPEC CAM1
+            output_high(RG3); //Turn on DIO for MULTSPEC CAM1
             fprintf (PC, "Finish 0x20\r\n"); 
          break;
          
@@ -401,7 +401,7 @@ void MULT_SPEC_Test()
          
             output_high (PIN_A5); //SFM2 mission side access
             fprintf (PC, "Start 0x21\r\n") ;
-            //output_low(); Turn off DIO for MULTSPEC CAM1
+            output_low(RG3); //Turn off DIO for MULTSPEC CAM1
             fprintf (PC, "Finish 0x21\r\n");
          break;
          
@@ -409,9 +409,9 @@ void MULT_SPEC_Test()
          
             output_high (PIN_A5); //SFM2 mission side access
             fprintf (PC, "Start 0x22\r\n") ;
-            //output_high(); Turn on DIO for trigger
-            //delay_ms(10000);
-            //output_low(); Turn off DIO for trigger
+            output_high(RG2); //Turn on DIO for trigger
+            delay_ms(10000);
+            output_low(RG2); //Turn off DIO for trigger
             fprintf (PC, "Finish 0x22\r\n"); 
          break;
          
@@ -479,7 +479,7 @@ void MULT_SPEC_Test()
          
             output_high (PIN_A5); //SFM2 mission side access
             fprintf (PC, "Start 0x30\r\n") ;
-            //output_high(); Turn on DIO for MULTSPEC CAM1
+            output_high(RF6); //Turn on DIO for MULTSPEC CAM1
             fprintf (PC, "Finish 0x30\r\n"); 
          break;
          
@@ -487,7 +487,7 @@ void MULT_SPEC_Test()
          
             output_high (PIN_A5); //SFM2 mission side access
             fprintf (PC, "Start 0x31\r\n") ;
-            //output_low(); Turn off DIO for MULTSPEC CAM1
+            output_low(RF6); //Turn off DIO for MULTSPEC CAM1
             fprintf (PC, "Finish 0x31\r\n");
             
          break;
@@ -496,9 +496,9 @@ void MULT_SPEC_Test()
          
             output_high (PIN_A5); //SFM2 mission side access
             fprintf (PC, "Start 0x32\r\n") ;
-            //output_high(); Turn on DIO for trigger
-            //delay_ms(10000);
-            //output_low(); Turn off DIO for trigger
+            output_high(RF7); //Turn on DIO for trigger
+            delay_ms(10000);
+            output_low(RF7); //Turn off DIO for trigger
             fprintf (PC, "Finish 0x32\r\n");   
          break;
          

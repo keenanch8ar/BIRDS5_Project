@@ -20,21 +20,21 @@ void main()
    set_tris_b(0b11010000);
    enable_interrupts(global);
    enable_interrupts(INT_rda4);
-   //fprintf(PC,"Start Operating\r\n");
-   fprintf(fab,"Start Operating\r\n");
+   fprintf(PC,"Start Operating\r\n");
+   //fprintf(fab,"Start Operating\r\n");
    output_high(PIN_A5);  //MUX MISSION SIDE
    //output_low(PIN_A5); //MUX MAIN SIDE
    output_high(sel);
 
    while(TRUE)
    { 
-      fprintf(fab,"\r\nHello World\r\n");
-      fprintf(fab,"Operating\r\n");
+      //fprintf(fab,"\r\nHello World\r\n");
+      //fprintf(fab,"Operating\r\n");
       delay_ms(2500);
 
-      PINO_Test();
+      //PINO_Test();
 
-      MULT_SPEC_test();  
+      MULT_SPEC_Test();  
 
    }
 }
