@@ -303,6 +303,7 @@ void MULT_SPEC_Test()
             for (int i = 0; i < 9; i++)
             {
                command[i] = fgetc (PC);
+               fprintf (PC, "Command Recieved\r\n") ;
             }
             break;
          }
