@@ -303,7 +303,7 @@ void MULT_SPEC_Test()
             for (int i = 0; i < 9; i++)
             {
                command[i] = fgetc (PC);
-               fprintf (PC, "Command Recieved\r\n") ;
+               fprintf (PC, "Command Recieved:%x\r\n", command[i]) ;
             }
             break;
          }
@@ -394,7 +394,7 @@ void MULT_SPEC_Test()
          
             output_high (PIN_A5); //SFM2 mission side access
             fprintf (PC, "Start 0x20\r\n") ;
-            output_high(RG3); //Turn on DIO for MULTSPEC CAM1
+            output_high(pin_G3); //Turn on DIO for MULTSPEC CAM1
             fprintf (PC, "Finish 0x20\r\n"); 
          break;
          
@@ -402,7 +402,7 @@ void MULT_SPEC_Test()
          
             output_high (PIN_A5); //SFM2 mission side access
             fprintf (PC, "Start 0x21\r\n") ;
-            output_low(RG3); //Turn off DIO for MULTSPEC CAM1
+            output_low(pin_G3); //Turn off DIO for MULTSPEC CAM1
             fprintf (PC, "Finish 0x21\r\n");
          break;
          
@@ -410,9 +410,9 @@ void MULT_SPEC_Test()
          
             output_high (PIN_A5); //SFM2 mission side access
             fprintf (PC, "Start 0x22\r\n") ;
-            output_high(RG2); //Turn on DIO for trigger
+            output_high(pin_G2); //Turn on DIO for trigger
             delay_ms(10000);
-            output_low(RG2); //Turn off DIO for trigger
+            output_low(pin_G2); //Turn off DIO for trigger
             fprintf (PC, "Finish 0x22\r\n"); 
          break;
          
@@ -480,7 +480,7 @@ void MULT_SPEC_Test()
          
             output_high (PIN_A5); //SFM2 mission side access
             fprintf (PC, "Start 0x30\r\n") ;
-            output_high(RF6); //Turn on DIO for MULTSPEC CAM1
+            output_high(pin_F6); //Turn on DIO for MULTSPEC CAM1
             fprintf (PC, "Finish 0x30\r\n"); 
          break;
          
@@ -488,7 +488,7 @@ void MULT_SPEC_Test()
          
             output_high (PIN_A5); //SFM2 mission side access
             fprintf (PC, "Start 0x31\r\n") ;
-            output_low(RF6); //Turn off DIO for MULTSPEC CAM1
+            output_low(pin_F6); //Turn off DIO for MULTSPEC CAM1
             fprintf (PC, "Finish 0x31\r\n");
             
          break;
@@ -497,9 +497,9 @@ void MULT_SPEC_Test()
          
             output_high (PIN_A5); //SFM2 mission side access
             fprintf (PC, "Start 0x32\r\n") ;
-            output_high(RF7); //Turn on DIO for trigger
+            output_high(pin_F7); //Turn on DIO for trigger
             delay_ms(10000);
-            output_low(RF7); //Turn off DIO for trigger
+            output_low(pin_F7); //Turn off DIO for trigger
             fprintf (PC, "Finish 0x32\r\n");   
          break;
          
@@ -562,7 +562,30 @@ void MULT_SPEC_Test()
             result = 1;
             fprintf (PC, "Finish 0x34\r\n");    
          break;
-   
+         
+         case 0x35: //Turn on CAM1 and CAM2 RPi trigger
+         
+            output_high (PIN_A5); //SFM2 mission side access
+            fprintf (PC, "Start 0x35\r\n") ;
+            output_high(pin_F7); //Turn on DIO for trigger MB2
+            output_high(pin_G2); //Turn on DIO for trigger MB1
+            delay_ms(10000);
+            output_low(pin_F7); //Turn off DIO for trigger
+            output_low(pin_G2); //Turn off DIO for trigger
+            fprintf (PC, "Finish 0x35\r\n");   
+            
+         break;
+         
+         case 0x36: //Turn on CAM1 and CAM2 RPi
+         
+            output_high (PIN_A5); //SFM2 mission side access
+            fprintf (PC, "Start 0x36\r\n") ;
+            output_high(pin_G3); //Turn on DIO for trigger MB2
+            delay_ms(5000);
+            output_high(pin_F6); //Turn on DIO for trigger MB1
+            fprintf (PC, "Finish 0x36\r\n");   
+            
+         break;
       }
    }
 }
