@@ -15,7 +15,6 @@ BYTE Finish_sign[1];
 int8 command_time_data[5];
 int8 j;
 int i;
-
 int result = 1;
 
 
@@ -504,8 +503,6 @@ void MULT_SPEC_Test()
          break;
          
          case 0x33: 
-            int result = 1;
-         
             //Capture in mode 1
             //(1 image, captured immediately, saved to specified address) 
             //eg. 23 is command, 00 02 06 08 is the address location, 01 is number of images to capture, 00 00 00 for remaining unused command bytes (command: 23 00 02 06 08 01 00 00 00)
@@ -660,8 +657,15 @@ void IMGCLS_Test()
          
             output_high (PIN_A5); //SFM2 mission side access
             fprintf (PC, "Start 0x20\r\n") ;
-            fputc(command[3], DC);
-            output_high(pin_G2); //Turn on DIO for IMG-CLS
+            output_high (PIN_A5); //SFM2 mission side access
+            
+            for (i = 1; i < 9; i++)
+            {
+               fputc(command[i], DC);
+               delay_ms(20);
+               fputc(command[i], PC);
+            }
+            
             fprintf (PC, "Finish 0x20\r\n"); 
          break;
          
@@ -669,8 +673,15 @@ void IMGCLS_Test()
          
             output_high (PIN_A5); //SFM2 mission side access
             fprintf (PC, "Start 0x21\r\n") ;
-            fputc(command[3], DC);
-            output_low(pin_G2); //Turn off DIO for IMG-CLS
+            output_high (PIN_A5); //SFM2 mission side access
+            
+            for (i = 1; i < 9; i++)
+            {
+               fputc(command[i], DC);
+               delay_ms(20);
+               fputc(command[i], PC);
+            }
+            
             fprintf (PC, "Finish 0x21\r\n");
             
          break;
