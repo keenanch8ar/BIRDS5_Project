@@ -7,6 +7,7 @@ BYTE PINO_DATA[39] = {0x00};
 int8 trigger_time_data[5];
 unsigned int32 address_data[4];
 unsigned int32 packet_data[2];
+unsigned int32 data[7];
 unsigned int32 address;
 unsigned int32 packet;
 BYTE Down[81];
@@ -286,8 +287,6 @@ void PINO_Test()
 
 void MULT_SPEC_Test()
 {
-   dummy[0] = 0x01;
-
    int32 num;
    
    while (TRUE)
@@ -324,23 +323,8 @@ void MULT_SPEC_Test()
          TRANSFER_DATA_NBYTE_TOPC_SMF(address, packet);
          fprintf (PC, "Finish 0x12\r\n") ;
          break;
-         
-         case 0x13://Uplink command to write the data on Flash Memory 2
-         output_high (PIN_A5) ;//Mission side
-         fprintf (PC, "Start 0x14\r\n") ;
-         address_data[0] = command[1]<<24;
-         address_data[1] = command[2]<<16;
-         address_data[2] = command[3]<<8;
-         address_data[3] = command[4];
-         address = address_data[0] + address_data[1] + address_data[2] + address_data[3];
-         //sector_erase_SMF (address);
-         WRITE_DATA_BYTE_SMF (address, command[5]) ;
-         WRITE_DATA_BYTE_SMF (address + 1, command[6]) ;
-         WRITE_DATA_BYTE_SMF (address + 2, command[7]) ;
-         WRITE_DATA_BYTE_SMF (address + 3, command[8]) ;
-         fprintf (PC, "Finish 0x14\r\n");
-         break;
-         
+
+    
          case 0x14://Uplink command to write the data on Flash Memory 2
          output_low (PIN_A5) ;//Main side
          fprintf (PC, "Start 0x14\r\n") ;
@@ -349,7 +333,7 @@ void MULT_SPEC_Test()
          address_data[2] = command[3]<<8;
          address_data[3] = command[4];
          address = address_data[0] + address_data[1] + address_data[2] + address_data[3];
-         //sector_erase_SMF (address);
+         sector_erase_SMF (address);
          WRITE_DATA_BYTE_SMF (address, command[5]) ;
          WRITE_DATA_BYTE_SMF (address + 1, command[6]) ;
          WRITE_DATA_BYTE_SMF (address + 2, command[7]) ;
@@ -471,6 +455,47 @@ void MULT_SPEC_Test()
             }
             result = 1;
             fprintf (PC, "Finish 0x24\r\n");    
+         break;
+         
+         case 0x25: //Copy specific images based on selected thumbnails selected from GS. Forwward all mission command data (8 bytes) to MB, MB will send command data (specific image name) to MB1 RPI
+         
+            output_high (PIN_A5); //SFM2 mission side access
+            fprintf (PC, "Start 0x25\r\n") ;
+            for (i = 1; i < 9; i++)
+            {
+               fputc(command[i], DC);
+               delay_ms(20);
+               fputc(command[i], PC);
+            }
+            fprintf (PC, "\r\n");
+            fprintf (PC, "From SMF:\r\n");
+            //wait for MB to say MB1 RPI finished copying the image to SF2
+           
+            // Transfer MULTSPEC data from SF2 to PC and to SCF
+            output_low (PIN_A5); // Main side
+            
+            address_data[0] = command[1]<<24;
+            address_data[1] = command[2]<<16;
+            address_data[2] = command[3]<<8;
+            address_data[3] = command[4];
+            address = address_data[0] + address_data[1] + address_data[2] + address_data[3];
+            
+            packet_data[0] = command[5]<<8;
+            packet_data[1] = command[6];
+            packet = (packet_data[0] + packet_data[1])*81;
+            
+            TRANSFER_DATA_NBYTE_TOPC_SMF(address, packet);
+            delay_ms(1000);
+            fprintf (PC, "From SCF:\r\n");
+            output_low (PIN_C4); // Main side SCF
+            sector_erase_SCF(address);
+            TRANSFER_DATA_NBYTE_SMFtoSCF(address, address, packet);
+            delay_ms(1000);
+            TRANSFER_DATA_NBYTE_TOPC_SCF(address, packet);
+            
+            fprintf (PC, "\r\n");
+            fprintf (PC, "Finish 0x25\r\n");
+            
          break;
          
          /////////////////////FOR CAM2 RPi on MB2////////////////////////////////
