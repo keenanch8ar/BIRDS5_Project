@@ -42,6 +42,10 @@
 void Check_UART();
 void waiting(int32 counterval);
 
+/////////////MAIN PIC Buffer/////////////
+void SerialDataReceive();                                                        //get buffer data one by one
+void Delete_Buffer();                                                            //get buffer data one by one
+
 /////////////CAM MISSION/////////////
 void Turn_On_CAM();
 void Turn_Off_CAM();

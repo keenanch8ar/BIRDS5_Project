@@ -62,7 +62,7 @@ int8 UPLINK_SUCCESS = 0;
 int8 RESERVE_SEC_FLAG = 0;
 
 //--------MAIN PIC Buffer------------------------------------------------------
-int8 CMD_FROM_PC[8] = {};
+int8 CMD_FROM_PC[9] = {};
 unsigned int8 in_bffr_main[16] = {};
 int8 COM_DATA= 0;
 static int8 CW_IDENTIFIER = 0;

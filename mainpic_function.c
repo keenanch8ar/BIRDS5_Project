@@ -1,5 +1,6 @@
 
-int8 MISSION_STATUS = 0;                                                         //MISSION STATUS FLAGS
+int8 MISSION_STATUS = 0;//MISSION STATUS FLAGS
+int32 FAB_FLAG = 0;
 static int16 currenttime = 0;
 BYTE command[9];
 int8 reset_time_data[11] = {};
@@ -18,6 +19,26 @@ int8 j;
 int i;
 int result = 1;
 
+void DELETE_CMD_FROM_PC()
+{
+   for(int num = 0; num < 9; num++)
+   {
+      CMD_FROM_PC[num] = 0;
+   }
+   return;
+}
+
+void Delete_Buffer()                                                             //delete com command buffer
+{
+   int num = 0;
+   for(num = 0;num < 16; num++)
+   {
+    in_bffr_main[num] = 0x00;
+   }
+   COM_DATA = 0;
+   return;
+}
+
 
 void Turn_On_CAM()
 
@@ -29,6 +50,55 @@ void Turn_On_CAM()
 void Turn_Off_CAM()
 {
    output_low (PIN_D7);
+   return;
+}
+//--------BC Function----------------------------------------------------------
+
+//unsigned int8 BC_temp_data[2] = {};
+unsigned int16 BC_temp_data_h = 0;
+unsigned int16 BC_temp_data_l = 0;
+unsigned int16 BC_TEMP = 0;
+float  temp = 0;
+float initial_temp = 0;
+float MAXTEMP = 0;
+int16 UNLEG2 = 0;
+
+
+void BC_SETUP()                                                                  //Analog read configuration (AN9)
+{
+   ANCON2= 0x01;                                                                 // PIN RC2 Analog enable
+   ADCON1L = 0x00;                                                               // SAMP bit must be cleared by software to start conversion (ends sampling and starts converting)
+   ADCHS0L = 0x09;                                                               // Connect AN9 as S/H+ input
+                                                                                 // AN9 is the input
+   ADCON2H = 0x00;                                                               //A/D control register 2H
+   ADRC = 1;                                                                     //RC Clock source
+   ADCSS0L = 0;                                                                  //Sample select register
+   ADCON3L = 0x02;                                                               // Conversion clock select bits, Tad = 3.2/Fosc
+   //setup_adc(ADC_CLOCK_DIV_32);                                                //VSS_VDD
+   ADCON2L = 0;                                                                  //A/D control register 2L
+   return;
+}
+void BC_READ_TO_PC()
+{
+   ADON = 1;
+   SAMP = 1;
+   delay_ms(100);
+   
+   SAMP = 0; // start converting
+   while (!DONE){};
+   delay_ms(100);
+   //BC_temp_data[0] = ADCBUF0H;//read_adc();
+   //BC_temp_data[1] = ADCBUF0L;
+   
+   BC_temp_data_h = ADCBUF0H;
+   BC_temp_data_l = ADCBUF0L;
+   //temp = ((data_h << 8 ) | data_l);
+   fprintf(PC,"data_l:%x \r\n", BC_temp_data_l);
+   fprintf(PC,"data_h:%x \r\n", BC_temp_data_h);
+   BC_TEMP = BC_temp_data_h | BC_temp_data_l;
+   fprintf(PC,"temp:%f\r\n",temp);
+   temp = BC_TEMP/1024*3.31*100-50;    //VDD: 3.31V(MEASURED)
+   fprintf(PC,"%1.1f \r\n", temp);
    return;
 }
 
@@ -287,328 +357,290 @@ void PINO_Test()
 
 void MULT_SPEC_Test()
 {
-   int32 num;
-   
-   while (TRUE)
+   for(int m = 0; m < 9; m++)
+      {
+         command[m] = CMD_FROM_PC[m];
+      }
+      
+   switch (command[0])
    {
-      command[0] = 0x00;
-      
-      for (num = 0; num < 100; num++)
-      {
-         if (kbhit (PC))
-         {
+   
+      case 0x12: //Transfer N packets of data from SFM2 to PC at the specified address locations
+      fprintf (PC, "Start 0x12\r\n") ;
+      output_low (PIN_A5);
+      address_data[0] = command[1]<<24;
+      address_data[1] = command[2]<<16;
+      address_data[2] = command[3]<<8;
+      address_data[3] = command[4];
+      address = address_data[0] + address_data[1] + address_data[2] + address_data[3];
+      packet_data[0] = command[5]<<8;
+      packet_data[1] = command[6];
+      packet = (packet_data[0] + packet_data[1])*81;
+      TRANSFER_DATA_NBYTE_TOPC_SMF(address, packet);
+      fprintf (PC, "Finish 0x12\r\n") ;
+      break;
 
-            for (int i = 0; i < 9; i++)
-            {
-               command[i] = fgetc (PC);
-               fprintf (PC, "Command Recieved:%x\r\n", command[i]) ;
-            }
-            break;
+ 
+      case 0x14://Uplink command to write the data on Flash Memory 2
+      output_low (PIN_A5) ;//Main side
+      fprintf (PC, "Start 0x14\r\n") ;
+      address_data[0] = command[1]<<24;
+      address_data[1] = command[2]<<16;
+      address_data[2] = command[3]<<8;
+      address_data[3] = command[4];
+      address = address_data[0] + address_data[1] + address_data[2] + address_data[3];
+      sector_erase_SMF (address);
+      WRITE_DATA_BYTE_SMF (address, command[5]) ;
+      WRITE_DATA_BYTE_SMF (address + 1, command[6]) ;
+      WRITE_DATA_BYTE_SMF (address + 2, command[7]) ;
+      WRITE_DATA_BYTE_SMF (address + 3, command[8]) ;
+      fprintf (PC, "Finish 0x14\r\n");
+      break;
+      
+      case 0x16://Erase the data on SFM2 at the given address. Specify how much data to erase eg. 16 00 01 02 03 FF 00 00 will erase the entire 64kB sector at address 00010203
+      output_low (PIN_A5);
+      fprintf(PC, "Start 0x16\r\n");
+      address_data[0] = command[1]<<24;
+      address_data[1] = command[2]<<16;
+      address_data[2] = command[3]<<8;
+      address_data[3] = command[4];
+      address = address_data[0] + address_data[1] + address_data[2] + address_data[3];
+      packet_data[0] = command[5]<<8;
+      packet_data[1] = command[6];
+      packet = (packet_data[0] + packet_data[1])*81;
+         switch(command[7]){
+            case 0x04:
+               SUBSECTOR_4KB_ERASE_SMF(address);
+               fprintf(PC, "Finish 0x16 4KB Erase\r\n");
+               TRANSFER_DATA_NBYTE_TOPC_SMF(address, packet);
+               break;
+            case 0x32:
+               SUBSECTOR_32KB_ERASE_SMF(address);
+               TRANSFER_DATA_NBYTE_TOPC_SMF(address, packet);
+               fprintf(PC, "Finish 0x16 32KB Erase\r\n");
+               break;
+            case 0xFF:
+               SECTOR_ERASE_SMF(address);
+               TRANSFER_DATA_NBYTE_TOPC_SMF(address, packet);
+               fprintf(PC, "Finish 0x16 Sector Erase\r\n");
+               break;
          }
-      }
-      switch (command[0])
-      {
+      break;
       
-         case 0x12: //Transfer N packets of data from SFM2 to PC at the specified address locations
-         fprintf (PC, "Start 0x12\r\n") ;
+      /////////////////////FOR CAM1 RPi on MB1////////////////////////////////
+      
+      case 0x20: //Turn on CAM1 RPi DIO for MOSFET on MB1 to power RPI from 5V
+      
+         output_high (PIN_A5); //SFM2 mission side access
+         fprintf (PC, "Start 0x20\r\n") ;
+         output_high(pin_G3); //Turn on DIO for MULTSPEC CAM1
+         fprintf (PC, "Finish 0x20\r\n"); 
+      break;
+      
+      case 0x21: //Turn off CAM1 RPi for MOSFET on MB1 to power RPI from 5V
+      
+         output_high (PIN_A5); //SFM2 mission side access
+         fprintf (PC, "Start 0x21\r\n") ;
+         output_low(pin_G3); //Turn off DIO for MULTSPEC CAM1
+         fprintf (PC, "Finish 0x21\r\n");
+      break;
+      
+      case 0x22: //Turn on CAM1 RPi trigger
+      
+         output_high (PIN_A5); //SFM2 mission side access
+         fprintf (PC, "Start 0x22\r\n") ;
+         output_high(pin_G2); //Turn on DIO for trigger
+         delay_ms(10000);
+         output_low(pin_G2); //Turn off DIO for trigger
+         fprintf (PC, "Finish 0x22\r\n"); 
+      break;
+      
+      case 0x23:
+      
+         //Capture in mode 1
+         //(1 image, captured immediately, saved to specified address) 
+         //eg. 23 is command, 00 02 06 08 is the address location, 01 is number of images to capture, 00 00 00 for remaining unused command bytes (command: 23 00 02 06 08 01 00 00 00)
+         fprintf (PC, "Start 0x23\r\n") ;
+         output_high (PIN_A5); //SFM2 mission side access
+         
+         for (i = 1; i < 9; i++)
+         {
+            fputc(command[i], DC);
+            delay_ms(20);
+            fputc(command[i], PC);
+         }
+         
+         fprintf (PC, "Finish 0x23\r\n");
+      break;
+      
+      case 0x24: //Turn on CAM1 RPi trigger at specific time from Reservation time
+
+         fprintf (PC, "Start 0x24\r\n") ;
          output_low (PIN_A5);
+         RESERVE_TARGET_FLAG = 3;
+//!            if(RESERVE_MIN_FLAG >= RESERVE_TARGET_FLAG) 
+//!            {
+//!               
+//!            }
+//!
+         fprintf (PC, "Finish 0x24\r\n");    
+      break;
+      
+      case 0x25: //Copy specific images based on selected thumbnails selected from GS. Forwward all mission command data (8 bytes) to MB, MB will send command data (specific image name) to MB1 RPI
+      
+         output_high (PIN_A5); //SFM2 mission side access
+         fprintf (PC, "Start 0x25\r\n") ;
+         for (i = 1; i < 9; i++)
+         {
+            fputc(command[i], DC);
+            delay_ms(20);
+            fputc(command[i], PC);
+         }
+         fprintf (PC, "\r\n");
+         fprintf (PC, "From SMF:\r\n");
+         //wait for MB to say MB1 RPI finished copying the image to SF2
+        
+         // Transfer MULTSPEC data from SF2 to PC and to SCF
+         output_low (PIN_A5); // Main side
+         
          address_data[0] = command[1]<<24;
          address_data[1] = command[2]<<16;
          address_data[2] = command[3]<<8;
          address_data[3] = command[4];
          address = address_data[0] + address_data[1] + address_data[2] + address_data[3];
+         
          packet_data[0] = command[5]<<8;
          packet_data[1] = command[6];
          packet = (packet_data[0] + packet_data[1])*81;
+         
          TRANSFER_DATA_NBYTE_TOPC_SMF(address, packet);
-         fprintf (PC, "Finish 0x12\r\n") ;
-         break;
-
-    
-         case 0x14://Uplink command to write the data on Flash Memory 2
-         output_low (PIN_A5) ;//Main side
-         fprintf (PC, "Start 0x14\r\n") ;
-         address_data[0] = command[1]<<24;
-         address_data[1] = command[2]<<16;
-         address_data[2] = command[3]<<8;
-         address_data[3] = command[4];
-         address = address_data[0] + address_data[1] + address_data[2] + address_data[3];
-         sector_erase_SMF (address);
-         WRITE_DATA_BYTE_SMF (address, command[5]) ;
-         WRITE_DATA_BYTE_SMF (address + 1, command[6]) ;
-         WRITE_DATA_BYTE_SMF (address + 2, command[7]) ;
-         WRITE_DATA_BYTE_SMF (address + 3, command[8]) ;
-         fprintf (PC, "Finish 0x14\r\n");
-         break;
+         delay_ms(1000);
+         fprintf (PC, "From SCF:\r\n");
+         output_low (PIN_C4); // Main side SCF
+         sector_erase_SCF(address);
+         TRANSFER_DATA_NBYTE_SMFtoSCF(address, address, packet);
+         delay_ms(1000);
+         TRANSFER_DATA_NBYTE_TOPC_SCF(address, packet);
          
-         case 0x16://Erase the data on SFM2 at the given address. Specify how much data to erase eg. 16 00 01 02 03 FF 00 00 will erase the entire 64kB sector at address 00010203
+         fprintf (PC, "\r\n");
+         fprintf (PC, "Finish 0x25\r\n");
+         
+      break;
+      
+      /////////////////////FOR CAM2 RPi on MB2////////////////////////////////
+      
+     case 0x30: //Turn on CAM2 RPi DIO for MOSFET on MB2 to power RPI from 5V
+      
+         output_high (PIN_A5); //SFM2 mission side access
+         fprintf (PC, "Start 0x30\r\n") ;
+         output_high(pin_F6); //Turn on DIO for MULTSPEC CAM1
+         fprintf (PC, "Finish 0x30\r\n"); 
+      break;
+      
+      case 0x31: //Turn off CAM1 RPi for MOSFET on MB1 to power RPI from 5V
+      
+         output_high (PIN_A5); //SFM2 mission side access
+         fprintf (PC, "Start 0x31\r\n") ;
+         output_low(pin_F6); //Turn off DIO for MULTSPEC CAM1
+         fprintf (PC, "Finish 0x31\r\n");
+         
+      break;
+      
+      case 0x32: //Turn on CAM1 RPi trigger
+      
+         output_high (PIN_A5); //SFM2 mission side access
+         fprintf (PC, "Start 0x32\r\n") ;
+         output_high(pin_F7); //Turn on DIO for trigger
+         delay_ms(10000);
+         output_low(pin_F7); //Turn off DIO for trigger
+         fprintf (PC, "Finish 0x32\r\n");   
+      break;
+      
+      case 0x33: 
+         //Capture in mode 1
+         //(1 image, captured immediately, saved to specified address) 
+         //eg. 23 is command, 00 02 06 08 is the address location, 01 is number of images to capture, 00 00 00 for remaining unused command bytes (command: 23 00 02 06 08 01 00 00 00)
+         
+         fprintf (PC, "Start 0x33\r\n") ;
+         
+         output_high (PIN_A5); //SFM2 mission side access
+         
+         for (i = 1; i < 9; i++)
+         {
+            fputc(command[i], DC);
+            delay_ms(20);
+            fputc(command[i], PC);
+         }
+         
+         fprintf (PC, "Finish 0x33\r\n");
+      break;
+      
+      case 0x34: //Turn on CAM1 RPi trigger at specific time from RESET_PIC time information
+
+         fprintf (PC, "Start 0x34\r\n") ;
          output_low (PIN_A5);
-         fprintf(PC, "Start 0x16\r\n");
-         address_data[0] = command[1]<<24;
-         address_data[1] = command[2]<<16;
-         address_data[2] = command[3]<<8;
-         address_data[3] = command[4];
-         address = address_data[0] + address_data[1] + address_data[2] + address_data[3];
-         packet_data[0] = command[5]<<8;
-         packet_data[1] = command[6];
-         packet = (packet_data[0] + packet_data[1])*81;
-            switch(command[7]){
-               case 0x04:
-                  SUBSECTOR_4KB_ERASE_SMF(address);
-                  fprintf(PC, "Finish 0x16 4KB Erase\r\n");
-                  TRANSFER_DATA_NBYTE_TOPC_SMF(address, packet);
-                  break;
-               case 0x32:
-                  SUBSECTOR_32KB_ERASE_SMF(address);
-                  TRANSFER_DATA_NBYTE_TOPC_SMF(address, packet);
-                  fprintf(PC, "Finish 0x16 32KB Erase\r\n");
-                  break;
-               case 0xFF:
-                  SECTOR_ERASE_SMF(address);
-                  TRANSFER_DATA_NBYTE_TOPC_SMF(address, packet);
-                  fprintf(PC, "Finish 0x16 Sector Erase\r\n");
-                  break;
-            }
-         break;
          
-         /////////////////////FOR CAM1 RPi on MB1////////////////////////////////
+         //read command
+         command_time_data[0] = command[1];
+         command_time_data[1] = command[2];
+         command_time_data[2] = command[3];
+         command_time_data[3] = command[4];
+         command_time_data[4] = command[5];
          
-         case 0x20: //Turn on CAM1 RPi DIO for MOSFET on MB1 to power RPI from 5V
+         //read time from reset_pic and compare command time and reset pic time every ten seconds
          
-            output_high (PIN_A5); //SFM2 mission side access
-            fprintf (PC, "Start 0x20\r\n") ;
-            output_high(pin_G3); //Turn on DIO for MULTSPEC CAM1
-            fprintf (PC, "Finish 0x20\r\n"); 
-         break;
+         for (j = 0; j<9; j++)
+         {
+            GET_TIME();
+            delay_ms(20);
+            result = trigger_time_data % command_time_data;
          
-         case 0x21: //Turn off CAM1 RPi for MOSFET on MB1 to power RPI from 5V
-         
-            output_high (PIN_A5); //SFM2 mission side access
-            fprintf (PC, "Start 0x21\r\n") ;
-            output_low(pin_G3); //Turn off DIO for MULTSPEC CAM1
-            fprintf (PC, "Finish 0x21\r\n");
-         break;
-         
-         case 0x22: //Turn on CAM1 RPi trigger
-         
-            output_high (PIN_A5); //SFM2 mission side access
-            fprintf (PC, "Start 0x22\r\n") ;
-            output_high(pin_G2); //Turn on DIO for trigger
-            delay_ms(10000);
-            output_low(pin_G2); //Turn off DIO for trigger
-            fprintf (PC, "Finish 0x22\r\n"); 
-         break;
-         
-         case 0x23:
-         
-            //Capture in mode 1
-            //(1 image, captured immediately, saved to specified address) 
-            //eg. 23 is command, 00 02 06 08 is the address location, 01 is number of images to capture, 00 00 00 for remaining unused command bytes (command: 23 00 02 06 08 01 00 00 00)
-            fprintf (PC, "Start 0x23\r\n") ;
-            output_high (PIN_A5); //SFM2 mission side access
-            
-            for (i = 1; i < 9; i++)
-            {
-               fputc(command[i], DC);
-               delay_ms(20);
-               fputc(command[i], PC);
-            }
-            
-            fprintf (PC, "Finish 0x23\r\n");
-         break;
-         
-         case 0x24: //Turn on CAM1 RPi trigger at specific time from RESET_PIC time information
-
-            fprintf (PC, "Start 0x24\r\n") ;
-            output_low (PIN_A5);
-            
-            //read command
-            command_time_data[0] = command[1];
-            command_time_data[1] = command[2];
-            command_time_data[2] = command[3];
-            command_time_data[3] = command[4];
-            command_time_data[4] = command[5];
-            
-            //read time from reset_pic and compare command time and reset pic time every ten seconds
-            
-            for (j = 0; j<9; j++)
-            {
-               GET_TIME();
-               delay_ms(20);
-               result = trigger_time_data % command_time_data;
-            
-               if (result = 0)
+            if (result = 0)            
+               {
+                  fprintf(PC, "Trigger time occurred\r\n");
+                  //output_high(); Turn on DIO for MULTSPEC CAM1
+                  //delay_ms(10000);
+                  //output_low() Turn off DIO for MULTSPEC CAM1
+               }
                
-                  {
-                     fprintf(PC, "Trigger time occurred\r\n");
-                     //output_high(); Turn on DIO for MULTSPEC CAM1
-                     //delay_ms(10000);
-                     //output_low() Turn off DIO for MULTSPEC CAM1
-                  }
-                  
-               else
-  
-                  {
-                     fprintf(PC, "No trigger\r\n");
-                     delay_ms(5000);
-                  }
-            }
-            result = 1;
-            fprintf (PC, "Finish 0x24\r\n");    
-         break;
-         
-         case 0x25: //Copy specific images based on selected thumbnails selected from GS. Forwward all mission command data (8 bytes) to MB, MB will send command data (specific image name) to MB1 RPI
-         
-            output_high (PIN_A5); //SFM2 mission side access
-            fprintf (PC, "Start 0x25\r\n") ;
-            for (i = 1; i < 9; i++)
-            {
-               fputc(command[i], DC);
-               delay_ms(20);
-               fputc(command[i], PC);
-            }
-            fprintf (PC, "\r\n");
-            fprintf (PC, "From SMF:\r\n");
-            //wait for MB to say MB1 RPI finished copying the image to SF2
-           
-            // Transfer MULTSPEC data from SF2 to PC and to SCF
-            output_low (PIN_A5); // Main side
-            
-            address_data[0] = command[1]<<24;
-            address_data[1] = command[2]<<16;
-            address_data[2] = command[3]<<8;
-            address_data[3] = command[4];
-            address = address_data[0] + address_data[1] + address_data[2] + address_data[3];
-            
-            packet_data[0] = command[5]<<8;
-            packet_data[1] = command[6];
-            packet = (packet_data[0] + packet_data[1])*81;
-            
-            TRANSFER_DATA_NBYTE_TOPC_SMF(address, packet);
-            delay_ms(1000);
-            fprintf (PC, "From SCF:\r\n");
-            output_low (PIN_C4); // Main side SCF
-            sector_erase_SCF(address);
-            TRANSFER_DATA_NBYTE_SMFtoSCF(address, address, packet);
-            delay_ms(1000);
-            TRANSFER_DATA_NBYTE_TOPC_SCF(address, packet);
-            
-            fprintf (PC, "\r\n");
-            fprintf (PC, "Finish 0x25\r\n");
-            
-         break;
-         
-         /////////////////////FOR CAM2 RPi on MB2////////////////////////////////
-         
-        case 0x30: //Turn on CAM2 RPi DIO for MOSFET on MB2 to power RPI from 5V
-         
-            output_high (PIN_A5); //SFM2 mission side access
-            fprintf (PC, "Start 0x30\r\n") ;
-            output_high(pin_F6); //Turn on DIO for MULTSPEC CAM1
-            fprintf (PC, "Finish 0x30\r\n"); 
-         break;
-         
-         case 0x31: //Turn off CAM1 RPi for MOSFET on MB1 to power RPI from 5V
-         
-            output_high (PIN_A5); //SFM2 mission side access
-            fprintf (PC, "Start 0x31\r\n") ;
-            output_low(pin_F6); //Turn off DIO for MULTSPEC CAM1
-            fprintf (PC, "Finish 0x31\r\n");
-            
-         break;
-         
-         case 0x32: //Turn on CAM1 RPi trigger
-         
-            output_high (PIN_A5); //SFM2 mission side access
-            fprintf (PC, "Start 0x32\r\n") ;
-            output_high(pin_F7); //Turn on DIO for trigger
-            delay_ms(10000);
-            output_low(pin_F7); //Turn off DIO for trigger
-            fprintf (PC, "Finish 0x32\r\n");   
-         break;
-         
-         case 0x33: 
-            //Capture in mode 1
-            //(1 image, captured immediately, saved to specified address) 
-            //eg. 23 is command, 00 02 06 08 is the address location, 01 is number of images to capture, 00 00 00 for remaining unused command bytes (command: 23 00 02 06 08 01 00 00 00)
-            
-            fprintf (PC, "Start 0x33\r\n") ;
-            
-            output_high (PIN_A5); //SFM2 mission side access
-            
-            for (i = 1; i < 9; i++)
-            {
-               fputc(command[i], DC);
-               delay_ms(20);
-               fputc(command[i], PC);
-            }
-            
-            fprintf (PC, "Finish 0x33\r\n");
-         break;
-         
-         case 0x34: //Turn on CAM1 RPi trigger at specific time from RESET_PIC time information
+            else
 
-            fprintf (PC, "Start 0x34\r\n") ;
-            output_low (PIN_A5);
-            
-            //read command
-            command_time_data[0] = command[1];
-            command_time_data[1] = command[2];
-            command_time_data[2] = command[3];
-            command_time_data[3] = command[4];
-            command_time_data[4] = command[5];
-            
-            //read time from reset_pic and compare command time and reset pic time every ten seconds
-            
-            for (j = 0; j<9; j++)
-            {
-               GET_TIME();
-               delay_ms(20);
-               result = trigger_time_data % command_time_data;
-            
-               if (result = 0)            
-                  {
-                     fprintf(PC, "Trigger time occurred\r\n");
-                     //output_high(); Turn on DIO for MULTSPEC CAM1
-                     //delay_ms(10000);
-                     //output_low() Turn off DIO for MULTSPEC CAM1
-                  }
-                  
-               else
-  
-                  {
-                     fprintf(PC, "No trigger\r\n");
-                     delay_ms(5000);
-                  }
-            }
-            result = 1;
-            fprintf (PC, "Finish 0x34\r\n");    
+               {
+                  fprintf(PC, "No trigger\r\n");
+                  delay_ms(5000);
+               }
+         }
+         result = 1;
+         fprintf (PC, "Finish 0x34\r\n");    
+      break;
+      
+      case 0x35: //Turn on CAM1 and CAM2 RPi trigger
+      
+         output_high (PIN_A5); //SFM2 mission side access
+         fprintf (PC, "Start 0x35\r\n") ;
+         output_high(pin_F7); //Turn on DIO for trigger MB2
+         output_high(pin_G2); //Turn on DIO for trigger MB1
+         delay_ms(10000);
+         output_low(pin_F7); //Turn off DIO for trigger
+         output_low(pin_G2); //Turn off DIO for trigger
+         fprintf (PC, "Finish 0x35\r\n");   
+         
+      break;
+      
+      case 0x36: //Turn on CAM1 and CAM2 RPi
+      
+         output_high (PIN_A5); //SFM2 mission side access
+         fprintf (PC, "Start 0x36\r\n") ;
+         output_high(pin_G3); //Turn on DIO for trigger MB2
+         delay_ms(5000);
+         output_high(pin_F6); //Turn on DIO for trigger MB1
+         fprintf (PC, "Finish 0x36\r\n");   
+      break;
+      
+      default:
+         fprintf (PC, "Command:%x", command[0]);
+         fprintf (PC, " does not exist\r\n");
          break;
-         
-         case 0x35: //Turn on CAM1 and CAM2 RPi trigger
-         
-            output_high (PIN_A5); //SFM2 mission side access
-            fprintf (PC, "Start 0x35\r\n") ;
-            output_high(pin_F7); //Turn on DIO for trigger MB2
-            output_high(pin_G2); //Turn on DIO for trigger MB1
-            delay_ms(10000);
-            output_low(pin_F7); //Turn off DIO for trigger
-            output_low(pin_G2); //Turn off DIO for trigger
-            fprintf (PC, "Finish 0x35\r\n");   
-            
-         break;
-         
-         case 0x36: //Turn on CAM1 and CAM2 RPi
-         
-            output_high (PIN_A5); //SFM2 mission side access
-            fprintf (PC, "Start 0x36\r\n") ;
-            output_high(pin_G3); //Turn on DIO for trigger MB2
-            delay_ms(5000);
-            output_high(pin_F6); //Turn on DIO for trigger MB1
-            fprintf (PC, "Finish 0x36\r\n");   
-            
-         break;
-      }
    }
 }
 
