@@ -660,7 +660,8 @@ void IMGCLS_Test()
          
             output_high (PIN_A5); //SFM2 mission side access
             fprintf (PC, "Start 0x20\r\n") ;
-            //output_high(); Turn on DIO for MULTSPEC CAM1
+            fputc(command[3], DC);
+            output_high(pin_G2); //Turn on DIO for IMG-CLS
             fprintf (PC, "Finish 0x20\r\n"); 
          break;
          
@@ -668,23 +669,13 @@ void IMGCLS_Test()
          
             output_high (PIN_A5); //SFM2 mission side access
             fprintf (PC, "Start 0x21\r\n") ;
-            //output_low(); Turn off DIO for MULTSPEC CAM1
+            fputc(command[3], DC);
+            output_low(pin_G2); //Turn off DIO for IMG-CLS
             fprintf (PC, "Finish 0x21\r\n");
             
          break;
          
-         case 0x82: //Turn on CAM1 RPi trigger
-         
-            output_high (PIN_A5); //SFM2 mission side access
-            fprintf (PC, "Start 0x22\r\n") ;
-            //output_high(); Turn on DIO for trigger
-            //delay_ms(10000);
-            //output_low(); Turn off DIO for trigger
-            fprintf (PC, "Finish 0x22\r\n");
-            
-         break;
-         
-         case 0x23:
+         case 0x82:
          
             //Capture in mode 1
             //(1 image, captured immediately, saved to specified address) 
