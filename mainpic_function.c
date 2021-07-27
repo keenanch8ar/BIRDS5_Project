@@ -1,6 +1,5 @@
 
 int8 MISSION_STATUS = 0;//MISSION STATUS FLAGS
-int32 FAB_FLAG = 0;
 static int16 currenttime = 0;
 BYTE command[9];
 int8 reset_time_data[11] = {};
@@ -52,7 +51,7 @@ void Turn_Off_CAM()
    output_low (PIN_D7);
    return;
 }
-//--------BC Function----------------------------------------------------------
+//--------BC Function--------------------------------------------------------//
 
 //unsigned int8 BC_temp_data[2] = {};
 unsigned int16 BC_temp_data_h = 0;
@@ -61,7 +60,7 @@ unsigned int16 BC_TEMP = 0;
 float  temp = 0;
 float initial_temp = 0;
 float MAXTEMP = 0;
-int16 UNLEG2 = 0;
+int16 UNREG2 = 0;
 
 
 void BC_SETUP()                                                                  //Analog read configuration (AN9)
@@ -102,39 +101,216 @@ void BC_READ_TO_PC()
    return;
 }
 
-void Flash_Memory_Access()
+void CHECK_BC_TEMP()                                                             //lee la temperatura del BC y lo guarda en MAXTEMP
 {
-   sector_erase_OF (0x00000000);
-   WRITE_DATA_BYTE_OF (0x00000000, 0x01) ;
-   TRANSFER_DATA_NBYTE_TOPC_OF (0x00000000, 1) ;
-   delay_ms (1000);
+   BC_SETUP();                                                                   //Analog read configuration (AN9)
+   ADON = 1;
+   SAMP = 1;
+   delay_ms(10);
    
-   sector_erase_OF (0x00000000);
-   WRITE_DATA_BYTE_OF (0x00000000, 0x02) ;
-   TRANSFER_DATA_NBYTE_TOPC_OF (0x00000000, 1) ;
-   delay_ms (1000);
+   SAMP = 0;                                                                     // start converting
+   while (!DONE){};
+   delay_ms(10);
+   BC_temp_data_h = ADCBUF0H;                                                    //read_adc();
+   BC_temp_data_l = ADCBUF0L;
+   //fprintf(PC,"%x%x\r\n",ADCBUF0H,BC_temp_data_l);
+   BC_temp = BC_temp_data_h<<8 | BC_temp_data_l;                                 //convierte en un int16
+   //fprintf(PC,"HEX : %x%x\r\n",BC_temp>>8,BC_temp);
+
+   temp = BC_temp;                                                               //convierte a float
+   //temp = temp/1024*3.25*100-50;
+   temp = (temp*3.3/1023);
+   temp = temp*100-50;
+   fprintf(PC,"Current Temp: %1.1f\r\n",temp);
    
-   sector_erase_OF (0x00000000);
-   WRITE_DATA_BYTE_OF (0x00000000, 0x03) ;
-   TRANSFER_DATA_NBYTE_TOPC_OF (0x00000000, 1) ;
-   delay_ms (1000);
+   if(MAXTEMP < temp)
+   {
+      MAXTEMP = temp;
+   }
+   fprintf(PC,"%f\r\n",temp);
+   return;
 }
 
-void ten_sec_counter(){
-   int counter=0;
-   int sec=0;
+void MEASURE_BC_TEMP()
+{
+   BC_SETUP();                                                                   //configuracion para lectura analogica
+   ADON = 1;
+   SAMP = 1;
+   delay_ms(1);
+   
+   SAMP = 0;                                                                     // start converting
+   while (!DONE){};
+   delay_ms(1);
+   BC_temp_data_h = ADCBUF0H;                                                    //read_adc();
+   BC_temp_data_l = ADCBUF0L;
 
+   return;
+}
 
-      counter++; //16.384ms for one increment
-      if(counter>60)
+void Turn_ON_BC()
+{
+   output_high(PIN_D5);                                                          //BC switch ON, RD5=1
+   return;
+}
+
+void Turn_OFF_BC()
+{
+   output_low(PIN_D5);                                                           //BC switch OFF, RD5=0
+   return;
+}
+
+void BC_OPERATION()                                                              //Turn ON BC and read temperature
+{
+   CHECK_BC_TEMP();                                                              //read BC temperature and save It in float MAXTEMP
+   initial_temp = MAXTEMP;                                                       //save temperature in initial_temp before turn_ON BC
+   fprintf(PC,"INITIAL TEMPERATURE is %1.1f\r\n\r\n",initial_temp);
+   Turn_ON_BC();                                                                 //BC switch ON, RD5=1
+   fprintf(PC,"Turned ON BC\r\n");
+   currenttime = 0;
+   int8 counter = 0;   
+   while(currenttime < 30)                                                       //turn ON BC for 30 sec
+   {
+      for(int i = 0; i < 10; i++)
       {
-         counter = 0;
-         sec++;
+         COLLECT_RESET_DATA();                                                   //send command to reset PIC requesting RESET DATA
+         if(reset_bffr[0] == 0x8e)
+         {
+            for(i = 0; i < 10; i++);                                             //shows the received array
+            {
+               fprintf(PC,"%x,",reset_bffr[i]);
+            }
+            fprintf(PC,"%x\r\n",reset_bffr[10]);
+            break;
+         }
       }
-      else if(sec>9){
-         break;
-      }
+      CHECK_BC_TEMP();                                                           //read BC temperature and save it in float MAXTEMP
+      UNREG2 = UNREG2 + RESET_bffr[10];                                          //add the unreg2 current every second
+      counter++;
+      delay_ms(900);
+   }
+      
+   Turn_OFF_BC();                                                                //BC switch OFF, RD5=0
+   fprintf(PC,"Turned OFF BC\r\n");
+   delay_ms(500);
+   CHECK_BC_TEMP();                                                              //reads the temperature of the BC and saves it to float MAXTEMP
+   if(MAXTEMP-initial_temp > 5)                                                  //sets the HIGH flag if there was an increase in temperature
+   {
+      ANT_DEP_STATUS = 1;
+   }
+   fprintf(PC,"MAXIMUM TEMPERATURE is %1.1f\r\n\r\n",MAXTEMP);
+   MAXTEMP = 0;
+   initial_temp = 0;
+   return;
 }
+
+void CLEAR_BC_FLAG()
+{
+   BC_ATTEMPT_FLAG = 0;
+   fprintf(PC,"\r\nBC Attempt Flag clear done\r\n");
+   return;
+}
+
+void MAKE_BC_FLAG_1()
+{
+   BC_ATTEMPT_FLAG = 1;
+   fprintf(PC,"\r\nBC Attempt Flag:1\r\n");
+   return;
+}
+
+void MAKE_BC_FLAG_2()
+{
+   BC_ATTEMPT_FLAG = 2;
+   fprintf(PC,"\r\nBC Attempt Flag:2\r\n");
+   return;
+}
+
+void MAKE_BC_FLAG_3()
+{
+   BC_ATTEMPT_FLAG = 3;
+   fprintf(PC,"\r\nBC Attempt Flag:3\r\n");
+   return;
+}
+
+void MAKE_BC_FLAG_4()
+{
+   BC_ATTEMPT_FLAG = 4;
+   fprintf(PC,"\r\nBC Attempt Flag:4\r\n");
+   return;
+}
+
+void Antenna_Deploy()
+{
+   fprintf(PC,"Ant Dep Attempt No: %x\r\n",BC_ATTEMPT_FLAG);
+   
+   if(BC_ATTEMPT_FLAG < 4 && BC_ATTEMPT_FLAG != 0)                               //IT WILL BE REPEATED 3 MORE TIMES AFTER THE FIRST DEPLOYMENT, SUCCESSFUL OR NOT
+   {
+   
+      fprintf(PC,"BC command sent to RESET PIC\r\n");
+      for(int num = 0; num < 50; num++)
+      {
+         fputc(0xBC,reset);
+         delay_ms(10);
+      }
+      delay_ms(1000);
+      if(reset_bffr[0] == 0xCB)                                                  //check the header of reset respond
+      {
+         RESET_DATA = 0;
+         BC_OPERATION();                                                         //Turn ON BC for 30s and read temperature
+         BC_ATTEMPT_FLAG++;                                                      //increase attempt Flag
+         STORE_FLAG_INFO();                                                      //save flag data to flash memory
+         WRITE_FLAG_to_EEPROM();                                                 //guarda los flags en la EEPROM a partir de la direccion 0x18000 (75%)
+         STORE_ADRESS_DATA_TO_FLASH();                                           //guarda los datos de direcciones, en un nuevo sector si se cumple el ciclo de R/W
+         reset_bffr[0] = 0;
+         CMD_FROM_PC[1] = 0;
+         RESET_DATA = 0;
+         delay_ms(1000);
+         delay_ms(20000);                                                        //wait until RESET goes back to normal loop
+         SAVE_SAT_LOG(0xBC,BC_ATTEMPT_FLAG,BC_ATTEMPT_FLAG);
+
+      }
+   }
+   return;
+}
+
+//--------Mission Boss PIC Data Collection-----------------------------------//
+
+int8 DC_ACK = 0;
+int8 MBP_DATA[83] = {};
+
+void Turn_On_MBP()
+{
+   output_high(PIN_F5);
+   return;
+}
+
+void Turn_Off_MBP()
+{
+   output_low(PIN_F5);
+   return;
+}
+
+
+//--------FAB HK collection--------------------------------------------------//
+#define HK_size 124                                                              //HK FORMAT ARRAY SIZE
+#define CW_size 5                                                                //CW FORMAT ARRAY SIZE
+#define HIGH_SAMP_HK_size 124                                                    //High Sampling HK FORMAT ARRAY SIZE
+#define FAB_SENSOR_size 45                                                       //HK FAB Part
+
+static unsigned int8 CW_FORMAT[CW_size] = {};
+unsigned int8 in_HK[FAB_SENSOR_size] = {};
+unsigned int8 HKDATA[HK_size] ={};
+unsigned int8 ACK_for_COM[24] = {0xAA,0,0,0,0,0,0,0,0,0,
+                                 0,0,0,0,0,0,0,0,0,0,
+                                 0,0,0,0xBB};
+//int8 in_High_HK[HIGH_SAMP_HK_size] = {};
+BYTE FAB_DATA = 0;
+//int t;
+static int8 FAB_MEASUERING_FLAG= 0;
+static int8 HIGH_SAMP_FAB_MEASUERING_FLAG = 0;
+int32 FAB_FLAG = 0;
+int8 CHECK_FAB_RESPONSE = 0;
+
+#define buffer_from_FAB  (in_bffr_main[0]==0x33)
 
 void PINO_Test()
 {
@@ -357,6 +533,7 @@ void PINO_Test()
 
 void MULT_SPEC_Test()
 {
+
    for(int m = 0; m < 9; m++)
       {
          command[m] = CMD_FROM_PC[m];
@@ -365,69 +542,7 @@ void MULT_SPEC_Test()
    switch (command[0])
    {
    
-      case 0x12: //Transfer N packets of data from SFM2 to PC at the specified address locations
-      fprintf (PC, "Start 0x12\r\n") ;
-      output_low (PIN_A5);
-      address_data[0] = command[1]<<24;
-      address_data[1] = command[2]<<16;
-      address_data[2] = command[3]<<8;
-      address_data[3] = command[4];
-      address = address_data[0] + address_data[1] + address_data[2] + address_data[3];
-      packet_data[0] = command[5]<<8;
-      packet_data[1] = command[6];
-      packet = (packet_data[0] + packet_data[1])*81;
-      TRANSFER_DATA_NBYTE_TOPC_SMF(address, packet);
-      fprintf (PC, "Finish 0x12\r\n") ;
-      break;
-
- 
-      case 0x14://Uplink command to write the data on Flash Memory 2
-      output_low (PIN_A5) ;//Main side
-      fprintf (PC, "Start 0x14\r\n") ;
-      address_data[0] = command[1]<<24;
-      address_data[1] = command[2]<<16;
-      address_data[2] = command[3]<<8;
-      address_data[3] = command[4];
-      address = address_data[0] + address_data[1] + address_data[2] + address_data[3];
-      sector_erase_SMF (address);
-      WRITE_DATA_BYTE_SMF (address, command[5]) ;
-      WRITE_DATA_BYTE_SMF (address + 1, command[6]) ;
-      WRITE_DATA_BYTE_SMF (address + 2, command[7]) ;
-      WRITE_DATA_BYTE_SMF (address + 3, command[8]) ;
-      fprintf (PC, "Finish 0x14\r\n");
-      break;
-      
-      case 0x16://Erase the data on SFM2 at the given address. Specify how much data to erase eg. 16 00 01 02 03 FF 00 00 will erase the entire 64kB sector at address 00010203
-      output_low (PIN_A5);
-      fprintf(PC, "Start 0x16\r\n");
-      address_data[0] = command[1]<<24;
-      address_data[1] = command[2]<<16;
-      address_data[2] = command[3]<<8;
-      address_data[3] = command[4];
-      address = address_data[0] + address_data[1] + address_data[2] + address_data[3];
-      packet_data[0] = command[5]<<8;
-      packet_data[1] = command[6];
-      packet = (packet_data[0] + packet_data[1])*81;
-         switch(command[7]){
-            case 0x04:
-               SUBSECTOR_4KB_ERASE_SMF(address);
-               fprintf(PC, "Finish 0x16 4KB Erase\r\n");
-               TRANSFER_DATA_NBYTE_TOPC_SMF(address, packet);
-               break;
-            case 0x32:
-               SUBSECTOR_32KB_ERASE_SMF(address);
-               TRANSFER_DATA_NBYTE_TOPC_SMF(address, packet);
-               fprintf(PC, "Finish 0x16 32KB Erase\r\n");
-               break;
-            case 0xFF:
-               SECTOR_ERASE_SMF(address);
-               TRANSFER_DATA_NBYTE_TOPC_SMF(address, packet);
-               fprintf(PC, "Finish 0x16 Sector Erase\r\n");
-               break;
-         }
-      break;
-      
-      /////////////////////FOR CAM1 RPi on MB1////////////////////////////////
+////////////////////////////FOR CAM1 RPi on MB1////////////////////////////////
       
       case 0x20: //Turn on CAM1 RPi DIO for MOSFET on MB1 to power RPI from 5V
       
@@ -527,7 +642,76 @@ void MULT_SPEC_Test()
          
       break;
       
-      /////////////////////FOR CAM2 RPi on MB2////////////////////////////////
+      case 0x26: //Transfer N packets of data from SFM2 to PC at the specified address locations
+      
+         fprintf (PC, "Start 0x12\r\n") ;
+         output_low (PIN_A5);
+         address_data[0] = command[1]<<24;
+         address_data[1] = command[2]<<16;
+         address_data[2] = command[3]<<8;
+         address_data[3] = command[4];
+         address = address_data[0] + address_data[1] + address_data[2] + address_data[3];
+         packet_data[0] = command[5]<<8;
+         packet_data[1] = command[6];
+         packet = (packet_data[0] + packet_data[1])*81;
+         TRANSFER_DATA_NBYTE_TOPC_SMF(address, packet);
+         fprintf (PC, "Finish 0x12\r\n") ;
+         
+      break;
+
+ 
+      case 0x27://Uplink command to write the data on Flash Memory 2
+      
+         output_low (PIN_A5) ;//Main side
+         fprintf (PC, "Start 0x27\r\n") ;
+         address_data[0] = command[1]<<24;
+         address_data[1] = command[2]<<16;
+         address_data[2] = command[3]<<8;
+         address_data[3] = command[4];
+         address = address_data[0] + address_data[1] + address_data[2] + address_data[3];
+         sector_erase_SMF (address);
+         WRITE_DATA_BYTE_SMF (address, command[5]) ;
+         WRITE_DATA_BYTE_SMF (address + 1, command[6]) ;
+         WRITE_DATA_BYTE_SMF (address + 2, command[7]) ;
+         WRITE_DATA_BYTE_SMF (address + 3, command[8]) ;
+         fprintf (PC, "Finish 0x27\r\n");
+      
+      break;
+      
+      case 0x28://Erase the data on SFM2 at the given address. Specify how much data to erase eg. 16 00 01 02 03 FF 00 00 will erase the entire 64kB sector at address 00010203
+      
+         output_low (PIN_A5);
+         fprintf(PC, "Start 0x28\r\n");
+         address_data[0] = command[1]<<24;
+         address_data[1] = command[2]<<16;
+         address_data[2] = command[3]<<8;
+         address_data[3] = command[4];
+         address = address_data[0] + address_data[1] + address_data[2] + address_data[3];
+         packet_data[0] = command[5]<<8;
+         packet_data[1] = command[6];
+         packet = (packet_data[0] + packet_data[1])*81;
+         switch(command[7])
+         {
+            case 0x04:
+               SUBSECTOR_4KB_ERASE_SMF(address);
+               fprintf(PC, "Finish 0x28 4KB Erase\r\n");
+               TRANSFER_DATA_NBYTE_TOPC_SMF(address, packet);
+               break;
+            case 0x32:
+               SUBSECTOR_32KB_ERASE_SMF(address);
+               TRANSFER_DATA_NBYTE_TOPC_SMF(address, packet);
+               fprintf(PC, "Finish 0x28 32KB Erase\r\n");
+               break;
+            case 0xFF:
+               SECTOR_ERASE_SMF(address);
+               TRANSFER_DATA_NBYTE_TOPC_SMF(address, packet);
+               fprintf(PC, "Finish 0x28 Sector Erase\r\n");
+               break;
+         }
+         
+      break;
+      
+////////////////////////////FOR CAM2 RPi on MB2////////////////////////////////
       
      case 0x30: //Turn on CAM2 RPi DIO for MOSFET on MB2 to power RPI from 5V
       

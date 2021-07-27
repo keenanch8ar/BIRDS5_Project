@@ -286,7 +286,7 @@ void STORE_FLAG_INFO()                                                          
 
 void RESET_FLAG_DATA()
 {
-   //BC_ATTEMPT_FLAG = 0;
+   BC_ATTEMPT_FLAG = 0;
    PASSED_DAYS = 0;
    //RESERVE_CHECK = 0;
    //RESERVE_MIN_FLAG = 0;
