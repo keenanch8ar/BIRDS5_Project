@@ -149,7 +149,7 @@ void main()
          if(command_ID == 0x00 || command_ID == 0x10)
          {
             fprintf(PC,"Main PIC or MB Command only\r\n");
-            //execute MP or MB commands
+            MAIN_MB_CMD();
          }
          
          if(command_ID == 0x20 || command_ID == 0x30)
@@ -163,10 +163,17 @@ void main()
             fprintf(PC,"ADCS Command\r\n");
             ADCS_test();
          }
+         
+         if(command_ID == 0x80)
+         {
+            fprintf(PC,"IMG-CLS Command\r\n");
+            IMGCLS_test();
+         }
+         
          if(command_ID == 0x90)
          {
             fprintf(PC,"PINO Command\r\n");
-            //PINO_test();
+            PINO_test();
          }
 
          DELETE_CMD_FROM_PC();                                                   //clear CMD_FROM_PC[] array

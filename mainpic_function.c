@@ -51,6 +51,116 @@ void Turn_Off_CAM()
    output_low (PIN_D7);
    return;
 }
+//--------Main or MB Commands------------------------------------------------//
+
+void MAIN_MB_CMD()
+{
+
+   for(int m = 0; m < 9; m++)
+   {
+      command[m] = CMD_FROM_PC[m];
+   }
+      
+   switch (command[0])
+   {
+      case 0x12:
+         fprintf (PC, "Start 0x12\r\n") ;
+         output_low (PIN_A5);
+         address_data[0] = command[2]<<24;
+         address_data[1] = command[3]<<16;
+         address_data[2] = command[4]<<8;
+         address_data[3] = command[5];
+         address = address_data[0] + address_data[1] + address_data[2] + address_data[3];
+         packet_data[0] = command[6]<<8;
+         packet_data[1] = command[7];
+         packet = (packet_data[0] + packet_data[1])*81;
+         TRANSFER_DATA_NBYTE_TOPC_SMF(address, packet);
+         fprintf (PC, "Finish 0x12\r\n") ;
+      break;
+      
+      
+      case 0x14://Uplink command to write the data on Flash Memory 2
+         output_low (PIN_A5) ;//Main side
+         fprintf (PC, "Start 0x14\r\n") ;
+         address_data[0] = command[2]<<24;
+         address_data[1] = command[3]<<16;
+         address_data[2] = command[4]<<8;
+         address_data[3] = command[5];
+         address = address_data[0] + address_data[1] + address_data[2] + address_data[3];
+         //sector_erase_SMF (address);
+         WRITE_DATA_BYTE_SMF (address, command[6]) ;
+         WRITE_DATA_BYTE_SMF (address + 1, command[7]) ;
+         WRITE_DATA_BYTE_SMF (address + 2, command[8]) ;
+         fprintf (PC, "Finish 0x14\r\n");
+      break;
+      
+      case 0x16://Erase the data on Flash Memory 2
+         output_low (PIN_A5);
+         fprintf(PC, "Start 0x16\r\n");
+         address_data[0] = command[2]<<24;
+         address_data[1] = command[3]<<16;
+         address_data[2] = command[4]<<8;
+         address_data[3] = command[5];
+         address = address_data[0] + address_data[1] + address_data[2] + address_data[3];
+            switch(command[6]){
+               case 0x04:
+                  SUBSECTOR_4KB_ERASE_SMF(address);
+                  fprintf(PC, "Finish 0x16\r\n");
+                  break;
+               case 0x32:
+                  SUBSECTOR_32KB_ERASE_SMF(address);
+                  fprintf(PC, "Finish 0x16\r\n");
+                  break;
+               case 0xFF:
+                  SECTOR_ERASE_SMF(address);
+                  fprintf(PC, "Finish 0x16\r\n");
+                  break;
+               default:
+                  fprintf(PC, "error\r\n");
+            }
+      break;    
+            
+      case 0x17:
+         output_high (PIN_A5); //SFM2 mission side access
+         fprintf (PC, "Start 0x17\r\n") ;
+         for (i = 1; i < 9; i++)
+         {
+            fputc(command[i], DC);
+            delay_ms(20);
+            fputc(command[i], PC);
+         }
+         fprintf (PC, "\r\n");
+         fprintf (PC, "From SMF:\r\n");
+         //wait for MB to say MB1 RPI finished copying the image to SF2
+        
+         // Transfer MULTSPEC data from SF2 to PC and to SCF
+         output_low (PIN_A5); // Main side
+         
+         address_data[0] = command[1]<<24;
+         address_data[1] = command[2]<<16;
+         address_data[2] = command[3]<<8;
+         address_data[3] = command[4];
+         address = address_data[0] + address_data[1] + address_data[2] + address_data[3];
+         
+         packet_data[0] = command[5]<<8;
+         packet_data[1] = command[6];
+         packet = (packet_data[0] + packet_data[1])*81;
+         
+         TRANSFER_DATA_NBYTE_TOPC_SMF(address, packet);
+         delay_ms(1000);
+         fprintf (PC, "From SCF:\r\n");
+         output_low (PIN_C4); // Main side SCF
+         sector_erase_SCF(address);
+         TRANSFER_DATA_NBYTE_SMFtoSCF(address, address, packet);
+         delay_ms(1000);
+         TRANSFER_DATA_NBYTE_TOPC_SCF(address, packet);
+         
+         fprintf (PC, "\r\n");
+         fprintf (PC, "Finish 0x17\r\n");
+      break;
+   }
+
+}
 //--------BC Function--------------------------------------------------------//
 
 //unsigned int8 BC_temp_data[2] = {};
@@ -63,7 +173,7 @@ float MAXTEMP = 0;
 int16 UNREG2 = 0;
 
 
-void BC_SETUP()                                                                  //Analog read configuration (AN9)
+void BC_SETUP()  //Analog read configuration (AN9)
 {
    ANCON2= 0x01;                                                                 // PIN RC2 Analog enable
    ADCON1L = 0x00;                                                               // SAMP bit must be cleared by software to start conversion (ends sampling and starts converting)
@@ -77,6 +187,7 @@ void BC_SETUP()                                                                 
    ADCON2L = 0;                                                                  //A/D control register 2L
    return;
 }
+
 void BC_READ_TO_PC()
 {
    ADON = 1;
@@ -830,31 +941,49 @@ void MULT_SPEC_Test()
 
 void IMGCLS_Test()
 {
-   dummy[0] = 0x01;
-
-   int32 num;
-   
-   while (TRUE)
+   for(int m = 0; m < 9; m++)
    {
-      command[0] = 0x00;
+      command[m] = CMD_FROM_PC[m];
+   }
       
-      for (num = 0; num < 100; num++)
-      {
-         if (kbhit (PC))
+   switch (command[0])
+   {
+      
+      case 0x80: //Turn on IMGCLS RPi DIO for MOSFET on RAB to power RPI from 5V line
+      
+         output_high (PIN_A5); //SFM2 mission side access
+         fprintf (PC, "Start 0x80\r\n") ;
+         output_high (pin_G3); //TEST PIN, MB CONTROLS IMGCLS ON/OFF
+         
+         for (i = 1; i < 9; i++)
          {
-
-            for (int i = 0; i < 9; i++)
-            {
-               command[i] = fgetc (PC);
-            }
-            break;
+            fputc(command[i], DC);
+            delay_ms(10);
+            fputc(command[i], PC);
          }
-      }
-      switch (command[0])
-      {
+         
+         fprintf (PC, "Finish 0x80\r\n"); 
+      break;
       
-         case 0x12: //Transfer N packets of data from SFM2 to PC at the specified address locations
-         fprintf (PC, "Start 0x12\r\n") ;
+      case 0x81: //Turn off IMGCLS RPi for MOSFET on RAB to power RPI from 5V
+      
+         output_high (PIN_A5); //SFM2 mission side access
+         fprintf (PC, "Start 0x81\r\n") ;
+         output_low (pin_G3); //SFM2 mission side access
+         
+         for (i = 1; i < 9; i++)
+         {
+            fputc(command[i], DC);
+            delay_ms(20);
+            fputc(command[i], PC);
+         }
+         
+         fprintf (PC, "Finish 0x81\r\n");
+         
+      break;
+      
+      case 0x82: //Transfer N packets of data from SFM2 to PC at the specified address locations
+         fprintf (PC, "Start 0x82\r\n") ;
          output_low (PIN_A5);
          address_data[0] = command[1]<<24;
          address_data[1] = command[2]<<16;
@@ -865,89 +994,99 @@ void IMGCLS_Test()
          packet_data[1] = command[6];
          packet = (packet_data[0] + packet_data[1])*81;
          TRANSFER_DATA_NBYTE_TOPC_SMF(address, packet);
-         fprintf (PC, "Finish 0x12\r\n") ;
-         break;
-         
-         
-         case 0x16://Erase the data on SFM2 at the given address. Specify how much data to erase eg. 16 00 01 02 03 FF will erase the entire 64kB sector at address 00010203
+         fprintf (PC, "Finish 0x82\r\n") ;
+      break;
+      
+      
+      case 0x83://Erase the data on SFM2 at the given address. Specify how much data to erase eg. 16 00 01 02 03 FF will erase the entire 64kB sector at address 00010203
          output_low (PIN_A5);
-         fprintf(PC, "Start 0x16\r\n");
+         fprintf(PC, "Start 0x83\r\n");
          address_data[0] = command[1]<<24;
          address_data[1] = command[2]<<16;
          address_data[2] = command[3]<<8;
          address_data[3] = command[4];
          address = address_data[0] + address_data[1] + address_data[2] + address_data[3];
-            switch(command[5]){
-               case 0x04:
-                  SUBSECTOR_4KB_ERASE_SMF(address);
-                  fprintf(PC, "Finish 0x16\r\n");
-                  break;
-               case 0x32:
-                  SUBSECTOR_32KB_ERASE_SMF(address);
-                  fprintf(PC, "Finish 0x16\r\n");
-                  break;
-               case 0xFF:
-                  SECTOR_ERASE_SMF(address);
-                  fprintf(PC, "Finish 0x16\r\n");
-                  break;
-            }
-         break;
+         switch(command[5])
+         {
+            case 0x04:
+               SUBSECTOR_4KB_ERASE_SMF(address);
+               fprintf(PC, "Finish 0x83\r\n");
+               break;
+            case 0x32:
+               SUBSECTOR_32KB_ERASE_SMF(address);
+               fprintf(PC, "Finish 0x83\r\n");
+               break;
+            case 0xFF:
+               SECTOR_ERASE_SMF(address);
+               fprintf(PC, "Finish 0x83\r\n");
+               break;
+         }
+      break;
+      
+      case 0x84:
+      
+         //Capture in mode 1
+         //(1 image, captured immediately, saved to specified address) 
+         //eg. 23 is command, 00 02 06 08 is the address location, 01 is number of images to capture, 00 00 00 for remaining unused command bytes (command: 23 00 02 06 08 01 00 00 00)
          
+         fprintf (PC, "Start 0x84\r\n") ;
          
-         case 0x80: //Turn on IMGCLS RPi DIO for MOSFET on RAB to power RPI from 5V line
+         output_high (PIN_A5); //SFM2 mission side access
          
-            output_high (PIN_A5); //SFM2 mission side access
-            fprintf (PC, "Start 0x20\r\n") ;
-            output_high (PIN_A5); //SFM2 mission side access
-            
-            for (i = 1; i < 9; i++)
+         for (i = 1; i < 9; i++)
+         {
+            fputc(command[i], DC);
+            delay_ms(20);
+            fputc(command[i], PC);
+         }
+         
+         fprintf (PC, "Finish 0x84\r\n");
+      break;
+      
+      case 0x85:
+      
+         output_high (PIN_A5); 
+         fprintf (PC, "Start 0x85\r\n");
+         
+         fputc(0x48, DC); //Forward command to MB which will turn on ADCS MCU
+         fputc(0x48, PC); //Forward command to MB which will turn on ADCS MCU
+         
+         int8 IMGCLS_ACK = 0;
+         for(int32 num = 0; num < 1000000; num++)
+         {
+            if(kbhit(DC))
             {
-               fputc(command[i], DC);
-               delay_ms(20);
-               fputc(command[i], PC);
+               IMGCLS_ACK = fgetc(DC);
+               break;
             }
             
-            fprintf (PC, "Finish 0x20\r\n"); 
-         break;
+         }
          
-         case 0x81: //Turn off IMGCLS RPi for MOSFET on RAB to power RPI from 5V
-         
-            output_high (PIN_A5); //SFM2 mission side access
-            fprintf (PC, "Start 0x21\r\n") ;
-            output_high (PIN_A5); //SFM2 mission side access
-            
-            for (i = 1; i < 9; i++)
+         if(IMGCLS_ACK == 0x70)                                                          //acknowledge
+         {
+            fputc(0x49, DC); //Forward command to MB which will turn on ADCS MCU
+            fputc(0x49, PC); //Forward command to MB which will turn on ADCS MCU
+            fprintf(PC,"\r\nIMGCLS ACK received\r\n");
+            fprintf(PC,"Recieved ACK: %x\r\n",IMGCLS_ACK);
+            for(int l = 1; l < 9; l++)
             {
-               fputc(command[i], DC);
-               delay_ms(20);
-               fputc(command[i], PC);
+               fputc(command[l], DC);
+               delay_ms(10);
+               fprintf(PC,"%x",command[l]);
+               delay_ms(10);
             }
+            fprintf(PC,"\r\n");
+
+         }
+         else
+         {
             
-            fprintf (PC, "Finish 0x21\r\n");
-            
-         break;
+            fprintf(PC,"Recieved ACK: %x\r\n",IMGCLS_ACK);
          
-         case 0x82:
-         
-            //Capture in mode 1
-            //(1 image, captured immediately, saved to specified address) 
-            //eg. 23 is command, 00 02 06 08 is the address location, 01 is number of images to capture, 00 00 00 for remaining unused command bytes (command: 23 00 02 06 08 01 00 00 00)
-            
-            fprintf (PC, "Start 0x23\r\n") ;
-            
-            output_high (PIN_A5); //SFM2 mission side access
-            
-            for (i = 1; i < 9; i++)
-            {
-               fputc(command[i], DC);
-               delay_ms(20);
-               fputc(command[i], PC);
-            }
-            
-            fprintf (PC, "Finish 0x23\r\n");
+         }
+         fprintf (PC, "Finish 0x85\r\n");
          break;
-        
-      }
+     
    }
 }
 
@@ -1013,6 +1152,7 @@ void ADCS_TEST()
          if(ADCS_ACK == 0x55)                                                          //acknowledge
          {
             fprintf(PC,"\r\nADCS ACK received\r\n");
+            fprintf(PC,"Recieved ACK: %x\r\n",ADCS_ACK);
             for(int32 num = 0; num < 1000000; num++)
             {
                if(kbhit(DC))
@@ -1029,13 +1169,12 @@ void ADCS_TEST()
          else
          {
             
-            fprintf(PC,"\r\nADCS ACK not received\r\n");
             fprintf(PC,"Recieved ACK: %x\r\n",ADCS_ACK);
          
          }
          //fprintf(PC,"Recieved Data: %x\r\n",ADCS_SENSOR_DATA);
          fprintf(PC,"Data Recieved: ");
-         for(int l = 0; l < 20; l++)
+         for(int l = 0; l < 13; l++)
          {
             fprintf(PC,"%x",ADCS_SENSOR_DATA[l]);
          }
@@ -1071,7 +1210,7 @@ void ADCS_TEST()
             int8 counter2 = 0;
             if(ADCS_ACK == 0x55)                                                          //acknowledge
             {
-               fprintf(PC,"\r\nADCS ACK received\r\n");
+               fprintf(PC,"Recieved adcs ACK: %x\r\n",ADCS_ACK);
                for(int32 num = 0; num < 1000000; num++)
                {
                   if(kbhit(DC))

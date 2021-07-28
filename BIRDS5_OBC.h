@@ -47,6 +47,7 @@ void SerialDataReceive();                                                       
 void Delete_Buffer();                                                            //get buffer data one by one
 void SAVE_SAT_LOG(int8 data, int8 data2, int8 data3);
 void RESET_SATELLITE();
+void MAIN_MB_CMD();
 
 
 /////////////ANTENNA DEPLOYMENT/////////////
