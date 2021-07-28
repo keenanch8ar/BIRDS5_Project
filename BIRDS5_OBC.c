@@ -158,6 +158,11 @@ void main()
             MULT_SPEC_Test();
          }
          
+         if(command_ID == 0x40)
+         {
+            fprintf(PC,"ADCS Command\r\n");
+            ADCS_test();
+         }
          if(command_ID == 0x90)
          {
             fprintf(PC,"PINO Command\r\n");

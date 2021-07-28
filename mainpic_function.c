@@ -951,6 +951,168 @@ void IMGCLS_Test()
    }
 }
 
+void DELETE_ADCS_SENSOR()
+{
+   for(int a = 0; a < ADCS_SENSOR_SIZE; a++)
+   {
+      ADCS_SENSOR_DATA[a] = 0;
+   }
+   return;
+}
+
+void ADCS_TEST()
+
+{
+   for(int m = 0; m < 9; m++)
+      {
+         command[m] = CMD_FROM_PC[m];
+      }
+      
+   switch (command[0])
+   {
+      
+      case 0x40: //Turn on ADCS MCU
+   
+         output_high (PIN_A5); 
+         fprintf (PC, "Start 0x40\r\n") ;
+         fputc(command[0],DC); //Forward command to MB which will turn on ADCS MCU
+         output_high(pin_G3); //turns on DIO for testing with ADCS
+         fprintf (PC, "Finish 0x40\r\n");
+         
+      break;
+      
+      case 0x41: //Turn off ADCS MCU
+   
+         output_high (PIN_A5); 
+         fprintf (PC, "Start 0x41\r\n") ;
+         fputc(command[0],DC); //Forward command to MB which will turn on ADCS MCU
+         output_low(pin_G3); //turns on DIO for testing with ADCS
+         fprintf (PC, "Finish 0x41\r\n");
+         
+      break;
+      
+      case 0x43: //Request ADCS Data from ADCS MCU
+   
+         output_high (PIN_A5); 
+         fprintf (PC, "Start 0x43\r\n") ;
+         fputc(0xAA, DC); //Forward command to MB which will turn on ADCS MCU
+         fputc(0xAA, PC); //Forward command to MB which will turn on ADCS MCU
+         
+         ADCS_ACK = 0;
+         for(int32 num = 0; num < 1000000; num++)
+         {
+            if(kbhit(DC))
+            {
+               ADCS_ACK = fgetc(DC);
+               break;
+            }
+            
+         }
+         
+         int8 counter = 0;
+         if(ADCS_ACK == 0x55)                                                          //acknowledge
+         {
+            fprintf(PC,"\r\nADCS ACK received\r\n");
+            for(int32 num = 0; num < 1000000; num++)
+            {
+               if(kbhit(DC))
+               {
+                  ADCS_SENSOR_DATA[counter] = fgetc(DC);
+                  counter++;
+                  if(counter == 13)
+                  {
+                     break;
+                  }
+               }
+            }
+         }
+         else
+         {
+            
+            fprintf(PC,"\r\nADCS ACK not received\r\n");
+            fprintf(PC,"Recieved ACK: %x\r\n",ADCS_ACK);
+         
+         }
+         //fprintf(PC,"Recieved Data: %x\r\n",ADCS_SENSOR_DATA);
+         fprintf(PC,"Data Recieved: ");
+         for(int l = 0; l < 20; l++)
+         {
+            fprintf(PC,"%x",ADCS_SENSOR_DATA[l]);
+         }
+         fprintf(PC,"\r\n");
+         fprintf (PC, "Finish 0x43\r\n");
+         
+      break;
+      
+      case 0x44: //Turn off ADCS MCU
+   
+         output_high (PIN_A5); 
+         fprintf (PC, "Start 0x44\r\n") ;
+         
+         currenttime = 0;
+         int8 counter3 = 0;   
+         while(currenttime < 30)                                                       //turn ON BC for 30 sec
+         {
+         
+            fputc(0xAA, DC); //Forward command to MB which will turn on ADCS MCU
+            fputc(0xAA, PC); //Forward command to MB which will turn on ADCS MCU
+            
+            ADCS_ACK = 0;
+            for(int32 num = 0; num < 100000; num++)
+            {
+               if(kbhit(DC))
+               {
+                  ADCS_ACK = fgetc(DC);
+                  break;
+               }
+               
+            }
+            
+            int8 counter2 = 0;
+            if(ADCS_ACK == 0x55)                                                          //acknowledge
+            {
+               fprintf(PC,"\r\nADCS ACK received\r\n");
+               for(int32 num = 0; num < 1000000; num++)
+               {
+                  if(kbhit(DC))
+                  {
+                     ADCS_SENSOR_DATA[counter] = fgetc(DC);
+                     counter2++;
+                     if(counter2 == 13)
+                     {
+                        break;
+                     }
+                  }
+               }
+            }
+            else
+            {
+               
+               fprintf(PC,"\r\nADCS ACK not received\r\n");
+               fprintf(PC,"Recieved ACK: %x\r\n",ADCS_ACK);
+            
+            }
+            //fprintf(PC,"Recieved Data: %x\r\n",ADCS_SENSOR_DATA);
+            fprintf(PC,"Data Recieved: ");
+            for(int l = 0; l < 20; l++)
+            {
+               fprintf(PC,"%x",ADCS_SENSOR_DATA[l]);
+            }
+            fprintf(PC,"\r\n");
+            fprintf (PC, "Finish 0x43\r\n");
+            counter3++;
+            delay_ms(900);
+         }
+
+         fprintf (PC, "Finish 0x44\r\n");
+         
+      break;
+   
+   }
+   
+}
+
+
 void GET_RESET_DATA()
 {
    dummy[0] = 0x11;

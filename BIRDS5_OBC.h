@@ -73,6 +73,9 @@ void COLLECT_RESET_DATA();
 void Turn_On_MBP();
 void Turn_Off_MBP();
 
+/////////////ADCS MISSION/////////////
+void ADCS_Test();
+
 /////////////Testing Stuff/////////////
 void Flash_Memory_Access();
 void PINO_test();
