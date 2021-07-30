@@ -353,7 +353,7 @@ void Antenna_Deploy()
 {
    fprintf(PC,"Ant Dep Attempt No: %x\r\n",BC_ATTEMPT_FLAG);
    
-   if(BC_ATTEMPT_FLAG < 4 && BC_ATTEMPT_FLAG != 0)                               //IT WILL BE REPEATED 3 MORE TIMES AFTER THE FIRST DEPLOYMENT, SUCCESSFUL OR NOT
+   if(BC_ATTEMPT_FLAG < 4)                                                      //IT WILL BE REPEATED 3 MORE TIMES AFTER THE FIRST DEPLOYMENT, SUCCESSFUL OR NOT
    {
    
       fprintf(PC,"BC command sent to RESET PIC\r\n");
@@ -397,6 +397,16 @@ void Turn_On_MBP()
 void Turn_Off_MBP()
 {
    output_low(PIN_F5);
+   return;
+}
+
+void Forward_CMD_MBP()
+{
+      for(int m = 1; m < 9; m++)
+      {
+         fputc(command[m], DC)
+         delay_ms(15);
+      }
    return;
 }
 
@@ -1048,8 +1058,8 @@ void IMGCLS_Test()
          output_high (PIN_A5); 
          fprintf (PC, "Start 0x85\r\n");
          
-         fputc(0x48, DC); //Forward command to MB which will turn on ADCS MCU
-         fputc(0x48, PC); //Forward command to MB which will turn on ADCS MCU
+         fputc(0x48, DC); //Forward command to MB
+         fputc(0x48, PC); 
          
          int8 IMGCLS_ACK = 0;
          for(int32 num = 0; num < 1000000; num++)
@@ -1064,8 +1074,8 @@ void IMGCLS_Test()
          
          if(IMGCLS_ACK == 0x70)                                                          //acknowledge
          {
-            fputc(0x49, DC); //Forward command to MB which will turn on ADCS MCU
-            fputc(0x49, PC); //Forward command to MB which will turn on ADCS MCU
+            fputc(0x49, DC); 
+            fputc(0x49, PC); 
             fprintf(PC,"\r\nIMGCLS ACK received\r\n");
             fprintf(PC,"Recieved ACK: %x\r\n",IMGCLS_ACK);
             for(int l = 1; l < 9; l++)
