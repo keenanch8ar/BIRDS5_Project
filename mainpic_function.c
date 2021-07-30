@@ -348,12 +348,43 @@ void MAKE_BC_FLAG_4()
    fprintf(PC,"\r\nBC Attempt Flag:4\r\n");
    return;
 }
+void BC_ON_30min()
+{
+   if(currenttime > 1805 && BC_ATTEMPT_FLAG == 0)                                //if first attempt and 30 min(1800sec) passed // changed to 1 min
+   {
+      fprintf(PC,"sending BC command to RESET PIC\r\n");
+      for(int16 num = 0; num < 200; num++)
+      {
+         fputc(0xBC,reset);
+         delay_ms(100);
+         if(reset_bffr[0] == 0xCB)                                               //condicion para que deje de enviar al recibir el ACK
+         {
+         break;
+         }
+      }
+      delay_ms(1000);                                                            
+      if(reset_bffr[0] == 0xCB)
+      {
+         BC_OPERATION();
+         BC_ATTEMPT_FLAG++;
+         WRITE_FLAG_to_EEPROM();
+         STORE_FLAG_INFO();
+         STORE_ADRESS_DATA_TO_FLASH();
+         reset_bffr[0] = 0;
+         RESET_DATA = 0;
+         delay_ms(1000);
+         delay_ms(20000);                                                        //wait until RESET goes back to nomal loop
+         SAVE_SAT_LOG(0xBC,0x30,0x30);                                           //first 30 min antenna deployment
+      }
+   }
+   return;
+}
 
 void Antenna_Deploy()
 {
    fprintf(PC,"Ant Dep Attempt No: %x\r\n",BC_ATTEMPT_FLAG);
    
-   if(BC_ATTEMPT_FLAG < 4)                                                      //IT WILL BE REPEATED 3 MORE TIMES AFTER THE FIRST DEPLOYMENT, SUCCESSFUL OR NOT
+   if(BC_ATTEMPT_FLAG < 4 && BC_ATTEMPT_FLAG != 0)                                                      //IT WILL BE REPEATED 3 MORE TIMES AFTER THE FIRST DEPLOYMENT, SUCCESSFUL OR NOT
    {
    
       fprintf(PC,"BC command sent to RESET PIC\r\n");
@@ -404,7 +435,7 @@ void Forward_CMD_MBP()
 {
       for(int m = 1; m < 9; m++)
       {
-         fputc(command[m], DC)
+         fputc(command[m], DC);
          delay_ms(15);
       }
    return;

@@ -126,10 +126,11 @@ void main()
 
    settings();  //Prepare all interrupts, timers, flag information, BC setup etc.
    
-   Antenna_Deploy(); //Attempt deploying of antenna
+   Antenna_Deploy(); //Attempt deploying of antenna. This is the 2nd, 3rd and 4th attempts
 
    while(TRUE)
    {
+      BC_ON_30min(); //Attempt 1st antenna deployment after 30mins
       
       if(CMD_FROM_PC[0])
       {
