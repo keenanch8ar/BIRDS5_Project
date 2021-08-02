@@ -11,6 +11,9 @@ unsigned int32 data[7];
 unsigned int32 address;
 unsigned int32 packet;
 BYTE Down[81];
+int8 MULTSPEC1_DATA[81] = {};
+int8 MULTSPEC2_DATA[81] = {};
+int8 IMGCLS_DATA[81] = {};
 BYTE dummy[1];
 BYTE Finish_sign[1];
 int8 command_time_data[5];
@@ -417,7 +420,7 @@ void Antenna_Deploy()
 //--------Mission Boss PIC Data Collection-----------------------------------//
 
 int8 DC_ACK = 0;
-int8 MBP_DATA[83] = {};
+int8 MBP_DATA[9] = {};
 
 void Turn_On_MBP()
 {
@@ -433,11 +436,43 @@ void Turn_Off_MBP()
 
 void Forward_CMD_MBP()
 {
-      for(int m = 1; m < 9; m++)
-      {
-         fputc(command[m], DC);
-         delay_ms(15);
-      }
+//!      for(int8 m = 0; m < 9; m++)
+//!      {
+//!         fputc(command[m], DC);
+//!         fputc(command[m], PC);
+//!         delay_ms(10);
+//!      }
+//!      //fputc(0x40, DC);
+//!      int8 counter;
+//!      if(kbhit(DC))
+//!      {
+//!         MBP_DATA[counter] = fgetc(DC);
+//!         counter++;
+//!         if(counter == 9)
+//!         {
+//!            break;
+//!         }
+//!      }
+//!      fprintf(PC,"Data Recieved from MBP: ");
+//!      for(int8 l = 0; l < 9; l++)
+//!      {
+//!         fprintf(PC,"%x",MBP_DATA[l]);
+//!      }
+//!      fprintf(PC,"\r\n");
+      int8 test = 0;
+      fputc(0x40,DC);
+      for(int32 num = 0; num < 1000000; num++)
+         {
+            if(kbhit(DC))
+            {
+               test = fgetc(DC);
+               fprintf(PC,"%x,",test);
+            }
+
+         }
+        
+         
+ 
    return;
 }
 
@@ -696,30 +731,53 @@ void MULT_SPEC_Test()
    
 ////////////////////////////FOR CAM1 RPi on MB1////////////////////////////////
       
-      case 0x20: //Turn on CAM1 RPi DIO for MOSFET on MB1 to power RPI from 5V
-      
+      case 0x20: //Turn off CAM1 RPi DIO for MOSFET on MB1 to power RPI from 5V      
+         
          output_high (PIN_A5); //SFM2 mission side access
-         fprintf (PC, "Start 0x20\r\n") ;
-         output_high(pin_G3); //Turn on DIO for MULTSPEC CAM1
-         fprintf (PC, "Finish 0x20\r\n"); 
-      break;
-      
-      case 0x21: //Turn off CAM1 RPi for MOSFET on MB1 to power RPI from 5V
-      
-         output_high (PIN_A5); //SFM2 mission side access
-         fprintf (PC, "Start 0x21\r\n") ;
+         fprintf (PC, "Start 0x20 - Turn OFF MULTSPEC CAM1 (MB1)\r\n") ;
          output_low(pin_G3); //Turn off DIO for MULTSPEC CAM1
-         fprintf (PC, "Finish 0x21\r\n");
+         fprintf (PC, "Finish 0x20\r\n");
+         
       break;
       
-      case 0x22: //Turn on CAM1 RPi trigger
-      
+      case 0x21: //Real time uplink command
          output_high (PIN_A5); //SFM2 mission side access
-         fprintf (PC, "Start 0x22\r\n") ;
-         output_high(pin_G2); //Turn on DIO for trigger
-         delay_ms(10000);
-         output_low(pin_G2); //Turn off DIO for trigger
-         fprintf (PC, "Finish 0x22\r\n"); 
+         fprintf (PC, "Start 0x21 - Real time uplink MULTSPEC CAM1\r\n") ;
+         fprintf (PC, "Finish 0x21\r\n");
+
+      break;
+      
+      case 0x22: //Real time downlink command
+      
+//!         output_high (PIN_A5); //SFM2 mission side access
+//!         fprintf (PC, "Start 0x22\r\n") ;
+//!         output_high(pin_G2); //Turn on DIO for trigger
+//!         delay_ms(10000);
+//!         output_low(pin_G2); //Turn off DIO for trigger
+//!         fprintf (PC, "Finish 0x22\r\n");
+         fprintf (PC, "Start 0x22 - Request MULT-SPEC MB1 Downlink Data\r\n") ;
+         Forward_CMD_MBP();
+         int8 counter = 0;
+         for(int32 num = 0; num < 1500000; num++)
+            {
+               if(kbhit(DC))
+               {
+                  MULTSPEC1_DATA[counter] = fgetc(DC);
+                  counter++;
+                  if(counter == 81)
+                  {
+                     break;
+                  }
+               }
+            }
+         fprintf(PC,"Data Recieved: ");
+         for(int l = 0; l < 81; l++)
+         {
+            fprintf(PC,"%x",MULTSPEC1_DATA[l]);
+         }
+         fprintf(PC,"\r\n");
+         fprintf (PC, "Finish 0x22\r\n");
+
       break;
       
       case 0x23:
@@ -863,33 +921,63 @@ void MULT_SPEC_Test()
          
       break;
       
+      case 0x2E: //Turn on CAM1 RPi for MOSFET on MB1 to power RPI from 5V
+         
+         output_high (PIN_A5); //SFM2 mission side access
+         fprintf (PC, "Start - Turn ON MULTSPEC CAM1 0x20\r\n") ;
+         output_high(pin_G3); //Turn on DIO for MULTSPEC CAM1
+         fprintf (PC, "Finish 0x20\r\n"); 
+      
+      break;
+      
 ////////////////////////////FOR CAM2 RPi on MB2////////////////////////////////
       
-     case 0x30: //Turn on CAM2 RPi DIO for MOSFET on MB2 to power RPI from 5V
+     case 0x30: //Turn off CAM2 RPi DIO for MOSFET on MB2 to power RPI from 5V
       
          output_high (PIN_A5); //SFM2 mission side access
-         fprintf (PC, "Start 0x30\r\n") ;
-         output_high(pin_F6); //Turn on DIO for MULTSPEC CAM1
-         fprintf (PC, "Finish 0x30\r\n"); 
+         fprintf (PC, "Start 0x30 - Turn OFF MULTSPEC CAM2 (MB2)\r\n") ;
+         output_low(pin_F6); //Turn off DIO for MULTSPEC CAM2
+         fprintf (PC, "Finish 0x30\r\n");
+         
       break;
       
       case 0x31: //Turn off CAM1 RPi for MOSFET on MB1 to power RPI from 5V
       
-         output_high (PIN_A5); //SFM2 mission side access
-         fprintf (PC, "Start 0x31\r\n") ;
-         output_low(pin_F6); //Turn off DIO for MULTSPEC CAM1
-         fprintf (PC, "Finish 0x31\r\n");
+
          
       break;
       
       case 0x32: //Turn on CAM1 RPi trigger
       
-         output_high (PIN_A5); //SFM2 mission side access
-         fprintf (PC, "Start 0x32\r\n") ;
-         output_high(pin_F7); //Turn on DIO for trigger
-         delay_ms(10000);
-         output_low(pin_F7); //Turn off DIO for trigger
-         fprintf (PC, "Finish 0x32\r\n");   
+//!         output_high (PIN_A5); //SFM2 mission side access
+//!         fprintf (PC, "Start 0x32\r\n") ;
+//!         output_high(pin_F7); //Turn on DIO for trigger
+//!         delay_ms(10000);
+//!         output_low(pin_F7); //Turn off DIO for trigger
+//!         fprintf (PC, "Finish 0x32\r\n");
+
+         fprintf (PC, "Start 0x32 - Request MULT-SPEC MB2 Downlink Data\r\n") ;
+         Forward_CMD_MBP();
+         counter = 0;
+         for(num = 0; num < 1500000; num++)
+            {
+               if(kbhit(DC))
+               {
+                  MULTSPEC2_DATA[counter] = fgetc(DC);
+                  counter++;
+                  if(counter == 81)
+                  {
+                     break;
+                  }
+               }
+            }
+         fprintf(PC,"Data Recieved: ");
+         for(l = 0; l < 81; l++)
+         {
+            fprintf(PC,"%x",MULTSPEC2_DATA[l]);
+         }
+         fprintf(PC,"\r\n");
+         fprintf (PC, "Finish 0x32\r\n");
       break;
       
       case 0x33: 
@@ -970,7 +1058,17 @@ void MULT_SPEC_Test()
          output_high(pin_G3); //Turn on DIO for trigger MB2
          delay_ms(5000);
          output_high(pin_F6); //Turn on DIO for trigger MB1
-         fprintf (PC, "Finish 0x36\r\n");   
+         fprintf (PC, "Finish 0x36\r\n");
+         
+      break;
+      
+      case 0x3E: // Turn on MULTSPEC CAM2 (MB2)
+      
+         output_high (PIN_A5); //SFM2 mission side access
+         fprintf (PC, "Start 0x3E - Turn ON MULTSPEC CAM2 (MB2)\r\n") ;
+         output_high(pin_F6); //Turn on DIO for MULTSPEC CAM1
+         fprintf (PC, "Finish 0x30\r\n"); 
+         
       break;
       
       default:
@@ -990,52 +1088,46 @@ void IMGCLS_Test()
    switch (command[0])
    {
       
-      case 0x80: //Turn on IMGCLS RPi DIO for MOSFET on RAB to power RPI from 5V line
+      case 0x80: //Turn off IMGCLS RPi DIO for MOSFET on RAB to power RPI from 5V line
       
          output_high (PIN_A5); //SFM2 mission side access
-         fprintf (PC, "Start 0x80\r\n") ;
-         output_high (pin_G3); //TEST PIN, MB CONTROLS IMGCLS ON/OFF
-         
-         for (i = 1; i < 9; i++)
-         {
-            fputc(command[i], DC);
-            delay_ms(10);
-            fputc(command[i], PC);
-         }
-         
+         fprintf (PC, "Start 0x80 - Turn off IMGCLS\r\n") ;
+         Forward_CMD_MBP();
          fprintf (PC, "Finish 0x80\r\n"); 
+         
       break;
       
-      case 0x81: //Turn off IMGCLS RPi for MOSFET on RAB to power RPI from 5V
+      case 0x81: //Real time uplink command
       
          output_high (PIN_A5); //SFM2 mission side access
-         fprintf (PC, "Start 0x81\r\n") ;
-         output_low (pin_G3); //SFM2 mission side access
-         
-         for (i = 1; i < 9; i++)
-         {
-            fputc(command[i], DC);
-            delay_ms(20);
-            fputc(command[i], PC);
-         }
-         
-         fprintf (PC, "Finish 0x81\r\n");
-         
+         fprintf (PC, "Start 0x81 - Real time uplink IMGCLS\r\n") ;
+         Forward_CMD_MBP();
+         fprintf (PC, "Finish 0x81\r\n"); 
       break;
       
-      case 0x82: //Transfer N packets of data from SFM2 to PC at the specified address locations
-         fprintf (PC, "Start 0x82\r\n") ;
-         output_low (PIN_A5);
-         address_data[0] = command[1]<<24;
-         address_data[1] = command[2]<<16;
-         address_data[2] = command[3]<<8;
-         address_data[3] = command[4];
-         address = address_data[0] + address_data[1] + address_data[2] + address_data[3];
-         packet_data[0] = command[5]<<8;
-         packet_data[1] = command[6];
-         packet = (packet_data[0] + packet_data[1])*81;
-         TRANSFER_DATA_NBYTE_TOPC_SMF(address, packet);
-         fprintf (PC, "Finish 0x82\r\n") ;
+      case 0x82: //Real time downlink IMGCLS
+         fprintf (PC, "Start 0x81 - Real time downlink IMGCLS\r\n") ;
+         Forward_CMD_MBP();
+         int8 counter = 0;
+         for(int32 num = 0; num < 1000000; num++)
+            {
+               if(kbhit(DC))
+               {
+                  IMGCLS_DATA[counter] = fgetc(DC);
+                  counter++;
+                  if(counter == 81)
+                  {
+                     break;
+                  }
+               }
+            }
+         fprintf(PC,"Data Recieved: ");
+         for(int l = 0; l < 81; l++)
+         {
+            fprintf(PC,"%x",IMGCLS_DATA[l]);
+         }
+         fprintf(PC,"\r\n");
+         fprintf (PC, "Finish 0x81\r\n"); 
       break;
       
       
@@ -1093,7 +1185,7 @@ void IMGCLS_Test()
          fputc(0x48, PC); 
          
          int8 IMGCLS_ACK = 0;
-         for(int32 num = 0; num < 1000000; num++)
+         for(num = 0; num < 1000000; num++)
          {
             if(kbhit(DC))
             {
@@ -1127,6 +1219,14 @@ void IMGCLS_Test()
          }
          fprintf (PC, "Finish 0x85\r\n");
          break;
+         
+         case 0x8E:
+         
+         fprintf (PC, "Start 0x8E - Turn ON IMGCLS\r\n") ;
+         Forward_CMD_MBP();
+         fprintf (PC, "Finish 0x8E\r\n");
+         
+         break;
      
    }
 }
@@ -1151,24 +1251,56 @@ void ADCS_TEST()
    switch (command[0])
    {
       
-      case 0x40: //Turn on ADCS MCU
+      case 0x40: //Turn off ADCS MCU
    
-         output_high (PIN_A5); 
-         fprintf (PC, "Start 0x40\r\n") ;
-         fputc(command[0],DC); //Forward command to MB which will turn on ADCS MCU
-         output_high(pin_G3); //turns on DIO for testing with ADCS
+//!         output_high (PIN_A5); 
+//!         fprintf (PC, "Start 0x40\r\n") ;
+//!         fputc(command[0],DC); //Forward command to MB which will turn on ADCS MCU
+//!         output_high(pin_G3); //turns on DIO for testing with ADCS
+//!         fprintf (PC, "Finish 0x40\r\n");
+         fprintf (PC, "Start 0x40 - Turn OFF ADCS\r\n") ;
+         Forward_CMD_MBP();
          fprintf (PC, "Finish 0x40\r\n");
          
       break;
       
       case 0x41: //Turn off ADCS MCU
    
-         output_high (PIN_A5); 
-         fprintf (PC, "Start 0x41\r\n") ;
-         fputc(command[0],DC); //Forward command to MB which will turn on ADCS MCU
-         output_low(pin_G3); //turns on DIO for testing with ADCS
+//!         output_high (PIN_A5); 
+//!         fprintf (PC, "Start 0x41\r\n") ;
+//!         fputc(command[0],DC); //Forward command to MB which will turn on ADCS MCU
+//!         output_low(pin_G3); //turns on DIO for testing with ADCS
+//!         fprintf (PC, "Finish 0x41\r\n");
+         fprintf (PC, "Start 0x41 - Real time Uplink ADCS\r\n") ;
+         Forward_CMD_MBP();
          fprintf (PC, "Finish 0x41\r\n");
          
+      break;
+      
+      case 0x42:
+         fprintf (PC, "Start 0x42 - Real time Downlink ADCS\r\n") ;
+         Forward_CMD_MBP();
+         int8 counter = 0;
+         for(int32 num = 0; num < 1000000; num++)
+            {
+               if(kbhit(DC))
+               {
+                  ADCS_SENSOR_DATA[counter] = fgetc(DC);
+                  counter++;
+                  if(counter == 81)
+                  {
+                     break;
+                  }
+               }
+            }
+         fprintf(PC,"Data Recieved: ");
+         for(int l = 0; l < 81; l++)
+         {
+            fprintf(PC,"%x",ADCS_SENSOR_DATA[l]);
+         }
+         fprintf(PC,"\r\n");
+         fprintf (PC, "Finish 0x42\r\n");
+      
       break;
       
       case 0x43: //Request ADCS Data from ADCS MCU
@@ -1179,7 +1311,7 @@ void ADCS_TEST()
          fputc(0xAA, PC); //Forward command to MB which will turn on ADCS MCU
          
          ADCS_ACK = 0;
-         for(int32 num = 0; num < 1000000; num++)
+         for(num = 0; num < 1000000; num++)
          {
             if(kbhit(DC))
             {
@@ -1189,7 +1321,7 @@ void ADCS_TEST()
             
          }
          
-         int8 counter = 0;
+         counter = 0;
          if(ADCS_ACK == 0x55)                                                          //acknowledge
          {
             fprintf(PC,"\r\nADCS ACK received\r\n");
@@ -1215,7 +1347,7 @@ void ADCS_TEST()
          }
          //fprintf(PC,"Recieved Data: %x\r\n",ADCS_SENSOR_DATA);
          fprintf(PC,"Data Recieved: ");
-         for(int l = 0; l < 13; l++)
+         for(l = 0; l < 13; l++)
          {
             fprintf(PC,"%x",ADCS_SENSOR_DATA[l]);
          }
@@ -1287,6 +1419,15 @@ void ADCS_TEST()
          fprintf (PC, "Finish 0x44\r\n");
          
       break;
+      
+      case 0x4E:
+      
+         fprintf (PC, "Start 0x4E - Turn ON ADCS\r\n") ;
+         Forward_CMD_MBP();
+         fprintf (PC, "Finish 0x4E\r\n");
+      
+      break;
+      
    
    }
    
