@@ -434,42 +434,45 @@ void Turn_Off_MBP()
    return;
 }
 
+void DEL_MBP_DATA()
+{
+   for(int n = 0; n < 9; n++)
+   {
+      MBP_DATA[n] = 0;  
+   }
+   return;
+}
+
 void Forward_CMD_MBP()
 {
-//!      for(int8 m = 0; m < 9; m++)
-//!      {
-//!         fputc(command[m], DC);
-//!         fputc(command[m], PC);
-//!         delay_ms(10);
-//!      }
-//!      //fputc(0x40, DC);
-//!      int8 counter;
-//!      if(kbhit(DC))
-//!      {
-//!         MBP_DATA[counter] = fgetc(DC);
-//!         counter++;
-//!         if(counter == 9)
-//!         {
-//!            break;
-//!         }
-//!      }
-//!      fprintf(PC,"Data Recieved from MBP: ");
-//!      for(int8 l = 0; l < 9; l++)
-//!      {
-//!         fprintf(PC,"%x",MBP_DATA[l]);
-//!      }
-//!      fprintf(PC,"\r\n");
-      int8 test = 0;
-      fputc(0x40,DC);
+      int count = 0;
+      for(int8 n = 0; n < 9; n++)
+      {
+         fputc(command[n], DC);
+         delay_ms(5);
+      }
+      
       for(int32 num = 0; num < 1000000; num++)
          {
             if(kbhit(DC))
             {
-               test = fgetc(DC);
-               fprintf(PC,"%x,",test);
+               MBP_DATA[count] = fgetc(DC);
+               count++;
             }
-
+            if(count == 9)
+               break;
          }
+         
+      fprintf(PC,"Data Recieved from MBP:");
+      
+      for(n = 0; n < 9; n++)
+      {
+         
+         fprintf(PC,"%x,",MBP_DATA[n]);
+      }
+      
+      fprintf(PC,"\r\n");
+      DEL_MBP_DATA();
         
          
  
@@ -736,6 +739,8 @@ void MULT_SPEC_Test()
          output_high (PIN_A5); //SFM2 mission side access
          fprintf (PC, "Start 0x20 - Turn OFF MULTSPEC CAM1 (MB1)\r\n") ;
          output_low(pin_G3); //Turn off DIO for MULTSPEC CAM1
+         Forward_CMD_MBP();
+         
          fprintf (PC, "Finish 0x20\r\n");
          
       break;
@@ -743,6 +748,7 @@ void MULT_SPEC_Test()
       case 0x21: //Real time uplink command
          output_high (PIN_A5); //SFM2 mission side access
          fprintf (PC, "Start 0x21 - Real time uplink MULTSPEC CAM1\r\n") ;
+         Forward_CMD_MBP();
          fprintf (PC, "Finish 0x21\r\n");
 
       break;
@@ -777,6 +783,10 @@ void MULT_SPEC_Test()
          }
          fprintf(PC,"\r\n");
          fprintf (PC, "Finish 0x22\r\n");
+         for(l = 0; l < 81; l++)
+         {
+            MULTSPEC1_DATA[l] = 0;
+         }
 
       break;
       
@@ -924,9 +934,10 @@ void MULT_SPEC_Test()
       case 0x2E: //Turn on CAM1 RPi for MOSFET on MB1 to power RPI from 5V
          
          output_high (PIN_A5); //SFM2 mission side access
-         fprintf (PC, "Start - Turn ON MULTSPEC CAM1 0x20\r\n") ;
+         fprintf (PC, "Start - Turn ON MULTSPEC CAM1 0x2E\r\n") ;
          output_high(pin_G3); //Turn on DIO for MULTSPEC CAM1
-         fprintf (PC, "Finish 0x20\r\n"); 
+         Forward_CMD_MBP();
+         fprintf (PC, "Finish 0x2E\r\n"); 
       
       break;
       
@@ -937,6 +948,7 @@ void MULT_SPEC_Test()
          output_high (PIN_A5); //SFM2 mission side access
          fprintf (PC, "Start 0x30 - Turn OFF MULTSPEC CAM2 (MB2)\r\n") ;
          output_low(pin_F6); //Turn off DIO for MULTSPEC CAM2
+         Forward_CMD_MBP();
          fprintf (PC, "Finish 0x30\r\n");
          
       break;
@@ -975,6 +987,11 @@ void MULT_SPEC_Test()
          for(l = 0; l < 81; l++)
          {
             fprintf(PC,"%x",MULTSPEC2_DATA[l]);
+         }
+
+         for(l = 0; l < 81; l++)
+         {
+            MULTSPEC2_DATA[l] = 0;
          }
          fprintf(PC,"\r\n");
          fprintf (PC, "Finish 0x32\r\n");
@@ -1066,7 +1083,7 @@ void MULT_SPEC_Test()
       
          output_high (PIN_A5); //SFM2 mission side access
          fprintf (PC, "Start 0x3E - Turn ON MULTSPEC CAM2 (MB2)\r\n") ;
-         output_high(pin_F6); //Turn on DIO for MULTSPEC CAM1
+         output_high(pin_F6); //Turn on DIO for MULTSPEC CAM2
          fprintf (PC, "Finish 0x30\r\n"); 
          
       break;
@@ -1128,6 +1145,10 @@ void IMGCLS_Test()
          }
          fprintf(PC,"\r\n");
          fprintf (PC, "Finish 0x81\r\n"); 
+         for(l = 0; l < 81; l++)
+         {
+            IMGCLS_DATA[l] = 0;
+         }
       break;
       
       
