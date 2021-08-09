@@ -56,4 +56,7 @@ void GET_RESET_DATA();
 void MULT_SPEC_Test();
 void GET_TIME();
 void IMGCLS_test();
+void PINO_Test_for_PINO();
+
+
 #include <mainpic_function.h>

@@ -75,6 +75,235 @@ void PINO_Test()
       
       for (num = 0; num < 100; num++)
       {
+         if (kbhit (PC))
+         {
+
+            for (int i = 0; i < 9; i++)
+            {
+               //fprintf (fab, "Get command\r\n") ;
+               command[i] = fgetc (PC);
+            }
+            break;
+         }
+      }
+      switch (command[0])
+      {
+         case 0x12:
+         fprintf (PC, "Start 0x12\r\n") ;
+         output_low (PIN_A5);
+         address_data[0] = command[2]<<24;
+         address_data[1] = command[3]<<16;
+         address_data[2] = command[4]<<8;
+         address_data[3] = command[5];
+         address = address_data[0] + address_data[1] + address_data[2] + address_data[3];
+         packet_data[0] = command[6]<<8;
+         packet_data[1] = command[7];
+         packet = (packet_data[0] + packet_data[1])*81;
+
+         //fputc(command[5] + command[6], fab);
+         TRANSFER_DATA_NBYTE_TOPC_SMF(address, packet);
+         output_high (PIN_A5);
+         //TRANSFER_DATA_NBYTE_TOFAB_SMF(address,81);
+         
+         fprintf (PC, "Finish 0x12\r\n") ;
+         break;
+         
+         
+         /*case 0x13://Get the data from Flash Memory 2
+         fprintf (fab, "Start 0x13\r\n") ;
+         output_low (PIN_A5);
+         address_data[0] = command[1]<<24;
+         address_data[1] = command[2]<<16;
+         address_data[2] = command[3]<<8;
+         address_data[3] = command[4];
+         address = address_data[0] + address_data[1] + address_data[2] + address_data[3];
+         TRANSFER_DATA_NBYTE_TOFAB_SMF(address, command[5] + command[6]);
+         fprintf (fab, "Finish 0x13\r\n") ;
+         
+         break;
+         */
+         
+         case 0x14://Uplink command to write the data on Flash Memory 2
+         output_low (PIN_A5) ;//Main side
+         fprintf (PC, "Start 0x14\r\n") ;
+         address_data[0] = command[2]<<24;
+         address_data[1] = command[3]<<16;
+         address_data[2] = command[4]<<8;
+         address_data[3] = command[5];
+         address = address_data[0] + address_data[1] + address_data[2] + address_data[3];
+         //sector_erase_SMF (address);
+         WRITE_DATA_BYTE_SMF (address, command[6]) ;
+         WRITE_DATA_BYTE_SMF (address + 1, command[7]) ;
+         WRITE_DATA_BYTE_SMF (address + 2, command[8]) ;
+         fprintf (PC, "Finish 0x14\r\n");
+         output_high (PIN_A5);//Mission side
+         break;
+         
+         case 0x16://Erase the data on Flash Memory 2
+         output_low (PIN_A5);
+         fprintf(PC, "Start 0x16\r\n");
+         address_data[0] = command[2]<<24;
+         address_data[1] = command[3]<<16;
+         address_data[2] = command[4]<<8;
+         address_data[3] = command[5];
+         address = address_data[0] + address_data[1] + address_data[2] + address_data[3];
+            switch(command[6]){
+               case 0x04:
+                  SUBSECTOR_4KB_ERASE_SMF(address);
+                  fprintf(PC, "Finish 0x16\r\n");
+                  break;
+               case 0x32:
+                  SUBSECTOR_32KB_ERASE_SMF(address);
+                  fprintf(PC, "Finish 0x16\r\n");
+                  break;
+               case 0xFF:
+                  SECTOR_ERASE_SMF(address);
+                  fprintf(PC, "Finish 0x16\r\n");
+                  break;
+               default:
+                  fprintf(PC, "error\r\n");
+            }
+            output_high (PIN_A5);//Mission side
+            break;
+         
+         /* case 0x91:
+         reset_time_data[0] = 0x82;
+         //fprintf (PC, "Command 2 Recieved\r\n") ;
+         //fputc (reset_time_data[0], PC) ;
+         fputc (0x91, reset);
+         break; */
+
+         case 0x90://Turn off PINO
+         fprintf (PC, "Start 0x90\r\n") ;
+         output_high (hvs);
+         fprintf (PC, "Finish 0x90\r\n");
+         delay_ms(5000);
+         output_low (PINO_power);
+         output_low (sel);
+         output_low(PIN_A5);//Main side
+         
+         break;
+         
+         case 0x91://PINO Real Time Uplink Command
+         output_high(PIN_A5);//Mission Side
+         fprintf (PC, "Start 0x91\r\n");
+         PINO_DATA[0] = command[0];
+         PINO_DATA[1] = command[2];
+         PINO_DATA[2] = command[3];
+         PINO_DATA[3] = command[4];
+         PINO_DATA[4] = command[5];
+         PINO_DATA[5] = command[6];
+         PINO_DATA[6] = command[7];
+         PINO_DATA[7] = command[8];
+         
+         for (i = 0; i<39; i++)
+         {
+            fputc (PINO_DATA[i], DC);
+         }
+         fprintf (PC, "Finish 0x91\r\n") ;
+         output_high(PIN_A5);//Mission Side
+         break;
+         
+         case 0x92://PINO Real Time Downlink Command
+         fprintf (PC, "Start 0x92\r\n") ;
+         output_high(PIN_A5);
+         PINO_DATA[0] = command[0];
+         PINO_DATA[1] = command[2];
+         PINO_DATA[2] = command[3];
+         PINO_DATA[3] = command[4];
+         PINO_DATA[4] = command[5];
+         PINO_DATA[5] = command[6];
+         PINO_DATA[6] = command[7];
+         PINO_DATA[7] = command[8];
+         
+         for (i = 0; i<39; i++)
+         {
+            fputc (PINO_DATA[i], DC);
+         }
+         
+         while (1)
+         {
+            if (kbhit (DC))
+            {
+               for (i = 0; i < 10; i++)
+               {
+                  Down[i] = fgetc (DC);
+               }
+               //fprintf (PC, "Finish transmitting\r\n") ;
+               for (i = 0; i < 10; i++)
+               {
+                  fputc (Down[i], PC);
+               }
+               fprintf (PC, "Finish 0x92\r\n") ;
+               output_high(PIN_A5);//Mission side
+               break;
+            }
+         }
+         
+         case 0x9E: //Turn on PINO
+         fprintf(PC, "Start 0x93\r\n");
+         output_high (PINO_power);
+         output_high (sel);
+         output_high (PIN_A5);//Mission side
+         fprintf(PC, "Finish 0x93\r\n");
+         
+
+         break;
+   
+         case 0x94:
+         output_high(PIN_A5);
+         fprintf (PC, "Start 0x94\r\n") ;
+         for (i = 0; i < 5; i++)
+         {
+            GET_RESET_DATA ();
+            delay_ms(5000);
+         }
+         fprintf (PC, "Finish 0x94\r\n") ;
+         output_high(PIN_A5);
+         break;
+         
+         
+         case 0x9B:
+         output_high(PIN_A5);
+         fprintf (PC, "Start 0x9B\r\n") ;
+         output_high (hvs);
+         fprintf (PC, "Finish 0x9B\r\n");
+         output_low (PINO_power);
+         output_low (sel);
+         output_low (PIN_A5);
+         break;
+         
+         case 0x9C://Time and attitude information
+         output_high(PIN_A5);
+         int a=0;
+         fprintf (PC, "Start 0x9C\r\n") ;
+         
+         for(a=0; a<12; a++){
+            GET_RESET_DATA();
+            delay_ms(10000);
+         }
+         
+         fprintf (PC, "Finish 0x9F\r\n") ;
+         fprintf (PC, "Finish 0x9C\r\n") ;
+         output_high(PIN_A5);
+
+         break;
+         
+
+      }
+   }
+}
+
+void PINO_Test_for_PINO()
+{
+   dummy[0] = 0x01;
+   int32 num;
+   while (TRUE)
+   {
+      command[0] = 0x00;
+      
+      for (num = 0; num < 100; num++)
+      {
          if (kbhit (fab))
          {
 
@@ -83,11 +312,16 @@ void PINO_Test()
                //fprintf (fab, "Get command\r\n") ;
                command[i] = fgetc (fab);
             }
+            fprintf(fab, "Get the command\r\n");
             break;
          }
       }
       switch (command[0])
       {
+         case 0x05:
+         fprintf(fab, "Analyse the command\r\n");
+         break;
+         
          case 0x12:
          fprintf (fab, "Start 0x12\r\n") ;
          output_low (PIN_A5);
@@ -102,6 +336,7 @@ void PINO_Test()
 
          //fputc(command[5] + command[6], fab);
          TRANSFER_DATA_NBYTE_TOFAB_SMF(address, packet);
+         output_high (PIN_A5);
          //TRANSFER_DATA_NBYTE_TOFAB_SMF(address,81);
          
          fprintf (fab, "Finish 0x12\r\n") ;
@@ -135,6 +370,7 @@ void PINO_Test()
          WRITE_DATA_BYTE_SMF (address + 1, command[7]) ;
          WRITE_DATA_BYTE_SMF (address + 2, command[8]) ;
          fprintf (fab, "Finish 0x14\r\n");
+         output_high (PIN_A5);//Mission side
          break;
          
          case 0x16://Erase the data on Flash Memory 2
@@ -161,6 +397,7 @@ void PINO_Test()
                default:
                   fprintf(fab, "error\r\n");
             }
+            output_high (PIN_A5);//Mission side
             break;
          
          /* case 0x91:
@@ -174,11 +411,15 @@ void PINO_Test()
          fprintf (fab, "Start 0x90\r\n") ;
          output_high (hvs);
          fprintf (fab, "Finish 0x90\r\n");
+         delay_ms(5000);
          output_low (PINO_power);
          output_low (sel);
+         output_low(PIN_A5);//Main side
+         
          break;
          
          case 0x91://PINO Real Time Uplink Command
+         output_high(PIN_A5);//Mission Side
          fprintf (fab, "Start 0x91\r\n");
          PINO_DATA[0] = command[0];
          PINO_DATA[1] = command[2];
@@ -189,15 +430,17 @@ void PINO_Test()
          PINO_DATA[6] = command[7];
          PINO_DATA[7] = command[8];
          
-         for (i = 0; i<39; i++)
+         for (i = 0; i<8; i++)
          {
             fputc (PINO_DATA[i], DC);
          }
          fprintf (fab, "Finish 0x91\r\n") ;
+         output_high(PIN_A5);//Mission Side
          break;
          
          case 0x92://PINO Real Time Downlink Command
          fprintf (fab, "Start 0x92\r\n") ;
+         output_high(PIN_A5);
          PINO_DATA[0] = command[0];
          PINO_DATA[1] = command[2];
          PINO_DATA[2] = command[3];
@@ -207,7 +450,7 @@ void PINO_Test()
          PINO_DATA[6] = command[7];
          PINO_DATA[7] = command[8];
          
-         for (i = 0; i<39; i++)
+         for (i = 0; i<8; i++)
          {
             fputc (PINO_DATA[i], DC);
          }
@@ -216,29 +459,34 @@ void PINO_Test()
          {
             if (kbhit (DC))
             {
-               for (i = 0; i < 10; i++)
+               for (i = 0; i < 81; i++)
                {
                   Down[i] = fgetc (DC);
                }
-               //fprintf (fab, "Finish transmitting\r\n") ;
-               for (i = 0; i < 10; i++)
+               //fprintf (PC, "Finish transmitting\r\n") ;
+               for (i = 0; i < 81; i++)
                {
                   fputc (Down[i], fab);
                }
                fprintf (fab, "Finish 0x92\r\n") ;
+               output_high(PIN_A5);//Mission side
                break;
             }
+            break;
          }
          
          case 0x9E: //Turn on PINO
          fprintf(fab, "Start 0x93\r\n");
          output_high (PINO_power);
          output_high (sel);
+         output_high (PIN_A5);//Mission side
          fprintf(fab, "Finish 0x93\r\n");
+         
 
          break;
    
          case 0x94:
+         output_high(PIN_A5);
          fprintf (fab, "Start 0x94\r\n") ;
          for (i = 0; i < 5; i++)
          {
@@ -246,19 +494,22 @@ void PINO_Test()
             delay_ms(5000);
          }
          fprintf (fab, "Finish 0x94\r\n") ;
+         output_high(PIN_A5);
          break;
          
          
          case 0x9B:
+         output_high(PIN_A5);
          fprintf (fab, "Start 0x9B\r\n") ;
          output_high (hvs);
          fprintf (fab, "Finish 0x9B\r\n");
          output_low (PINO_power);
          output_low (sel);
+         output_low (PIN_A5);
          break;
          
          case 0x9C://Time and attitude information
-         
+         output_high(PIN_A5);
          int a=0;
          fprintf (fab, "Start 0x9C\r\n") ;
          
@@ -267,15 +518,9 @@ void PINO_Test()
             delay_ms(10000);
          }
          
-
-         /*GET_RESET_DATA ();
-         while(a<12){//Do "GET_RESET_DATA()" during 2mins;
-            a = a + ten_sec_counter();
-            GET_RESET_DATA ();
-         }*/
-
          fprintf (fab, "Finish 0x9F\r\n") ;
          fprintf (fab, "Finish 0x9C\r\n") ;
+         output_high(PIN_A5);
 
          break;
          
@@ -744,7 +989,7 @@ void GET_RESET_DATA()
       hr = reset_time_data[2];
       dayl = reset_time_data[3];
       dayh = reset_time_data[4];
-      fprintf (fab, "\r\n") ;
+      fprintf (PC, "\r\n") ;
       
       PINO_DATA[0] = 0xFC; //This the header for the Time attitude data.
       
@@ -759,7 +1004,7 @@ void GET_RESET_DATA()
          PINO_DATA[i] = 0x01;
 
       }
-      fprintf(fab,"Send Data\r\n");
+      fprintf(PC,"Send Data\r\n");
 
       for (j = 0; j < 39; j++)
       {
@@ -773,7 +1018,7 @@ void GET_RESET_DATA()
       //fprintf (fab, "\r\n") ;
       
       }else{
-      fprintf (fab, "\r\nRESET DATA NOT OBTAINED\r\n") ;
+      fprintf (PC, "\r\nRESET DATA NOT OBTAINED\r\n") ;
    }
    return;
 }
