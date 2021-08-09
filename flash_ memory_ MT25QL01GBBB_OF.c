@@ -770,31 +770,36 @@ void TRANSFER_DATA_NBYTE_TOPC_OF(unsigned INT32 ADDRESS,int32 data_byte)        
 {
    for (int32 i=0 ; i < data_byte ; i++)
    {
-      fputc(READ_DATA_BYTE_OF(ADDRESS),PC);
+      //fputc(READ_DATA_BYTE_OF(ADDRESS),PC);
+      fprintf(PC, "%x", READ_DATA_BYTE_OF(ADDRESS));
       ADDRESS++;
    }
+   fprintf(PC, "\r\n");
    return;
 }
 
 
-void TRANSFER_DATA_NBYTE_TOPC_SCF(unsigned INT32 ADRESS,int32 data_byte)         //read and send the specified data
+void TRANSFER_DATA_NBYTE_TOPC_SCF(unsigned INT32 ADDRESS,int32 data_byte)         //read and send the specified data
 {
    for (int32 i=0 ; i < data_byte ; i++)
    {
-      fprintf(PC,"%x",READ_DATA_BYTE_SCF(ADRESS));
-      ADRESS++;
+      fprintf(PC,"%x",READ_DATA_BYTE_SCF(ADDRESS));
+      ADDRESS++;
    }
+   fprintf(PC, "\r\n");
    return;
 }
 
 
-void TRANSFER_DATA_NBYTE_TOPC_SMF(unsigned INT32 ADRESS,int32 data_byte)         //read and send the specified data
+void TRANSFER_DATA_NBYTE_TOPC_SMF(unsigned INT32 ADDRESS,int32 data_byte)         //read and send the specified data
 {
    for (int32 i=0 ; i < data_byte ; i++)
    {
-      fputc(READ_DATA_BYTE_SMF(ADRESS),PC);
-      ADRESS++;
+      //fputc(READ_DATA_BYTE_SMF(ADDRESS),PC);
+      fprintf(PC, "%x", READ_DATA_BYTE_SMF(ADDRESS));
+      ADDRESS++;
    }
+   fprintf(PC, "\r\n");
    return;
 }
 
