@@ -14,6 +14,8 @@ BYTE Down[81];
 int8 MULTSPEC1_DATA[81] = {};
 int8 MULTSPEC2_DATA[81] = {};
 int8 IMGCLS_DATA[81] = {};
+int8 SFWD_DATA[81] = {};
+int8 NEW_PINO_DATA[81] = {};
 BYTE dummy[1];
 BYTE Finish_sign[1];
 int8 command_time_data[5];
@@ -442,6 +444,8 @@ void DEL_MBP_DATA()
    }
    return;
 }
+
+
 
 void Forward_CMD_MBP()
 {
@@ -1308,19 +1312,23 @@ void ADCS_TEST()
                {
                   ADCS_SENSOR_DATA[counter] = fgetc(DC);
                   counter++;
-                  if(counter == 81)
+                  if(counter == 14)
                   {
                      break;
                   }
                }
             }
          fprintf(PC,"Data Recieved: ");
-         for(int l = 0; l < 81; l++)
+         for(int l = 0; l < 14; l++)
          {
             fprintf(PC,"%x",ADCS_SENSOR_DATA[l]);
          }
          fprintf(PC,"\r\n");
          fprintf (PC, "Finish 0x42\r\n");
+         for(l = 0; l < 14; l++)
+         {
+            ADCS_SENSOR_DATA[l] = 0;
+         }
       
       break;
       
@@ -1454,7 +1462,136 @@ void ADCS_TEST()
    
 }
 
+void SFWD_Test()
 
+{
+
+   for(int m = 0; m < 9; m++)
+      {
+         command[m] = CMD_FROM_PC[m];
+      }
+      
+   switch (command[0])
+   {
+      
+      case 0x50: //Turn off SFWD MCU
+
+         fprintf (PC, "Start 0x50 - Turn OFF SFWD\r\n") ;
+         Forward_CMD_MBP();
+         fprintf (PC, "Finish 0x50\r\n");
+         
+      break;
+      
+      case 0x5e: //Turn on SFWD MCU
+   
+         fprintf (PC, "Start 0x5e - Turn ON SWFWD\r\n") ;
+         Forward_CMD_MBP();
+         fprintf (PC, "Finish 0x5e\r\n");
+         
+      break;
+      
+      case 0x52:
+         fprintf (PC, "Start 0x52 - Request SFWD MB2 Downlink Data\r\n") ;
+         Forward_CMD_MBP();
+         int8 counter = 0;
+         for(int32 num = 0; num < 1500000; num++)
+            {
+               if(kbhit(DC))
+               {
+                  SFWD_DATA[counter] = fgetc(DC);
+                  counter++;
+                  if(counter == 81)
+                  {
+                     break;
+                  }
+               }
+            }
+         fprintf(PC,"Data Recieved: ");
+         for(int l = 0; l < 81; l++)
+         {
+            fprintf(PC,"%x",SFWD_DATA[l]);
+         }
+         fprintf(PC,"\r\n");
+         fprintf (PC, "Finish 0x52\r\n");
+         for(l = 0; l < 81; l++)
+         {
+            SFWD_DATA[l] = 0;
+         }
+   
+         break;
+ 
+   }
+
+}
+
+
+
+void NEW_PINO_Test()
+
+{
+
+   for(int m = 0; m < 9; m++)
+      {
+         command[m] = CMD_FROM_PC[m];
+      }
+      
+   switch (command[0])
+   {
+      
+      case 0x90: //Turn off SFWD MCU
+
+         fprintf (PC, "Start 0x90 - Turn OFF PINO\r\n") ;
+         Forward_CMD_MBP();
+         output_high (hvs);
+         output_low (PINO_power);
+         output_low (sel);
+         fprintf (PC, "Finish 0x90\r\n");
+         
+      break;
+      
+      case 0x9e: //Turn on PINO MCU
+   
+         fprintf (PC, "Start 0x9E - Turn ON PINO\r\n") ;
+         Forward_CMD_MBP();
+         output_high (PINO_power);
+         output_high (sel);
+         fprintf (PC, "Finish 0x5e\r\n");
+         
+      break;
+      
+      case 0x92:
+         fprintf (PC, "Start 0x52 - Request SFWD MB2 Downlink Data\r\n") ;
+         Forward_CMD_MBP();
+         int8 counter = 0;
+         for(int32 num = 0; num < 1500000; num++)
+            {
+               if(kbhit(DC))
+               {
+                  NEW_PINO_DATA[counter] = fgetc(DC);
+                  counter++;
+                  if(counter == 81)
+                  {
+                     break;
+                  }
+               }
+            }
+         fprintf(PC,"Data Recieved: ");
+         for(int l = 0; l < 81; l++)
+         {
+            fprintf(PC,"%x",NEW_PINO_DATA[l]);
+         }
+         fprintf(PC,"\r\n");
+         fprintf (PC, "Finish 0x52\r\n");
+         for(l = 0; l < 81; l++)
+         {
+            NEW_PINO_DATA[l] = 0;
+         }
+   
+         break;
+ 
+   }
+
+}
 void GET_RESET_DATA()
 {
    dummy[0] = 0x11;

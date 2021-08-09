@@ -165,6 +165,12 @@ void main()
             ADCS_test();
          }
          
+         if(command_ID == 0x50)
+         {
+            fprintf(PC,"S-FWD Command\r\n");
+            SFWD_test();
+         }
+         
          if(command_ID == 0x80)
          {
             fprintf(PC,"IMG-CLS Command\r\n");
@@ -174,7 +180,7 @@ void main()
          if(command_ID == 0x90)
          {
             fprintf(PC,"PINO Command\r\n");
-            PINO_test();
+            NEW_PINO_test();
          }
 
          DELETE_CMD_FROM_PC();                                                   //clear CMD_FROM_PC[] array
