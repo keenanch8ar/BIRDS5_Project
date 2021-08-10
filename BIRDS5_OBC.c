@@ -180,7 +180,7 @@ void main()
          if(command_ID == 0x90)
          {
             fprintf(PC,"PINO Command\r\n");
-            NEW_PINO_test();
+            PINO_test();
          }
 
          DELETE_CMD_FROM_PC();                                                   //clear CMD_FROM_PC[] array
