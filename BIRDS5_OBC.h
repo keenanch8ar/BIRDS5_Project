@@ -77,9 +77,13 @@ void Turn_Off_MBP();
 /////////////ADCS MISSION/////////////
 void ADCS_Test();
 
+/////////////SFWD MISSION/////////////
+void SFWD_Test();
+
 /////////////Testing Stuff/////////////
 void Flash_Memory_Access();
 void PINO_test();
+void NEW_PINO_test();
 void GET_RESET_DATA();
 void MULT_SPEC_Test();
 void GET_TIME();
