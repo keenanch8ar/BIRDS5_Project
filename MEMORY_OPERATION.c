@@ -62,7 +62,7 @@ int8 UPLINK_SUCCESS = 0;
 int8 RESERVE_SEC_FLAG = 0;
 
 //--------MAIN PIC Buffer------------------------------------------------------
-int8 CMD_FROM_PC[8] = {};
+int8 CMD_FROM_PC[9] = {};
 unsigned int8 in_bffr_main[16] = {};
 int8 COM_DATA= 0;
 static int8 CW_IDENTIFIER = 0;
@@ -73,7 +73,7 @@ int8 COM_ONEBYTE_COMMAND = 0;                                                   
 #define buffer_from_com  (in_bffr_main[0]==0xAA) && (in_bffr_main[15]==0xBB)
 #define buffer_flash  (in_bffr_main[7]==0x73)
 #define START_ADCS_MISSION  (in_bffr_main[1]==0x73)
-#define ADCS_SENSOR_SIZE 100                                                      //for testing additional 6byte for checking duty
+#define ADCS_SENSOR_SIZE 14                                                      //for testing additional 6byte for checking duty
 
 
 int8 ADCS_SENSOR_DATA[ADCS_SENSOR_SIZE] = {};
@@ -286,7 +286,7 @@ void STORE_FLAG_INFO()                                                          
 
 void RESET_FLAG_DATA()
 {
-   //BC_ATTEMPT_FLAG = 0;
+   BC_ATTEMPT_FLAG = 0;
    PASSED_DAYS = 0;
    //RESERVE_CHECK = 0;
    //RESERVE_MIN_FLAG = 0;
