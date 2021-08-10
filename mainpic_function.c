@@ -1333,7 +1333,7 @@ void MULT_SPEC_Test()
          output_high (PIN_A5); //SFM2 mission side access
          fprintf (PC, "Start 0x3E - Turn ON MULTSPEC CAM2 (MB2)\r\n") ;
          output_high(pin_F6); //Turn on DIO for MULTSPEC CAM2
-         fprintf (PC, "Finish 0x30\r\n"); 
+         fprintf (PC, "Finish 0x3E\r\n"); 
          
       break;
       

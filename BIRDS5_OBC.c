@@ -114,7 +114,6 @@ void settings()
    
    
    fprintf(PC,"Start Operating\r\n");
-   fprintf(fab,"Start Operating\r\n");
    output_low(PIN_A5); //MUX MAIN SIDE
    
    return;                                                                       
