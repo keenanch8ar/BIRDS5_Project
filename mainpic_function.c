@@ -14,7 +14,7 @@ BYTE Down[81];
 int8 MULTSPEC1_DATA[81] = {};
 int8 MULTSPEC2_DATA[81] = {};
 int8 IMGCLS_DATA[81] = {};
-int8 SFWD_DATA[81] = {};
+BYTE SFWD_DATA[81] = {0x00};
 int8 NEW_PINO_DATA[81] = {};
 BYTE dummy[1];
 BYTE Finish_sign[1];
@@ -453,33 +453,33 @@ void Forward_CMD_MBP()
       for(int8 n = 0; n < 9; n++)
       {
          fputc(command[n], DC);
-         delay_ms(5);
+         delay_ms(10);
       }
       
-      for(int32 num = 0; num < 1000000; num++)
-         {
-            if(kbhit(DC))
-            {
-               MBP_DATA[count] = fgetc(DC);
-               count++;
-            }
-            if(count == 9)
-               break;
-         }
-         
-      fprintf(PC,"Data Recieved from MBP:");
-      
-      for(n = 0; n < 9; n++)
-      {
-         
-         fprintf(PC,"%x,",MBP_DATA[n]);
-      }
-      
-      fprintf(PC,"\r\n");
-      DEL_MBP_DATA();
-        
-         
- 
+//!      for(int32 num = 0; num < 1000000; num++)
+//!         {
+//!            if(kbhit(DC))
+//!            {
+//!               MBP_DATA[count] = fgetc(DC);
+//!               count++;
+//!            }
+//!            if(count == 9)
+//!               break;
+//!         }
+//!         
+//!      fprintf(PC,"Data Recieved from MBP:");
+//!      
+//!      for(n = 0; n < 9; n++)
+//!      {
+//!         
+//!         fprintf(PC,"%x,",MBP_DATA[n]);
+//!      }
+//!      
+//!      fprintf(PC,"\r\n");
+//!      DEL_MBP_DATA();
+//!        
+//!         
+//! 
    return;
 }
 
@@ -1737,32 +1737,64 @@ void SFWD_Test()
       
       case 0x52:
          fprintf (PC, "Start 0x52 - Request SFWD MB2 Downlink Data\r\n") ;
+         for(int y = 0; y < 81; y++)
+         {
+            SFWD_DATA[y] = 0x00;
+         }
          Forward_CMD_MBP();
-         int8 counter = 0;
-         for(int32 num = 0; num < 1500000; num++)
+         int counter_sfd = 0;
+         for(int32 num = 0; num < 1000000; num++)
             {
                if(kbhit(DC))
                {
-                  SFWD_DATA[counter] = fgetc(DC);
-                  counter++;
-                  if(counter == 81)
+                  SFWD_DATA[counter_sfd] = fgetc(DC);
+                  counter_sfd++;
+                  if(counter_sfd == 81)
                   {
                      break;
                   }
                }
             }
-         fprintf(PC,"Data Recieved: ");
-         for(int l = 0; l < 81; l++)
+         fprintf(PC,"Data Recieved from SFWD: ");
+         for(y = 0; y < 81; y++)
          {
-            fprintf(PC,"%x",SFWD_DATA[l]);
+            fprintf(PC,"%x, ",SFWD_DATA[y]);
+            //fputc(SFWD_DATA[l],PC);
          }
+         
+         fprintf(PC,"\r\n");
+         for(y = 0; y < 81; y++)
+         {
+            //fprintf(PC,"%x, ",SFWD_DATA[y]);
+            fputc(SFWD_DATA[y],PC);
+         }
+         
          fprintf(PC,"\r\n");
          fprintf (PC, "Finish 0x52\r\n");
-         for(l = 0; l < 81; l++)
+         for(y = 0; y < 81; y++)
          {
-            SFWD_DATA[l] = 0;
+            SFWD_DATA[y] = 0x00;
          }
-   
+         int8 dummy[20];
+         counter_sfd = 0;
+         for(num = 0; num < 100000; num++)
+            {
+               if(kbhit(DC))
+               {
+                  dummy[counter_sfd] = fgetc(DC);
+                  counter_sfd++;
+                  if(counter_sfd == 20)
+                  {
+                     break;
+                  }
+               }
+            }
+         for(y = 0; y < 81; y++)
+         {
+            SFWD_DATA[y] = 0x00;
+         }
+         
+         
          break;
  
    }
