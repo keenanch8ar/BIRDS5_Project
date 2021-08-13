@@ -1011,6 +1011,7 @@ void MULT_SPEC_Test()
 //!         output_low(pin_G2); //Turn off DIO for trigger
 //!         fprintf (PC, "Finish 0x22\r\n");
          fprintf (PC, "Start 0x22 - Request MULT-SPEC MB1 Downlink Data\r\n") ;
+         output_high (PIN_A5); //SFM2 mission side access
          Forward_CMD_MBP();
          int8 counter = 0;
          for(int32 num = 0; num < 1500000; num++)
@@ -1218,6 +1219,7 @@ void MULT_SPEC_Test()
 //!         fprintf (PC, "Finish 0x32\r\n");
 
          fprintf (PC, "Start 0x32 - Request MULT-SPEC MB2 Downlink Data\r\n") ;
+         output_high (PIN_A5); //SFM2 mission side access
          Forward_CMD_MBP();
          counter = 0;
          for(num = 0; num < 1500000; num++)
@@ -1372,6 +1374,7 @@ void IMGCLS_Test()
       break;
       
       case 0x82: //Real time downlink IMGCLS
+         output_high (PIN_A5);
          fprintf (PC, "Start 0x82 - Real time downlink IMGCLS\r\n") ;
          Forward_CMD_MBP();
          int8 counter_cls = 0;
@@ -1402,28 +1405,11 @@ void IMGCLS_Test()
       
       
       case 0x83://Erase the data on SFM2 at the given address. Specify how much data to erase eg. 16 00 01 02 03 FF will erase the entire 64kB sector at address 00010203
-         output_low (PIN_A5);
-         fprintf(PC, "Start 0x83\r\n");
-         address_data[0] = command[1]<<24;
-         address_data[1] = command[2]<<16;
-         address_data[2] = command[3]<<8;
-         address_data[3] = command[4];
-         address = address_data[0] + address_data[1] + address_data[2] + address_data[3];
-         switch(command[5])
-         {
-            case 0x04:
-               SUBSECTOR_4KB_ERASE_SMF(address);
-               fprintf(PC, "Finish 0x83\r\n");
-               break;
-            case 0x32:
-               SUBSECTOR_32KB_ERASE_SMF(address);
-               fprintf(PC, "Finish 0x83\r\n");
-               break;
-            case 0xFF:
-               SECTOR_ERASE_SMF(address);
-               fprintf(PC, "Finish 0x83\r\n");
-               break;
-         }
+         output_high (PIN_A5);
+         fprintf (PC, "Start 0x83 - Mission Mode 1 IMGCLS\r\n") ;
+         Forward_CMD_MBP();
+         fprintf (PC, "Finish 0x83\r\n"); 
+         
       break;
       
       case 0x84:
@@ -1492,6 +1478,7 @@ void IMGCLS_Test()
          
          case 0x8E:
          
+         output_high (PIN_A5); //SFM2 mission side access
          fprintf (PC, "Start 0x8E - Turn ON IMGCLS\r\n") ;
          Forward_CMD_MBP();
          fprintf (PC, "Finish 0x8E\r\n");
