@@ -1372,31 +1372,31 @@ void IMGCLS_Test()
       break;
       
       case 0x82: //Real time downlink IMGCLS
-         fprintf (PC, "Start 0x81 - Real time downlink IMGCLS\r\n") ;
+         fprintf (PC, "Start 0x82 - Real time downlink IMGCLS\r\n") ;
          Forward_CMD_MBP();
-         int8 counter = 0;
-         for(int32 num = 0; num < 1000000; num++)
+         int8 counter_cls = 0;
+         for(int32 num_cls = 0; num_cls < 1500000; num_cls++)
             {
                if(kbhit(DC))
                {
-                  IMGCLS_DATA[counter] = fgetc(DC);
-                  counter++;
-                  if(counter == 81)
+                  IMGCLS_DATA[counter_cls] = fgetc(DC);
+                  counter_cls++;
+                  if(counter_cls == 81)
                   {
                      break;
                   }
                }
             }
          fprintf(PC,"Data Recieved: ");
-         for(int l = 0; l < 81; l++)
+         for(int8 c = 0; c < 81; c++)
          {
-            fprintf(PC,"%x",IMGCLS_DATA[l]);
+            fprintf(PC,"%x, ",IMGCLS_DATA[c]);
          }
          fprintf(PC,"\r\n");
-         fprintf (PC, "Finish 0x81\r\n"); 
-         for(l = 0; l < 81; l++)
+         fprintf (PC, "Finish 0x82\r\n"); 
+         for(c = 0; c < 81; c++)
          {
-            IMGCLS_DATA[l] = 0;
+            IMGCLS_DATA[c] = 0;
          }
       break;
       
@@ -1455,7 +1455,7 @@ void IMGCLS_Test()
          fputc(0x48, PC); 
          
          int8 IMGCLS_ACK = 0;
-         for(num = 0; num < 1000000; num++)
+         for(int32 num = 0; num < 1000000; num++)
          {
             if(kbhit(DC))
             {
