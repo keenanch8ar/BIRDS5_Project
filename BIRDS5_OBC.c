@@ -37,7 +37,7 @@ void intval()
 #INT_rda                                                                         //PC Interrupt, RS232 receive data available in buffer 1
 void UART1_RXD(void)
 {
-   CMD_FROM_PC[PC_DATA] = fgetc(PC);                                             //loads the CMD_FROM_PC [] array with the data sent by PC
+   CMD_FROM_PC[PC_DATA] = fgetc(PC);                                             //loads the [] array with the data sent by PC
    PC_DATA = ((PC_DATA + 1) % 9);                                                //when the data is obtained in position 9, PC_DATA = 0
 }
 
@@ -46,9 +46,12 @@ void UART2_RXD(void)
 {
    //SerialDataReceive();  //get 32 byte
    //COM_ONEBYTE_COMMAND = fgetc(COM);
-   in_bffr_main[COM_DATA] = fgetc(COM);                                          //load the array in_bffr_main [] with the data sent by COM PIC
-   fprintf(PC,"I receive from COM PIC: %x \r\n", in_bffr_main[COM_DATA]);
-   COM_DATA = ((COM_DATA + 1) % 16);                                             //when the data is obtained in position 16, COM_DATA = 0
+//!   in_bffr_main[COM_DATA] = fgetc(COM);                                          //load the array in_bffr_main [] with the data sent by COM PIC
+//!   fprintf(PC,"I receive from COM PIC: %x \r\n", in_bffr_main[COM_DATA]);
+//!   COM_DATA = ((COM_DATA + 1) % 16);                                             //when the data is obtained in position 16, COM_DATA = 0
+   CMD_FROM_COMM[COM_DATA] = fgetc(COM);   
+   fprintf(PC,"I receive from COM PIC: %x \r\n", CMD_FROM_COMM[COM_DATA]);
+   COM_DATA = ((COM_DATA + 1) % 16);  
 }
 
 #INT_rda3                                                                        //FAB Interrupt, RS232 receive data available in buffer 3
@@ -133,6 +136,7 @@ void main()
       
       if(CMD_FROM_PC[0])
       {
+   
          fprintf(PC,"COMMAND RECEIVED FROM PC: ");
          for(int m = 0; m < 9; m++)
          {
@@ -189,6 +193,78 @@ void main()
          COM_DATA = 0;                                                           //clear COM correct receiving data flag
          PC_DATA = 0;                                                            //clear PC correct receiving data flag
       }
+      
+      
+      if(CMD_FROM_COMM[0] && CMD_FROM_COMM[4] != 0xAB)
+      {
+         
+//!         CMD_FROM_PC[0] = CMD_FROM_COMM[4];
+//!         CMD_FROM_PC[1] = CMD_FROM_COMM[5];
+//!         CMD_FROM_PC[2] = CMD_FROM_COMM[6];
+//!         CMD_FROM_PC[3] = CMD_FROM_COMM[7];
+//!         CMD_FROM_PC[4] = CMD_FROM_COMM[8];
+//!         CMD_FROM_PC[5] = CMD_FROM_COMM[9];
+//!         CMD_FROM_PC[6] = CMD_FROM_COMM[10];
+//!         CMD_FROM_PC[7] = CMD_FROM_COMM[11];
+//!         CMD_FROM_PC[8] = 0x00;
+//!         
+//!         fprintf(PC,"COMMAND RECEIVED FROM COMM: ");
+//!         for(int m = 0; m < 9; m++)
+//!         {
+//!            fprintf(PC,"%x",CMD_FROM_PC[m]);
+//!         }
+//!         fprintf(PC,"\r\n");
+         //0000 0000 to 0001 FFFF is MAIN PIC/MB
+         
+         BYTE command_ID = CMD_FROM_COMM[4];
+         command_ID &= 0xF0;
+         //fprintf(PC,"%x",command_ID);
+         //fprintf(PC,"\r\n");
+         
+         if(command_ID == 0x00 || command_ID == 0x10)
+         {
+            fprintf(PC,"Main PIC or MB Command only\r\n");
+            MAIN_MB_CMD();
+         }
+         
+         if(command_ID == 0x20 || command_ID == 0x30)
+         {
+            fprintf(PC,"MULT-SPEC Command\r\n");
+            MULT_SPEC_Test();
+         }
+         
+         if(command_ID == 0x40)
+         {
+            fprintf(PC,"ADCS Command\r\n");
+            ADCS_test();
+         }
+         
+         if(command_ID == 0x50)
+         {
+            fprintf(PC,"S-FWD Command\r\n");
+            SFWD_test();
+         }
+         
+         if(command_ID == 0x80)
+         {
+            fprintf(PC,"IMG-CLS Command\r\n");
+            IMGCLS_test();
+         }
+         
+         if(command_ID == 0x90)
+         {
+            fprintf(PC,"PINO Command\r\n");
+            PINO_test();
+         }
+         DELETE_CMD_FROM_COMM();
+         DELETE_CMD_FROM_PC();                                                   //clear CMD_FROM_PC[] array
+         Delete_Buffer();                                                        //clear in_bffr_main[] array
+         CMD_FROM_PC[1] = 0;
+         COM_DATA = 0;                                                           //clear COM correct receiving data flag
+         PC_DATA = 0;                                                            //clear PC correct receiving data flag
+      }
+      
+      DELETE_CMD_FROM_COMM();
       
       delay_ms(400); 
    }

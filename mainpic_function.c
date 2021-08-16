@@ -32,6 +32,14 @@ void DELETE_CMD_FROM_PC()
    return;
 }
 
+void DELETE_CMD_FROM_COMM()
+{
+   for(int num = 0; num < 16; num++)
+   {
+      CMD_FROM_COMM[num] = 0;
+   }
+   return;
+}
 void Delete_Buffer()                                                             //delete com command buffer
 {
    int num = 0;
@@ -60,10 +68,26 @@ void Turn_Off_CAM()
 
 void MAIN_MB_CMD()
 {
-
-   for(int m = 0; m < 9; m++)
+   if(CMD_FROM_PC[0])
    {
-      command[m] = CMD_FROM_PC[m];
+      for(int m = 0; m < 9; m++)
+      {
+         command[m] = CMD_FROM_PC[m];
+      }
+   }
+   
+   if(CMD_FROM_COMM[0] && CMD_FROM_COMM[4] != 0xAB)
+   {
+
+      command[0] = CMD_FROM_COMM[4];
+      command[1] = CMD_FROM_COMM[5];
+      command[2] = CMD_FROM_COMM[6];
+      command[3] = CMD_FROM_COMM[7];
+      command[4] = CMD_FROM_COMM[8];
+      command[5] = CMD_FROM_COMM[9];
+      command[6] = CMD_FROM_COMM[10];
+      command[7] = CMD_FROM_COMM[11];
+      command[8] = 0x00;
    }
       
    switch (command[0])
@@ -963,10 +987,27 @@ void PINO_Test_for_PINO()
 void MULT_SPEC_Test()
 {
 
-   for(int m = 0; m < 9; m++)
-      {
-         command[m] = CMD_FROM_PC[m];
-      }
+   if(CMD_FROM_COMM[0] && CMD_FROM_COMM[4] != 0xAB)
+   {
+
+      command[0] = CMD_FROM_COMM[4];
+      command[1] = CMD_FROM_COMM[5];
+      command[2] = CMD_FROM_COMM[6];
+      command[3] = CMD_FROM_COMM[7];
+      command[4] = CMD_FROM_COMM[8];
+      command[5] = CMD_FROM_COMM[9];
+      command[6] = CMD_FROM_COMM[10];
+      command[7] = CMD_FROM_COMM[11];
+      command[8] = 0x00;
+   }
+   
+   if(CMD_FROM_PC[0])
+   {
+      for(int m = 0; m < 9; m++)
+         {
+            command[m] = CMD_FROM_PC[m];
+         }
+   }
       
    switch (command[0])
    {
@@ -1334,15 +1375,36 @@ void MULT_SPEC_Test()
          fprintf (PC, " does not exist\r\n");
          break;
    }
+   
+   for(int m = 0; m < 9; m++)
+   {
+      command[m] = 0;
+   }
 }
 
 void IMGCLS_Test()
 {
-   for(int m = 0; m < 9; m++)
+   if(CMD_FROM_COMM[0] && CMD_FROM_COMM[4] != 0xAB)
    {
-      command[m] = CMD_FROM_PC[m];
+
+      command[0] = CMD_FROM_COMM[4];
+      command[1] = CMD_FROM_COMM[5];
+      command[2] = CMD_FROM_COMM[6];
+      command[3] = CMD_FROM_COMM[7];
+      command[4] = CMD_FROM_COMM[8];
+      command[5] = CMD_FROM_COMM[9];
+      command[6] = CMD_FROM_COMM[10];
+      command[7] = CMD_FROM_COMM[11];
+      command[8] = 0x00;
    }
-      
+   
+   if(CMD_FROM_PC[0])
+   {
+      for(int m = 0; m < 9; m++)
+         {
+            command[m] = CMD_FROM_PC[m];
+         }
+   }
    switch (command[0])
    {
       
@@ -1476,6 +1538,10 @@ void IMGCLS_Test()
          break;
      
    }
+   for(int m = 0; m < 9; m++)
+   {
+      command[m] = 0;
+   }
 }
 
 void DELETE_ADCS_SENSOR()
@@ -1490,10 +1556,27 @@ void DELETE_ADCS_SENSOR()
 void ADCS_TEST()
 
 {
-   for(int m = 0; m < 9; m++)
-      {
-         command[m] = CMD_FROM_PC[m];
-      }
+   if(CMD_FROM_COMM[0] && CMD_FROM_COMM[4] != 0xAB)
+   {
+
+      command[0] = CMD_FROM_COMM[4];
+      command[1] = CMD_FROM_COMM[5];
+      command[2] = CMD_FROM_COMM[6];
+      command[3] = CMD_FROM_COMM[7];
+      command[4] = CMD_FROM_COMM[8];
+      command[5] = CMD_FROM_COMM[9];
+      command[6] = CMD_FROM_COMM[10];
+      command[7] = CMD_FROM_COMM[11];
+      command[8] = 0x00;
+   }
+   
+   if(CMD_FROM_PC[0])
+   {
+      for(int m = 0; m < 9; m++)
+         {
+            command[m] = CMD_FROM_PC[m];
+         }
+   }
       
    switch (command[0])
    {
@@ -1682,16 +1765,37 @@ void ADCS_TEST()
    
    }
    
+   for(int m = 0; m < 9; m++)
+   {
+      command[m] = 0;
+   }
+   
 }
 
 void SFWD_Test()
 
 {
+   if(CMD_FROM_COMM[0] && CMD_FROM_COMM[4] != 0xAB)
+   {
 
-   for(int m = 0; m < 9; m++)
-      {
-         command[m] = CMD_FROM_PC[m];
-      }
+      command[0] = CMD_FROM_COMM[4];
+      command[1] = CMD_FROM_COMM[5];
+      command[2] = CMD_FROM_COMM[6];
+      command[3] = CMD_FROM_COMM[7];
+      command[4] = CMD_FROM_COMM[8];
+      command[5] = CMD_FROM_COMM[9];
+      command[6] = CMD_FROM_COMM[10];
+      command[7] = CMD_FROM_COMM[11];
+      command[8] = 0x00;
+   }
+
+   if(CMD_FROM_PC[0])
+   {
+      for(int m = 0; m < 9; m++)
+         {
+            command[m] = CMD_FROM_PC[m];
+         }
+   }
       
    switch (command[0])
    {
@@ -1775,6 +1879,11 @@ void SFWD_Test()
          break;
  
    }
+   
+   for(int m = 0; m < 9; m++)
+   {
+      command[m] = 0;
+   }
 
 }
 
@@ -1784,10 +1893,27 @@ void NEW_PINO_Test()
 
 {
 
-   for(int m = 0; m < 9; m++)
-      {
-         command[m] = CMD_FROM_PC[m];
-      }
+   if(CMD_FROM_COMM[0] && CMD_FROM_COMM[4] != 0xAB)
+   {
+
+      command[0] = CMD_FROM_COMM[4];
+      command[1] = CMD_FROM_COMM[5];
+      command[2] = CMD_FROM_COMM[6];
+      command[3] = CMD_FROM_COMM[7];
+      command[4] = CMD_FROM_COMM[8];
+      command[5] = CMD_FROM_COMM[9];
+      command[6] = CMD_FROM_COMM[10];
+      command[7] = CMD_FROM_COMM[11];
+      command[8] = 0x00;
+   }
+
+   if(CMD_FROM_PC[0])
+   {
+      for(int m = 0; m < 9; m++)
+         {
+            command[m] = CMD_FROM_PC[m];
+         }
+   }
       
      
    switch (command[0])
@@ -1849,7 +1975,11 @@ void NEW_PINO_Test()
          break;
  
    }
-
+   
+   for(int m = 0; m < 9; m++)
+   {
+      command[m] = 0;
+   }
 }
 void GET_RESET_DATA()
 {
