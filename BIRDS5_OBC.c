@@ -77,7 +77,7 @@ void settings()
    set_tris_b(0b11010000);                                                       // Port b configuration
    enable_interrupts(global);                                                    // Enabling global interrupts      
    enable_interrupts(INT_rda);                                                   // Main to PC interrupt
-   enable_interrupts(INT_rda2);                                                  // Main to COM PIC interrupt
+   //enable_interrupts(INT_rda2);                                                  // Main to COM PIC interrupt
    enable_interrupts(INT_rda3);                                                  // Main to FAB PIC interrupt   
    enable_interrupts(INT_rda4);                                                  // Main to RESET PIC interrupt
 
