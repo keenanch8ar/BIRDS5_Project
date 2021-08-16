@@ -15,7 +15,7 @@ int8 MULTSPEC1_DATA[81] = {};
 int8 MULTSPEC2_DATA[81] = {};
 int8 IMGCLS_DATA[81] = {};
 BYTE SFWD_DATA[81] = {0x00};
-int8 NEW_PINO_DATA[81] = {};
+BYTE NEW_PINO_DATA[81] = {};
 BYTE dummy[1];
 BYTE Finish_sign[1];
 int8 command_time_data[5];
@@ -769,17 +769,7 @@ void PINO_Test_for_PINO()
       
       for (num = 0; num < 100; num++)
       {
-         if (kbhit (fab))
-         {
-
-            for (int i = 0; i < 9; i++)
-            {
-               //fprintf (fab, "Get command\r\n") ;
-               command[i] = fgetc (fab);
-            }
-            fprintf(fab, "Get the command\r\n");
-            break;
-         }
+         Forward_CMD_MBP();
       }
       switch (command[0])
       {
@@ -1925,6 +1915,7 @@ void NEW_PINO_Test()
          }
    }
       
+     
    switch (command[0])
    {
       
@@ -1949,19 +1940,23 @@ void NEW_PINO_Test()
          
       break;
       
+      case 0x91:
+         fprintf (PC, "Start 0x91 - Real Time Uplink Command");
+         Forward_CMD_MBP();
+         fprintf (PC, "Finish 0x91\r\n");
+         break;
+         
+      
       case 0x92:
-         fprintf (PC, "Start 0x52 - Request SFWD MB2 Downlink Data\r\n") ;
+         fprintf (PC, "Start 0x92 - Request SFWD MB2 Downlink Data\r\n") ;
          Forward_CMD_MBP();
          int8 counter = 0;
          for(int32 num = 0; num < 1500000; num++)
             {
                if(kbhit(DC))
                {
+                  for(counter = 0; counter<81; counter++){
                   NEW_PINO_DATA[counter] = fgetc(DC);
-                  counter++;
-                  if(counter == 81)
-                  {
-                     break;
                   }
                }
             }
@@ -1971,7 +1966,7 @@ void NEW_PINO_Test()
             fprintf(PC,"%x",NEW_PINO_DATA[l]);
          }
          fprintf(PC,"\r\n");
-         fprintf (PC, "Finish 0x52\r\n");
+         fprintf (PC, "Finish 0x92\r\n");
          for(l = 0; l < 81; l++)
          {
             NEW_PINO_DATA[l] = 0;
