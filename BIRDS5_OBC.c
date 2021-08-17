@@ -71,8 +71,7 @@ void UART4_RXD(void)
    {
       reset_flag = 1;                                                            //raise flag to reset (pone a alto bandera para reseteo)
       RESET_DATA = 0;                                                            //position indicator within reset_data vector (indicador de posicion dentro del vector reset_data)
-   }
-   
+   }  
 }
 
 void settings()
@@ -183,7 +182,6 @@ void main()
          if(command_ID == 0x90)
          {
             fprintf(PC,"PINO Command\r\n");
-            fputc(0xBC, reset);
             NEW_PINO_test();
          }
 
@@ -254,7 +252,7 @@ void main()
          if(command_ID == 0x90)
          {
             fprintf(PC,"PINO Command\r\n");
-            PINO_test();
+            NEW_PINO_test();
          }
          DELETE_CMD_FROM_COMM();
          DELETE_CMD_FROM_PC();                                                   //clear CMD_FROM_PC[] array

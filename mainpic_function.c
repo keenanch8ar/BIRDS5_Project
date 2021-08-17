@@ -645,6 +645,7 @@ void PINO_Test()
          delay_ms(5000);
          output_low (PINO_power);
          output_low (sel);
+         fputc(0xAB, reset);
          output_low(PIN_A5);//Main side
          
          break;
@@ -710,6 +711,7 @@ void PINO_Test()
          output_high (PINO_power);
          output_high (sel);
          output_high (PIN_A5);//Mission side
+         fputc(0xBC, reset);
          fprintf(PC, "Finish 0x93\r\n");
          
 
@@ -1926,6 +1928,7 @@ void NEW_PINO_Test()
          output_high (hvs);
          output_low (PINO_power);
          output_low (sel);
+         fputc(0xAB, reset);
          fprintf (PC, "Finish 0x90\r\n");
          
       break;
@@ -1936,6 +1939,7 @@ void NEW_PINO_Test()
          Forward_CMD_MBP();
          output_high (PINO_power);
          output_high (sel);
+         fputc(0xBC, reset);
          fprintf (PC, "Finish 0x5e\r\n");
          
       break;
