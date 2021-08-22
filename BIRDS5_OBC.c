@@ -26,10 +26,17 @@ void intval()
       //fprintf(PC,"currenttime:%ld \r\n", currenttime);                        //Check TMR0 operation
       //fprintf(PC,"Done\r\n");
       
+      if((RESERVE_SEC_FLAG % 10) == 0)
+      {
+         FAB_DATA = 0;
+         fputc(0x61, FAB);
+      }
+      
       if(RESERVE_SEC_FLAG > 59)                                                  //the counters inside the if are incremented every 60s
       {
          RESERVE_SEC_FLAG = 0;
          RESERVE_MIN_FLAG++;                                                     //time counter in minutes (used in reservation table)
+         //fprintf(PC,"1minute");
       }
    }
 }
@@ -54,13 +61,16 @@ void UART2_RXD(void)
    COM_DATA = ((COM_DATA + 1) % 16);  
 }
 
-#INT_rda3                                                                        //FAB Interrupt, RS232 receive data available in buffer 3
+#INT_rda3//FAB Interrupt, RS232 receive data available in buffer 3
 void UART3_RXD(void)
 {
    //collect_HK_from_FAB();
-   in_HK[FAB_DATA] = fgetc(FAB);                                                 //load the array in_HK [] with the data sent by the FAB PIC
+   in_HK[FAB_DATA] = fgetc(FAB);//load the array in_HK [] with the data sent by the FAB PIC
+   fprintf(PC,"Battery Voltage %x \r\n", in_HK[FAB_DATA]);
    FAB_DATA = ((FAB_DATA + 1) % FAB_SENSOR_size);                                //when the data is obtained in position 45 FAB_DATA = 0
-} 
+   fprintf(PC, "\r\n");
+   
+}
 
 #INT_rda4                                                                        //Reset PIC Interrupt, RS232 receive data available in buffer 4
 void UART4_RXD(void)
@@ -77,7 +87,8 @@ void UART4_RXD(void)
 void settings()
 {
    set_tris_b(0b11010000);                                                       // Port b configuration
-   enable_interrupts(global);                                                    // Enabling global interrupts      
+   enable_interrupts(global);  // Enabling global interrupts
+   enable_interrupts(int_timer0);                                                //HK data show by 1sec
    enable_interrupts(INT_rda);                                                   // Main to PC interrupt
    enable_interrupts(INT_rda2);                                                  // Main to COM PIC interrupt
    enable_interrupts(INT_rda3);                                                  // Main to FAB PIC interrupt   
@@ -125,6 +136,8 @@ void settings()
 void main()
 {
 
+   fprintf(PC, "Turn on the satellite\r\n");
+
    settings();  //Prepare all interrupts, timers, flag information, BC setup etc.
    
    Antenna_Deploy(); //Attempt deploying of antenna. This is the 2nd, 3rd and 4th attempts
@@ -133,10 +146,11 @@ void main()
    {
       BC_ON_30min(); //Attempt 1st antenna deployment after 30mins
       
+      
       if(CMD_FROM_PC[0])
       {
    
-         fprintf(PC,"COMMAND RECEIVED FROM PC: ");
+         //fprintf(PC,"COMMAND RECEIVED FROM PC: ");
          for(int m = 0; m < 9; m++)
          {
             fprintf(PC,"%x",CMD_FROM_PC[m]);

@@ -92,6 +92,7 @@ void MAIN_MB_CMD()
       
    switch (command[0])
    {
+   
       case 0x12:
          fprintf (PC, "Start 0x12\r\n") ;
          output_low (PIN_A5);
@@ -708,6 +709,7 @@ void PINO_Test()
          
          case 0x9E: //Turn on PINO
          fprintf(PC, "Start 0x93\r\n");
+         output_low(hvs);
          output_high (PINO_power);
          output_high (sel);
          output_high (PIN_A5);//Mission side
@@ -1021,6 +1023,7 @@ void MULT_SPEC_Test()
          output_high (PIN_A5); //SFM2 mission side access
          fprintf (PC, "Start 0x20 - Turn OFF MULTSPEC CAM1 (MB1)\r\n") ;
          output_low(pin_G3); //Turn off DIO for MULTSPEC CAM1
+         fputc(0xCD, reset);
          Forward_CMD_MBP();
          
          fprintf (PC, "Finish 0x20\r\n");
@@ -1218,6 +1221,7 @@ void MULT_SPEC_Test()
          
          output_high (PIN_A5); //SFM2 mission side access
          fprintf (PC, "Start - Turn ON MULTSPEC CAM1 0x2E\r\n") ;
+         fputc(0xEC, reset);
          output_high(pin_G3); //Turn on DIO for MULTSPEC CAM1
          Forward_CMD_MBP();
          fprintf (PC, "Finish 0x2E\r\n"); 
@@ -1230,9 +1234,11 @@ void MULT_SPEC_Test()
       
          output_high (PIN_A5); //SFM2 mission side access
          fprintf (PC, "Start 0x30 - Turn OFF MULTSPEC CAM2 (MB2)\r\n") ;
+         fputc(0xCD, reset);
          output_low(pin_F6); //Turn off DIO for MULTSPEC CAM2
          Forward_CMD_MBP();
          fprintf (PC, "Finish 0x30\r\n");
+         
          
       break;
       
@@ -1368,7 +1374,8 @@ void MULT_SPEC_Test()
          output_high (PIN_A5); //SFM2 mission side access
          fprintf (PC, "Start 0x3E - Turn ON MULTSPEC CAM2 (MB2)\r\n") ;
          output_high(pin_F6); //Turn on DIO for MULTSPEC CAM2
-         fprintf (PC, "Finish 0x3E\r\n"); 
+         fputc(0xEC, reset);
+         fprintf (PC, "Finish 0x3E\r\n");
          
       break;
       
@@ -1416,6 +1423,7 @@ void IMGCLS_Test()
          fprintf (PC, "Start 0x80 - Turn off IMGCLS\r\n") ;
          Forward_CMD_MBP();
          fprintf (PC, "Finish 0x80\r\n"); 
+         fputc(0xCD, reset);
          
       break;
       
@@ -1534,8 +1542,10 @@ void IMGCLS_Test()
          
          output_high (PIN_A5); //SFM2 mission side access
          fprintf (PC, "Start 0x8E - Turn ON IMGCLS\r\n") ;
+         fputc(0xEC, reset);
          Forward_CMD_MBP();
          fprintf (PC, "Finish 0x8E\r\n");
+         
          
          break;
      
@@ -1805,6 +1815,7 @@ void SFWD_Test()
       case 0x50: //Turn off SFWD MCU
 
          fprintf (PC, "Start 0x50 - Turn OFF SFWD\r\n") ;
+         fputc(0xCD, reset);
          Forward_CMD_MBP();
          fprintf (PC, "Finish 0x50\r\n");
          
@@ -1813,6 +1824,7 @@ void SFWD_Test()
       case 0x5e: //Turn on SFWD MCU
    
          fprintf (PC, "Start 0x5e - Turn ON SWFWD\r\n") ;
+         fputc(0xEC, reset);
          Forward_CMD_MBP();
          fprintf (PC, "Finish 0x5e\r\n");
          
@@ -1926,9 +1938,12 @@ void NEW_PINO_Test()
          fprintf (PC, "Start 0x90 - Turn OFF PINO\r\n") ;
          Forward_CMD_MBP();
          output_high (hvs);
-         output_low (PINO_power);
+         delay_ms(15000);
          output_low (sel);
+         output_high (PIN_A5);
+         output_low (hvs);
          fputc(0xAB, reset);
+         output_low (PINO_power);
          fprintf (PC, "Finish 0x90\r\n");
          
       break;
@@ -1938,9 +1953,11 @@ void NEW_PINO_Test()
          fprintf (PC, "Start 0x9E - Turn ON PINO\r\n") ;
          Forward_CMD_MBP();
          output_high (PINO_power);
-         output_high (sel);
          fputc(0xBC, reset);
-         fprintf (PC, "Finish 0x5e\r\n");
+         output_low (PIN_A5);
+         output_high (sel);
+         output_low (hvs);
+         fprintf (PC, "Finish 0x9E\r\n");
          
       break;
       
@@ -1950,18 +1967,49 @@ void NEW_PINO_Test()
          fprintf (PC, "Finish 0x91\r\n");
          break;
          
+         case 0x9C://Time and attitude information
+         //output_high(PIN_A5);
+         int a=0;
+         fprintf (PC, "Start 0x9C\r\n") ;
+         
+         for(a=0; a<12; a++){
+            //fputc(0x9C,DC);
+            //delay_ms(50);
+            //GET_RESET_DATA();
+            Forward_CMD_MBP();
+            BYTE pp[1] = 0x00;
+            for(i=0; i<39; i++)
+            {
+               fputc(pp[0], DC);
+               fputc(pp[0], PC);
+               pp[0]++;
+               delay_ms(50);
+            }
+            
+            delay_ms(10000);
+         }
+         
+         fprintf (PC, "Finish 0x9C\r\n") ;
+         
+
+         break;
+         
       
       case 0x92:
          fprintf (PC, "Start 0x92 - Request SFWD MB2 Downlink Data\r\n") ;
          Forward_CMD_MBP();
-         int8 counter = 0;
+         int8 pino_counter = 0;
          for(int32 num = 0; num < 1500000; num++)
             {
+             
                if(kbhit(DC))
                {
-                  for(counter = 0; counter<81; counter++){
-                  NEW_PINO_DATA[counter] = fgetc(DC);
-                  }
+                  NEW_PINO_DATA[pino_counter] = fgetc(DC);
+                  pino_counter++;
+               }
+               if(pino_counter == 81)
+               {
+                  break;
                }
             }
          fprintf(PC,"Data Recieved: ");
@@ -1977,6 +2025,14 @@ void NEW_PINO_Test()
          }
    
          break;
+         
+         case 0x95:
+            output_high(hvs);
+            break;
+            
+         case 0x96:
+            output_low(hvs);
+            break;
  
    }
    
@@ -1987,7 +2043,7 @@ void NEW_PINO_Test()
 }
 void GET_RESET_DATA()
 {
-   dummy[0] = 0x11;
+   //dummy[0] = 0x11;
    Finish_sign[0] = 0xFF;
    RESET_DATA = 0;
    int8 dayh;
@@ -2041,6 +2097,7 @@ void GET_RESET_DATA()
          //fprintf (fab, " % x, ", PINO_DATA[j]) ;
          
          fputc (PINO_DATA[j], DC);
+         fputc (PINO_DATA[j], PC);
          
       }
       //fputc (Finish_sign[0], DC);
@@ -2079,7 +2136,7 @@ void GET_TIME()
          fputc (reset_bffr[num + 1], PC) ;
       }
       
-      fputc (dummy[0], DC);
+      //fputc (dummy[0], DC);
       trigger_time_data[0] = reset_time_data[0];
       trigger_time_data[1] = reset_time_data[1];
       trigger_time_data[2] = reset_time_data[2];
