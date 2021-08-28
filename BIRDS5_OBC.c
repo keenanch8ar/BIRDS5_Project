@@ -210,7 +210,7 @@ void main()
       
       
       //if((CMD_FROM_COMM[15]==0xBB) && (CMD_FROM_COMM[4] != 0xAB))
-      if(CMD_FROM_COMM)
+      if(CMD_FROM_COMM[0])
       {
          
 //!         CMD_FROM_PC[0] = CMD_FROM_COMM[4];
