@@ -88,10 +88,18 @@ void MAIN_MB_CMD()
       command[6] = CMD_FROM_COMM[10];
       command[7] = CMD_FROM_COMM[11];
       command[8] = 0x00;
+      fprintf (PC, "Case 1\r\n");
    }
       
    switch (command[0])
    {
+      case 0x00:
+         fprintf (PC, "Case 2\r\n");
+      break;
+      
+      case 0x10:
+         fprintf (PC, "Case 3\r\n");
+      break;
    
       case 0x12:
          fprintf (PC, "Start 0x12\r\n") ;
