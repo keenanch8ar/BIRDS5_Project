@@ -30,15 +30,14 @@ void intval()
       {
          FAB_DATA = 0;
          fputc(0x61, FAB);
+         //fprintf(PC,"SENT FAB \r\n"); 
       }
       
       if(RESERVE_SEC_FLAG > 59)                                                  //the counters inside the if are incremented every 60s
       {
          RESERVE_SEC_FLAG = 0;
          RESERVE_MIN_FLAG++;//time counter in minutes (used in reservation table)
-         FAB_DATA=0;
-         fputc(0x61, FAB);
-         //fprintf(PC,"1minute");
+
       }
    }
 }

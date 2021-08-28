@@ -1920,7 +1920,6 @@ void SFWD_Test()
                   break;
                }
          }
-         fprintf (PC, "Finish 0x2E\r\n");
          
          fprintf (PC, "Finish 0x5e\r\n");
          
