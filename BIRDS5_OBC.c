@@ -35,7 +35,9 @@ void intval()
       if(RESERVE_SEC_FLAG > 59)                                                  //the counters inside the if are incremented every 60s
       {
          RESERVE_SEC_FLAG = 0;
-         RESERVE_MIN_FLAG++;                                                     //time counter in minutes (used in reservation table)
+         RESERVE_MIN_FLAG++;//time counter in minutes (used in reservation table)
+         FAB_DATA=0;
+         fputc(0x61, FAB);
          //fprintf(PC,"1minute");
       }
    }
@@ -149,8 +151,8 @@ void main()
       
       if(CMD_FROM_PC[0])
       {
-   
-         //fprintf(PC,"COMMAND RECEIVED FROM PC: ");
+         fprintf(PC,"\r\n");
+         fprintf(PC,"COMMAND RECEIVED FROM PC: ");
          for(int m = 0; m < 9; m++)
          {
             fprintf(PC,"%x",CMD_FROM_PC[m]);
@@ -207,7 +209,7 @@ void main()
       }
       
       
-      if(CMD_FROM_COMM[15]==0xBB && CMD_FROM_COMM[4] != 0xAB)
+      if((CMD_FROM_COMM[15]==0xBB) && (CMD_FROM_COMM[4] != 0xAB))
       {
          
 //!         CMD_FROM_PC[0] = CMD_FROM_COMM[4];

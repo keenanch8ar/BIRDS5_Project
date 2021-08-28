@@ -1023,8 +1023,18 @@ void MULT_SPEC_Test()
          output_high (PIN_A5); //SFM2 mission side access
          fprintf (PC, "Start 0x20 - Turn OFF MULTSPEC CAM1 (MB1)\r\n") ;
          output_low(pin_G3); //Turn off DIO for MULTSPEC CAM1
-         fputc(0xCD, reset);
          Forward_CMD_MBP();
+         for(int16 num_reset = 0; num_reset < 200; num_reset++)
+         {
+            fputc(0xCD,reset);
+            delay_ms(100);
+            if(reset_bffr[0] == 0xCD)
+               {
+                  fprintf (PC, "RESET Turned off 5V\r\n");
+                  break;
+               }
+         }
+         //fputc(0xCD, reset);
          
          fprintf (PC, "Finish 0x20\r\n");
          
@@ -1221,9 +1231,20 @@ void MULT_SPEC_Test()
          
          output_high (PIN_A5); //SFM2 mission side access
          fprintf (PC, "Start - Turn ON MULTSPEC CAM1 0x2E\r\n") ;
-         fputc(0xEC, reset);
+         //fputc(0xEC, reset);
          output_high(pin_G3); //Turn on DIO for MULTSPEC CAM1
          Forward_CMD_MBP();
+         
+         for(num_reset = 0; num_reset < 200; num_reset++)
+         {
+            fputc(0xEC,reset);
+            delay_ms(100);
+            if(reset_bffr[0] == 0xEC)
+               {
+                  fprintf (PC, "RESET Turned on 5V\r\n");
+                  break;
+               }
+         }
          fprintf (PC, "Finish 0x2E\r\n"); 
       
       break;
@@ -1234,9 +1255,20 @@ void MULT_SPEC_Test()
       
          output_high (PIN_A5); //SFM2 mission side access
          fprintf (PC, "Start 0x30 - Turn OFF MULTSPEC CAM2 (MB2)\r\n") ;
-         fputc(0xCD, reset);
+         //fputc(0xCD, reset);
          output_low(pin_F6); //Turn off DIO for MULTSPEC CAM2
          Forward_CMD_MBP();
+         
+         for(num_reset = 0; num_reset < 200; num_reset++)
+         {
+            fputc(0xCD,reset);
+            delay_ms(100);
+            if(reset_bffr[0] == 0xCD)
+               {
+                  fprintf (PC, "RESET Turned off 5V\r\n");
+                  break;
+               }
+         }
          fprintf (PC, "Finish 0x30\r\n");
          
          
@@ -1374,7 +1406,19 @@ void MULT_SPEC_Test()
          output_high (PIN_A5); //SFM2 mission side access
          fprintf (PC, "Start 0x3E - Turn ON MULTSPEC CAM2 (MB2)\r\n") ;
          output_high(pin_F6); //Turn on DIO for MULTSPEC CAM2
-         fputc(0xEC, reset);
+         //fputc(0xEC, reset);
+         
+         for(num_reset = 0; num_reset < 200; num_reset++)
+         {
+            fputc(0xEC,reset);
+            delay_ms(100);
+            if(reset_bffr[0] == 0xEC)
+               {
+                  fprintf (PC, "RESET Turned on 5V\r\n");
+                  break;
+               }
+         }
+         
          fprintf (PC, "Finish 0x3E\r\n");
          
       break;
@@ -1422,8 +1466,19 @@ void IMGCLS_Test()
          output_high (PIN_A5); //SFM2 mission side access
          fprintf (PC, "Start 0x80 - Turn off IMGCLS\r\n") ;
          Forward_CMD_MBP();
+         
+         for(int16 num_reset_ic = 0; num_reset_ic < 200; num_reset_ic++)
+         {
+            fputc(0xCD,reset);
+            delay_ms(100);
+            if(reset_bffr[0] == 0xCD)
+               {
+                  fprintf (PC, "RESET Turned off 5V\r\n");
+                  break;
+               }
+         }
          fprintf (PC, "Finish 0x80\r\n"); 
-         fputc(0xCD, reset);
+         //fputc(0xCD, reset);
          
       break;
       
@@ -1542,8 +1597,19 @@ void IMGCLS_Test()
          
          output_high (PIN_A5); //SFM2 mission side access
          fprintf (PC, "Start 0x8E - Turn ON IMGCLS\r\n") ;
-         fputc(0xEC, reset);
+         //fputc(0xEC, reset);
          Forward_CMD_MBP();
+         
+         for(num_reset_ic = 0; num_reset_ic < 200; num_reset_ic++)
+         {
+            fputc(0xEC,reset);
+            delay_ms(100);
+            if(reset_bffr[0] == 0xEC)
+               {
+                  fprintf (PC, "RESET Turned on 5V\r\n");
+                  break;
+               }
+         }
          fprintf (PC, "Finish 0x8E\r\n");
          
          
@@ -1815,8 +1881,18 @@ void SFWD_Test()
       case 0x50: //Turn off SFWD MCU
 
          fprintf (PC, "Start 0x50 - Turn OFF SFWD\r\n") ;
-         fputc(0xCD, reset);
+         //fputc(0xCD, reset);
          Forward_CMD_MBP();
+         for(int16 num_reset_s = 0; num_reset_s < 200; num_reset_s++)
+         {
+            fputc(0xCD,reset);
+            delay_ms(100);
+            if(reset_bffr[0] == 0xCD)
+               {
+                  fprintf (PC, "RESET Turned off 5V\r\n");
+                  break;
+               }
+         }
          fprintf (PC, "Finish 0x50\r\n");
          
       break;
@@ -1824,8 +1900,20 @@ void SFWD_Test()
       case 0x5e: //Turn on SFWD MCU
    
          fprintf (PC, "Start 0x5e - Turn ON SWFWD\r\n") ;
-         fputc(0xEC, reset);
+         //fputc(0xEC, reset);
          Forward_CMD_MBP();
+         for(num_reset_s = 0; num_reset_s < 200; num_reset_s++)
+         {
+            fputc(0xEC,reset);
+            delay_ms(100);
+            if(reset_bffr[0] == 0xEC)
+               {
+                  fprintf (PC, "RESET Turned on 5V\r\n");
+                  break;
+               }
+         }
+         fprintf (PC, "Finish 0x2E\r\n");
+         
          fprintf (PC, "Finish 0x5e\r\n");
          
       break;
