@@ -28,8 +28,8 @@ void intval()
       
       if((RESERVE_SEC_FLAG % 10) == 0)
       {
-         FAB_DATA = 0;
-         fputc(0x61, FAB);
+         //FAB_DATA = 0;
+         //fputc(0x61, FAB);
          //fprintf(PC,"SENT FAB \r\n"); 
       }
       
@@ -37,6 +37,8 @@ void intval()
       {
          RESERVE_SEC_FLAG = 0;
          RESERVE_MIN_FLAG++;//time counter in minutes (used in reservation table)
+         //FAB_DATA = 0;
+         //fputc(0x61, FAB);
 
       }
    }
@@ -58,7 +60,7 @@ void UART2_RXD(void)
 //!   fprintf(PC,"I receive from COM PIC: %x \r\n", in_bffr_main[COM_DATA]);
 //!   COM_DATA = ((COM_DATA + 1) % 16);                                             //when the data is obtained in position 16, COM_DATA = 0
    CMD_FROM_COMM[COM_DATA] = fgetc(COM);   
-   fprintf(PC,"I receive from COM PIC: %x \r\n", CMD_FROM_COMM[COM_DATA]);
+   fprintf(PC,"%x,", CMD_FROM_COMM[COM_DATA]);
    COM_DATA = ((COM_DATA + 1) % 16);  
 }
 
@@ -67,9 +69,10 @@ void UART3_RXD(void)
 {
    //collect_HK_from_FAB();
    in_HK[FAB_DATA] = fgetc(FAB);//load the array in_HK [] with the data sent by the FAB PIC
-   fprintf(PC,"Battery Voltage %x \r\n", in_HK[FAB_DATA]);
+   //fprintf(PC,"Battery Voltage %x \r\n", in_HK[FAB_DATA]);
+   fprintf(PC,"%x,",in_HK[FAB_DATA]);
    FAB_DATA = ((FAB_DATA + 1) % FAB_SENSOR_size);                                //when the data is obtained in position 45 FAB_DATA = 0
-   fprintf(PC, "\r\n");
+   //fprintf(PC, "\r\n");
    
 }
 
@@ -209,26 +212,9 @@ void main()
       
       
       //if((CMD_FROM_COMM[15]==0xBB) && (CMD_FROM_COMM[4] != 0xAB))
-      if(CMD_FROM_COMM[0])
+      if(CMD_FROM_COMM[0] == 0xAA && CMD_FROM_COMM[15] == 0xBB)
       {
          
-//!         CMD_FROM_PC[0] = CMD_FROM_COMM[4];
-//!         CMD_FROM_PC[1] = CMD_FROM_COMM[5];
-//!         CMD_FROM_PC[2] = CMD_FROM_COMM[6];
-//!         CMD_FROM_PC[3] = CMD_FROM_COMM[7];
-//!         CMD_FROM_PC[4] = CMD_FROM_COMM[8];
-//!         CMD_FROM_PC[5] = CMD_FROM_COMM[9];
-//!         CMD_FROM_PC[6] = CMD_FROM_COMM[10];
-//!         CMD_FROM_PC[7] = CMD_FROM_COMM[11];
-//!         CMD_FROM_PC[8] = 0x00;
-//!         
-//!         fprintf(PC,"COMMAND RECEIVED FROM COMM: ");
-//!         for(int m = 0; m < 9; m++)
-//!         {
-//!            fprintf(PC,"%x",CMD_FROM_PC[m]);
-//!         }
-//!         fprintf(PC,"\r\n");
-         //0000 0000 to 0001 FFFF is MAIN PIC/MB
          if(CMD_FROM_COMM[4]!= 0xAB)
          {
          

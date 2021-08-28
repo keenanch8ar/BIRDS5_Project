@@ -23,6 +23,28 @@ int8 j;
 int i;
 int result = 1;
 
+//--------FAB HK collection--------------------------------------------------//
+#define HK_size 124                                                              //HK FORMAT ARRAY SIZE
+#define CW_size 5                                                                //CW FORMAT ARRAY SIZE
+#define HIGH_SAMP_HK_size 124                                                    //High Sampling HK FORMAT ARRAY SIZE
+#define FAB_SENSOR_size 45                                                       //HK FAB Part
+
+static unsigned int8 CW_FORMAT[CW_size] = {};
+unsigned int8 in_HK[FAB_SENSOR_size] = {};
+unsigned int8 HKDATA[HK_size] ={};
+unsigned int8 ACK_for_COM[24] = {0xAA,0,0,0,0,0,0,0,0,0,
+                                 0,0,0,0,0,0,0,0,0,0,
+                                 0,0,0,0xBB};
+//int8 in_High_HK[HIGH_SAMP_HK_size] = {};
+BYTE FAB_DATA = 0;
+//int t;
+static int8 FAB_MEASUERING_FLAG= 0;
+static int8 HIGH_SAMP_FAB_MEASUERING_FLAG = 0;
+int32 FAB_FLAG = 0;
+int8 CHECK_FAB_RESPONSE = 0;
+
+#define buffer_from_FAB  (in_bffr_main[0]==0x33)
+
 void DELETE_CMD_FROM_PC()
 {
    for(int num = 0; num < 9; num++)
@@ -88,18 +110,48 @@ void MAIN_MB_CMD()
       command[6] = CMD_FROM_COMM[10];
       command[7] = CMD_FROM_COMM[11];
       command[8] = 0x00;
-      fprintf (PC, "Case 1\r\n");
    }
       
    switch (command[0])
    {
-      case 0x00:
-         fprintf (PC, "Case 2\r\n");
+//!      case 0x00:
+//!         fputc(0x61, FAB);
+//!         delay_ms(200);
+//!         fprintf(PC,"Battery Voltage %x \r\n", in_HK[FAB_DATA]);
+//!         fprintf(PC, "\r\n");
+//!      break;
+      
+      case 0x01:
+         fputc(0x60, FAB);
+         //delay_ms(300);
+         //fprintf(PC,"Battery Voltage %x \r\n", in_HK[0]);
+         //fprintf(PC, "\r\n");
+         FAB_DATA = 0;
       break;
       
-      case 0x10:
-         fprintf (PC, "Case 3\r\n");
+      case 0x02:
+         fputc(0x61, FAB);
+//!         delay_ms(10000);
+//!         if(in_HK[0]==0xAA)
+//!         {
+//!            for(int h = 0; h < 27; h++);                                             //shows the received array
+//!            {
+//!               fprintf(PC,"%x,",in_HK[h]);
+//!            }
+//!         }
+//!         //fprintf(PC,"Battery Voltage %x \r\n", in_HK[0]);
+//!         fprintf(PC, "\r\n");
+         FAB_DATA = 0;
       break;
+      
+      case 0x03:
+         fputc(0x69, FAB);
+         //delay_ms(300);
+         //fprintf(PC,"Battery Voltage %x \r\n", in_HK[0]);
+         //fprintf(PC, "\r\n");
+         FAB_DATA = 0;
+      break; 
+      
    
       case 0x12:
          fprintf (PC, "Start 0x12\r\n") ;
@@ -516,28 +568,6 @@ void Forward_CMD_MBP()
    return;
 }
 
-
-//--------FAB HK collection--------------------------------------------------//
-#define HK_size 124                                                              //HK FORMAT ARRAY SIZE
-#define CW_size 5                                                                //CW FORMAT ARRAY SIZE
-#define HIGH_SAMP_HK_size 124                                                    //High Sampling HK FORMAT ARRAY SIZE
-#define FAB_SENSOR_size 45                                                       //HK FAB Part
-
-static unsigned int8 CW_FORMAT[CW_size] = {};
-unsigned int8 in_HK[FAB_SENSOR_size] = {};
-unsigned int8 HKDATA[HK_size] ={};
-unsigned int8 ACK_for_COM[24] = {0xAA,0,0,0,0,0,0,0,0,0,
-                                 0,0,0,0,0,0,0,0,0,0,
-                                 0,0,0,0xBB};
-//int8 in_High_HK[HIGH_SAMP_HK_size] = {};
-BYTE FAB_DATA = 0;
-//int t;
-static int8 FAB_MEASUERING_FLAG= 0;
-static int8 HIGH_SAMP_FAB_MEASUERING_FLAG = 0;
-int32 FAB_FLAG = 0;
-int8 CHECK_FAB_RESPONSE = 0;
-
-#define buffer_from_FAB  (in_bffr_main[0]==0x33)
 
 void PINO_Test()
 {
