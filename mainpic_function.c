@@ -245,6 +245,8 @@ void MAIN_MB_CMD()
          delay_ms(1000);
          TRANSFER_DATA_NBYTE_TOPC_SCF(address, packet);
          
+         output_high(PIN_C4); // COMM side
+         
          fprintf (PC, "\r\n");
          fprintf (PC, "Finish 0x17\r\n");
       break;
