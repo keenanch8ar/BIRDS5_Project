@@ -1063,7 +1063,7 @@ void MULT_SPEC_Test()
          output_high (PIN_A5); //SFM2 mission side access
          fprintf (PC, "Start 0x20 - Turn OFF MULTSPEC CAM1 (MB1)\r\n") ;
          output_low(pin_G3); //Turn off DIO for MULTSPEC CAM1
-         Forward_CMD_MBP();
+         //Forward_CMD_MBP();
          for(int16 num_reset = 0; num_reset < 200; num_reset++)
          {
             fputc(0xCD,reset);
@@ -1273,7 +1273,7 @@ void MULT_SPEC_Test()
          fprintf (PC, "Start - Turn ON MULTSPEC CAM1 0x2E\r\n") ;
          //fputc(0xEC, reset);
          output_high(pin_G3); //Turn on DIO for MULTSPEC CAM1
-         Forward_CMD_MBP();
+         //Forward_CMD_MBP();
          
          for(num_reset = 0; num_reset < 200; num_reset++)
          {
@@ -1297,7 +1297,7 @@ void MULT_SPEC_Test()
          fprintf (PC, "Start 0x30 - Turn OFF MULTSPEC CAM2 (MB2)\r\n") ;
          //fputc(0xCD, reset);
          output_low(pin_F6); //Turn off DIO for MULTSPEC CAM2
-         Forward_CMD_MBP();
+         //Forward_CMD_MBP();
          
          for(num_reset = 0; num_reset < 200; num_reset++)
          {
@@ -1701,11 +1701,6 @@ void ADCS_TEST()
       
       case 0x40: //Turn off ADCS MCU
    
-//!         output_high (PIN_A5); 
-//!         fprintf (PC, "Start 0x40\r\n") ;
-//!         fputc(command[0],DC); //Forward command to MB which will turn on ADCS MCU
-//!         output_high(pin_G3); //turns on DIO for testing with ADCS
-//!         fprintf (PC, "Finish 0x40\r\n");
          fprintf (PC, "Start 0x40 - Turn OFF ADCS\r\n") ;
          Forward_CMD_MBP();
          fprintf (PC, "Finish 0x40\r\n");
@@ -1728,19 +1723,46 @@ void ADCS_TEST()
       case 0x42:
          fprintf (PC, "Start 0x42 - Real time Downlink ADCS\r\n") ;
          Forward_CMD_MBP();
+         
          int8 counter = 0;
-         for(int32 num = 0; num < 1000000; num++)
+         for(int32 adcs = 0; adcs < 1000000; adcs++)
+         {
+            if(kbhit(DC))
             {
-               if(kbhit(DC))
+               int8 header = fgetc(DC);
+               if (header == 0x55)
                {
-                  ADCS_SENSOR_DATA[counter] = fgetc(DC);
+                  ADCS_SENSOR_DATA[counter] = header;
                   counter++;
-                  if(counter == 14)
+                  for(int32 num = 0; num < 1000000; num++)
                   {
-                     break;
+                     if(kbhit(DC))
+                     {
+                        ADCS_SENSOR_DATA[counter] = fgetc(DC);
+                        counter++;
+                        if(counter == 14)
+                        {
+                           break;
+                        }
+                     }
                   }
+                  break;
                }
             }
+         
+         }
+//!         for(int32 num = 0; num < 1000000; num++)
+//!            {
+//!               if(kbhit(DC))
+//!               {
+//!                  ADCS_SENSOR_DATA[counter] = fgetc(DC);
+//!                  counter++;
+//!                  if(counter == 14)
+//!                  {
+//!                     break;
+//!                  }
+//!               }
+//!            }
          fprintf(PC,"Data Recieved: ");
          for(int l = 0; l < 14; l++)
          {
@@ -1763,7 +1785,7 @@ void ADCS_TEST()
          fputc(0xAA, PC); //Forward command to MB which will turn on ADCS MCU
          
          ADCS_ACK = 0;
-         for(num = 0; num < 1000000; num++)
+         for(int32 num = 0; num < 1000000; num++)
          {
             if(kbhit(DC))
             {
@@ -1922,7 +1944,7 @@ void SFWD_Test()
 
          fprintf (PC, "Start 0x50 - Turn OFF SFWD\r\n") ;
          //fputc(0xCD, reset);
-         Forward_CMD_MBP();
+         //Forward_CMD_MBP();
          for(int16 num_reset_s = 0; num_reset_s < 200; num_reset_s++)
          {
             fputc(0xCD,reset);
@@ -1941,7 +1963,7 @@ void SFWD_Test()
    
          fprintf (PC, "Start 0x5e - Turn ON SWFWD\r\n") ;
          //fputc(0xEC, reset);
-         Forward_CMD_MBP();
+         //Forward_CMD_MBP();
          for(num_reset_s = 0; num_reset_s < 200; num_reset_s++)
          {
             fputc(0xEC,reset);
