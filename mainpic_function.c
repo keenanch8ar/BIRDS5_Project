@@ -122,34 +122,63 @@ void MAIN_MB_CMD()
 //!      break;
       
       case 0x01:
+         fprintf(PC,"Battery Data From FAB: ");
          fputc(0x60, FAB);
-         //delay_ms(300);
+         delay_ms(300);
          //fprintf(PC,"Battery Voltage %x \r\n", in_HK[0]);
-         //fprintf(PC, "\r\n");
+         fprintf(PC, "\r\n");
          FAB_DATA = 0;
       break;
       
       case 0x02:
+         fprintf(PC,"Collect HK Data From FAB: ");
          fputc(0x61, FAB);
-//!         delay_ms(10000);
-//!         if(in_HK[0]==0xAA)
-//!         {
-//!            for(int h = 0; h < 27; h++);                                             //shows the received array
-//!            {
-//!               fprintf(PC,"%x,",in_HK[h]);
-//!            }
-//!         }
-//!         //fprintf(PC,"Battery Voltage %x \r\n", in_HK[0]);
-//!         fprintf(PC, "\r\n");
+         delay_ms(300);
+         //fprintf(PC,"Battery Voltage %x \r\n", in_HK[0]);
+         fprintf(PC, "\r\n");
          FAB_DATA = 0;
       break;
       
       case 0x03:
-         fputc(0x69, FAB);
-         //delay_ms(300);
-         //fprintf(PC,"Battery Voltage %x \r\n", in_HK[0]);
-         //fprintf(PC, "\r\n");
-         FAB_DATA = 0;
+      
+         fprintf(PC,"Collect Data from RESET: \r\n");
+         RESET_DATA = 0;
+         int8 dayh;
+         int8 dayl;
+         int8 hr;
+         int8 min;
+         int8 sec;
+         for (int i = 0; i < 6; i++)
+         {
+            COLLECT_RESET_DATA ();
+            if (reset_bffr[0] == 0x8e)
+            {
+               break;
+            }
+         }
+         if (RESET_bffr[0] == 0x8e)
+         {
+            //fprintf (PC, "\r\nRESET DATA OBTAINED\r\n") ;
+            for (int num = 0; num < 5; num++)
+            {
+               reset_time_data[num] = reset_bffr[num + 1];
+               //fputc (reset_bffr[num + 1], DC);
+               //fprintf (PC, " %x, ", reset_bffr[num + 1]) ;
+            }
+            sec = reset_time_data[0];
+            min = reset_time_data[1];
+            hr = reset_time_data[2];
+            dayl = reset_time_data[3];
+            dayh = reset_time_data[4];
+            //fprintf (PC, "\r\n") ;           
+         }
+         
+         else
+         {
+            fprintf (PC, "\r\nRESET DATA NOT OBTAINED\r\n") ;
+            return;
+         }
+
       break; 
       
    
@@ -1944,7 +1973,7 @@ void SFWD_Test()
 
          fprintf (PC, "Start 0x50 - Turn OFF SFWD\r\n") ;
          //fputc(0xCD, reset);
-         //Forward_CMD_MBP();
+         Forward_CMD_MBP();
          for(int16 num_reset_s = 0; num_reset_s < 200; num_reset_s++)
          {
             fputc(0xCD,reset);
@@ -1963,7 +1992,7 @@ void SFWD_Test()
    
          fprintf (PC, "Start 0x5e - Turn ON SWFWD\r\n") ;
          //fputc(0xEC, reset);
-         //Forward_CMD_MBP();
+         Forward_CMD_MBP();
          for(num_reset_s = 0; num_reset_s < 200; num_reset_s++)
          {
             fputc(0xEC,reset);
