@@ -529,7 +529,6 @@ void Antenna_Deploy()
          delay_ms(1000);
          delay_ms(20000);                                                        //wait until RESET goes back to normal loop
          SAVE_SAT_LOG(0xBC,BC_ATTEMPT_FLAG,BC_ATTEMPT_FLAG);
-
       }
    }
    return;
