@@ -70,7 +70,7 @@ void UART3_RXD(void)
    //collect_HK_from_FAB();
    in_HK[FAB_DATA] = fgetc(FAB);//load the array in_HK [] with the data sent by the FAB PIC
    //fprintf(PC,"Battery Voltage %x \r\n", in_HK[FAB_DATA]);
-   fprintf(PC,"%x,",in_HK[FAB_DATA]);
+   //fprintf(PC,"%x,",in_HK[FAB_DATA]);
    FAB_DATA = ((FAB_DATA + 1) % FAB_SENSOR_size);                                //when the data is obtained in position 45 FAB_DATA = 0
    //fprintf(PC, "\r\n");
    
@@ -80,7 +80,7 @@ void UART3_RXD(void)
 void UART4_RXD(void)
 {
    reset_bffr[RESET_DATA] = fgetc(reset);                                        //loads the reset_bffr array with the data sent by the Reset PIC (carga el array reset_bffr con los datos enviados por el Reset PIC)
-   fprintf(PC,"%x,",reset_bffr[RESET_DATA]);
+   //fprintf(PC,"%x,",reset_bffr[RESET_DATA]);
    RESET_DATA = ((RESET_DATA + 1) % RESET_size);                                 //when the data is obtained in position 11 RESET_DATA = 0 (cuando se obtenga el dato en la posicion 11 RESET_DATA=0)
    if(reset_bffr[0] == 0xaa)                                                     //get ready for reset satellite
    {
