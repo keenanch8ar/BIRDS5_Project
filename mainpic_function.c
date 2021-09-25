@@ -291,6 +291,11 @@ void MAIN_MB_CMD()
          fprintf (PC, "\r\n");
          fprintf (PC, "Finish 0x17\r\n");
       break;
+      
+      case 0x18:
+         ERASE_EEPROM_INFO();                                                    //erase 512byte(from 0x18000 to 0x181ff)
+         MEMORY_ERASE(); 
+      break;
    }
 
 }
