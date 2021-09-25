@@ -179,7 +179,19 @@ void MAIN_MB_CMD()
             return;
          }
 
-      break; 
+      break;
+      
+      case 0x04:
+         fprintf(PC, "\r\nBPB POWER ON\r\n");
+         Turn_ON_MBP();
+         break;
+         
+         case 0x05:
+         fprintf(PC, "\r\nBPB POWER OFF\r\n");
+         Turn_OFF_MBP();
+         break;
+      
+         
       
    
       case 0x12:

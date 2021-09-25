@@ -93,6 +93,7 @@ void UART4_RXD(void)
 void settings()
 {
    set_tris_b(0b11010000);                                                       // Port b configuration
+   
    enable_interrupts(global);  // Enabling global interrupts
    enable_interrupts(int_timer0);                                                //HK data show by 1sec
    enable_interrupts(INT_rda);                                                   // Main to PC interrupt
@@ -124,7 +125,7 @@ void settings()
    fprintf(PC,"\r\n");
    CURRENT_ADDRESS_OF_FLASH();                                                   //Print current address allocation
    CHANGE_ADDRESS_WRITING_LOCATION();                                            //change writing direction when 95.000 cycles are exceeded
-
+   
    output_high(PIN_C4);                                                          //MUX: COM side (MAIN-COM)
    output_low(PIN_A5);                                                           //MUX: Main side (MAIN-MISSION)
   
@@ -150,7 +151,7 @@ void main()
 
    while(TRUE)
    {
-      BC_ON_30min(); //Attempt 1st antenna deployment after 30mins
+      ///BC_ON_30min(); //Attempt 1st antenna deployment after 30mins
       
       
       if(CMD_FROM_PC[0])
