@@ -132,10 +132,11 @@ void MAIN_MB_CMD()
       
       case 0x02:
          fprintf(PC,"Collect HK Data From FAB: ");
-         fputc(0x61, FAB);
-         delay_ms(300);
+         fputc(0x69, FAB);
+        // delay_ms(300);
          //fprintf(PC,"Battery Voltage %x \r\n", in_HK[0]);
-         fprintf(PC, "\r\n");
+ 
+         
          FAB_DATA = 0;
       break;
       
@@ -179,7 +180,19 @@ void MAIN_MB_CMD()
             return;
          }
 
-      break; 
+      break;
+      
+      case 0x04:
+         fprintf(PC, "\r\nBPB POWER ON\r\n");
+         Turn_ON_MBP();
+         break;
+         
+         case 0x05:
+         fprintf(PC, "\r\nBPB POWER OFF\r\n");
+         Turn_OFF_MBP();
+         break;
+      
+         
       
    
       case 0x12:
