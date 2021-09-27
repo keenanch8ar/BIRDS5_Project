@@ -26,19 +26,22 @@ void intval()
       //fprintf(PC,"currenttime:%ld \r\n", currenttime);                        //Check TMR0 operation
       //fprintf(PC,"Done\r\n");
       
-      if((RESERVE_SEC_FLAG % 10) == 0)
+      if((RESERVE_SEC_FLAG % 5) == 0)
       {
-         //FAB_DATA = 0;
-         //fputc(0x61, FAB);
-         //fprintf(PC,"SENT FAB \r\n"); 
+         FAB_DATA = 0;
+         fprintf(PC,"\r\n");
+         fputc(0x61, FAB);
+         fputc(0x28,reset);
       }
       
       if(RESERVE_SEC_FLAG > 59)                                                  //the counters inside the if are incremented every 60s
       {
          RESERVE_SEC_FLAG = 0;
          RESERVE_MIN_FLAG++;//time counter in minutes (used in reservation table)
-         //FAB_DATA = 0;
-         //fputc(0x61, FAB);
+         FAB_DATA = 0;
+         fprintf(PC,"\r\n");
+         fputc(0x61, FAB);
+         
 
       }
    }
@@ -72,7 +75,6 @@ void UART3_RXD(void)
    //fprintf(PC,"Battery Voltage %x \r\n", in_HK[FAB_DATA]);
    fprintf(PC,"%x,",in_HK[FAB_DATA]);
    FAB_DATA = ((FAB_DATA + 1) % FAB_SENSOR_size);                                //when the data is obtained in position 45 FAB_DATA = 0
-   //fprintf(PC, "\r\n");
    
 }
 
@@ -80,7 +82,7 @@ void UART3_RXD(void)
 void UART4_RXD(void)
 {
    reset_bffr[RESET_DATA] = fgetc(reset);                                        //loads the reset_bffr array with the data sent by the Reset PIC (carga el array reset_bffr con los datos enviados por el Reset PIC)
-   //fprintf(PC,"%x,",reset_bffr[RESET_DATA]);
+   fprintf(PC,"%x,",reset_bffr[RESET_DATA]);
    RESET_DATA = ((RESET_DATA + 1) % RESET_size);                                 //when the data is obtained in position 11 RESET_DATA = 0 (cuando se obtenga el dato en la posicion 11 RESET_DATA=0)
    if(reset_bffr[0] == 0xaa)                                                     //get ready for reset satellite
    {
