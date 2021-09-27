@@ -70,7 +70,7 @@ void UART3_RXD(void)
    //collect_HK_from_FAB();
    in_HK[FAB_DATA] = fgetc(FAB);//load the array in_HK [] with the data sent by the FAB PIC
    //fprintf(PC,"Battery Voltage %x \r\n", in_HK[FAB_DATA]);
-   //fprintf(PC,"%x,",in_HK[FAB_DATA]);
+   fprintf(PC,"%x,",in_HK[FAB_DATA]);
    FAB_DATA = ((FAB_DATA + 1) % FAB_SENSOR_size);                                //when the data is obtained in position 45 FAB_DATA = 0
    //fprintf(PC, "\r\n");
    

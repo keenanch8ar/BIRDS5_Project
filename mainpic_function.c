@@ -132,10 +132,11 @@ void MAIN_MB_CMD()
       
       case 0x02:
          fprintf(PC,"Collect HK Data From FAB: ");
-         fputc(0x61, FAB);
-         delay_ms(300);
+         fputc(0x69, FAB);
+        // delay_ms(300);
          //fprintf(PC,"Battery Voltage %x \r\n", in_HK[0]);
-         fprintf(PC, "\r\n");
+ 
+         
          FAB_DATA = 0;
       break;
       
