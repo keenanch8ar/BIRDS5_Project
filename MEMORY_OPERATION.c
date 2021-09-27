@@ -115,7 +115,7 @@ void CURRENT_FLAG_STATUS()                                                      
 }
 
 
-void CURRENT_ADDRESS_OF_FLASH()                                                  //imprime la asignacion de direcciones de la Flash memory
+void CURRENT_ADDRESS_OF_FLASH()                                                  //print the Flash memory address assignment
 {  
    fprintf(PC,"\r\nADD INFO ADDRESS:%lx\r\n\r\n",ADD_INFO_ADDRESS);
    fprintf(PC,"FLAG DATA ADDRESS:%x%x%x%x\r\n",FLAG_DATA_ADDRESS>>24,FLAG_DATA_ADDRESS>>16,FLAG_DATA_ADDRESS>>8,FLAG_DATA_ADDRESS);
