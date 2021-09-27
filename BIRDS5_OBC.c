@@ -29,8 +29,8 @@ void intval()
       if((RESERVE_SEC_FLAG % 5) == 0)
       {
          FAB_DATA = 0;
-         fprintf(PC,"\r\n");
-         fputc(0x61, FAB);
+         //fprintf(PC,"\r\n");
+         //fputc(0x61, FAB);
 
       }
       
@@ -40,8 +40,8 @@ void intval()
          RESERVE_MIN_FLAG++;//time counter in minutes (used in reservation table)
          FAB_DATA = 0;
          //fprintf(PC,"\r\n");
-         fputc(0x61, FAB);
-         fputc(0x28,reset);
+         //fputc(0x61, FAB);
+         //fputc(0x28,reset);
       }
    }
 }
@@ -153,6 +153,18 @@ void main()
    while(TRUE)
    {
       ///BC_ON_30min(); //Attempt 1st antenna deployment after 30mins
+      
+      if(FAB_FLAG > 89)                                                          //every 90 sec, OBC gather sensor data and update CW format 
+      {
+         FAB_FLAG = 0;
+         fprintf(PC,"\r\n***90sec passed***\r\n");
+         fputc(0x61, FAB);
+         DELETE_CMD_FROM_PC();                                                   //delete PC command
+         PC_DATA = 0;                                                            //reset interrupt data for safety
+         COM_DATA = 0;                                                           //reset interrupt data for safety
+         RESET_DATA = 0;                                                         //reset interrupt data for safety
+         fprintf(PC,"\r\n");
+      } 
       
       
       if(CMD_FROM_PC[0])
