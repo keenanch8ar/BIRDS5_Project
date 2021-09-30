@@ -72,7 +72,7 @@ void UART3_RXD(void)
    //collect_HK_from_FAB();
    in_HK[FAB_DATA] = fgetc(FAB);//load the array in_HK [] with the data sent by the FAB PIC
    //fprintf(PC,"Battery Voltage %x \r\n", in_HK[FAB_DATA]);
-   fprintf(PC,"%x ",in_HK[FAB_DATA]);
+   //fprintf(PC,"%x ",in_HK[FAB_DATA]);
    FAB_DATA = ((FAB_DATA + 1) % FAB_SENSOR_size);                                //when the data is obtained in position 45 FAB_DATA = 0
    
 }
@@ -96,7 +96,7 @@ void settings()
    set_tris_b(0b11010000);                                                       // Port b configuration
    
    enable_interrupts(global);  // Enabling global interrupts
-   enable_interrupts(int_timer0);                                                //HK data show by 1sec
+   enable_interrupts(int_timer0);                                                // HK data show by 1sec
    enable_interrupts(INT_rda);                                                   // Main to PC interrupt
    enable_interrupts(INT_rda2);                                                  // Main to COM PIC interrupt
    enable_interrupts(INT_rda3);                                                  // Main to FAB PIC interrupt   
@@ -115,9 +115,6 @@ void settings()
    BC_SETUP();                                                                   //configuration of the digital analog converter for temperature sensor reading
   
    output_low(PIN_A4);                                                           //kill switch off
-   Turn_OFF_CAM();                                                               //Camera switch OFF, RD7=0
-   //Turn_OFF_ADCS();                                                            //ADCS switch OFF, RD6=0  
-   //Turn_ON_ADCS();                                                             //ADCS switch ON, RD6=1
    Turn_ON_MBP();                                                                //Mission Boss switch ON, RF5=1
    Turn_OFF_BC();                                                                //Burner Circuit switch OFF, RD5=0
 
@@ -149,6 +146,8 @@ void main()
    settings();  //Prepare all interrupts, timers, flag information, BC setup etc.
    
    Antenna_Deploy(); //Attempt deploying of antenna. This is the 2nd, 3rd and 4th attempts
+   
+   FAB_TEST_OPERATION();
 
    while(TRUE)
    {
@@ -158,7 +157,15 @@ void main()
       {
          FAB_FLAG = 0;
          fprintf(PC,"\r\n***90sec passed***\r\n");
-         fputc(0x61, FAB);
+         FAB_TEST_OPERATION();
+         COM_DATA = 0;
+         STORE_ADRESS_DATA_TO_FLASH();                                           //for store the address info
+         fprintf(PC,"CW:");
+         for(int i = 0; i < 4; i++)                                              //show CW format
+         {
+            fprintf(PC,"%x,",CW_FORMAT[i]);
+         }
+         fprintf(PC,"%x\r\n",CW_FORMAT[4]);
          DELETE_CMD_FROM_PC();                                                   //delete PC command
          PC_DATA = 0;                                                            //reset interrupt data for safety
          COM_DATA = 0;                                                           //reset interrupt data for safety

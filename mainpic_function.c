@@ -1,5 +1,6 @@
+//--------Mission variables--------------------------------------------------//
 
-int8 MISSION_STATUS = 0;//MISSION STATUS FLAGS
+int8 MISSION_STATUS = 0; //MISSION STATUS FLAGS
 static int16 currenttime = 0;
 BYTE command[9];
 int8 reset_time_data[11] = {};
@@ -31,19 +32,35 @@ int result = 1;
 
 static unsigned int8 CW_FORMAT[CW_size] = {};
 unsigned int8 in_HK[FAB_SENSOR_size] = {};
-unsigned int8 HKDATA[HK_size] ={};
+unsigned int8 HKDATA[HK_size] = {};
 unsigned int8 ACK_for_COM[24] = {0xAA,0,0,0,0,0,0,0,0,0,
                                  0,0,0,0,0,0,0,0,0,0,
                                  0,0,0,0xBB};
-//int8 in_High_HK[HIGH_SAMP_HK_size] = {};
+
 BYTE FAB_DATA = 0;
-//int t;
-static int8 FAB_MEASUERING_FLAG= 0;
-static int8 HIGH_SAMP_FAB_MEASUERING_FLAG = 0;
+static int8 FAB_MEASURING_FLAG= 0;
+static int8 HIGH_SAMP_FAB_MEASURING_FLAG = 0;
 int32 FAB_FLAG = 0;
 int8 CHECK_FAB_RESPONSE = 0;
 
 #define buffer_from_FAB  (in_bffr_main[0]==0x33)
+
+
+//--------BC Function--------------------------------------------------------//
+
+//unsigned int8 BC_temp_data[2] = {};
+unsigned int16 BC_temp_data_h = 0;
+unsigned int16 BC_temp_data_l = 0;
+unsigned int16 BC_TEMP = 0;
+float  temp = 0;
+float initial_temp = 0;
+float MAXTEMP = 0;
+int16 UNREG2 = 0;
+
+//--------Mission Boss PIC Data Collection-----------------------------------//
+
+int8 DC_ACK = 0;
+int8 MBP_DATA[9] = {};
 
 void DELETE_CMD_FROM_PC()
 {
@@ -54,6 +71,7 @@ void DELETE_CMD_FROM_PC()
    return;
 }
 
+
 void DELETE_CMD_FROM_COMM()
 {
    for(int num = 0; num < 16; num++)
@@ -62,6 +80,8 @@ void DELETE_CMD_FROM_COMM()
    }
    return;
 }
+
+
 void Delete_Buffer()                                                             //delete com command buffer
 {
    int num = 0;
@@ -73,19 +93,6 @@ void Delete_Buffer()                                                            
    return;
 }
 
-
-void Turn_On_CAM()
-
-{
-   output_high (PIN_D7);
-   return;
-}
-
-void Turn_Off_CAM()
-{
-   output_low (PIN_D7);
-   return;
-}
 //--------Main or MB Commands------------------------------------------------//
 
 void MAIN_MB_CMD()
@@ -179,19 +186,19 @@ void MAIN_MB_CMD()
 
       break;
       
+      
       case 0x04:
          fprintf(PC, "\r\nBPB POWER ON\r\n");
          Turn_ON_MBP();
-         break;
+      break;
          
-         case 0x05:
+      
+      case 0x05:
          fprintf(PC, "\r\nBPB POWER OFF\r\n");
          Turn_OFF_MBP();
-         break;
+      break;
       
-         
       
-   
       case 0x12:
          fprintf (PC, "Start 0x12\r\n") ;
          output_low (PIN_A5);
@@ -222,6 +229,7 @@ void MAIN_MB_CMD()
          WRITE_DATA_BYTE_SMF (address + 2, command[8]) ;
          fprintf (PC, "Finish 0x14\r\n");
       break;
+      
       
       case 0x16://Erase the data on Flash Memory 2
          output_low (PIN_A5);
@@ -297,17 +305,8 @@ void MAIN_MB_CMD()
    }
 
 }
+
 //--------BC Function--------------------------------------------------------//
-
-//unsigned int8 BC_temp_data[2] = {};
-unsigned int16 BC_temp_data_h = 0;
-unsigned int16 BC_temp_data_l = 0;
-unsigned int16 BC_TEMP = 0;
-float  temp = 0;
-float initial_temp = 0;
-float MAXTEMP = 0;
-int16 UNREG2 = 0;
-
 
 void BC_SETUP()  //Analog read configuration (AN9)
 {
@@ -323,6 +322,7 @@ void BC_SETUP()  //Analog read configuration (AN9)
    ADCON2L = 0;                                                                  //A/D control register 2L
    return;
 }
+
 
 void BC_READ_TO_PC()
 {
@@ -347,6 +347,7 @@ void BC_READ_TO_PC()
    fprintf(PC,"%1.1f \r\n", temp);
    return;
 }
+
 
 void CHECK_BC_TEMP()                                                             //lee la temperatura del BC y lo guarda en MAXTEMP
 {
@@ -378,6 +379,7 @@ void CHECK_BC_TEMP()                                                            
    return;
 }
 
+
 void MEASURE_BC_TEMP()
 {
    BC_SETUP();                                                                   //configuracion para lectura analogica
@@ -394,17 +396,20 @@ void MEASURE_BC_TEMP()
    return;
 }
 
+
 void Turn_ON_BC()
 {
    output_high(PIN_D5);                                                          //BC switch ON, RD5=1
    return;
 }
 
+
 void Turn_OFF_BC()
 {
    output_low(PIN_D5);                                                           //BC switch OFF, RD5=0
    return;
 }
+
 
 void BC_OPERATION()                                                              //Turn ON BC and read temperature
 {
@@ -450,12 +455,14 @@ void BC_OPERATION()                                                             
    return;
 }
 
+
 void CLEAR_BC_FLAG()
 {
    BC_ATTEMPT_FLAG = 0;
    fprintf(PC,"\r\nBC Attempt Flag clear done\r\n");
    return;
 }
+
 
 void MAKE_BC_FLAG_1()
 {
@@ -464,12 +471,14 @@ void MAKE_BC_FLAG_1()
    return;
 }
 
+
 void MAKE_BC_FLAG_2()
 {
    BC_ATTEMPT_FLAG = 2;
    fprintf(PC,"\r\nBC Attempt Flag:2\r\n");
    return;
 }
+
 
 void MAKE_BC_FLAG_3()
 {
@@ -478,12 +487,15 @@ void MAKE_BC_FLAG_3()
    return;
 }
 
+
 void MAKE_BC_FLAG_4()
 {
    BC_ATTEMPT_FLAG = 4;
    fprintf(PC,"\r\nBC Attempt Flag:4\r\n");
    return;
 }
+
+
 void BC_ON_30min()
 {
    if(currenttime > 65 && BC_ATTEMPT_FLAG == 0)                                //if first attempt and 30 min(1800sec) passed // changed to 1 min
@@ -515,6 +527,7 @@ void BC_ON_30min()
    }
    return;
 }
+
 
 void Antenna_Deploy()
 {
@@ -549,10 +562,770 @@ void Antenna_Deploy()
    return;
 }
 
+//------------------------------------HK Collection and forming CW----------------------------------------------------//
+
+void Delete_in_HK()                                                              //Delete the array in_HK [118]
+{
+   int num;
+   for(num = 0; num < HK_size; num++)
+   {
+      in_HK[num] = 0;
+   }
+   return;
+}
+
+
+void Delete_HKDATA()                                                             //function that deletes the HKDATA array [118]
+{
+   int num;
+   for(num = 0; num < HK_size; num++)
+   {
+      HKDATA[num] = 0;
+   }
+   return;
+}
+
+
+void Send_COMMAND_TO_FAB(int8 cmd)                                               //function that sends commands to the FAB
+{
+   fputc(cmd,FAB);                                                               //the data and the port are indicated
+   return;
+}
+
+
+void COMMAND_TO_FAB(int32 delaytime)                                             //send command to the FAB to request data
+{
+   FAB_DATA = 0;
+   enable_interrupts(INT_rda3);                                                  //Enable UART FAB interrupt to load vector in_HK []
+   Send_Command_to_FAB(0x61);                                                    //send command to fab
+   int32 a = 0;
+   while (FAB_DATA == 0)
+   {                                                                             //Wait for the FAB_DATA flag to go high
+      a++;                                                                       //the flag is raised when data is received on the UART
+      if(a > 50000)
+      {
+         break;
+      }
+   }
+   waiting(delaytime);                                                           //wait function
+   disable_interrupts(INT_rda3);                                                 //disable UART FAB interrupt
+   return;
+}
+
+
+int8 CHECK_SUNSHINE(int8 current)
+{
+   if(current > EX_PANEL_THRESHHOLD)
+   {
+      return 1;
+   }
+   else
+   {
+      return 0;
+   }
+}
+
+
+int8 OPERATION_MODE_VALUE(int8 Bat_Vol)
+{
+   if(Bat_Vol > 0x94)                                                            //0x94HKDATA[116] 
+   {//more than 3.8
+      OPERATION_MODE = 0x11;
+      return 96;
+   }
+   else if((Bat_Vol > 0x88) && (Bat_Vol <= 0x94))
+   {//3.5 to 3.8
+      OPERATION_MODE = 0x10;
+      return 64;
+   }
+   else if(Bat_Vol <= 0x88)
+   {//less than 3.5
+      OPERATION_MODE = 0x00;
+      return 16;
+   }
+}
+
+
+int8 CONVERT_16bit_GYRO_to_8bit_X(int8 HIGH_8bit, int8 LOW_8bit)
+{
+   signed int16 row_data = make16(HIGH_8bit, LOW_8bit);
+   float ang_v = row_data*0.00875-0.11853;
+   /*fprintf(PC,"ang:%.4f\r\n",ang_v);*/
+   return (int8)ang_v; 
+}
+
+
+int8 CONVERT_16bit_GYRO_to_8bit_Y(int8 HIGH_8bit, int8 LOW_8bit)
+{
+   signed int16 row_data = make16(HIGH_8bit, LOW_8bit);
+   float ang_v = row_data*0.00875-0.24552;
+   /*fprintf(PC,"ang:%.4f\r\n",ang_v);*/
+   return (int8)ang_v; 
+}
+
+
+int8 CONVERT_16bit_GYRO_to_8bit_Z(int8 HIGH_8bit, int8 LOW_8bit)
+{
+   signed int16 row_data = make16(HIGH_8bit, LOW_8bit);
+   float ang_v = row_data*0.00875-0.40486;
+   /*fprintf(PC,"ang:%.4f\r\n",ang_v);*/
+   return (int8)ang_v; 
+}
+
+
+void REFRESH_CW_ACK_for_COM()                                                    //load the ACK_for_COM array with 0x00 [7]
+{
+   for(int i = 1; i < 7; i++)
+   {
+      ACK_for_COM[i] = 0x00;
+   }
+   return;
+}
+
+
+void REFRESH_MSN_ACK_for_COM()                                                   //clear array ACK_for_COM[i] from position 12 to 22
+{
+   for(int i = 12; i < 23; i++)
+   {
+      ACK_for_COM[i] = 0x00;
+   }
+   return;
+}
+
+
+void CW_RESPOND()                                                                //load array ACK_for_COM [] with data from array CW_FORMAT [] and send to COM PIC
+{
+   REFRESH_CW_ACK_for_COM();                                                     //load with 0x00 the array ACK_for_COM [] from pos 1 to 6
+   delay_ms(100);
+   ACK_for_COM[0] = 0xAA;
+   ACK_for_COM[1] = 0x50;
+   ACK_for_COM[2] = CW_FORMAT[0];
+   ACK_for_COM[3] = CW_FORMAT[1];
+   ACK_for_COM[4] = CW_FORMAT[2];
+   ACK_for_COM[5] = CW_FORMAT[3];
+   ACK_for_COM[6] = CW_FORMAT[4];
+   ACK_for_COM[23] = 0xBB;
+   for(int a = 0; a < 24; a++)                                                   //send the latest CW data to COM PIC
+   {
+      fputc(ACK_for_COM[a],COM);
+   }
+   
+   fprintf(PC,"\r\nCW ANS:");
+   for(a = 0; a < 23; a++)                                                       //send the latest CW data to PC
+   {
+      fprintf(PC,"%x,",ACK_for_COM[a]);
+   }
+   fprintf(PC,"%x\r\n",ACK_for_COM[23]);
+   
+//!   for(int k = 14; k < 23; k++)                                                   //clear RSV part
+//!   {
+//!      ACK_for_COM[k] = 0x00;
+//!   }
+   return;
+}
+
+
+void CHECK_50_and_CW_RESPOND()                                                   //check if command 0x50 arrived from COM PIC and send CW to COM
+{
+   if(in_bffr_main[4] == 0x50)
+   {
+      CW_RESPOND();                                                              //load array ACK_for_COM [] with data from array CW_FORMAT [] and send to COM PIC
+      Delete_Buffer();                                                           //delete in_bffr_main[] (COM command buffer)
+      COM_DATA = 0;                                                              //flag to zero
+   }
+   return;
+}
+
+
+void Delete_CW_FORMAT()                                                           //clear array CW_FORMAT [5]
+{
+   for(int num = 0; num < CW_size; num++)
+   {
+      CW_FORMAT[num] = 0;
+   }
+   return;
+}
+
+
+void MAKE_CW1_FORMAT()                                                           
+{
+   Delete_CW_FORMAT();                                                            //borra el array CW_FORMAT[5]
+   
+   CW_FORMAT[0] = HKDATA[44];                                                    //battery voltage
+   CW_FORMAT[1] = HKDATA[45]<<4|HKDATA[46]>>4;                                   //battery current
+   CW_FORMAT[2] = HKDATA[47];                                                    //battery temp
+   
+//   CW_FORMAT[3] = CW_FORMAT[3];//0:CW1
+//   CW_FORMAT[3] = CW_FORMAT[3] + RESERVE_CHECK * 64;
+   CW_FORMAT[3] = CW_FORMAT[3] + OPERATION_MODE_VALUE(HKDATA[116]);              //96(=64+32-->0x01100000):nomal, 64(0x01000000):low, 16(0x00100000):safe
+   KILL_FLAG_FAB = (HKDATA[49] & 0x10)>>4;
+   KILL_FLAG_MAIN = HKDATA[49] & 0x01;
+   CW_FORMAT[3] = CW_FORMAT[3] + KILL_FLAG_MAIN * 16;
+   CW_FORMAT[3] = CW_FORMAT[3] + KILL_FLAG_FAB * 8;
+   CW_FORMAT[3] = CW_FORMAT[3] + ANT_DEP_STATUS * 4;
+   CW_FORMAT[3] = CW_FORMAT[3] + CHECK_SUNSHINE(HKDATA[34]) * 2;                 //+Y Panel (new axis definition)
+   CW_FORMAT[3] = CW_FORMAT[3] + CHECK_SUNSHINE(HKDATA[35]) * 1;                 //+X Panel (new axis definition)
+   
+   CW_FORMAT[4] = CW_FORMAT[4] + CHECK_SUNSHINE(HKDATA[36]) * 128;               //-Z Panel (new axis definition)
+   CW_FORMAT[4] = CW_FORMAT[4] + CHECK_SUNSHINE(HKDATA[37]) * 64;                //-X Panel (new axis definition)
+   CW_FORMAT[4] = CW_FORMAT[4] + CHECK_SUNSHINE(HKDATA[38]) * 32;                //+Z Panel (new axis definition)
+   CW_FORMAT[4] = CW_FORMAT[4] + (HKDATA[4] & 0b00011111);                       //time data
+   
+   CW_IDENTIFIER = 0;
+   CHECK_50_and_CW_RESPOND();
+   ACK_for_COM[0] = 0xAA;                                                        //for safety (this byte should be always 0)
+   ACK_for_COM[23] = 0xBB;                                                       //for safety (this byte should be always 0)
+   return;
+}
+
+
+void MAKE_CW2_FORMAT()                                                           
+{
+   Delete_CW_FORMAT();
+   CW_FORMAT[0] = CONVERT_16bit_GYRO_to_8bit_X(HKDATA[59], HKDATA[60]);          //GYRO X axis
+   CW_FORMAT[1] = CONVERT_16bit_GYRO_to_8bit_Y(HKDATA[61], HKDATA[62]);          //GYRO Y axis
+   CW_FORMAT[2] = CONVERT_16bit_GYRO_to_8bit_Z(HKDATA[63], HKDATA[64]);          //GYRO Z axis
+   
+   CW_FORMAT[3] = CW_FORMAT[3] + 128;                                            //1:CW2
+   CW_FORMAT[3] = CW_FORMAT[3] + FIRST_HSSC_DONE * 64;                           //High Sampling Sensor Collection Flag 0:not done, 1:done
+   CW_FORMAT[3] = CW_FORMAT[3] + AUTO_CAM_DONE * 32;                             //AUTO CAM MISSION DONE 0:not done, 1:done
+   CW_FORMAT[3] = CW_FORMAT[3] + AUTO_MBP_DONE * 16;                             //AUTO MBP MISSION DONE 0:not done, 1:done
+   CW_FORMAT[3] = CW_FORMAT[3] + AUTO_ADCS_DONE * 8;                             //AUTO ADCS MISSION DONE 0:not done, 1:done
+   CW_FORMAT[3] = CW_FORMAT[3] + HKDATA[48] * 4;                                 //Heater 0:OFF, 1:ON
+   CW_FORMAT[3] = CW_FORMAT[3] + RESERVE_CHECK * 2;                              //RSV Flag
+   CW_FORMAT[3] = CW_FORMAT[3] + UPLINK_SUCCESS;                                 //UPLINK SUCCESS
+   
+   CW_FORMAT[4] = MISSION_STATUS;                                                //MISSION STATUS FLAGS
+
+   CW_IDENTIFIER = 1;
+   CHECK_50_and_CW_RESPOND();
+   ACK_for_COM[0] = 0xAA;                                                        //for safety (this byte should be always 0)
+   ACK_for_COM[23] = 0xBB;                                                       //for safety (this byte should be always 0)
+   
+   return;
+}
+
+
+void MAKE_CW_FORMAT()
+{
+   if(CW_IDENTIFIER)
+   {
+      MAKE_CW1_FORMAT();
+   }
+   else
+   {
+      MAKE_CW2_FORMAT();
+   }
+}
+
+
+void SAVE_HKDATA_TO_SCF(unsigned int32 Memory_Address)
+{
+   output_low(PIN_C4);
+   for(int8 num = 0; num < HK_size; num++)
+   {
+      WRITE_DATA_BYTE_SCF(Memory_Address+num, HKDATA[num]);
+   }
+   output_high(PIN_C4);
+   return;
+}
+
+
+void Send_HKDATA_to_SCF(int32 address)
+{
+   Save_HKDATA_to_SCF(address);  //save HK to COM PIC
+   CHECK_50_and_CW_RESPOND();
+   return;
+}
+
+
+void SAVE_HKDATA_TO_SMF(unsigned int32 Memory_Address)
+{
+   output_low(PIN_A5);
+   for(int8 num = 0; num < HK_size; num++)
+   {
+      WRITE_DATA_BYTE_SMF(Memory_Address+num, HKDATA[num]);
+   }
+   return;
+}
+
+
+void Send_HKDATA_to_SMF(int32 address)
+{
+   Save_HKDATA_to_SMF(address);  //save HK to COM PIC
+   CHECK_50_and_CW_RESPOND();
+   return;
+}
+
+
+void SAVE_HKDATA_TO_OF(unsigned int32 Memory_Address)
+{
+   int num;
+   for(num = 0; num < HK_size; num++)
+   {
+      WRITE_DATA_BYTE_OF(Memory_Address+num, HKDATA[num]);
+   }
+   return;
+}
+
+
+void Send_HKDATA_to_OF(int32 address)
+{
+   Save_HKDATA_to_OF(address);  //save HK to COM PIC
+   CHECK_50_and_CW_RESPOND();
+   return;
+}
+
+
+void SAVE_CWFORMAT_TO_SCF(unsigned int32 Memory_Address)
+{
+   output_low(PIN_C4);
+   for(int8 num = 0; num < CW_size; num++)
+   {
+      WRITE_DATA_BYTE_SCF(Memory_Address+num, CW_FORMAT[num]);
+   }
+   output_high(PIN_C4);
+   return;
+}
+
+
+void SEND_CWFORMAT_TO_SCF(int32 address)
+{
+   SAVE_CWFORMAT_TO_SCF(address);                                                 //save HK to COM PIC
+   CHECK_50_and_CW_RESPOND();
+   return;
+}
+
+
+void SAVE_CWFORMAT_TO_SMF(unsigned int32 Memory_Address)
+{
+   output_low(PIN_A5);
+   for(int8 num = 0; num < CW_size; num++)
+   {
+      WRITE_DATA_BYTE_SMF(Memory_Address+num, CW_FORMAT[num]);
+   }
+   return;
+}
+
+
+void SEND_CWFORMAT_TO_SMF(int32 address)
+{
+   SAVE_CWFORMAT_TO_SMF(address);  //save HK to COM PIC
+   CHECK_50_and_CW_RESPOND();
+   fprintf(PC,"\r\nCW SAVED\r\n");
+   return;
+}
+
+
+void SAVE_CWFORMAT_TO_OF(unsigned int32 Memory_Address)
+{
+   for(int8 num = 0; num < CW_size; num++)
+   {
+      WRITE_DATA_BYTE_OF(Memory_Address+num, CW_FORMAT[num]);
+   }
+   return;
+}
+
+
+void SEND_CWFORMAT_TO_OF(int32 address)
+{
+   SAVE_CWFORMAT_TO_SCF(address);                                                 //save HK to COM PIC
+   TRANSFER_DATA_NBYTE_TOPC_OF(address,CW_size);                                  //for checking whether the data saved correctly
+   CHECK_50_and_CW_RESPOND();
+   return;
+}
+
+
+void CHECK_HKDATA(int8 in,int32 delaytime)                                       //function that loads the HKDATA array []
+{
+   fprintf(PC,"GET FAB SENSOR DATA\r\n");
+   Delete_HKDATA();                                                              //delete the HKDATA [] array
+   waiting(delaytime);                                                           //waiting
+   CHECK_50_and_CW_RESPOND();
+   for(int num = 1; num < 11 - in; num++)                                        //[FAB] +X,-Y,-Z,+Y,-Xtemp_high,low(array[10] to [17])
+   {
+      HKDATA[num + 5+4] = in_HK[num + 2 - in];                                   //places the data sent by the FAB in the HKDATA [] array from position 10 to 17
+      /* fputc(HKDATA[num + 5+4],PC); */                                         //prints the data from position 10 to 19
+      fprintf(PC,"%x,",HKDATA[num + 5+4]);
+   }
+   
+   MEASURE_BC_TEMP();                                                            //analog reading and loading of the variable BC_temp_data_h and BC_temp_data_l
+   CHECK_50_and_CW_RESPOND();   
+   HKDATA[14+4] = BC_temp_data_h;                                                //+X temp high[18]
+   HKDATA[15+4] = BC_temp_data_l;                                                //+X temp low[19]
+   
+   for(num = 9; num < FAB_SENSOR_size - 2; num++)                                //[FAB] from CPLD temp to Kill status(array[20] to [49])
+   {
+      HKDATA[num + 7+4] = in_HK[num + 2 - in];
+      /*fputc(HKDATA[num + 7+4],PC);*/                                           //prints the data from position 20 to 49
+      fprintf(PC,"%x,",HKDATA[num + 7+4]);
+   }
+   FAB_DATA = 0;                                                                 //reset the flag
+   return;
+}
+
+
+void VERIFY_FABDATA(int32 delaytime1,int32 delaytime2)
+{
+   for(int8 num = 0; num < 3; num++)
+   {
+      COMMAND_TO_FAB(delaytime1);                                                //function that sends command to the FAB and loads the array in_HK []
+      CHECK_50_and_CW_RESPOND();
+      //FAB_DATA = 0;
+      if(in_HK[0] == 0x33)                                                       //gather sensor data by interrupt
+      {
+         CHECK_HKDATA(2,delaytime2);                                             //function that loads the HKDATA array [118]
+         CHECK_50_and_CW_RESPOND();
+         CHECK_FAB_RESPONSE = 1;                                                 //1 is succeeded to get response from FAB
+         break;
+      }
+      else if(in_HK[1] == 0x33)
+      {
+         //delay_ms(200);
+         CHECK_HKDATA(1,delaytime2);
+         CHECK_50_and_CW_RESPOND();
+         CHECK_FAB_RESPONSE = 1;                                                 //1 is succeeded to get response from FAB
+         break;
+      }
+      else if(in_HK[2] == 0x33)
+      {
+         //delay_ms(200);
+         CHECK_HKDATA(0,delaytime2);
+         CHECK_50_and_CW_RESPOND();
+         CHECK_FAB_RESPONSE = 1;                                                 //1 is succeeded to get response from FAB
+         break;
+      }
+   }
+   return;
+}
+
+
+void GET_RESET_DATA()                                                            //function that loads the HKDATA array with the Reset PIC data
+{
+   RESET_DATA = 0;
+   for(int i = 0; i < 6; i++)
+   {
+      COLLECT_RESET_DATA();
+      if(reset_bffr[0] == 0x8e)
+      {
+         break;
+      }
+   }   
+   CHECK_50_and_CW_RESPOND();
+   if(RESET_bffr[0] == 0x8e)                                                     //if the header byte is correct
+   {
+      fprintf(PC,"\r\nRESET DATA OBTAINED\r\n");
+      for(int num = 0; num < 5; num++)                                           //load the HKDATA array with timedata in positions 2 to 6
+      {
+         HKDATA[num + 2] = reset_bffr[num + 1];
+         /*
+         fputc(HKDATA[num + 2],PC);
+         */
+         fprintf(PC,"%x,",HKDATA[num + 2]);                                      //show to serial monitor
+      }
+   
+      for(num = 0; num < 5; num++)                                               //load the HKDATA array with reset sensor data in positions 110 to 114
+      {
+         HKDATA[num + 116] = reset_bffr[num + 6];                                //load the HKDATA [] with the reset data []
+         /*
+         fputc(HKDATA[num + 116],PC);
+         */
+         fprintf(PC,"%x,",HKDATA[num + 116]);                                    //show to serial monitor
+      }
+      fprintf(PC,"\r\n");
+   }
+   else
+   {
+      fprintf(PC,"\r\nRESET DATA NO OBTAINED\r\n");
+   }
+   //Delete_Reset();
+   return;
+}
+
+
+void Turn_On_ADCS()
+{
+   
+   fputc(0x4E, DC);
+   delay_ms(10);
+   fputc(0x00, DC);
+   delay_ms(10);
+   fputc(0x00, DC);
+   delay_ms(10);
+   fputc(0x00, DC);
+   delay_ms(10);
+   fputc(0x00, DC);
+   delay_ms(10);
+   fputc(0x00, DC);
+   delay_ms(10);
+   fputc(0x00, DC);
+   delay_ms(10);
+   fputc(0x00, DC);
+   delay_ms(10);
+   
+   return;
+
+}
+
+
+void Turn_Off_ADCS()
+{
+   
+   fputc(0x40, DC);
+   delay_ms(10);
+   fputc(0x00, DC);
+   delay_ms(10);
+   fputc(0x00, DC);
+   delay_ms(10);
+   fputc(0x00, DC);
+   delay_ms(10);
+   fputc(0x00, DC);
+   delay_ms(10);
+   fputc(0x00, DC);
+   delay_ms(10);
+   fputc(0x00, DC);
+   delay_ms(10);
+   fputc(0x00, DC);
+   delay_ms(10);
+   
+   return;
+
+}
+
+
+void GET_ADCS_SENSOR_DATA()                                                      //after that, method will changed (ADCS make format and just send to MAIN PIC)
+{
+   CHECK_50_and_CW_RESPOND();
+
+   fputc(0x42, DC);
+   delay_ms(10);
+   fputc(0xAA, DC);
+   delay_ms(10);
+   fputc(0x00, DC);
+   delay_ms(10);
+   fputc(0x00, DC);
+   delay_ms(10);
+   fputc(0x00, DC);
+   delay_ms(10);
+   fputc(0x00, DC);
+   delay_ms(10);
+   fputc(0x00, DC);
+   delay_ms(10);
+   fputc(0x00, DC);
+   delay_ms(10);
+   fputc(0x00, DC);
+   delay_ms(10);
+   
+   int8 counter = 0;
+   for(int32 adcs = 0; adcs < 1000000; adcs++)
+   {
+      if(kbhit(DC))
+      {
+         int8 header = fgetc(DC);
+         if (header == 0x55)
+         {
+            ADCS_SENSOR_DATA[counter] = header;
+            counter++;
+            for(int32 num = 0; num < 1000000; num++)
+            {
+               if(kbhit(DC))
+               {
+                  ADCS_SENSOR_DATA[counter] = fgetc(DC);
+                  counter++;
+                  if(counter == 14)
+                  {
+                     fprintf(PC,"\r\nADCS DATA OBTAINED\r\n");
+                     break;
+                  }
+               }
+            }
+            fprintf(PC,"\r\nADCS DATA NOT OBTAINED\r\n");
+            break;
+         }
+      }
+   
+   }
+   fprintf(PC,"ADCS DATA:\r\n");
+   for(int l = 0; l < 14; l++)
+   {
+      fprintf(PC,"%x",ADCS_SENSOR_DATA[l]);
+   }
+   fprintf(PC,"\r\n");
+   
+   for(l = 0; l < 14; l++)
+   {
+      ADCS_SENSOR_DATA[l] = 0;
+   }
+  
+   return;
+}
+
+
+void MAKE_ADCS_HKDATA()                                                          //loads into the HKDATA [] array the ADCS data in positions 53 to 106
+{
+   GET_ADCS_SENSOR_DATA();                                                       //function that loads the ADCS_SENSOR_DATA [] array with the ADCS data
+   CHECK_50_and_CW_RESPOND();   
+   for(int num = 53; num < 64; num++)                                           //12byte(MAG6,GYRO6)
+   {
+      HKDATA[num] = ADCS_SENSOR_DATA[num - 52];                                  //ADCS[1] to ADCS[12]
+   }
+   
+   for(num = 65; num < 113; num++)                                           //48byte(GPS) = 60
+   {
+      HKDATA[num] = 0;                                                           //ADCS[13] to ADCS[60]
+      ADCS_SENSOR_DATA[num] = 0;
+   }
+   
+   for(int n = 1; n < 61; n++)                                                   // SHOW IN SERIAL MONITOR 12byte(MAG6,GYRO6)+48byte(GPS) = 60
+   {
+      fprintf(PC,"%x,",ADCS_SENSOR_DATA[n]);                                     //ADCS[1] to ADCS[60]
+                                
+   }
+   
+   return;
+}
+
+
+void DISPLAY_CW()                                                                //funcion que imprime el array CW_FORMAT[]
+{
+   fprintf(PC,"\r\nCW:\r\n");
+   for(int8 i = 0; i < 5; i++)
+   {
+      fprintf(PC,"%x",CW_FORMAT[i]);
+   }
+   fprintf(PC,"\r\n");
+   CHECK_50_and_CW_RESPOND();   
+   return;
+}
+
+
+void SET_IDENTIFIER()
+{
+   CHECK_50_and_CW_RESPOND();
+   HKDATA[0] = 0x33;
+   HKDATA[1] = 0x33;
+   HKDATA[7] = 0xAA;
+   HKDATA[8] = 0xAA;
+   HKDATA[9] = 0xAA;
+   HKDATA[50] = 0xBB;
+   HKDATA[51] = 0xBB;
+   HKDATA[52] = 0xBB;
+   HKDATA[113] = 0xCC;
+   HKDATA[114] = 0xCC;
+   HKDATA[115] = 0xCC;
+   HKDATA[122] = 0x44;
+   HKDATA[123] = 0x44;
+   return;
+}
+
+
+void FAB_TEST_OPERATION()
+{
+   Delete_in_HK();                                                               //Delete the array in_HK [124]
+   LOOP_FAB_HK_ADDRESS();                                                        //Rotate the save positions of the data if it reaches the end of the allocated space 
+   LOOP_FAB_CW_ADDRESS();                                                        //Rotate the save positions of the data if it reaches the end of the allocated space
+   CHECK_50_and_CW_RESPOND();                                                    //check if command 0x50 arrived from COM PIC and send CW to COM
+   LOOP_FAB_HK_ADDRESS();                                                        //Rotate the save positions of the data if it reaches the end of the allocated space
+   CHECK_50_and_CW_RESPOND();                                                    //check if command 0x50 arrived from COM PIC and send CW to COM
+   LOOP_FAB_CW_ADDRESS();                                                        //Rotate the save positions of the data if it reaches the end of the allocated space
+   CHECK_50_and_CW_RESPOND();                                                    //check if command 0x50 arrived from COM PIC and send CW to COM
+   Turn_On_MBP();
+   Turn_On_ADCS();                                                               //turn ON ADCS, RD6 = HIGH                                                               
+   fprintf(PC,"FAB communication start\r\n");
+   waiting(200000);                                                              //wait function, about 200.000=1s
+   FAB_MEASURING_FLAG++;                                                         //count until 7(it means 10 min)
+   FAB_DATA = 0;                                                                 //for initialize
+   
+   fprintf(PC,"SENDING COMMAND TO FAB\r\n");
+   CHECK_50_and_CW_RESPOND();                                                    //check if command 0x50 arrived from COM PIC and send CW to COM
+   VERIFY_FABDATA(130000,2000);//delaytime1 and delaytime2                       //send command to the FAB and load the array in_HK [] with the data from the FAB
+   CHECK_50_and_CW_RESPOND();
+   
+   GET_RESET_DATA();                                                             //send command to reset PIC and load HKDATA [] array with Reset PIC data
+   
+   MAKE_ADCS_HKDATA();                                                           //send command to ADCS MCS and load HKDATA [] array with ADCS data
+   
+   Turn_Off_ADCS();                                                              //ADCS switch OFF
+   Turn_Off_MBP();                                                               //Turn off mission boss and CPLD
+   
+   CHECK_50_and_CW_RESPOND();
+   MAKE_CW_FORMAT();                                                             //make CW format
+   CHECK_50_and_CW_RESPOND();   
+   SET_IDENTIFIER();                                                             //load the HKDATA [] with the identifiers (headers and footers)  
+   if(CHECK_FAB_RESPONSE)                                                        //check if HKDATA [] was loaded with the FAB data and performed the CW format
+   {
+      fprintf(PC,"\r\nCollecting HK and Making CW Format Done\r\n");
+
+      fprintf(PC,"\r\nHK data:\r\n");
+
+      CHECK_50_and_CW_RESPOND();
+      
+      for(int num = 0; num < 65; num++)                                          //array[0] to [64](until gyro data)
+      {
+         fprintf(PC,"%x,",HKDATA[num]);
+      }
+      CHECK_50_and_CW_RESPOND();
+      for(num = 65; num < 113; num++)                                            //GPS 60 byte should be shown as char type
+      {
+      
+         fprintf(PC,"%x,",HKDATA[num]);                                          //just for test
+      }
+      CHECK_50_and_CW_RESPOND();
+      for(num = 113; num < HK_Size; num++)                                       //array[113] to [124]
+      {
+         fprintf(PC,",%x",HKDATA[num]);
+      }
+      fprintf(PC,"\r\n");
+      CHECK_50_and_CW_RESPOND();
+      
+      DISPLAY_CW();                                                              //function that prints the array CW_FORMAT []
+      CHECK_FAB_RESPONSE = 0;                                                    //FAB flag to zero   
+      output_low(PIN_C4);                                                        //COM Flash memory, Main side
+      output_low(PIN_A5);                                                        //Shared Mission Flash, Main side
+      
+      SEND_HKDATA_to_SCF(FAB_HK_ADDRESS);                                        //save the HKDATA array in COM flash []
+      SEND_HKDATA_to_SMF(FAB_HK_ADDRESS);                                        //save the HKDATA array in SMF flash []
+      SEND_HKDATA_to_OF(FAB_HK_ADDRESS);                                         //save the HKDATA array in Main flash []
+      
+      SEND_CWFORMAT_TO_SCF(FAB_CW_ADDRESS);                                      //save the CWFORMAT array in COM flash []
+      SEND_CWFORMAT_TO_SMF(FAB_CW_ADDRESS);                                      //save the CWFORMAT array in SMF flash []
+      SEND_CWFORMAT_TO_OF(FAB_CW_ADDRESS);                                       //save the CWFORMAT array in Main flash []
+      
+      FAB_HK_ADDRESS = FAB_HK_ADDRESS + HK_size;                                 //prepare for next storing address
+      FAB_CW_ADDRESS = FAB_CW_ADDRESS + CW_size;                                 //prepare for next storing address
+      
+      fprintf(PC,"\r\nSENSORS DATA SAVED ON FLASH\r\n");
+      output_high(PIN_C4);                                                       //COM Flash memory COM side
+      CHECK_50_and_CW_RESPOND();
+   }
+   else
+   {
+      SEND_HKDATA_to_SCF(FAB_HK_ADDRESS);                                        //save the HKDATA array in COM flash []
+      SEND_HKDATA_to_SMF(FAB_HK_ADDRESS);                                        //save the HKDATA array in SMF flash []
+      SEND_HKDATA_to_OF(FAB_HK_ADDRESS);                                         //save the HKDATA array in Main flash []
+      
+      SEND_CWFORMAT_TO_SCF(FAB_CW_ADDRESS);                                      //save the CWFORMAT array in COM flash []
+      SEND_CWFORMAT_TO_SMF(FAB_CW_ADDRESS);                                      //save the CWFORMAT array in SMF flash []
+      SEND_CWFORMAT_TO_OF(FAB_CW_ADDRESS);                                       //save the CWFORMAT array in Main flash []
+      
+      FAB_HK_ADDRESS = FAB_HK_ADDRESS + HK_size;                                 //prepare for next storing address
+      FAB_CW_ADDRESS = FAB_CW_ADDRESS + CW_size;                                 //prepare for next storing address
+      
+      fprintf(PC,"NO RESPONSE FROM FAB\r\n\r\n");  
+      CHECK_50_and_CW_RESPOND();
+      for(int num = 0; num < HK_size; num++)
+      {
+         fprintf(PC,"%x,",HKDATA[num]);
+      }
+      CHECK_50_and_CW_RESPOND();
+   
+   }
+   
+   return;
+}
+
 //--------Mission Boss PIC Data Collection-----------------------------------//
 
-int8 DC_ACK = 0;
-int8 MBP_DATA[9] = {};
 
 void Turn_On_MBP()
 {
@@ -560,11 +1333,13 @@ void Turn_On_MBP()
    return;
 }
 
+
 void Turn_Off_MBP()
 {
    output_low(PIN_F5);
    return;
 }
+
 
 void DEL_MBP_DATA()
 {
@@ -574,7 +1349,6 @@ void DEL_MBP_DATA()
    }
    return;
 }
-
 
 
 void Forward_CMD_MBP()
@@ -613,6 +1387,7 @@ void Forward_CMD_MBP()
    return;
 }
 
+//--------Mission Execution Tests--------------------------------------------//
 
 void PINO_Test()
 {
@@ -638,23 +1413,23 @@ void PINO_Test()
       switch (command[0])
       {
          case 0x12:
-         fprintf (PC, "Start 0x12\r\n") ;
-         output_low (PIN_A5);
-         address_data[0] = command[2]<<24;
-         address_data[1] = command[3]<<16;
-         address_data[2] = command[4]<<8;
-         address_data[3] = command[5];
-         address = address_data[0] + address_data[1] + address_data[2] + address_data[3];
-         packet_data[0] = command[6]<<8;
-         packet_data[1] = command[7];
-         packet = (packet_data[0] + packet_data[1])*81;
-
-         //fputc(command[5] + command[6], fab);
-         TRANSFER_DATA_NBYTE_TOPC_SMF(address, packet);
-         output_high (PIN_A5);
-         //TRANSFER_DATA_NBYTE_TOFAB_SMF(address,81);
-         
-         fprintf (PC, "Finish 0x12\r\n") ;
+            fprintf (PC, "Start 0x12\r\n") ;
+            output_low (PIN_A5);
+            address_data[0] = command[2]<<24;
+            address_data[1] = command[3]<<16;
+            address_data[2] = command[4]<<8;
+            address_data[3] = command[5];
+            address = address_data[0] + address_data[1] + address_data[2] + address_data[3];
+            packet_data[0] = command[6]<<8;
+            packet_data[1] = command[7];
+            packet = (packet_data[0] + packet_data[1])*81;
+   
+            //fputc(command[5] + command[6], fab);
+            TRANSFER_DATA_NBYTE_TOPC_SMF(address, packet);
+            output_high (PIN_A5);
+            //TRANSFER_DATA_NBYTE_TOFAB_SMF(address,81);
+            
+            fprintf (PC, "Finish 0x12\r\n") ;
          break;
          
          
@@ -673,46 +1448,46 @@ void PINO_Test()
          */
          
          case 0x14://Uplink command to write the data on Flash Memory 2
-         output_low (PIN_A5) ;//Main side
-         fprintf (PC, "Start 0x14\r\n") ;
-         address_data[0] = command[2]<<24;
-         address_data[1] = command[3]<<16;
-         address_data[2] = command[4]<<8;
-         address_data[3] = command[5];
-         address = address_data[0] + address_data[1] + address_data[2] + address_data[3];
-         //sector_erase_SMF (address);
-         WRITE_DATA_BYTE_SMF (address, command[6]) ;
-         WRITE_DATA_BYTE_SMF (address + 1, command[7]) ;
-         WRITE_DATA_BYTE_SMF (address + 2, command[8]) ;
-         fprintf (PC, "Finish 0x14\r\n");
-         output_high (PIN_A5);//Mission side
+            output_low (PIN_A5) ;//Main side
+            fprintf (PC, "Start 0x14\r\n") ;
+            address_data[0] = command[2]<<24;
+            address_data[1] = command[3]<<16;
+            address_data[2] = command[4]<<8;
+            address_data[3] = command[5];
+            address = address_data[0] + address_data[1] + address_data[2] + address_data[3];
+            //sector_erase_SMF (address);
+            WRITE_DATA_BYTE_SMF (address, command[6]) ;
+            WRITE_DATA_BYTE_SMF (address + 1, command[7]) ;
+            WRITE_DATA_BYTE_SMF (address + 2, command[8]) ;
+            fprintf (PC, "Finish 0x14\r\n");
+            output_high (PIN_A5);//Mission side
          break;
          
          case 0x16://Erase the data on Flash Memory 2
-         output_low (PIN_A5);
-         fprintf(PC, "Start 0x16\r\n");
-         address_data[0] = command[2]<<24;
-         address_data[1] = command[3]<<16;
-         address_data[2] = command[4]<<8;
-         address_data[3] = command[5];
-         address = address_data[0] + address_data[1] + address_data[2] + address_data[3];
-            switch(command[6]){
-               case 0x04:
-                  SUBSECTOR_4KB_ERASE_SMF(address);
-                  fprintf(PC, "Finish 0x16\r\n");
-                  break;
-               case 0x32:
-                  SUBSECTOR_32KB_ERASE_SMF(address);
-                  fprintf(PC, "Finish 0x16\r\n");
-                  break;
-               case 0xFF:
-                  SECTOR_ERASE_SMF(address);
-                  fprintf(PC, "Finish 0x16\r\n");
-                  break;
-               default:
-                  fprintf(PC, "error\r\n");
-            }
-            output_high (PIN_A5);//Mission side
+            output_low (PIN_A5);
+            fprintf(PC, "Start 0x16\r\n");
+            address_data[0] = command[2]<<24;
+            address_data[1] = command[3]<<16;
+            address_data[2] = command[4]<<8;
+            address_data[3] = command[5];
+            address = address_data[0] + address_data[1] + address_data[2] + address_data[3];
+               switch(command[6]){
+                  case 0x04:
+                     SUBSECTOR_4KB_ERASE_SMF(address);
+                     fprintf(PC, "Finish 0x16\r\n");
+                     break;
+                  case 0x32:
+                     SUBSECTOR_32KB_ERASE_SMF(address);
+                     fprintf(PC, "Finish 0x16\r\n");
+                     break;
+                  case 0xFF:
+                     SECTOR_ERASE_SMF(address);
+                     fprintf(PC, "Finish 0x16\r\n");
+                     break;
+                  default:
+                     fprintf(PC, "error\r\n");
+               }
+               output_high (PIN_A5);//Mission side
             break;
          
          /* case 0x91:
@@ -723,35 +1498,35 @@ void PINO_Test()
          break; */
 
          case 0x90://Turn off PINO
-         fprintf (PC, "Start 0x90\r\n") ;
-         output_high (hvs);
-         fprintf (PC, "Finish 0x90\r\n");
-         delay_ms(5000);
-         output_low (PINO_power);
-         output_low (sel);
-         fputc(0xAB, reset);
-         output_low(PIN_A5);//Main side
-         
+            fprintf (PC, "Start 0x90\r\n") ;
+            output_high (hvs);
+            fprintf (PC, "Finish 0x90\r\n");
+            delay_ms(5000);
+            output_low (PINO_power);
+            output_low (sel);
+            fputc(0xAB, reset);
+            output_low(PIN_A5);//Main side
+            
          break;
          
          case 0x91://PINO Real Time Uplink Command
-         output_high(PIN_A5);//Mission Side
-         fprintf (PC, "Start 0x91\r\n");
-         PINO_DATA[0] = command[0];
-         PINO_DATA[1] = command[2];
-         PINO_DATA[2] = command[3];
-         PINO_DATA[3] = command[4];
-         PINO_DATA[4] = command[5];
-         PINO_DATA[5] = command[6];
-         PINO_DATA[6] = command[7];
-         PINO_DATA[7] = command[8];
-         
-         for (i = 0; i<39; i++)
-         {
-            fputc (PINO_DATA[i], DC);
-         }
-         fprintf (PC, "Finish 0x91\r\n") ;
-         output_high(PIN_A5);//Mission Side
+            output_high(PIN_A5);//Mission Side
+            fprintf (PC, "Start 0x91\r\n");
+            PINO_DATA[0] = command[0];
+            PINO_DATA[1] = command[2];
+            PINO_DATA[2] = command[3];
+            PINO_DATA[3] = command[4];
+            PINO_DATA[4] = command[5];
+            PINO_DATA[5] = command[6];
+            PINO_DATA[6] = command[7];
+            PINO_DATA[7] = command[8];
+            
+            for (i = 0; i<39; i++)
+            {
+               fputc (PINO_DATA[i], DC);
+            }
+            fprintf (PC, "Finish 0x91\r\n") ;
+            output_high(PIN_A5);//Mission Side
          break;
          
          case 0x92://PINO Real Time Downlink Command
@@ -791,14 +1566,14 @@ void PINO_Test()
          }
          
          case 0x9E: //Turn on PINO
-         fprintf(PC, "Start 0x93\r\n");
-         output_low(hvs);
-         output_high (PINO_power);
-         output_high (sel);
-         output_high (PIN_A5);//Mission side
-         fputc(0xBC, reset);
-         fprintf(PC, "Finish 0x93\r\n");
-         
+            fprintf(PC, "Start 0x93\r\n");
+            output_low(hvs);
+            output_high (PINO_power);
+            output_high (sel);
+            output_high (PIN_A5);//Mission side
+            fputc(0xBC, reset);
+            fprintf(PC, "Finish 0x93\r\n");
+            
 
          break;
    
@@ -830,8 +1605,9 @@ void PINO_Test()
          int a=0;
          fprintf (PC, "Start 0x9C\r\n") ;
          
-         for(a=0; a<12; a++){
-            GET_RESET_DATA();
+         for(a=0; a<12; a++)
+         {
+            GET_RESET_DATA_for_PINO();
             delay_ms(10000);
          }
          
@@ -846,230 +1622,6 @@ void PINO_Test()
    }
 }
 
-void PINO_Test_for_PINO()
-{
-   dummy[0] = 0x01;
-   int32 num;
-   while (TRUE)
-   {
-      command[0] = 0x00;
-      
-      for (num = 0; num < 100; num++)
-      {
-         Forward_CMD_MBP();
-      }
-      switch (command[0])
-      {
-         case 0x05:
-         fprintf(fab, "Analyse the command\r\n");
-         break;
-         
-         case 0x12:
-         fprintf (fab, "Start 0x12\r\n") ;
-         output_low (PIN_A5);
-         address_data[0] = command[2]<<24;
-         address_data[1] = command[3]<<16;
-         address_data[2] = command[4]<<8;
-         address_data[3] = command[5];
-         address = address_data[0] + address_data[1] + address_data[2] + address_data[3];
-         packet_data[0] = command[6]<<8;
-         packet_data[1] = command[7];
-         packet = (packet_data[0] + packet_data[1])*81;
-
-         //fputc(command[5] + command[6], fab);
-         TRANSFER_DATA_NBYTE_TOFAB_SMF(address, packet);
-         output_high (PIN_A5);
-         //TRANSFER_DATA_NBYTE_TOFAB_SMF(address,81);
-         
-         fprintf (fab, "Finish 0x12\r\n") ;
-         break;
-         
-         
-         /*case 0x13://Get the data from Flash Memory 2
-         fprintf (fab, "Start 0x13\r\n") ;
-         output_low (PIN_A5);
-         address_data[0] = command[1]<<24;
-         address_data[1] = command[2]<<16;
-         address_data[2] = command[3]<<8;
-         address_data[3] = command[4];
-         address = address_data[0] + address_data[1] + address_data[2] + address_data[3];
-         TRANSFER_DATA_NBYTE_TOFAB_SMF(address, command[5] + command[6]);
-         fprintf (fab, "Finish 0x13\r\n") ;
-         
-         break;
-         */
-         
-         case 0x14://Uplink command to write the data on Flash Memory 2
-         output_low (PIN_A5) ;//Main side
-         fprintf (fab, "Start 0x14\r\n") ;
-         address_data[0] = command[2]<<24;
-         address_data[1] = command[3]<<16;
-         address_data[2] = command[4]<<8;
-         address_data[3] = command[5];
-         address = address_data[0] + address_data[1] + address_data[2] + address_data[3];
-         //sector_erase_SMF (address);
-         WRITE_DATA_BYTE_SMF (address, command[6]) ;
-         WRITE_DATA_BYTE_SMF (address + 1, command[7]) ;
-         WRITE_DATA_BYTE_SMF (address + 2, command[8]) ;
-         fprintf (fab, "Finish 0x14\r\n");
-         output_high (PIN_A5);//Mission side
-         break;
-         
-         case 0x16://Erase the data on Flash Memory 2
-         output_low (PIN_A5);
-         fprintf(fab, "Start 0x16\r\n");
-         address_data[0] = command[2]<<24;
-         address_data[1] = command[3]<<16;
-         address_data[2] = command[4]<<8;
-         address_data[3] = command[5];
-         address = address_data[0] + address_data[1] + address_data[2] + address_data[3];
-            switch(command[6]){
-               case 0x04:
-                  SUBSECTOR_4KB_ERASE_SMF(address);
-                  fprintf(fab, "Finish 0x16\r\n");
-                  break;
-               case 0x32:
-                  SUBSECTOR_32KB_ERASE_SMF(address);
-                  fprintf(fab, "Finish 0x16\r\n");
-                  break;
-               case 0xFF:
-                  SECTOR_ERASE_SMF(address);
-                  fprintf(fab, "Finish 0x16\r\n");
-                  break;
-               default:
-                  fprintf(fab, "error\r\n");
-            }
-            output_high (PIN_A5);//Mission side
-            break;
-         
-         /* case 0x91:
-         reset_time_data[0] = 0x82;
-         //fprintf (PC, "Command 2 Recieved\r\n") ;
-         //fputc (reset_time_data[0], PC) ;
-         fputc (0x91, reset);
-         break; */
-
-         case 0x90://Turn off PINO
-         fprintf (fab, "Start 0x90\r\n") ;
-         output_high (hvs);
-         fprintf (fab, "Finish 0x90\r\n");
-         delay_ms(5000);
-         output_low (PINO_power);
-         output_low (sel);
-         output_low(PIN_A5);//Main side
-         
-         break;
-         
-         case 0x91://PINO Real Time Uplink Command
-         output_high(PIN_A5);//Mission Side
-         fprintf (fab, "Start 0x91\r\n");
-         PINO_DATA[0] = command[0];
-         PINO_DATA[1] = command[2];
-         PINO_DATA[2] = command[3];
-         PINO_DATA[3] = command[4];
-         PINO_DATA[4] = command[5];
-         PINO_DATA[5] = command[6];
-         PINO_DATA[6] = command[7];
-         PINO_DATA[7] = command[8];
-         
-         for (i = 0; i<8; i++)
-         {
-            fputc (PINO_DATA[i], DC);
-         }
-         fprintf (fab, "Finish 0x91\r\n") ;
-         output_high(PIN_A5);//Mission Side
-         break;
-         
-         case 0x92://PINO Real Time Downlink Command
-         fprintf (fab, "Start 0x92\r\n") ;
-         output_high(PIN_A5);
-         PINO_DATA[0] = command[0];
-         PINO_DATA[1] = command[2];
-         PINO_DATA[2] = command[3];
-         PINO_DATA[3] = command[4];
-         PINO_DATA[4] = command[5];
-         PINO_DATA[5] = command[6];
-         PINO_DATA[6] = command[7];
-         PINO_DATA[7] = command[8];
-         
-         for (i = 0; i<8; i++)
-         {
-            fputc (PINO_DATA[i], DC);
-         }
-         
-         while (1)
-         {
-            if (kbhit (DC))
-            {
-               for (i = 0; i < 81; i++)
-               {
-                  Down[i] = fgetc (DC);
-               }
-               //fprintf (PC, "Finish transmitting\r\n") ;
-               for (i = 0; i < 81; i++)
-               {
-                  fputc (Down[i], fab);
-               }
-               fprintf (fab, "Finish 0x92\r\n") ;
-               output_high(PIN_A5);//Mission side
-               break;
-            }
-            break;
-         }
-         
-         case 0x9E: //Turn on PINO
-         fprintf(fab, "Start 0x93\r\n");
-         output_high (PINO_power);
-         output_high (sel);
-         output_high (PIN_A5);//Mission side
-         fprintf(fab, "Finish 0x93\r\n");
-         
-
-         break;
-   
-         case 0x94:
-         output_high(PIN_A5);
-         fprintf (fab, "Start 0x94\r\n") ;
-         for (i = 0; i < 5; i++)
-         {
-            GET_RESET_DATA ();
-            delay_ms(5000);
-         }
-         fprintf (fab, "Finish 0x94\r\n") ;
-         output_high(PIN_A5);
-         break;
-         
-         
-         case 0x9B:
-         output_high(PIN_A5);
-         fprintf (fab, "Start 0x9B\r\n") ;
-         output_high (hvs);
-         fprintf (fab, "Finish 0x9B\r\n");
-         output_low (PINO_power);
-         output_low (sel);
-         output_low (PIN_A5);
-         break;
-         
-         case 0x9C://Time and attitude information
-         output_high(PIN_A5);
-         int a=0;
-         fprintf (fab, "Start 0x9C\r\n") ;
-         
-         for(a=0; a<12; a++){
-            GET_RESET_DATA();
-            delay_ms(10000);
-         }
-         
-         fprintf (fab, "Finish 0x9F\r\n") ;
-         fprintf (fab, "Finish 0x9C\r\n") ;
-         output_high(PIN_A5);
-
-         break;
-         
-
-      }
-   }
-}
 
 void MULT_SPEC_Test()
 {
@@ -1437,7 +1989,7 @@ void MULT_SPEC_Test()
          
          for (j = 0; j<9; j++)
          {
-            GET_TIME();
+            //GET_TIME();
             delay_ms(20);
             result = trigger_time_data % command_time_data;
          
@@ -1517,6 +2069,7 @@ void MULT_SPEC_Test()
       command[m] = 0;
    }
 }
+
 
 void IMGCLS_Test()
 {
@@ -1705,14 +2258,6 @@ void IMGCLS_Test()
    }
 }
 
-void DELETE_ADCS_SENSOR()
-{
-   for(int a = 0; a < ADCS_SENSOR_SIZE; a++)
-   {
-      ADCS_SENSOR_DATA[a] = 0;
-   }
-   return;
-}
 
 void ADCS_TEST()
 
@@ -1794,25 +2339,16 @@ void ADCS_TEST()
             }
          
          }
-//!         for(int32 num = 0; num < 1000000; num++)
-//!            {
-//!               if(kbhit(DC))
-//!               {
-//!                  ADCS_SENSOR_DATA[counter] = fgetc(DC);
-//!                  counter++;
-//!                  if(counter == 14)
-//!                  {
-//!                     break;
-//!                  }
-//!               }
-//!            }
+
          fprintf(PC,"Data Recieved: ");
          for(int l = 0; l < 14; l++)
          {
             fprintf(PC,"%x",ADCS_SENSOR_DATA[l]);
          }
          fprintf(PC,"\r\n");
+         
          fprintf (PC, "Finish 0x42\r\n");
+         
          for(l = 0; l < 14; l++)
          {
             ADCS_SENSOR_DATA[l] = 0;
@@ -1955,6 +2491,7 @@ void ADCS_TEST()
    
 }
 
+
 void SFWD_Test()
 
 {
@@ -2094,7 +2631,6 @@ void SFWD_Test()
 }
 
 
-
 void NEW_PINO_Test()
 
 {
@@ -2167,7 +2703,7 @@ void NEW_PINO_Test()
          for(a=0; a<12; a++){
             //fputc(0x9C,DC);
             //delay_ms(50);
-            //GET_RESET_DATA();
+            //GET_RESET_DATA_for_PINO();
             Forward_CMD_MBP();
             BYTE pp[1] = 0x00;
             for(i=0; i<39; i++)
@@ -2233,10 +2769,11 @@ void NEW_PINO_Test()
       command[m] = 0;
    }
 }
-void GET_RESET_DATA()
+
+
+void GET_RESET_DATA_for_PINO()
 {
-   //dummy[0] = 0x11;
-   Finish_sign[0] = 0xFF;
+
    RESET_DATA = 0;
    int8 dayh;
    int8 dayl;
@@ -2292,13 +2829,12 @@ void GET_RESET_DATA()
          fputc (PINO_DATA[j], PC);
          
       }
-      //fputc (Finish_sign[0], DC);
-      
-      //fprintf (fab, "\r\n") ;
-      
-      }else{
-      fprintf (PC, "\r\nRESET DATA NOT OBTAINED\r\n") ;
-   }
+
+  }
+      else
+      {
+         fprintf (PC, "\r\nRESET DATA NOT OBTAINED\r\n") ;
+      }
    return;
 }
 
@@ -2348,4 +2884,6 @@ void GET_TIME()
    
    return;
 }
+
+
 

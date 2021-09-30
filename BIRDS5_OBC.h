@@ -49,6 +49,26 @@ void SAVE_SAT_LOG(int8 data, int8 data2, int8 data3);
 void RESET_SATELLITE();
 void MAIN_MB_CMD();
 
+/////////////FAB SENSOR collection/////////////
+void Delete_in_HK();
+void Delete_HKDATA();
+void Delete_CW_FORMAT();
+void MAKE_CW_FORMAT();
+void SAVE_HKDATA_TO_OF(unsigned int32 Memory_Address);
+void SAVE_HKDATA_TO_SCF(unsigned int32 Memory_Address);
+void SAVE_CWFORMAT_TO_OF(unsigned int32 Memory_Address);
+void SAVE_CWFORMAT_TO_SCF(unsigned int32 Memory_Address);
+void Send_COMMAND_TO_FAB(int8 cmd);
+int8 ACK_FROM_FAB();
+void Send_HKDATA_to_SCF(int32 address);
+void Send_HKDATA_to_OF(int32 address);
+void SEND_CWFORMAT_TO_SCF(int32 address);
+void SEND_CWFORMAT_TO_OF(int32 address);
+void Send_HKDATA_to_PC(int32 address);
+void CHECK_HKDATA(int8 in);
+void VERIFY_FABDATA(int32 delaytime1,int32 delaytime2);
+void FAB_TEST_OPERATION();
+void GET_RESET_DATA();
 
 /////////////ANTENNA DEPLOYMENT/////////////
 void BC_SETUP();
@@ -63,9 +83,6 @@ void MAKE_BC_FLAG_2();
 void MAKE_BC_FLAG_3();
 void MAKE_BC_FLAG_4();
 
-/////////////CAM MISSION/////////////
-void Turn_On_CAM();
-void Turn_Off_CAM();
 
 /////////////RESET SENSOR collection/////////////
 void COLLECT_RESET_DATA();
@@ -75,6 +92,9 @@ void Turn_On_MBP();
 void Turn_Off_MBP();
 
 /////////////ADCS MISSION/////////////
+void GET_ADCS_SENSOR_DATA();
+void Turn_On_ADCS();
+void Turn_Off_ADCS();
 void ADCS_Test();
 
 /////////////SFWD MISSION/////////////
@@ -84,7 +104,7 @@ void SFWD_Test();
 void Flash_Memory_Access();
 void PINO_test();
 void NEW_PINO_test();
-void GET_RESET_DATA();
+void GET_RESET_DATA_for_PINO();
 void MULT_SPEC_Test();
 void GET_TIME();
 void IMGCLS_test();
