@@ -70,6 +70,17 @@ void VERIFY_FABDATA(int32 delaytime1,int32 delaytime2);
 void FAB_TEST_OPERATION();
 void GET_RESET_DATA();
 
+///////////////HIGH SAMPLING HK collection//////////////
+void SAVE_HIGH_HKDATA_TO_SCF(unsigned int32 Memory_Adress);
+void Send_HIGH_HKDATA_to_SCF(int32 adress);
+void SAVE_HIGH_HKDATA_TO_OF(unsigned int32 Memory_Adress);
+void Send_HIGH_HKDATA_to_OF(int32 adress);
+void CHECK_HIGH_SAMP_FABDATA(int8 in);
+void VERIFY_HIGH_SAMP_FABDATA(int32 delaytime);
+void GET_HIGH_SAMP_RESET_DATA();
+void HIGH_SAMP_FAB_OPERATION();
+void HIGHSAMP_SENSOR_COLLECTION(int16 second);
+
 /////////////ANTENNA DEPLOYMENT/////////////
 void BC_SETUP();
 void BC_READ_TO_PC();

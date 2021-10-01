@@ -302,6 +302,12 @@ void MAIN_MB_CMD()
          ERASE_EEPROM_INFO();                                                    //erase 512byte(from 0x18000 to 0x181ff)
          MEMORY_ERASE(); 
       break;
+      
+      case 0x19:
+         unsigned int16 duration = (unsigned int16)command[2]*12;                      //CMD2 is operation time(min), maxima cantidad de lecturas en 2 horas = 1440
+         if(duration > 1440){duration = 1440;}                                   // 12 readings in 1 min, every 5 seconds
+         HIGHSAMP_SENSOR_COLLECTION(duration);
+      break;
    }
 
 }
@@ -1323,6 +1329,253 @@ void FAB_TEST_OPERATION()
    
    return;
 }
+
+
+//--------HIGH SAMPLING HK collection----------------------------------------//
+
+void CHECK_HIGH_SAMP_FABDATA(int8 in)                                            //FAB sensor data collect
+{
+   fprintf(PC,"\r\nFAB DATA OBTAINED\r\n");
+   Delete_HKDATA();
+   for(int num = 1; num < 11; num++)                                             //Collect HK DATA
+   {
+      HKDATA[num + 5+4] = in_HK[num + 2 - in];
+      fprintf(PC, "%x,", HKDATA[num]);
+   }
+   MEASURE_BC_TEMP();
+   HKDATA[18] = BC_temp_data_h;                                                  //-X Panel Temp
+   HKDATA[19] = BC_temp_data_l;                                                  //-X Panel Temp
+   for(num = 9; num < FAB_SENSOR_size - 2; num++)                                //[FAB] from CPLD temp to Kill status(array[20] to [49])
+   {
+      HKDATA[num + 7+4] = in_HK[num + 2 - in];
+      fprintf(PC, "%x,", HKDATA[num + 7+4]);
+   }
+   FAB_DATA = 0;
+}
+
+
+void VERIFY_HIGH_SAMP_FABDATA(int32 delaytime)
+{
+   for(int8 num = 0; num < 3; num++)
+   {
+      COMMAND_TO_FAB(delaytime);
+      //FAB_DATA = 0;
+      //waiting(1000);
+      if(in_HK[0] == 0x33)                                                       //gather sensor data by interrupt
+      {
+         CHECK_HIGH_SAMP_FABDATA(2);
+         CHECK_FAB_RESPONSE = 1;                                                 //1 is succeeded to get response from FAB
+         break;
+      }else if(in_HK[1] == 0x33){
+         //delay_ms(200);
+         CHECK_HIGH_SAMP_FABDATA(1);
+         CHECK_FAB_RESPONSE = 1;                                                 //1 is succeeded to get response from FAB
+         break;
+      }else if(in_HK[2] == 0x33){
+         //delay_ms(200);
+         CHECK_HIGH_SAMP_FABDATA(0);
+         CHECK_FAB_RESPONSE = 1;                                                 //1 is succeeded to get response from FAB
+         break;
+      }
+      FAB_DATA = 0;
+   }
+   return;
+}
+
+
+void GET_HIGH_SAMP_RESET_DATA()
+{
+   RESET_DATA = 0;
+   COLLECT_RESET_DATA();
+   if(RESET_bffr[0] == 0x8e)
+   {
+      fprintf(PC,"GET RESET\r\n");
+      for(int num = 0; num < 5; num++)                                           //timedata
+      {
+         HKDATA[num + 2] = reset_bffr[num + 1];
+         fputc(HKDATA[num + 2],PC);
+      }
+   
+      for(num = 0; num < 5; num++)                                               //reset sensor data
+      {
+         HKDATA[num + 116] = reset_bffr[num + 6];                                //HKDATA[116] = reset[6]
+         fputc(HKDATA[num + 116],PC);
+      }
+   }else{
+      fprintf(PC,"NO RESET\r\n");
+   }
+   //Delete_Reset();
+}
+
+
+void MAKE_HIGH_SAMP_ADCS_FORMAT()
+{
+   GET_ADCS_SENSOR_DATA();
+//!   for(int num = 53; num < 113; num++)                                           //12byte+48byte = 60 byte
+//!   {
+//!      HKDATA[num] = ADCS_SENSOR_DATA[num - 52];                                  //ADCS[1] to ADCS[60]
+//!   }
+   
+   for(int num = 53; num < 64; num++)                                           //12byte(MAG6,GYRO6)
+   {
+      HKDATA[num] = ADCS_SENSOR_DATA[num - 52];                                  //ADCS[1] to ADCS[12]
+   }
+   
+   for(num = 65; num < 113; num++)                                           //48byte(GPS) = 60
+   {
+      HKDATA[num] = 0;                                                           //ADCS[13] to ADCS[60]
+      ADCS_SENSOR_DATA[num] = 0;
+   }
+   
+
+   return;
+}
+
+
+void SAVE_HIGH_SAMP_DATA_TO_EACH_MEMORY()
+{
+   output_low(PIN_C4);
+   CHECK_50_and_CW_RESPOND();
+   for(int i = 0; i < HIGH_SAMP_HK_size; i++)
+   {
+      WRITE_DATA_BYTE_SCF(HIGH_SAMP_HK_ADDRESS + i,HKDATA[i]);
+   }
+   output_high(PIN_C4); 
+   
+   CHECK_50_and_CW_RESPOND();
+   for(i = 0; i < HIGH_SAMP_HK_size; i++)
+   {
+      WRITE_DATA_BYTE_OF(HIGH_SAMP_HK_ADDRESS + i,HKDATA[i]);
+   }
+   
+   CHECK_50_and_CW_RESPOND();
+   output_low(PIN_A5);
+   for(i = 0; i < HIGH_SAMP_HK_size; i++)
+   {
+      WRITE_DATA_BYTE_SMF(HIGH_SAMP_HK_ADDRESS + i,HKDATA[i]);
+   }  
+   
+   CHECK_50_and_CW_RESPOND();
+   HIGH_SAMP_HK_ADDRESS = HIGH_SAMP_HK_ADDRESS + HIGH_SAMP_HK_size;              //prepare for next storing address
+   
+   return;
+}
+
+
+void HIGH_SAMP_FAB_OPERATION()
+{
+   Turn_ON_ADCS();
+   CHECK_50_and_CW_RESPOND();
+   HIGH_SAMP_FAB_MEASURING_FLAG++;                                              //count until 90(it means 10 min)
+   //disable_interrupts(INT_rda2);
+   if(HIGH_SAMP_FAB_MEASURING_FLAG > 17)                                        //HIGH_SAMP_FAB_MEASUERING_FLAG=18 --> 18*5 = 90 (sec)
+      {
+         
+         CHECK_50_and_CW_RESPOND();
+         
+         fprintf(PC,"\r\n\90sec\r\n");
+         Delete_in_HK();                                                         //delet HK array
+         VERIFY_FABDATA(10000,10);                                               //envia comando al FAB y Carga el array in_HK[] con los datos del FAB
+         GET_RESET_DATA();                                                       //funcion que carga el array HKDATA con los datos del Reset PIC
+         MAKE_ADCS_HKDATA();                                                     //carga en el array HKDATA[] los datos del ADCS en las posiciones 53 al 106
+         SET_IDENTIFIER();
+         MAKE_CW_FORMAT();
+         output_low(PIN_C4);
+         output_low(PIN_A5);
+         
+         SEND_HKDATA_to_SCF(FAB_HK_ADDRESS);                                     //save HK in COM flash memory
+         SEND_HKDATA_to_SMF(FAB_HK_ADDRESS);                                     //save HK in Mission flash memory
+         SEND_HKDATA_to_OF(FAB_HK_ADDRESS);                                      //save HK in OBC flash memory
+         SEND_CWFORMAT_TO_SCF(FAB_CW_ADDRESS);
+         SEND_CWFORMAT_TO_SMF(FAB_CW_ADDRESS);
+         SEND_CWFORMAT_TO_OF(FAB_CW_ADDRESS);
+         
+         CHECK_50_and_CW_RESPOND();
+         FAB_HK_ADDRESS = FAB_HK_ADDRESS + HK_size;                              //prepare for next storing address
+         FAB_CW_ADDRESS = FAB_CW_ADDRESS + CW_size;                              //prepare for next storing address
+         
+         SAVE_HIGH_SAMP_DATA_TO_EACH_MEMORY();
+         
+         CHECK_50_and_CW_RESPOND();
+         
+         fprintf(PC,"\r\nCOUNT:%d\r\n",HIGH_SAMP_FAB_MEASURING_FLAG);
+         HIGH_SAMP_FAB_MEASURING_FLAG = 0;
+         
+      }else{
+         Delete_in_HK();                                                         //delet HK array
+         GET_RESET_DATA();                                                       //funcion que carga el array HKDATA con los datos del Reset PIC
+         VERIFY_HIGH_SAMP_FABDATA(10000);                                        //get FAB data   
+         GET_HIGH_SAMP_RESET_DATA();                                             //get reset data
+         MAKE_HIGH_SAMP_ADCS_FORMAT();                                           //get ADCS data
+         SET_IDENTIFIER();
+         //MAKE_CW_FORMAT();
+              
+         fprintf(PC,"\r\n");
+         for(int num = 0; num < 65; num++)                                       //array[0] to [64](until gyro data)
+         {
+            fprintf(PC,"%x,",HKDATA[num]);
+         }
+         CHECK_50_and_CW_RESPOND();
+         for(num = 65; num < 113; num++)
+         {
+          //fputc(HKDATA[num],PC);
+            fprintf(PC,"%x,",HKDATA[num]);
+         }
+         CHECK_50_and_CW_RESPOND();
+         for(num = 113; num < HK_Size; num++)
+         {
+            fprintf(PC,",%x",HKDATA[num]);
+         } 
+         CHECK_50_and_CW_RESPOND();
+         
+         fprintf(PC,"\r\nCOUNT:%d\r\n",HIGH_SAMP_FAB_MEASURING_FLAG);
+         CHECK_FAB_RESPONSE = 0;
+         SAVE_HIGH_SAMP_DATA_TO_EACH_MEMORY();
+      }    
+      //Delete_in_HK();
+
+   FAB_DATA = 0;
+   output_high(PIN_C4);
+
+   return;
+}
+
+
+void HIGHSAMP_SENSOR_COLLECTION(int16 times)
+{
+   Turn_ON_ADCS();                                                             //ADCS GPS ON   
+   LOOP_HIGH_SAMP_HK_ADDRESS();                                                  //loop in memory to save data, keep first 3 sectors forever
+   int32 num = 0;
+
+   while(num < times)
+   {
+      CHECK_50_and_CW_RESPOND();                                                 //check cw cmd from COM PIC
+      if(FAB_FLAG > 4)
+      {
+         FAB_FLAG = 0;
+         HIGH_SAMP_FAB_OPERATION();                                              //collect FAB, RESET and ADCS data
+         
+         num++;
+         if((num % 20) == 0)                                                     //once in the 20 times(every 100sec save the address to the flash)
+         {
+            STORE_ADRESS_DATA_TO_FLASH();                                        //for store the flag
+         } 
+      }
+
+      BC_ON_30min();                                                             //check if first attempt and 30 min(1800sec) passed
+      if((CMD_FROM_PC[0] == 0xAB)||(in_bffr_main[4] == 0xAB))                    //forced termination function
+      {
+         Delete_Buffer();
+         break;
+      }
+      PC_DATA = 0;
+      RESET_SATELLITE();                                                         //check reset command from RESET PIC
+   }
+                                                                                  //ADCS GPS OFF   
+   fprintf(PC,"HSSC DONE\r\n");
+   return;
+}
+
 
 //--------Mission Boss PIC Data Collection-----------------------------------//
 
