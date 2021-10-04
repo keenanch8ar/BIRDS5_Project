@@ -304,7 +304,7 @@ void MAIN_MB_CMD()
       break;
       
       case 0x19:
-         unsigned int16 duration = (unsigned int16)command[2]*12;                      //CMD2 is operation time(min), maxima cantidad de lecturas en 2 horas = 1440
+         unsigned int16 duration = (unsigned int16)command[2]*12;                //CMD2 is operation time(min), maximum number of readings in 2 hours = 1440
          if(duration > 1440){duration = 1440;}                                   // 12 readings in 1 min, every 5 seconds
          HIGHSAMP_SENSOR_COLLECTION(duration);
       break;
@@ -314,7 +314,7 @@ void MAIN_MB_CMD()
 
 //--------BC Function--------------------------------------------------------//
 
-void BC_SETUP()  //Analog read configuration (AN9)
+void BC_SETUP()                                                                  //Analog read configuration (AN9)
 {
    ANCON2= 0x01;                                                                 // PIN RC2 Analog enable
    ADCON1L = 0x00;                                                               // SAMP bit must be cleared by software to start conversion (ends sampling and starts converting)
@@ -355,23 +355,23 @@ void BC_READ_TO_PC()
 }
 
 
-void CHECK_BC_TEMP()                                                             //lee la temperatura del BC y lo guarda en MAXTEMP
+void CHECK_BC_TEMP()                                                             //reads the temperature of the BC and saves it in MAXTEMP
 {
    BC_SETUP();                                                                   //Analog read configuration (AN9)
    ADON = 1;
    SAMP = 1;
    delay_ms(10);
    
-   SAMP = 0;                                                                     // start converting
+   SAMP = 0;                                                                     //start converting
    while (!DONE){};
    delay_ms(10);
    BC_temp_data_h = ADCBUF0H;                                                    //read_adc();
    BC_temp_data_l = ADCBUF0L;
    //fprintf(PC,"%x%x\r\n",ADCBUF0H,BC_temp_data_l);
-   BC_temp = BC_temp_data_h<<8 | BC_temp_data_l;                                 //convierte en un int16
+   BC_temp = BC_temp_data_h<<8 | BC_temp_data_l;                                 //convert to an int16
    //fprintf(PC,"HEX : %x%x\r\n",BC_temp>>8,BC_temp);
 
-   temp = BC_temp;                                                               //convierte a float
+   temp = BC_temp;                                                               //convert to a float
    //temp = temp/1024*3.25*100-50;
    temp = (temp*3.3/1023);
    temp = temp*100-50;
@@ -388,12 +388,12 @@ void CHECK_BC_TEMP()                                                            
 
 void MEASURE_BC_TEMP()
 {
-   BC_SETUP();                                                                   //configuracion para lectura analogica
+   BC_SETUP();                                                                   //configuration for analog reading
    ADON = 1;
    SAMP = 1;
    delay_ms(1);
    
-   SAMP = 0;                                                                     // start converting
+   SAMP = 0;                                                                     //start converting
    while (!DONE){};
    delay_ms(1);
    BC_temp_data_h = ADCBUF0H;                                                    //read_adc();
@@ -504,14 +504,14 @@ void MAKE_BC_FLAG_4()
 
 void BC_ON_30min()
 {
-   if(currenttime > 65 && BC_ATTEMPT_FLAG == 0)                                //if first attempt and 30 min(1800sec) passed // changed to 1 min
+   if(currenttime > 65 && BC_ATTEMPT_FLAG == 0)                                //if first attempt and 30 min(1800sec) passed // changed to 1 min for testing
    {
       fprintf(PC,"sending BC command to RESET PIC\r\n");
       for(int16 num = 0; num < 200; num++)
       {
          fputc(0xBC,reset);
          delay_ms(100);
-         if(reset_bffr[0] == 0xCB)                                               //condicion para que deje de enviar al recibir el ACK
+         if(reset_bffr[0] == 0xCB)                                               //condition for it to stop sending when receiving the ACK
          {
          break;
          }
@@ -527,7 +527,7 @@ void BC_ON_30min()
          reset_bffr[0] = 0;
          RESET_DATA = 0;
          delay_ms(1000);
-         delay_ms(20000);                                                        //wait until RESET goes back to nomal loop
+         delay_ms(20000);                                                        //wait until RESET goes back to normal loop
          SAVE_SAT_LOG(0xBC,0x30,0x30);                                           //first 30 min antenna deployment
       }
    }
@@ -948,7 +948,7 @@ void CHECK_HKDATA(int8 in,int32 delaytime)                                      
    Delete_HKDATA();                                                              //delete the HKDATA [] array
    waiting(delaytime);                                                           //waiting
    CHECK_50_and_CW_RESPOND();
-   for(int num = 1; num < 11 - in; num++)                                        //[FAB] +X,-Y,-Z,+Y,-Xtemp_high,low(array[10] to [17])
+   for(int num = 1; num < 11 - in; num++)                                        //[FAB] +X,-Y,-Z,+Y,-X temp_high,low(array[10] to [17])
    {
       HKDATA[num + 5+4] = in_HK[num + 2 - in];                                   //places the data sent by the FAB in the HKDATA [] array from position 10 to 17
       /* fputc(HKDATA[num + 5+4],PC); */                                         //prints the data from position 10 to 19
