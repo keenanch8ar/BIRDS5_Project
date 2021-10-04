@@ -405,14 +405,14 @@ void MEASURE_BC_TEMP()
 
 void Turn_ON_BC()
 {
-   output_high(PIN_D5);                                                          //BC switch ON, RD5=1
+   output_high(PIN_C2);                                                          //BC switch ON, RD5=1
    return;
 }
 
 
 void Turn_OFF_BC()
 {
-   output_low(PIN_D5);                                                           //BC switch OFF, RD5=0
+   output_low(PIN_C2);                                                           //BC switch OFF, RD5=0
    return;
 }
 
@@ -1337,18 +1337,18 @@ void CHECK_HIGH_SAMP_FABDATA(int8 in)                                           
 {
    fprintf(PC,"\r\nFAB DATA OBTAINED\r\n");
    Delete_HKDATA();
-   for(int num = 1; num < 11; num++)                                             //Collect HK DATA
+   for(int8 num_fab = 1; num_fab < 11; num_fab++)                                             //Collect HK DATA
    {
-      HKDATA[num + 5+4] = in_HK[num + 2 - in];
-      fprintf(PC, "%x,", HKDATA[num]);
+      HKDATA[num_fab + 5+4] = in_HK[num_fab + 2 - in];
+      fprintf(PC, "%x,", HKDATA[num_fab]);
    }
    MEASURE_BC_TEMP();
    HKDATA[18] = BC_temp_data_h;                                                  //-X Panel Temp
    HKDATA[19] = BC_temp_data_l;                                                  //-X Panel Temp
-   for(num = 9; num < FAB_SENSOR_size - 2; num++)                                //[FAB] from CPLD temp to Kill status(array[20] to [49])
+   for(num_fab = 9; num_fab < FAB_SENSOR_size - 2; num_fab++)                                //[FAB] from CPLD temp to Kill status(array[20] to [49])
    {
-      HKDATA[num + 7+4] = in_HK[num + 2 - in];
-      fprintf(PC, "%x,", HKDATA[num + 7+4]);
+      HKDATA[num_fab + 7+4] = in_HK[num_fab + 2 - in];
+      fprintf(PC, "%x,", HKDATA[num_fab + 7+4]);
    }
    FAB_DATA = 0;
 }
@@ -1389,7 +1389,7 @@ void GET_HIGH_SAMP_RESET_DATA()
    COLLECT_RESET_DATA();
    if(RESET_bffr[0] == 0x8e)
    {
-      fprintf(PC,"GET RESET\r\n");
+      fprintf(PC,"\r\nGET RESET\r\n");
       for(int num = 0; num < 5; num++)                                           //timedata
       {
          HKDATA[num + 2] = reset_bffr[num + 1];
@@ -1474,8 +1474,8 @@ void HIGH_SAMP_FAB_OPERATION()
          CHECK_50_and_CW_RESPOND();
          
          fprintf(PC,"\r\n\90sec\r\n");
-         Delete_in_HK();                                                         //delet HK array
-         VERIFY_FABDATA(10000,10);                                               //envia comando al FAB y Carga el array in_HK[] con los datos del FAB
+         Delete_in_HK();                                                         //delete HK array
+         VERIFY_FABDATA(10000,10);                                               //send command to the FAB and load the array in_HK [] with the data from the FAB
          GET_RESET_DATA();                                                       //funcion que carga el array HKDATA con los datos del Reset PIC
          MAKE_ADCS_HKDATA();                                                     //carga en el array HKDATA[] los datos del ADCS en las posiciones 53 al 106
          SET_IDENTIFIER();
