@@ -72,7 +72,7 @@ void UART3_RXD(void)
    //collect_HK_from_FAB();
    in_HK[FAB_DATA] = fgetc(FAB);//load the array in_HK [] with the data sent by the FAB PIC
    //fprintf(PC,"Battery Voltage %x \r\n", in_HK[FAB_DATA]);
-   //fprintf(PC,"%x ",in_HK[FAB_DATA]);
+   fprintf(PC,"%x ",in_HK[FAB_DATA]);
    FAB_DATA = ((FAB_DATA + 1) % FAB_SENSOR_size);                                //when the data is obtained in position 45 FAB_DATA = 0
    
 }
@@ -147,31 +147,31 @@ void main()
    
    Antenna_Deploy(); //Attempt deploying of antenna. This is the 2nd, 3rd and 4th attempts
    
-   //FAB_TEST_OPERATION();
+   FAB_TEST_OPERATION();
 
    while(TRUE)
    {
-      BC_ON_30min(); //Attempt 1st antenna deployment after 30mins
+      BC_ON_30min();                                                             //Attempt 1st antenna deployment after 30mins
       
-//!      if(FAB_FLAG > 89)                                                          //every 90 sec, OBC gather sensor data and update CW format 
-//!      {
-//!         FAB_FLAG = 0;
-//!         fprintf(PC,"\r\n***90sec passed***\r\n");
-//!         FAB_TEST_OPERATION();
-//!         COM_DATA = 0;
-//!         STORE_ADRESS_DATA_TO_FLASH();                                           //for store the address info
-//!         fprintf(PC,"CW:");
-//!         for(int i = 0; i < 4; i++)                                              //show CW format
-//!         {
-//!            fprintf(PC,"%x,",CW_FORMAT[i]);
-//!         }
-//!         fprintf(PC,"%x\r\n",CW_FORMAT[4]);
-//!         DELETE_CMD_FROM_PC();                                                   //delete PC command
-//!         PC_DATA = 0;                                                            //reset interrupt data for safety
-//!         COM_DATA = 0;                                                           //reset interrupt data for safety
-//!         RESET_DATA = 0;                                                         //reset interrupt data for safety
-//!         fprintf(PC,"\r\n");
-//!      } 
+      if(FAB_FLAG > 89)                                                          //every 90 sec, OBC gather sensor data and update CW format 
+      {
+         FAB_FLAG = 0;
+         fprintf(PC,"\r\n***90sec passed***\r\n");
+         FAB_TEST_OPERATION();
+         COM_DATA = 0;
+         STORE_ADRESS_DATA_TO_FLASH();                                           //for store the address info
+         fprintf(PC,"CW:");
+         for(int i = 0; i < 4; i++)                                              //show CW format
+         {
+            fprintf(PC,"%x,",CW_FORMAT[i]);
+         }
+         fprintf(PC,"%x\r\n",CW_FORMAT[4]);
+         DELETE_CMD_FROM_PC();                                                   //delete PC command
+         PC_DATA = 0;                                                            //reset interrupt data for safety
+         COM_DATA = 0;                                                           //reset interrupt data for safety
+         RESET_DATA = 0;                                                         //reset interrupt data for safety
+         fprintf(PC,"\r\n");
+      } 
       
       
       if(CMD_FROM_PC[0])
