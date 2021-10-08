@@ -23,6 +23,7 @@ int8 command_time_data[5];
 int8 j;
 int i;
 int result = 1;
+int8 test[9] = {};
 
 //--------FAB HK collection--------------------------------------------------//
 #define HK_size 76                                                               //HK FORMAT ARRAY SIZE
@@ -1113,6 +1114,9 @@ void Turn_Off_ADCS()
 
 void GET_ADCS_SENSOR_DATA()                                                      //after that, method will changed (ADCS make format and just send to MAIN PIC)
 {
+   Turn_On_ADCS();
+   delay_ms(50);
+   
    CHECK_50_and_CW_RESPOND();
    
    fputc(0x42, DC);
@@ -1135,7 +1139,7 @@ void GET_ADCS_SENSOR_DATA()                                                     
    delay_ms(10);
    
    int8 counter = 0;
-   for(int32 adcs = 0; adcs < 1000000; adcs++)
+   for(int32 adcs = 0; adcs < 100000; adcs++)
    {
       if(kbhit(DC))
       {
@@ -1145,7 +1149,7 @@ void GET_ADCS_SENSOR_DATA()                                                     
             fprintf(PC,"\r\nADCS DATA OBTAINED:\r\n");
             ADCS_SENSOR_DATA[counter] = header;
             counter++;
-            for(int32 num = 0; num < 1000000; num++)
+            for(int32 num = 0; num < 100000; num++)
             {
                if(kbhit(DC))
                {
@@ -1188,9 +1192,11 @@ void MAKE_ADCS_HKDATA()                                                         
       HKDATA[num] = ADCS_SENSOR_DATA[num - 52];                                  //ADCS[1] to ADCS[12]
    }
    
-   Delete_ADCS_data();
+
    
-   Turn_Off_ADCS();
+   //Delete_ADCS_data();
+   
+   //Turn_Off_ADCS();
    
    return;
 }
@@ -1255,8 +1261,49 @@ void FAB_TEST_OPERATION()
    
    MAKE_ADCS_HKDATA();                                                           //send command to ADCS MCS and load HKDATA [] array with ADCS data
    
-   Turn_Off_ADCS();                                                              //ADCS switch OFF
-   Turn_Off_MBP();                                                               //Turn off mission boss and CPLD
+   test[0] = 0x21;
+   test[1] = 0x05;
+   test[2] = (int8)ADCS_SENSOR_DATA[1];
+   test[3] = (int8)ADCS_SENSOR_DATA[2];
+   test[4] = (int8)ADCS_SENSOR_DATA[3];
+   test[5] = (int8)ADCS_SENSOR_DATA[4];
+   test[6] = (int8)ADCS_SENSOR_DATA[5];
+   test[7] = (int8)ADCS_SENSOR_DATA[6];
+   test[8] = 0x05;
+   
+   fprintf(PC, "\r\nCommand to MB:\r\n");
+   for(int8 o = 0; o < 9; o++)
+      {
+
+         fprintf(PC,"%x ",test[o]);
+      }
+   
+   fputc(test[0], DC);
+   delay_ms(10);
+   fputc(test[1], DC);
+   delay_ms(10);
+   fputc(test[2], DC);
+   delay_ms(10);
+   fputc(test[3], DC);
+   delay_ms(10);
+   fputc(test[4], DC);
+   delay_ms(10);
+   fputc(test[5], DC);
+   delay_ms(10);
+   fputc(test[6], DC);
+   delay_ms(10);
+   fputc(test[7], DC);
+   delay_ms(10);
+   fputc(test[8], DC);
+   
+   for(int8 z = 0; z < 9; z++)
+   {
+      test[z] = 0;
+   }
+   
+   Delete_ADCS_data();
+   //Turn_Off_ADCS();                                                              //ADCS switch OFF
+   //Turn_Off_MBP();                                                               //Turn off mission boss and CPLD
    
    CHECK_50_and_CW_RESPOND();
    MAKE_CW_FORMAT();                                                             //make CW format
@@ -1372,12 +1419,16 @@ void VERIFY_HIGH_SAMP_FABDATA(int32 delaytime)
          CHECK_HIGH_SAMP_FABDATA(2);
          CHECK_FAB_RESPONSE = 1;                                                 //1 is succeeded to get response from FAB
          break;
-      }else if(in_HK[1] == 0x33){
+      }
+      else if(in_HK[1] == 0x33)
+      {
          //delay_ms(200);
          CHECK_HIGH_SAMP_FABDATA(1);
          CHECK_FAB_RESPONSE = 1;                                                 //1 is succeeded to get response from FAB
          break;
-      }else if(in_HK[2] == 0x33){
+      }
+      else if(in_HK[2] == 0x33)
+      {
          //delay_ms(200);
          CHECK_HIGH_SAMP_FABDATA(0);
          CHECK_FAB_RESPONSE = 1;                                                 //1 is succeeded to get response from FAB
@@ -1409,7 +1460,9 @@ void GET_HIGH_SAMP_RESET_DATA()
          //fputc(HKDATA[num + 68],PC);
          fprintf(PC,"%x ",HKDATA[num + 68]);
       }
-   }else{
+   }
+   else
+   {
       fprintf(PC,"\r\nNO RESET DATA\r\n");
    }
    //Delete_Reset();
@@ -1553,7 +1606,7 @@ void HIGH_SAMP_FAB_OPERATION()
 
 void HIGHSAMP_SENSOR_COLLECTION(int16 times)
 {
-   Turn_ON_ADCS();                                                             //ADCS GPS ON   
+   Turn_ON_ADCS();                                                               //ADCS GPS ON   
    LOOP_HIGH_SAMP_HK_ADDRESS();                                                  //loop in memory to save data, keep first 3 sectors forever
    int32 num = 0;
 
@@ -2333,6 +2386,36 @@ void MULT_SPEC_Test()
    }
 }
 
+
+void OITA_Test()
+{
+   Turn_On_MBP();
+   GET_ADCS_SENSOR_DATA();
+   
+   command[0] = 0x82;
+   command[1] = ADCS_SENSOR_DATA[1];
+   command[2] = ADCS_SENSOR_DATA[2];
+   command[3] = ADCS_SENSOR_DATA[3];
+   command[4] = ADCS_SENSOR_DATA[4];
+   command[5] = ADCS_SENSOR_DATA[5];
+   command[6] = ADCS_SENSOR_DATA[6];
+   command[7] = ADCS_SENSOR_DATA[7];
+   command[8] = ADCS_SENSOR_DATA[8];
+   
+   for(int8 ll = 0; ll < 9; ll++)
+      {
+         
+         fprintf(PC,"%x ",command[ll]);
+      }
+   
+   Forward_CMD_MBP();
+   
+   Delete_ADCS_data();
+   
+  
+   
+   
+}
 
 void IMGCLS_Test()
 {

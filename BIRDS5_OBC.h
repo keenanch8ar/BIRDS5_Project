@@ -101,6 +101,7 @@ void COLLECT_RESET_DATA();
 /////////////MBP Data Collection MISSION/////////////
 void Turn_On_MBP();
 void Turn_Off_MBP();
+void Forward_CMD_MBP();
 
 /////////////ADCS MISSION/////////////
 void GET_ADCS_SENSOR_DATA();
@@ -120,6 +121,7 @@ void MULT_SPEC_Test();
 void GET_TIME();
 void IMGCLS_test();
 void PINO_Test_for_PINO();
+void OITA_Test();
 
 
 #include <mainpic_function.h>
