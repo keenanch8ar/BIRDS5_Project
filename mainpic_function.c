@@ -15,6 +15,7 @@ BYTE Down[81];
 int8 MULTSPEC1_DATA[81] = {};
 int8 MULTSPEC2_DATA[81] = {};
 int8 IMGCLS_DATA[81] = {};
+int8 DLP_DATA[81] = {};
 BYTE SFWD_DATA[81] = {0x00};
 BYTE NEW_PINO_DATA[81] = {};
 BYTE dummy[1];
@@ -1084,6 +1085,7 @@ void Turn_On_ADCS()
 
 }
 
+
 void Delete_ADCS_data()
 {
 
@@ -1686,6 +1688,118 @@ void DEL_MBP_DATA()
    return;
 }
 
+
+void DLP_test()
+{
+   if(CMD_FROM_COMM[0] && CMD_FROM_COMM[4] != 0xAB)
+   {
+
+      command[0] = CMD_FROM_COMM[4];
+      command[1] = CMD_FROM_COMM[5];
+      command[2] = CMD_FROM_COMM[6];
+      command[3] = CMD_FROM_COMM[7];
+      command[4] = CMD_FROM_COMM[8];
+      command[5] = CMD_FROM_COMM[9];
+      command[6] = CMD_FROM_COMM[10];
+      command[7] = CMD_FROM_COMM[11];
+      command[8] = 0x00;
+   }
+   
+   if(CMD_FROM_PC[0])
+   {
+      for(int m = 0; m < 9; m++)
+         {
+            command[m] = CMD_FROM_PC[m];
+         }
+   }
+   switch (command[0])
+   {
+      case 0x7E:
+         
+         output_high (PIN_A5); //SFM2 mission side access
+         fprintf (PC, "Start 0x7E - Turn ON DLP\r\n") ;
+         Forward_CMD_MBP();
+         fprintf (PC, "Finish 0x7E\r\n");
+         
+      break;
+      
+      case 0x70: //Turn off DLP RPi DIO for MOSFET on RAB to power RPI from 5V line
+      
+         output_high (PIN_A5); //SFM2 mission side access
+         fprintf (PC, "Start 0x70 - Turn off IMGCLS\r\n") ;
+         Forward_CMD_MBP();
+         fprintf (PC, "Finish 0x70\r\n"); 
+         
+      break;
+      
+      case 0x71: //Real time uplink command
+      
+         output_high (PIN_A5); //SFM2 mission side access
+         fprintf (PC, "Start 0x71 - Real time uplink DLP\r\n") ;
+         Forward_CMD_MBP();
+         fprintf (PC, "Finish 0x71\r\n"); 
+      break;
+      
+      case 0x72:
+         output_high (PIN_A5);
+         fprintf (PC, "Start 0x82 - Real time downlink DLP\r\n") ;
+         Forward_CMD_MBP();
+         int8 counter_dlp = 0;
+         for(int32 num_dlp = 0; num_dlp < 1500000; num_dlp++)
+         {
+            if(kbhit(DC))
+            {
+               DLP_DATA[counter_dlp] = fgetc(DC);
+               counter_dlp++;
+               if(counter_dlp == 81)
+               {
+                  break;
+               }
+            }
+         }
+         
+         fprintf(PC,"Data Recieved: ");
+         for(int8 c = 0; c < 81; c++)
+         {
+            fprintf(PC,"%x, ",DLP_DATA[c]);
+         }
+         fprintf(PC,"\r\n");
+         fprintf (PC, "Finish 0x72\r\n");
+         
+         for(c = 0; c < 81; c++)
+         {
+            DLP_DATA[c] = 0;
+         }
+      break;
+      
+      
+      case 0x73://Erase the data on SFM2 at the given address. Specify how much data to erase eg. 16 00 01 02 03 FF will erase the entire 64kB sector at address 00010203
+      
+         output_high (PIN_A5);
+         fprintf (PC, "Start 0x73\r\n") ;
+         Forward_CMD_MBP();
+         fprintf (PC, "Finish 0x73\r\n"); 
+         
+      break;
+      
+      case 0x74:
+         
+         fprintf (PC, "Start 0x74 - DLP Deployment\r\n") ;     
+         output_high (PIN_A5);
+         Forward_CMD_MBP();  
+         fprintf (PC, "Finish 0x74\r\n");
+         
+      break;
+      
+     
+   }
+   
+   for(int m = 0; m < 9; m++)
+   {
+      command[m] = 0;
+   }
+   
+}
 
 void Forward_CMD_MBP()
 {
@@ -2445,6 +2559,7 @@ void OITA_Test()
    
    
 }
+
 
 void IMGCLS_Test()
 {

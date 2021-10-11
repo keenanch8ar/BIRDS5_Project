@@ -122,6 +122,7 @@ void GET_TIME();
 void IMGCLS_test();
 void PINO_Test_for_PINO();
 void OITA_Test();
+void DLP_Test();
 
 
 #include <mainpic_function.h>

@@ -319,6 +319,12 @@ void main()
                SFWD_test();
             }
             
+            if(command_ID_from_COMM == 0x70)
+            {
+               fprintf(PC,"DLP Command\r\n");
+               DLP_test();
+            }
+            
             if(command_ID_from_COMM == 0x80)
             {
                fprintf(PC,"IMG-CLS Command\r\n");
