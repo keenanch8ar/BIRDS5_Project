@@ -82,6 +82,15 @@ void DELETE_CMD_FROM_COMM()
    return;
 }
 
+void DELETE_CMD_ARRAY_DATA()
+{
+   for(int num = 0; num < 9; num++)
+   {
+      command[num] = 0;
+   }
+   return;
+}
+
 
 void Delete_Buffer()                                                             //delete com command buffer
 {
@@ -1261,14 +1270,24 @@ void FAB_TEST_OPERATION()
    
    MAKE_ADCS_HKDATA();                                                           //send command to ADCS MCS and load HKDATA [] array with ADCS data
    
+//!   test[0] = 0x21;
+//!   test[1] = 0x05;
+//!   test[2] = (int8)ADCS_SENSOR_DATA[1];
+//!   test[3] = (int8)ADCS_SENSOR_DATA[2];
+//!   test[4] = (int8)ADCS_SENSOR_DATA[3];
+//!   test[5] = (int8)ADCS_SENSOR_DATA[4];
+//!   test[6] = (int8)ADCS_SENSOR_DATA[5];
+//!   test[7] = (int8)ADCS_SENSOR_DATA[6];
+//!   test[8] = 0x05;
+   
    test[0] = 0x21;
    test[1] = 0x05;
-   test[2] = (int8)ADCS_SENSOR_DATA[1];
-   test[3] = (int8)ADCS_SENSOR_DATA[2];
-   test[4] = (int8)ADCS_SENSOR_DATA[3];
-   test[5] = (int8)ADCS_SENSOR_DATA[4];
-   test[6] = (int8)ADCS_SENSOR_DATA[5];
-   test[7] = (int8)ADCS_SENSOR_DATA[6];
+   test[2] = 0x06;
+   test[3] = 0x07;
+   test[4] = 0x08;
+   test[5] = 0x09;
+   test[6] = 0x09;
+   test[7] = 0x09;
    test[8] = 0x05;
    
    fprintf(PC, "\r\nCommand to MB:\r\n");
@@ -1295,6 +1314,7 @@ void FAB_TEST_OPERATION()
    fputc(test[7], DC);
    delay_ms(10);
    fputc(test[8], DC);
+   delay_ms(10);
    
    for(int8 z = 0; z < 9; z++)
    {
@@ -1975,16 +1995,16 @@ void MULT_SPEC_Test()
          fprintf (PC, "Start 0x20 - Turn OFF MULTSPEC CAM1 (MB1)\r\n") ;
          output_low(pin_G3); //Turn off DIO for MULTSPEC CAM1
          //Forward_CMD_MBP();
-         for(int16 num_reset = 0; num_reset < 200; num_reset++)
-         {
-            fputc(0xCD,reset);
-            delay_ms(100);
-            if(reset_bffr[0] == 0xCD)
-               {
-                  fprintf (PC, "RESET Turned off 5V\r\n");
-                  break;
-               }
-         }
+//!         for(int16 num_reset = 0; num_reset < 200; num_reset++)
+//!         {
+//!            fputc(0xCD,reset);
+//!            delay_ms(100);
+//!            if(reset_bffr[0] == 0xCD)
+//!               {
+//!                  fprintf (PC, "RESET Turned off 5V\r\n");
+//!                  break;
+//!               }
+//!         }
          //fputc(0xCD, reset);
          
          fprintf (PC, "Finish 0x20\r\n");
@@ -1994,7 +2014,15 @@ void MULT_SPEC_Test()
       case 0x21: //Real time uplink command
          output_high (PIN_A5); //SFM2 mission side access
          fprintf (PC, "Start 0x21 - Real time uplink MULTSPEC CAM1\r\n") ;
+//!         fprintf(PC, "\r\nCommand Data:\r\n");
+//!         
+//!         for(int yz = 0; yz < 9; yz++)
+//!         {
+//!            fprintf(PC, "%x ",command[yz]);
+//!         
+//!         }
          Forward_CMD_MBP();
+         DELETE_CMD_ARRAY_DATA();
          fprintf (PC, "Finish 0x21\r\n");
 
       break;
@@ -2186,16 +2214,17 @@ void MULT_SPEC_Test()
          output_high(pin_G3); //Turn on DIO for MULTSPEC CAM1
          //Forward_CMD_MBP();
          
-         for(num_reset = 0; num_reset < 200; num_reset++)
-         {
-            fputc(0xEC,reset);
-            delay_ms(100);
-            if(reset_bffr[0] == 0xEC)
-               {
-                  fprintf (PC, "RESET Turned on 5V\r\n");
-                  break;
-               }
-         }
+//!         for(num_reset = 0; num_reset < 200; num_reset++)
+//!         {
+//!            fputc(0xEC,reset);
+//!            delay_ms(100);
+//!            if(reset_bffr[0] == 0xEC)
+//!               {
+//!                  fprintf (PC, "RESET Turned on 5V\r\n");
+//!                  break;
+//!               }
+//!         }
+         DELETE_CMD_ARRAY_DATA();
          fprintf (PC, "Finish 0x2E\r\n"); 
       
       break;
@@ -2209,17 +2238,17 @@ void MULT_SPEC_Test()
          //fputc(0xCD, reset);
          output_low(pin_F6); //Turn off DIO for MULTSPEC CAM2
          //Forward_CMD_MBP();
-         
-         for(num_reset = 0; num_reset < 200; num_reset++)
-         {
-            fputc(0xCD,reset);
-            delay_ms(100);
-            if(reset_bffr[0] == 0xCD)
-               {
-                  fprintf (PC, "RESET Turned off 5V\r\n");
-                  break;
-               }
-         }
+//!         
+//!         for(num_reset = 0; num_reset < 200; num_reset++)
+//!         {
+//!            fputc(0xCD,reset);
+//!            delay_ms(100);
+//!            if(reset_bffr[0] == 0xCD)
+//!               {
+//!                  fprintf (PC, "RESET Turned off 5V\r\n");
+//!                  break;
+//!               }
+//!         }
          fprintf (PC, "Finish 0x30\r\n");
          
          
@@ -2359,16 +2388,16 @@ void MULT_SPEC_Test()
          output_high(pin_F6); //Turn on DIO for MULTSPEC CAM2
          //fputc(0xEC, reset);
          
-         for(num_reset = 0; num_reset < 200; num_reset++)
-         {
-            fputc(0xEC,reset);
-            delay_ms(100);
-            if(reset_bffr[0] == 0xEC)
-               {
-                  fprintf (PC, "RESET Turned on 5V\r\n");
-                  break;
-               }
-         }
+//!         for(num_reset = 0; num_reset < 200; num_reset++)
+//!         {
+//!            fputc(0xEC,reset);
+//!            delay_ms(100);
+//!            if(reset_bffr[0] == 0xEC)
+//!               {
+//!                  fprintf (PC, "RESET Turned on 5V\r\n");
+//!                  break;
+//!               }
+//!         }
          
          fprintf (PC, "Finish 0x3E\r\n");
          
@@ -2390,29 +2419,29 @@ void MULT_SPEC_Test()
 void OITA_Test()
 {
    Turn_On_MBP();
-   GET_ADCS_SENSOR_DATA();
+   MAKE_ADCS_HKDATA();
    
-   command[0] = 0x82;
-   command[1] = ADCS_SENSOR_DATA[1];
-   command[2] = ADCS_SENSOR_DATA[2];
-   command[3] = ADCS_SENSOR_DATA[3];
-   command[4] = ADCS_SENSOR_DATA[4];
-   command[5] = ADCS_SENSOR_DATA[5];
-   command[6] = ADCS_SENSOR_DATA[6];
-   command[7] = ADCS_SENSOR_DATA[7];
-   command[8] = ADCS_SENSOR_DATA[8];
+//!   command[0] = 0x21;
+//!   command[1] = ADCS_SENSOR_DATA[1];
+//!   command[2] = ADCS_SENSOR_DATA[2];
+//!   command[3] = ADCS_SENSOR_DATA[3];
+//!   command[4] = ADCS_SENSOR_DATA[4];
+//!   command[5] = ADCS_SENSOR_DATA[5];
+//!   command[6] = ADCS_SENSOR_DATA[6];
+//!   command[7] = ADCS_SENSOR_DATA[7];
+//!   command[8] = 0x05;
+//!   
+//!   for(int8 ll = 0; ll < 9; ll++)
+//!      {
+//!         
+//!         fprintf(PC,"%x ",command[ll]);
+//!      }
    
-   for(int8 ll = 0; ll < 9; ll++)
-      {
-         
-         fprintf(PC,"%x ",command[ll]);
-      }
+   //Forward_CMD_MBP();
    
-   Forward_CMD_MBP();
+   //Delete_ADCS_data();
    
-   Delete_ADCS_data();
-   
-  
+   //DELETE_CMD_ARRAY_DATA();
    
    
 }
@@ -2469,6 +2498,7 @@ void IMGCLS_Test()
          output_high (PIN_A5); //SFM2 mission side access
          fprintf (PC, "Start 0x81 - Real time uplink IMGCLS\r\n") ;
          Forward_CMD_MBP();
+         DELETE_CMD_ARRAY_DATA();
          fprintf (PC, "Finish 0x81\r\n"); 
       break;
       
