@@ -145,14 +145,14 @@ void main()
 
    settings();                                                                   //Prepare all interrupts, timers, flag information, BC setup etc.
    
-   Antenna_Deploy(); //Attempt deploying of antenna. This is the 2nd, 3rd and 4th attempts
+   //Antenna_Deploy(); //Attempt deploying of antenna. This is the 2nd, 3rd and 4th attempts
    
    //FAB_TEST_OPERATION();
-   Turn_On_ADCS();
+   //Turn_On_ADCS();
 
    while(TRUE)
    {
-      BC_ON_30min();                                                             //Attempt 1st antenna deployment after 30mins
+      //BC_ON_30min();                                                             //Attempt 1st antenna deployment after 30mins
       
 //!      if(FAB_FLAG > 89)                                                          //every 90 sec, OBC gather sensor data and update CW format 
 //!      {
@@ -174,7 +174,7 @@ void main()
 //!         fprintf(PC,"\r\n");
 //!      } 
 
-      if(FAB_FLAG > 3)                                                          //every 90 sec, OBC gather sensor data and update CW format 
+      /*if(FAB_FLAG > 3)                                                          //every 90 sec, OBC gather sensor data and update CW format 
       {
          
          FAB_FLAG = 0;
@@ -220,7 +220,7 @@ void main()
 //!         PC_DATA = 0;                                                            //clear PC correct receiving data flag
 //!         RESET_DATA = 0;                                                         //reset interrupt data for safety
 //!         fprintf(PC,"\r\n");
-      } 
+      }*/
       
       
       if(CMD_FROM_PC[0])
@@ -328,6 +328,7 @@ void main()
             if(command_ID_from_COMM == 0x80)
             {
                fprintf(PC,"IMG-CLS Command\r\n");
+               fputc(0xBC,reset);
                IMGCLS_test();
             }
             

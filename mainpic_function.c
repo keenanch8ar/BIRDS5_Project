@@ -201,6 +201,7 @@ void MAIN_MB_CMD()
       case 0x04:
          fprintf(PC, "\r\nBPB POWER ON\r\n");
          Turn_ON_MBP();
+         
       break;
          
       
