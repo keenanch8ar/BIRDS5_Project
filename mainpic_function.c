@@ -25,6 +25,7 @@ int8 j;
 int i;
 int result = 1;
 int8 test[9] = {};
+int8 OitaTestArray[9] = {};
 
 //--------FAB HK collection--------------------------------------------------//
 #define HK_size 76                                                               //HK FORMAT ARRAY SIZE
@@ -1158,7 +1159,7 @@ void GET_ADCS_SENSOR_DATA()                                                     
          int8 header = fgetc(DC);
          if (header == 0x55)
          {
-            fprintf(PC,"\r\nADCS DATA OBTAINED:\r\n");
+            //fprintf(PC,"\r\nADCS DATA OBTAINED:\r\n");
             ADCS_SENSOR_DATA[counter] = header;
             counter++;
             for(int32 num = 0; num < 100000; num++)

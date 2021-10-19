@@ -174,22 +174,33 @@ void main()
 //!         fprintf(PC,"\r\n");
 //!      } 
 
-      /*if(FAB_FLAG > 3)                                                          //every 90 sec, OBC gather sensor data and update CW format 
+      if(FAB_FLAG > 3)                                                          //every 90 sec, OBC gather sensor data and update CW format 
       {
          
          FAB_FLAG = 0;
-         fprintf(PC,"\r\n***3sec passed***\r\n");
+         //fprintf(PC,"\r\n***3sec passed***\r\n");
          OITA_Test();
          delay_ms(500);
-         CMD_FROM_PC[0] = 0x81;
-         CMD_FROM_PC[1] = 0x22;
-         CMD_FROM_PC[2] = ADCS_SENSOR_DATA[1];
-         CMD_FROM_PC[3] = ADCS_SENSOR_DATA[2];
-         CMD_FROM_PC[4] = ADCS_SENSOR_DATA[3];
-         CMD_FROM_PC[5] = ADCS_SENSOR_DATA[4];
-         CMD_FROM_PC[6] = ADCS_SENSOR_DATA[5];
-         CMD_FROM_PC[7] = ADCS_SENSOR_DATA[6];
-         CMD_FROM_PC[8] = 0x29;
+         
+//!         CMD_FROM_PC[0] = 0x81;
+//!         CMD_FROM_PC[1] = 0x22;
+//!         CMD_FROM_PC[2] = ADCS_SENSOR_DATA[1];
+//!         CMD_FROM_PC[3] = ADCS_SENSOR_DATA[2];
+//!         CMD_FROM_PC[4] = ADCS_SENSOR_DATA[3];
+//!         CMD_FROM_PC[5] = ADCS_SENSOR_DATA[4];
+//!         CMD_FROM_PC[6] = ADCS_SENSOR_DATA[5];
+//!         CMD_FROM_PC[7] = ADCS_SENSOR_DATA[6];
+//!         CMD_FROM_PC[8] = 0x29;
+         
+//!         OitaTestArray[0] = 0x55;
+//!         OitaTestArray[1] = 0xAA;
+//!         OitaTestArray[2] = ADCS_SENSOR_DATA[1];
+//!         OitaTestArray[3] = ADCS_SENSOR_DATA[2];
+//!         OitaTestArray[4] = ADCS_SENSOR_DATA[3];
+//!         OitaTestArray[5] = ADCS_SENSOR_DATA[4];
+//!         OitaTestArray[6] = ADCS_SENSOR_DATA[5];
+//!         OitaTestArray[7] = ADCS_SENSOR_DATA[6];
+//!         OitaTestArray[8] = 0xBB;
 
 //!         CMD_FROM_PC[0] = 0x21;
 //!         CMD_FROM_PC[1] = 0x22;
@@ -204,9 +215,9 @@ void main()
 //!         for(int8 ll = 0; ll < 9; ll++)
 //!         {
 //!            
-//!            fprintf(PC,"%x ",CMD_FROM_PC[ll]);
+//!            fprintf(PC,"%x ",OitaTestArray[ll]);
 //!         }
-//!         fprintf(PC,"\r\n");
+         //fprintf(PC,"\r\n");
 //!         
 //!         MULT_SPEC_Test();
 //!
@@ -220,7 +231,7 @@ void main()
 //!         PC_DATA = 0;                                                            //clear PC correct receiving data flag
 //!         RESET_DATA = 0;                                                         //reset interrupt data for safety
 //!         fprintf(PC,"\r\n");
-      }*/
+      }
       
       
       if(CMD_FROM_PC[0])
