@@ -25,7 +25,10 @@ int8 j;
 int i;
 int result = 1;
 int8 test[9] = {};
-int8 OitaTestArray[9] = {};
+int OitaTestArray[14] = {};
+float df;
+float dg;
+float dk;
 
 //--------FAB HK collection--------------------------------------------------//
 #define HK_size 76                                                               //HK FORMAT ARRAY SIZE
@@ -1187,6 +1190,83 @@ void GET_ADCS_SENSOR_DATA()                                                     
    }
    fprintf(PC,"\r\n");
    
+   OitaTestArray[0] = ADCS_SENSOR_DATA[0];
+   OitaTestArray[1] = ADCS_SENSOR_DATA[1];
+   OitaTestArray[2] = ADCS_SENSOR_DATA[2];
+   OitaTestArray[3] = ADCS_SENSOR_DATA[3];
+   OitaTestArray[4] = ADCS_SENSOR_DATA[4];
+   OitaTestArray[5] = ADCS_SENSOR_DATA[5];
+   OitaTestArray[6] = ADCS_SENSOR_DATA[6];
+   OitaTestArray[7] = ADCS_SENSOR_DATA[7];
+   OitaTestArray[8] = ADCS_SENSOR_DATA[8];
+   OitaTestArray[9] = ADCS_SENSOR_DATA[9];
+   OitaTestArray[10] = ADCS_SENSOR_DATA[10];
+   OitaTestArray[11] = ADCS_SENSOR_DATA[11];
+   OitaTestArray[12] = ADCS_SENSOR_DATA[12];
+   OitaTestArray[13] = ADCS_SENSOR_DATA[13];
+
+   
+   for(int lm = 0; lm < 14; lm++)
+   {
+      fprintf(PC, "%d ", OitaTestArray[lm]);
+   }
+   fprintf(PC,"\r\n");
+   
+   df = make16(ADCS_SENSOR_DATA[1], ADCS_SENSOR_DATA[2]);
+   dg = make16(ADCS_SENSOR_DATA[3], ADCS_SENSOR_DATA[4]);
+   dk = make16(ADCS_SENSOR_DATA[5], ADCS_SENSOR_DATA[6]);
+      
+      
+//!   fprintf(PC, "%03f ", df);
+//!   fprintf(PC, "%03f ", dg);
+//!   fprintf(PC, "%03f ", dk);
+//!   fprintf(PC,"\r\n");
+//!   
+//!   fprintf(PC, "%5.3f ", df);
+//!   fprintf(PC, "%5.3f ", dg);
+//!   fprintf(PC, "%5.3f ", dk);
+//!   fprintf(PC,"\r\n");
+//!   
+//!   df = df/100;
+//!   dg = dg/100;
+//!   dk = dk/100;
+//!   
+//!   fprintf(PC, "%5.3f ", df);
+//!   fprintf(PC, "%5.3f ", dg);
+//!   fprintf(PC, "%5.3f ", dk);
+//!   fprintf(PC,"\r\n");
+//!
+   if((df - 32768.00) > 0)
+   {
+      fprintf(PC, "%f ", (df-32768)*-1);
+   }
+   else
+   {
+      fprintf(PC, "%f ", df);
+   }
+      
+   if((dg - 32768.00) > 0)
+   {
+      fprintf(PC, "%f ", (dg-32768)*-1);
+   }
+   else
+   {
+      fprintf(PC, "%f ", dg);
+   }
+      
+   if((dk - 32768.00) > 0)
+   {
+      fprintf(PC, "%f ", (dk-32768)*-1);
+   }
+   else
+   {
+      fprintf(PC, "%f ", dk);
+   }
+      
+//!   fprintf(PC, "%f ", dg);
+//!   fprintf(PC, "%f ", dk);
+   fprintf(PC,"\r\n");
+  
    return;
 }
 
