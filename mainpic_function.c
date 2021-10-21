@@ -1184,11 +1184,11 @@ void GET_ADCS_SENSOR_DATA()                                                     
        
    }
    
-   for(int l = 0; l < 14; l++)
-   {
-      fprintf(PC,"%x ",ADCS_SENSOR_DATA[l]);
-   }
-   fprintf(PC,"\r\n");
+//!   for(int l = 0; l < 14; l++)
+//!   {
+//!      fprintf(PC,"%x ",ADCS_SENSOR_DATA[l]);
+//!   }
+//!   fprintf(PC,"\r\n");
    
    OitaTestArray[0] = ADCS_SENSOR_DATA[0];
    OitaTestArray[1] = ADCS_SENSOR_DATA[1];
@@ -1206,11 +1206,11 @@ void GET_ADCS_SENSOR_DATA()                                                     
    OitaTestArray[13] = ADCS_SENSOR_DATA[13];
 
    
-   for(int lm = 0; lm < 14; lm++)
-   {
-      fprintf(PC, "%d ", OitaTestArray[lm]);
-   }
-   fprintf(PC,"\r\n");
+//!   for(int lm = 0; lm < 14; lm++)
+//!   {
+//!      fprintf(PC, "%d ", OitaTestArray[lm]);
+//!   }
+//!   fprintf(PC,"\r\n");
    
    df = make16(ADCS_SENSOR_DATA[1], ADCS_SENSOR_DATA[2]);
    dg = make16(ADCS_SENSOR_DATA[3], ADCS_SENSOR_DATA[4]);
@@ -1238,29 +1238,29 @@ void GET_ADCS_SENSOR_DATA()                                                     
 //!
    if((df - 32768.00) > 0)
    {
-      fprintf(PC, "%f ", (df-32768)*-1);
+      fprintf(PC, "%f ", ((df-32768)*-1)/100);
    }
    else
    {
-      fprintf(PC, "%f ", df);
+      fprintf(PC, "%f ", df/100);
    }
       
    if((dg - 32768.00) > 0)
    {
-      fprintf(PC, "%f ", (dg-32768)*-1);
+      fprintf(PC, "%f ", ((dg-32768)*-1)/100);
    }
    else
    {
-      fprintf(PC, "%f ", dg);
+      fprintf(PC, "%f ", dg/100);
    }
       
    if((dk - 32768.00) > 0)
    {
-      fprintf(PC, "%f ", (dk-32768)*-1);
+      fprintf(PC, "%f ", ((dk-32768)*-1)/100);
    }
    else
    {
-      fprintf(PC, "%f ", dk);
+      fprintf(PC, "%f ", dk/100);
    }
       
 //!   fprintf(PC, "%f ", dg);
