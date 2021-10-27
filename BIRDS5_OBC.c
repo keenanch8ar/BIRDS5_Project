@@ -147,92 +147,43 @@ void main()
    
    //Antenna_Deploy(); //Attempt deploying of antenna. This is the 2nd, 3rd and 4th attempts
    
-   //FAB_TEST_OPERATION();
+   FAB_TEST_OPERATION();
    //Turn_On_ADCS();
 
    while(TRUE)
    {
       //BC_ON_30min();                                                             //Attempt 1st antenna deployment after 30mins
       
-//!      if(FAB_FLAG > 89)                                                          //every 90 sec, OBC gather sensor data and update CW format 
-//!      {
-//!         FAB_FLAG = 0;
-//!         fprintf(PC,"\r\n***90sec passed***\r\n");
-//!         FAB_TEST_OPERATION();
-//!         COM_DATA = 0;
-//!         STORE_ADRESS_DATA_TO_FLASH();                                           //for store the address info
-//!         fprintf(PC,"CW:");
-//!         for(int i = 0; i < 4; i++)                                              //show CW format
-//!         {
-//!            fprintf(PC,"%x,",CW_FORMAT[i]);
-//!         }
-//!         fprintf(PC,"%x\r\n",CW_FORMAT[4]);
-//!         DELETE_CMD_FROM_PC();                                                   //delete PC command
-//!         PC_DATA = 0;                                                            //reset interrupt data for safety
-//!         COM_DATA = 0;                                                           //reset interrupt data for safety
-//!         RESET_DATA = 0;                                                         //reset interrupt data for safety
-//!         fprintf(PC,"\r\n");
-//!      } 
-
-      if(FAB_FLAG > 3)                                                          //every 90 sec, OBC gather sensor data and update CW format 
+      if(FAB_FLAG > 89)                                                          //every 90 sec, OBC gather sensor data and update CW format 
       {
-         
          FAB_FLAG = 0;
-         //fprintf(PC,"\r\n***3sec passed***\r\n");
-         OITA_Test();
-         delay_ms(500);
-         
-//!         CMD_FROM_PC[0] = 0x81;
-//!         CMD_FROM_PC[1] = 0x22;
-//!         CMD_FROM_PC[2] = ADCS_SENSOR_DATA[1];
-//!         CMD_FROM_PC[3] = ADCS_SENSOR_DATA[2];
-//!         CMD_FROM_PC[4] = ADCS_SENSOR_DATA[3];
-//!         CMD_FROM_PC[5] = ADCS_SENSOR_DATA[4];
-//!         CMD_FROM_PC[6] = ADCS_SENSOR_DATA[5];
-//!         CMD_FROM_PC[7] = ADCS_SENSOR_DATA[6];
-//!         CMD_FROM_PC[8] = 0x29;
-         
-//!         OitaTestArray[0] = 0x55;
-//!         OitaTestArray[1] = 0xAA;
-//!         OitaTestArray[2] = ADCS_SENSOR_DATA[1];
-//!         OitaTestArray[3] = ADCS_SENSOR_DATA[2];
-//!         OitaTestArray[4] = ADCS_SENSOR_DATA[3];
-//!         OitaTestArray[5] = ADCS_SENSOR_DATA[4];
-//!         OitaTestArray[6] = ADCS_SENSOR_DATA[5];
-//!         OitaTestArray[7] = ADCS_SENSOR_DATA[6];
-//!         OitaTestArray[8] = 0xBB;
+         fprintf(PC,"\r\n***90sec passed***\r\n");
+         FAB_TEST_OPERATION();
+         COM_DATA = 0;
+         STORE_ADRESS_DATA_TO_FLASH();                                           //for store the address info
+         fprintf(PC,"CW:");
+         for(int i = 0; i < 4; i++)                                              //show CW format
+         {
+            fprintf(PC,"%x,",CW_FORMAT[i]);
+         }
+         fprintf(PC,"%x\r\n",CW_FORMAT[4]);
+         DELETE_CMD_FROM_PC();                                                   //delete PC command
+         PC_DATA = 0;                                                            //reset interrupt data for safety
+         COM_DATA = 0;                                                           //reset interrupt data for safety
+         RESET_DATA = 0;                                                         //reset interrupt data for safety
+         fprintf(PC,"\r\n");
+      } 
 
-//!         CMD_FROM_PC[0] = 0x21;
-//!         CMD_FROM_PC[1] = 0x22;
-//!         CMD_FROM_PC[2] = 0x23;
-//!         CMD_FROM_PC[3] = 0x24;
-//!         CMD_FROM_PC[4] = 0x25;
-//!         CMD_FROM_PC[5] = 0x26;
-//!         CMD_FROM_PC[6] = 0x27;
-//!         CMD_FROM_PC[7] = 0x28;
-//!         CMD_FROM_PC[8] = 0x29;
-         
-//!         for(int8 ll = 0; ll < 9; ll++)
-//!         {
-//!            
-//!            fprintf(PC,"%x ",OitaTestArray[ll]);
-//!         }
-         //fprintf(PC,"\r\n");
+//!      if(FAB_FLAG > 3)                                                          //every 90 sec, OBC gather sensor data and update CW format 
+//!      {
 //!         
-//!         MULT_SPEC_Test();
-//!
-//!         //FAB_TEST_OPERATION();
-//!         Delete_ADCS_data();
-//!         DELETE_CMD_ARRAY_DATA();
-//!         DELETE_CMD_FROM_PC();                                                   //clear CMD_FROM_PC[] array
-//!         Delete_Buffer();                                                        //clear in_bffr_main[] array
-//!         CMD_FROM_PC[1] = 0;
-//!         COM_DATA = 0;                                                           //clear COM correct receiving data flag
-//!         PC_DATA = 0;                                                            //clear PC correct receiving data flag
-//!         RESET_DATA = 0;                                                         //reset interrupt data for safety
-//!         fprintf(PC,"\r\n");
-      }
-      
+//!         FAB_FLAG = 0;
+//!         //fprintf(PC,"\r\n***3sec passed***\r\n");
+//!         OITA_Test();
+//!         delay_ms(500);
+//!         
+//!      }
+//!      
       
       if(CMD_FROM_PC[0])
       {
