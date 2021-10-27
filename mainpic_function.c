@@ -1162,7 +1162,7 @@ void GET_ADCS_SENSOR_DATA()                                                     
          int8 header = fgetc(DC);
          if (header == 0x55)
          {
-            //fprintf(PC,"\r\nADCS DATA OBTAINED:\r\n");
+            fprintf(PC,"\r\nADCS DATA OBTAINED:\r\n");
             ADCS_SENSOR_DATA[counter] = header;
             counter++;
             for(int32 num = 0; num < 100000; num++)
@@ -1184,11 +1184,11 @@ void GET_ADCS_SENSOR_DATA()                                                     
        
    }
    
-//!   for(int l = 0; l < 14; l++)
-//!   {
-//!      fprintf(PC,"%x ",ADCS_SENSOR_DATA[l]);
-//!   }
-//!   fprintf(PC,"\r\n");
+   for(int l = 0; l < 14; l++)
+   {
+      fprintf(PC,"%x ",ADCS_SENSOR_DATA[l]);
+   }
+   fprintf(PC,"\r\n");
    
    OitaTestArray[0] = ADCS_SENSOR_DATA[0];
    OitaTestArray[1] = ADCS_SENSOR_DATA[1];

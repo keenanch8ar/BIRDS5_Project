@@ -148,7 +148,7 @@ void main()
    //Antenna_Deploy(); //Attempt deploying of antenna. This is the 2nd, 3rd and 4th attempts
    
    FAB_TEST_OPERATION();
-   //Turn_On_ADCS();
+   Turn_On_ADCS();
 
    while(TRUE)
    {
