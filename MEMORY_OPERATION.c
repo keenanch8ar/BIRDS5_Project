@@ -531,7 +531,7 @@ void TAKE_ADDRESS_DATA_FROM_SMF()
    return;
 }
 
-void MAKE_FLAG_INFO()                                                            //Guarda en cada variable la informacion de flags recuperadas de memoria
+void MAKE_FLAG_INFO()                                                            //Saves in each variable the information of flags retrieved from memory
 {
    BC_ATTEMPT_FLAG     = flag_info_bffr[0];
    PASSED_DAYS         = make16(flag_info_bffr[1],flag_info_bffr[2]);
@@ -550,7 +550,7 @@ void MAKE_FLAG_INFO()                                                           
    UPLINK_SUCCESS      = flag_info_bffr[15];
    if(PASSED_DAYS == 0xffff)
    {
-      COLLECT_RESET_DATA();                                                      //funcion que envia el comando 0x28 al reset PIC y carga reset_bffr[]
+      COLLECT_RESET_DATA();                                                      //function that sends command 0x28 to reset PIC and loads reset_bffr []
       PASSED_DAYS = make16(reset_bffr[4],reset_bffr[5]);
    }
    return;
