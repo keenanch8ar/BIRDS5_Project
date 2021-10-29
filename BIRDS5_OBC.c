@@ -29,19 +29,14 @@ void intval()
       if((RESERVE_SEC_FLAG % 5) == 0)
       {
          FAB_DATA = 0;
-         //fprintf(PC,"\r\n");
-         //fputc(0x61, FAB);
 
       }
       
       if(RESERVE_SEC_FLAG > 59)                                                  //the counters inside the if are incremented every 60s
       {
          RESERVE_SEC_FLAG = 0;
-         RESERVE_MIN_FLAG++;//time counter in minutes (used in reservation table)
+         RESERVE_MIN_FLAG++;                                                     //time counter in minutes (used in reservation table)
          FAB_DATA = 0;
-         //fprintf(PC,"\r\n");
-         //fputc(0x61, FAB);
-         //fputc(0x28,reset);
       }
    }
 }
@@ -66,13 +61,12 @@ void UART2_RXD(void)
    COM_DATA = ((COM_DATA + 1) % 16);  
 }
 
-#INT_rda3//FAB Interrupt, RS232 receive data available in buffer 3
+#INT_rda3                                                                        //FAB Interrupt, RS232 receive data available in buffer 3
 void UART3_RXD(void)
 {
-   //collect_HK_from_FAB();
-   in_HK[FAB_DATA] = fgetc(FAB);//load the array in_HK [] with the data sent by the FAB PIC
-   //fprintf(PC,"Battery Voltage %x \r\n", in_HK[FAB_DATA]);
-   fprintf(PC,"%x ",in_HK[FAB_DATA]);
+
+   //fprintf(PC,"%x ",in_HK[FAB_DATA]);
+   in_HK[FAB_DATA] = fgetc(FAB);                                                 //load the array in_HK [] with the data sent by the FAB PIC
    FAB_DATA = ((FAB_DATA + 1) % FAB_SENSOR_size);                                //when the data is obtained in position 45 FAB_DATA = 0
    
 }
@@ -80,8 +74,8 @@ void UART3_RXD(void)
 #INT_rda4                                                                        //Reset PIC Interrupt, RS232 receive data available in buffer 4
 void UART4_RXD(void)
 {
-   reset_bffr[RESET_DATA] = fgetc(reset);                                        //loads the reset_bffr array with the data sent by the Reset PIC (carga el array reset_bffr con los datos enviados por el Reset PIC)
    //fprintf(PC,"%x,",reset_bffr[RESET_DATA]);
+   reset_bffr[RESET_DATA] = fgetc(reset);                                        //loads the reset_bffr array with the data sent by the Reset PIC (carga el array reset_bffr con los datos enviados por el Reset PIC)
    RESET_DATA = ((RESET_DATA + 1) % RESET_size);                                 //when the data is obtained in position 11 RESET_DATA = 0 (cuando se obtenga el dato en la posicion 11 RESET_DATA=0)
    if(reset_bffr[0] == 0xaa)                                                     //get ready for reset satellite
    {
@@ -95,7 +89,7 @@ void settings()
 {
    set_tris_b(0b11010000);                                                       // Port b configuration
    
-   enable_interrupts(global);  // Enabling global interrupts
+   enable_interrupts(global);                                                    // Enabling global interrupts
    enable_interrupts(int_timer0);                                                // HK data show by 1sec
    enable_interrupts(INT_rda);                                                   // Main to PC interrupt
    enable_interrupts(INT_rda2);                                                  // Main to COM PIC interrupt
@@ -127,7 +121,7 @@ void settings()
    output_high(PIN_C4);                                                          //MUX: COM side (MAIN-COM)
    output_low(PIN_A5);                                                           //MUX: Main side (MAIN-MISSION)
   
-   //Get_RSV();                                                                    //read the reservation table info from flash memory  
+   //Get_RSV();                                                                   //read the reservation table info from flash memory  
    SAVE_SAT_LOG(0x25,0x25,0x25);                                                 //0X25 0X25 0X25 SATELLITE RESET INDICATOR
    
    
@@ -245,7 +239,6 @@ void main()
       }
       
       
-      //if((CMD_FROM_COMM[15]==0xBB) && (CMD_FROM_COMM[4] != 0xAB))
       if(CMD_FROM_COMM[0] == 0xAA && CMD_FROM_COMM[15] == 0xBB)
       {
          
@@ -290,7 +283,6 @@ void main()
             if(command_ID_from_COMM == 0x80)
             {
                fprintf(PC,"IMG-CLS Command\r\n");
-               fputc(0xBC,reset);
                IMGCLS_test();
             }
             
@@ -310,6 +302,23 @@ void main()
       
       DELETE_CMD_FROM_COMM();
       
+      if(COM_DATA != 0 || PC_DATA != 0)                                          //COM_DATA AND PC_DATA WILL BE ZERO IF THE CORRECT NUMBER OF CHARACTERS ARE RECEIVED
+      {
+         delay_ms(500);
+         if(PC_DATA != 0)                                                        //If the correct number of characters was not received, reset the CMD_FROM_PC array
+         {
+            CMD_FROM_PC[0] = 0;
+            CMD_FROM_PC[1] = 0;
+            CMD_FROM_PC[2] = 0;
+            CMD_FROM_PC[3] = 0;
+            CMD_FROM_PC[4] = 0;
+            CMD_FROM_PC[5] = 0;
+            CMD_FROM_PC[6] = 0;
+            CMD_FROM_PC[7] = 0;
+            COM_DATA = 0;
+            PC_DATA = 0;
+         }
+      }
       delay_ms(400); 
    }
 

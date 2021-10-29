@@ -97,7 +97,7 @@ void DELETE_CMD_ARRAY_DATA()
 }
 
 
-void Delete_Buffer()                                                             //delete com command buffer
+void Delete_Buffer()                                                            
 {
    int num = 0;
    for(num = 0;num < 16; num++)
@@ -144,19 +144,21 @@ void MAIN_MB_CMD()
 //!      break;
       
       case 0x01:
+      
          fprintf(PC,"Collect HK Data From FAB: ");
          fputc(0x61, FAB);
          FAB_DATA = 0;
+         
       break;
       
       case 0x02:
+      
          fprintf(PC,"Collect ADCS Data From FAB: ");
          fputc(0x69, FAB);
-        // delay_ms(300);
+         // delay_ms(300);
          //fprintf(PC,"Battery Voltage %x \r\n", in_HK[0]);
- 
-         
          FAB_DATA = 0;
+         
       break;
       
       case 0x03:
@@ -1135,7 +1137,7 @@ void GET_ADCS_SENSOR_DATA()                                                     
    
    CHECK_50_and_CW_RESPOND();
    
-   fputc(0x42, DC);
+   fputc(0x42, DC);                                                              //Request ADCS Data by sending command to Mission Boss to forward to ADCS MCU
    delay_ms(10);
    fputc(0xAA, DC);
    delay_ms(10);
@@ -1190,20 +1192,20 @@ void GET_ADCS_SENSOR_DATA()                                                     
    }
    fprintf(PC,"\r\n");
    
-   OitaTestArray[0] = ADCS_SENSOR_DATA[0];
-   OitaTestArray[1] = ADCS_SENSOR_DATA[1];
-   OitaTestArray[2] = ADCS_SENSOR_DATA[2];
-   OitaTestArray[3] = ADCS_SENSOR_DATA[3];
-   OitaTestArray[4] = ADCS_SENSOR_DATA[4];
-   OitaTestArray[5] = ADCS_SENSOR_DATA[5];
-   OitaTestArray[6] = ADCS_SENSOR_DATA[6];
-   OitaTestArray[7] = ADCS_SENSOR_DATA[7];
-   OitaTestArray[8] = ADCS_SENSOR_DATA[8];
-   OitaTestArray[9] = ADCS_SENSOR_DATA[9];
-   OitaTestArray[10] = ADCS_SENSOR_DATA[10];
-   OitaTestArray[11] = ADCS_SENSOR_DATA[11];
-   OitaTestArray[12] = ADCS_SENSOR_DATA[12];
-   OitaTestArray[13] = ADCS_SENSOR_DATA[13];
+//!   OitaTestArray[0] = ADCS_SENSOR_DATA[0];
+//!   OitaTestArray[1] = ADCS_SENSOR_DATA[1];
+//!   OitaTestArray[2] = ADCS_SENSOR_DATA[2];
+//!   OitaTestArray[3] = ADCS_SENSOR_DATA[3];
+//!   OitaTestArray[4] = ADCS_SENSOR_DATA[4];
+//!   OitaTestArray[5] = ADCS_SENSOR_DATA[5];
+//!   OitaTestArray[6] = ADCS_SENSOR_DATA[6];
+//!   OitaTestArray[7] = ADCS_SENSOR_DATA[7];
+//!   OitaTestArray[8] = ADCS_SENSOR_DATA[8];
+//!   OitaTestArray[9] = ADCS_SENSOR_DATA[9];
+//!   OitaTestArray[10] = ADCS_SENSOR_DATA[10];
+//!   OitaTestArray[11] = ADCS_SENSOR_DATA[11];
+//!   OitaTestArray[12] = ADCS_SENSOR_DATA[12];
+//!   OitaTestArray[13] = ADCS_SENSOR_DATA[13];
 
    
 //!   for(int lm = 0; lm < 14; lm++)
@@ -1212,10 +1214,10 @@ void GET_ADCS_SENSOR_DATA()                                                     
 //!   }
 //!   fprintf(PC,"\r\n");
    
-   df = make16(ADCS_SENSOR_DATA[1], ADCS_SENSOR_DATA[2]);
-   dg = make16(ADCS_SENSOR_DATA[3], ADCS_SENSOR_DATA[4]);
-   dk = make16(ADCS_SENSOR_DATA[5], ADCS_SENSOR_DATA[6]);
-      
+//!   df = make16(ADCS_SENSOR_DATA[1], ADCS_SENSOR_DATA[2]);
+//!   dg = make16(ADCS_SENSOR_DATA[3], ADCS_SENSOR_DATA[4]);
+//!   dk = make16(ADCS_SENSOR_DATA[5], ADCS_SENSOR_DATA[6]);
+//!      
       
 //!   fprintf(PC, "%03f ", df);
 //!   fprintf(PC, "%03f ", dg);
@@ -1236,36 +1238,36 @@ void GET_ADCS_SENSOR_DATA()                                                     
 //!   fprintf(PC, "%5.3f ", dk);
 //!   fprintf(PC,"\r\n");
 //!
-   if((df - 32768.00) > 0)
-   {
-      fprintf(PC, "%f ", ((df-32768)*-1)/100);
-   }
-   else
-   {
-      fprintf(PC, "%f ", df/100);
-   }
-      
-   if((dg - 32768.00) > 0)
-   {
-      fprintf(PC, "%f ", ((dg-32768)*-1)/100);
-   }
-   else
-   {
-      fprintf(PC, "%f ", dg/100);
-   }
-      
-   if((dk - 32768.00) > 0)
-   {
-      fprintf(PC, "%f ", ((dk-32768)*-1)/100);
-   }
-   else
-   {
-      fprintf(PC, "%f ", dk/100);
-   }
+//!   if((df - 32768.00) > 0)
+//!   {
+//!      fprintf(PC, "%f ", ((df-32768)*-1)/100);
+//!   }
+//!   else
+//!   {
+//!      fprintf(PC, "%f ", df/100);
+//!   }
+//!      
+//!   if((dg - 32768.00) > 0)
+//!   {
+//!      fprintf(PC, "%f ", ((dg-32768)*-1)/100);
+//!   }
+//!   else
+//!   {
+//!      fprintf(PC, "%f ", dg/100);
+//!   }
+//!      
+//!   if((dk - 32768.00) > 0)
+//!   {
+//!      fprintf(PC, "%f ", ((dk-32768)*-1)/100);
+//!   }
+//!   else
+//!   {
+//!      fprintf(PC, "%f ", dk/100);
+//!   }
       
 //!   fprintf(PC, "%f ", dg);
 //!   fprintf(PC, "%f ", dk);
-   fprintf(PC,"\r\n");
+//!   fprintf(PC,"\r\n");
   
    return;
 }
@@ -1353,57 +1355,6 @@ void FAB_TEST_OPERATION()
    GET_RESET_DATA();                                                             //send command to reset PIC and load HKDATA [] array with Reset PIC data
    
    MAKE_ADCS_HKDATA();                                                           //send command to ADCS MCS and load HKDATA [] array with ADCS data
-   
-//!   test[0] = 0x21;
-//!   test[1] = 0x05;
-//!   test[2] = (int8)ADCS_SENSOR_DATA[1];
-//!   test[3] = (int8)ADCS_SENSOR_DATA[2];
-//!   test[4] = (int8)ADCS_SENSOR_DATA[3];
-//!   test[5] = (int8)ADCS_SENSOR_DATA[4];
-//!   test[6] = (int8)ADCS_SENSOR_DATA[5];
-//!   test[7] = (int8)ADCS_SENSOR_DATA[6];
-//!   test[8] = 0x05;
-   
-   test[0] = 0x21;
-   test[1] = 0x05;
-   test[2] = 0x06;
-   test[3] = 0x07;
-   test[4] = 0x08;
-   test[5] = 0x09;
-   test[6] = 0x09;
-   test[7] = 0x09;
-   test[8] = 0x05;
-   
-   fprintf(PC, "\r\nCommand to MB:\r\n");
-   for(int8 o = 0; o < 9; o++)
-      {
-
-         fprintf(PC,"%x ",test[o]);
-      }
-   
-   fputc(test[0], DC);
-   delay_ms(10);
-   fputc(test[1], DC);
-   delay_ms(10);
-   fputc(test[2], DC);
-   delay_ms(10);
-   fputc(test[3], DC);
-   delay_ms(10);
-   fputc(test[4], DC);
-   delay_ms(10);
-   fputc(test[5], DC);
-   delay_ms(10);
-   fputc(test[6], DC);
-   delay_ms(10);
-   fputc(test[7], DC);
-   delay_ms(10);
-   fputc(test[8], DC);
-   delay_ms(10);
-   
-   for(int8 z = 0; z < 9; z++)
-   {
-      test[z] = 0;
-   }
    
    Delete_ADCS_data();
    //Turn_Off_ADCS();                                                              //ADCS switch OFF
