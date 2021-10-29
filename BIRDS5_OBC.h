@@ -124,5 +124,20 @@ void PINO_Test_for_PINO();
 void OITA_Test();
 void DLP_Test();
 
+////////////////////////////////RESERVATION FUNCTION (reserve_function.c)/////////////////////////////////
+void initialize_table();
+void sort_table();                                                               //(command info, time info, mission mode)Å~10Å®compare the time and sort
+void Save_RSV();
+void table_refresh();
+void Get_RSV();
+void Disp_RSV();                                                                 //show the reserve status (reserve command and reserve table)
+void input_reservation_COM();                                                    //put the command into the table and sort
+void input_reservation_PC();                                                     //put the command into the table and sort
+void Remove_1_Reservation();                                                     //after executing the mission, it should be finished
+void Reserve_command_COM();                                                      //reservation from COM
+void Reserve_command_PC();                                                       //reservation from PC
+void Reserve_next();                                                             //after finishing executing the reservation command, this function should be execute
+void RSV_DATA_DOWNLOAD();                                                        //send cmd to COM for data download reservation function
+
 
 #include <mainpic_function.h>

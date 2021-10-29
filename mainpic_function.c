@@ -2,6 +2,7 @@
 
 int8 MISSION_STATUS = 0; //MISSION STATUS FLAGS
 static int16 currenttime = 0;
+static int16 missiontime = 0;
 BYTE command[9];
 int8 reset_time_data[11] = {};
 BYTE PINO_DATA[39] = {0x00};
@@ -1586,7 +1587,7 @@ void HIGH_SAMP_FAB_OPERATION()
    CHECK_50_and_CW_RESPOND();
    HIGH_SAMP_FAB_MEASURING_FLAG++;                                              //count until 90(it means 10 min)
    //disable_interrupts(INT_rda2);
-   if(HIGH_SAMP_FAB_MEASURING_FLAG > 17)                                        //HIGH_SAMP_FAB_MEASUERING_FLAG=18 --> 18*5 = 90 (sec)
+   if(HIGH_SAMP_FAB_MEASURING_FLAG > 8)                                        //HIGH_SAMP_FAB_MEASUERING_FLAG=18 --> 18*5 = 90 (sec)
       {
          
          CHECK_50_and_CW_RESPOND();
@@ -1661,14 +1662,14 @@ void HIGH_SAMP_FAB_OPERATION()
 
 void HIGHSAMP_SENSOR_COLLECTION(int16 times)
 {
-   Turn_ON_ADCS();                                                               //ADCS GPS ON   
+   Turn_ON_ADCS();                                                               //ADCS ON   
    LOOP_HIGH_SAMP_HK_ADDRESS();                                                  //loop in memory to save data, keep first 3 sectors forever
    int32 num = 0;
 
    while(num < times)
    {
       CHECK_50_and_CW_RESPOND();                                                 //check cw cmd from COM PIC
-      if(FAB_FLAG > 4)
+      if(FAB_FLAG > 10)                                                           //HSSC repeats every 10secs
       {
          FAB_FLAG = 0;
          HIGH_SAMP_FAB_OPERATION();                                              //collect FAB, RESET and ADCS data
@@ -1680,7 +1681,7 @@ void HIGHSAMP_SENSOR_COLLECTION(int16 times)
          } 
       }
 
-      BC_ON_30min();                                                             //check if first attempt and 30 min(1800sec) passed
+      //BC_ON_30min();                                                             //check if first attempt and 30 min(1800sec) passed
       if((CMD_FROM_PC[0] == 0xAB)||(in_bffr_main[4] == 0xAB))                    //forced termination function
       {
          Delete_Buffer();

@@ -28,7 +28,7 @@ void initialize_table()                                                         
 //by comapring j-8 and j data,if it is needed, swhich j-9 and j-1, j-8 and j, j-7 and j+1....etc
 ////////////////////////////////////////////////////////////////////////////////////////////////
 
-int8 count_reservation()                                                         //Funcion que cuenta la cantidad de posiciones en la tabla con datos distintos de 0xFF 
+int8 count_reservation()                                                         //Function that counts the number of positions in the table with data other than 0xFF
 {
    int8 counter = 0;
    for(int num = 1; num < table_size - 6; num = num + 8)
@@ -139,20 +139,20 @@ void table_refresh()                                                            
 void Get_RSV()
 {
    //fprintf(PC,"%x");
-   for(int num = 0; num < table_size+1; num++)                                   //Carga en el vector reserve_table[] los datos leidos de la flash memory 
-   {                                                                             //desde la posicion RSV_DATA_ADDRESS hasta el tamaño de la tabla
+   for(int num = 0; num < table_size+1; num++)                                   //Loads the data read from flash memory into the reserve_table [] vector 
+   {                                                                             //from RSV_DATA_ADDRESS position to table size
       reserve_table[num]=READ_DATA_BYTE_OF(RSV_DATA_ADDRESS + num);              //import reservation table info
    }
-   reserve_table[80] = count_reservation();                                      //Carga en la posicion 30 la cantidad de posiciones ocupadas con datos
+   reserve_table[80] = count_reservation();                                      //Loads in position 30 the number of positions occupied with data
 //   RESERVE_MIN_FLAG = READ_DATA_BYTE_OF(RSV_DATA_ADDRESS+31);
-   if(reserve_table[80] == 0xFF || reserve_table[80] == 0x00)                    //Si la tabla no tiene datos almacenados
+   if(reserve_table[80] == 0xFF || reserve_table[80] == 0x00)                    //If the table has no stored data
    {
-      initialize_table();                                                        //completa con 0xff toda la tabla
+      initialize_table();                                                        //fill the entire table with 0xff
    }
-   table_num = reserve_table[80];                                                //guarda en table_num la cantidad de datos que contiene la tabla
+   table_num = reserve_table[80];                                                //saves in table_num the amount of data that the table contains
    if(table_num != 0x00)                                                         //yes-->get reserved command and target time
    {
-      RESERVE_CHECK = 1;                                                         //LA tabla esta utilizada
+      RESERVE_CHECK = 1;                                                         //The table is used
       MISSION_CONTENTS = reserve_table[0];                                       //closest mission command
       RESERVE_TARGET_FLAG = reserve_table[1];                                    //closest time data
       MISSION_DETAIL = reserve_table[2];                                         //closest mission command detail
@@ -162,7 +162,7 @@ void Get_RSV()
       RESERVE_ADDRESS_4 = reserve_table[6];                                      //closest mission address
       RESERVE_PACKET_NUM = reserve_table[7];                                     //closest mission pckt number
    }else{
-      RESERVE_CHECK = 0;                                                         //la tabla no esta utilizada
+      RESERVE_CHECK = 0;                                                         //The table is not used
       MISSION_CONTENTS = 0xff;                                                   //closest mission command
       RESERVE_TARGET_FLAG = 0xff;                                                //closest time data
       MISSION_DETAIL = 0xff;                                                     //closest mission command detail

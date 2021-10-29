@@ -36,6 +36,7 @@ void intval()
       {
          RESERVE_SEC_FLAG = 0;
          RESERVE_MIN_FLAG++;                                                     //time counter in minutes (used in reservation table)
+         missiontime++;
          FAB_DATA = 0;
       }
    }
@@ -57,7 +58,7 @@ void UART2_RXD(void)
 //!   fprintf(PC,"I receive from COM PIC: %x \r\n", in_bffr_main[COM_DATA]);
 //!   COM_DATA = ((COM_DATA + 1) % 16);                                             //when the data is obtained in position 16, COM_DATA = 0
    CMD_FROM_COMM[COM_DATA] = fgetc(COM);   
-   //fprintf(PC,"%x,", CMD_FROM_COMM[COM_DATA]);
+   fprintf(PC,"%x,", CMD_FROM_COMM[COM_DATA]);
    COM_DATA = ((COM_DATA + 1) % 16);  
 }
 
@@ -110,6 +111,7 @@ void settings()
   
    output_low(PIN_A4);                                                           //kill switch off
    Turn_ON_MBP();                                                                //Mission Boss switch ON, RF5=1
+   Turn_On_ADCS();
    Turn_OFF_BC();                                                                //Burner Circuit switch OFF, RD5=0
 
    fprintf(PC,"\r\n");
@@ -121,12 +123,14 @@ void settings()
    output_high(PIN_C4);                                                          //MUX: COM side (MAIN-COM)
    output_low(PIN_A5);                                                           //MUX: Main side (MAIN-MISSION)
   
-   //Get_RSV();                                                                   //read the reservation table info from flash memory  
+   Get_RSV();                                                                   //read the reservation table info from flash memory  
    SAVE_SAT_LOG(0x25,0x25,0x25);                                                 //0X25 0X25 0X25 SATELLITE RESET INDICATOR
-   
-   
-   fprintf(PC,"Start Operating\r\n");
+   delay_ms(500);
    output_low(PIN_A5); //MUX MAIN SIDE
+   
+   fprintf(PC,"\r\n*********Start Operating*********\r\n");
+   
+   
    
    return;                                                                       
   
@@ -135,14 +139,14 @@ void settings()
 void main()
 {
 
-   fprintf(PC, "Turn on the satellite\r\n");
+   fprintf(PC, "*********Turn on the satellite*********\r\n");
 
    settings();                                                                   //Prepare all interrupts, timers, flag information, BC setup etc.
    
    //Antenna_Deploy(); //Attempt deploying of antenna. This is the 2nd, 3rd and 4th attempts
    
    FAB_TEST_OPERATION();
-   Turn_On_ADCS();
+
 
    while(TRUE)
    {
@@ -166,70 +170,86 @@ void main()
          COM_DATA = 0;                                                           //reset interrupt data for safety
          RESET_DATA = 0;                                                         //reset interrupt data for safety
          fprintf(PC,"\r\n");
-      } 
+      }
+      
+      if((RESERVE_MIN_FLAG >= RESERVE_TARGET_FLAG) && RESERVE_CHECK == 1)        //check the reservation command, if time came, execute
+      {
+         fprintf(PC,"Execute reserved command\r\n");
+         MISSION_CONTENTS = CHECK_MEMORY_FUNCTION(MISSION_CONTENTS);             //avoid erase or transfer sectors from memory as reserved commands
+         EXECUTE_COMMAND_from_PC(MISSION_CONTENTS,MISSION_DETAIL,RESERVE_ADDRESS_1,RESERVE_ADDRESS_2,RESERVE_ADDRESS_3,RESERVE_ADDRESS_4,RESERVE_PACKET_NUM, 0x00, 0x00);    //execute command
+         Remove_1_Reservation();                                                 //remove the finished command and sort again and save updated command table
+         if(reserve_table[80] != 0x00)                                           //if next reservation is registered, wait until time will be come
+         {
+            Reserve_next();                                                      //take the next CMD from the table
+         }else{                                                                  //if all reservation finished, reset flag about reservation
+            RESERVE_TARGET_FLAG = 0;                                             //reset flag
+            RESERVE_CHECK = 0;
+            MISSION_CONTENTS = 0;
+            MISSION_DETAIL = 0;
+         }
+      }
 
-//!      if(FAB_FLAG > 3)                                                          //every 90 sec, OBC gather sensor data and update CW format 
-//!      {
-//!         
-//!         FAB_FLAG = 0;
-//!         //fprintf(PC,"\r\n***3sec passed***\r\n");
-//!         OITA_Test();
-//!         delay_ms(500);
-//!         
-//!      }
-//!      
       
       if(CMD_FROM_PC[0])
       {
-         fprintf(PC,"\r\n");
-         fprintf(PC,"COMMAND RECEIVED FROM PC: ");
-         for(int m = 0; m < 9; m++)
-         {
-            fprintf(PC,"%x",CMD_FROM_PC[m]);
-         }
-         fprintf(PC,"\r\n");
-         //0000 0000 to 0001 FFFF is MAIN PIC/MB
-         
-         BYTE command_ID = CMD_FROM_PC[0];
-         command_ID &= 0xF0;
-         //fprintf(PC,"%x",command_ID);
-         //fprintf(PC,"\r\n");
-         
-         if(command_ID == 0x00 || command_ID == 0x10)
-         {
-            fprintf(PC,"Main PIC or MB Command only\r\n");
-            MAIN_MB_CMD();
-         }
-         
-         if(command_ID == 0x20 || command_ID == 0x30)
-         {
-            fprintf(PC,"MULT-SPEC Command\r\n");
-            MULT_SPEC_Test();
-         }
-         
-         if(command_ID == 0x40)
-         {
-            fprintf(PC,"ADCS Command\r\n");
-            ADCS_test();
-         }
-         
-         if(command_ID == 0x50)
-         {
-            fprintf(PC,"S-FWD Command\r\n");
-            SFWD_test();
-         }
-         
-         if(command_ID == 0x80)
-         {
-            fprintf(PC,"IMG-CLS Command\r\n");
-            IMGCLS_test();
-         }
-         
-         if(command_ID == 0x90)
-         {
-            fprintf(PC,"PINO Command\r\n");
-            NEW_PINO_test();
-         }
+//!         if(CMD_FROM_PC[1] == 0)
+//!         {
+            fprintf(PC,"\r\n");
+            fprintf(PC,"COMMAND RECEIVED FROM PC: ");
+            for(int m = 0; m < 9; m++)
+            {
+               fprintf(PC,"%x",CMD_FROM_PC[m]);
+            }
+            fprintf(PC,"\r\n");
+            //0000 0000 to 0001 FFFF is MAIN PIC/MB
+            
+            BYTE command_ID = CMD_FROM_PC[0];
+            command_ID &= 0xF0;
+            //fprintf(PC,"%x",command_ID);
+            //fprintf(PC,"\r\n");
+            
+            if(command_ID == 0x00 || command_ID == 0x10)
+            {
+               fprintf(PC,"Main PIC or MB Command only\r\n");
+               //MAIN_MB_CMD();
+               EXECUTE_COMMAND_from_PC(CMD_FROM_PC[0], CMD_FROM_PC[1], CMD_FROM_PC[2], CMD_FROM_PC[3], CMD_FROM_PC[4], CMD_FROM_PC[5], CMD_FROM_PC[6], CMD_FROM_PC[7], CMD_FROM_PC[8]);
+            }
+            
+            if(command_ID == 0x20 || command_ID == 0x30)
+            {
+               fprintf(PC,"MULT-SPEC Command\r\n");
+               MULT_SPEC_Test();
+            }
+            
+            if(command_ID == 0x40)
+            {
+               fprintf(PC,"ADCS Command\r\n");
+               ADCS_test();
+            }
+            
+            if(command_ID == 0x50)
+            {
+               fprintf(PC,"S-FWD Command\r\n");
+               SFWD_test();
+            }
+            
+            if(command_ID == 0x80)
+            {
+               fprintf(PC,"IMG-CLS Command\r\n");
+               IMGCLS_test();
+            }
+            
+            if(command_ID == 0x90)
+            {
+               fprintf(PC,"PINO Command\r\n");
+               NEW_PINO_test();
+            }
+//!         }
+//!         else
+//!         {
+//!            SAVE_SAT_LOG(CMD_FROM_PC[0],CMD_FROM_PC[1],CMD_FROM_PC[2]);          //reservation command log
+//!            Reserve_command_PC(); 
+//!         }
 
          DELETE_CMD_FROM_PC();                                                   //clear CMD_FROM_PC[] array
          Delete_Buffer();                                                        //clear in_bffr_main[] array

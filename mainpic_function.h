@@ -4,6 +4,8 @@
 #include<mainpic_function.c>
 #include<SATELLITE_LOG.c>
 #include<FLASH_OPERATION.c>                                                      //erase or transfer
+#include<analyze_commands.c>
+#include<reserve_function.c>
 //----------Flash_memory_MT25QL01GBBB_OF.c-------------------------------------
 
 void WRITE_ENABLE_OF();
