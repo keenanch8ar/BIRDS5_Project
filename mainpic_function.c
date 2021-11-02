@@ -1,6 +1,7 @@
 //--------Mission variables--------------------------------------------------//
 
-int8 MISSION_STATUS = 0; //MISSION STATUS FLAGS
+int8 MISSION_STATUS = 0;                                                         //MISSION STATUS FLAG
+int8 MISSION_OPERATING = 0;                                                      //MISSION OPERATING FLAG
 static int16 currenttime = 0;
 static int16 missiontime = 0;
 BYTE command[9];
@@ -88,6 +89,7 @@ void DELETE_CMD_FROM_COMM()
    return;
 }
 
+
 void DELETE_CMD_ARRAY_DATA()
 {
    for(int num = 0; num < 9; num++)
@@ -149,6 +151,7 @@ void MAIN_MB_CMD()
          fprintf(PC,"Collect HK Data From FAB: ");
          fputc(0x61, FAB);
          FAB_DATA = 0;
+         DELETE_CMD_ARRAY_DATA();
          
       break;
       
@@ -159,6 +162,7 @@ void MAIN_MB_CMD()
          // delay_ms(300);
          //fprintf(PC,"Battery Voltage %x \r\n", in_HK[0]);
          FAB_DATA = 0;
+         DELETE_CMD_ARRAY_DATA();
          
       break;
       
@@ -201,14 +205,16 @@ void MAIN_MB_CMD()
             fprintf (PC, "\r\nRESET DATA NOT OBTAINED\r\n") ;
             return;
          }
+         DELETE_CMD_ARRAY_DATA();
 
       break;
       
       
       case 0x04:
+      
          fprintf(PC, "\r\nBPB POWER ON\r\n");
          Turn_ON_MBP();
-         
+         DELETE_CMD_ARRAY_DATA();
       break;
          
       
@@ -325,7 +331,16 @@ void MAIN_MB_CMD()
       case 0x19:
          unsigned int16 duration = (unsigned int16)command[2]*12;                //CMD2 is operation time(min), maximum number of readings in 2 hours = 1440
          if(duration > 1440){duration = 1440;}                                   // 12 readings in 1 min, every 5 seconds
+         MISSION_STATUS = 1;
          HIGHSAMP_SENSOR_COLLECTION(duration);
+         MISSION_STATUS = 0;
+      break;
+      
+      case 0x1F:
+         MISSION_STATUS = 1;
+         //RESET SATELLITE
+         MISSION_STATUS = 0;
+         MISSION_OPERATING = 0;
       break;
    }
 
@@ -820,8 +835,9 @@ void MAKE_CW2_FORMAT()
    CW_FORMAT[3] = CW_FORMAT[3] + RESERVE_CHECK * 2;                              //RSV Flag
    CW_FORMAT[3] = CW_FORMAT[3] + UPLINK_SUCCESS;                                 //UPLINK SUCCESS
    
-   CW_FORMAT[4] = MISSION_STATUS;                                                //MISSION STATUS FLAGS
-
+   CW_FORMAT[4] = MISSION_STATUS<<4;                                                //MISSION STATUS FLAG
+   CW_FORMAT[4] = MISSION_OPERATING>>4;
+   
    CW_IDENTIFIER = 1;
    CHECK_50_and_CW_RESPOND();
    ACK_for_COM[0] = 0xAA;                                                        //for safety (this byte should be always 0)
@@ -1022,6 +1038,76 @@ void VERIFY_FABDATA(int32 delaytime1,int32 delaytime2)
       }
    }
    return;
+}
+
+
+void REPLY_TO_COM(int8 data1,int8 data2)
+{
+   if(ACK_for_COM[12] == 0x66 && ACK_for_COM[14] == 0x77)
+   {
+      for(int n = 0; n < 24; n++)                                                //send back the acknowledge
+      {
+         fputc(ACK_for_COM[n],COM);
+      }
+      for(n = 0; n < 24; n++)                                                    //send back the acknowledge
+      {
+         fprintf(PC,"%x,",ACK_for_COM[n]);
+      }
+      fprintf(PC,",AUTO\r\n");
+   }
+   else{
+      //REFLESH_MSN_ACK_for_COM();
+//!      for(int n = 7; n < 24; n++)//send back the acknowledge
+//!      {
+//!         ACK_for_COM[n] = 0xff;
+//!      }
+      ACK_for_COM[0] = 0xAA;
+      ACK_for_COM[12] = data1;
+      ACK_for_COM[13] = data2;
+      ACK_for_COM[23] = 0xBB;
+      for(int n = 0; n < 24; n++)                                                //send back the acknowledge
+      {
+         fputc(ACK_for_COM[n],COM);
+      }
+      for(n = 0; n < 24; n++)                                                    //send back the acknowledge
+      {
+         fprintf(PC,"%x,",ACK_for_COM[n]);
+      }
+      fprintf(PC,",NORMAL\r\n");
+   }
+
+}
+
+
+void UPDATE_ACK_for_COM(int8 data1,int8 data2,int32 address, int16 size)         //send data to COM for automatical mission
+{
+   fprintf(PC,"address is %lx\r\n", address);
+   fprintf(PC,"size is %lu\r\n",size);
+   REFRESH_MSN_ACK_for_COM();                                                    //clear array ACK_for_COM[i] from position 12 to 22
+   ACK_for_COM[15] = address >> 24;
+   ACK_for_COM[16] = address >> 16;
+   ACK_for_COM[17] = address >> 8;
+   ACK_for_COM[18] = address;
+   
+   ACK_for_COM[19] = 0;
+   ACK_for_COM[20] = 0;
+   ACK_for_COM[21] = size >> 8;
+   ACK_for_COM[22] = size;
+   
+   ACK_for_COM[0] = 0xAA;                                                        //header
+   ACK_for_COM[12] = data1;                                                      //success ack indicator 0x66
+   ACK_for_COM[14] = data2;                                                      //auto indicator 0x77
+   ACK_for_COM[23] = 0xBB;                                                       //footer
+   fprintf(PC,"sending to COM PIC: \r\n");
+   for(int m = 0; m<24; m++)
+   {
+      fprintf(PC,"%x ",ACK_for_COM[m]);
+   }
+   fprintf(PC,"\r\n");
+   for(int n = 0; n < 24; n++)                                                   //send back the acknowledge
+   {
+      fputc(ACK_for_COM[n],COM);
+   }
 }
 
 
@@ -1298,7 +1384,7 @@ void MAKE_ADCS_HKDATA()                                                         
 }
 
 
-void DISPLAY_CW()                                                                //funcion que imprime el array CW_FORMAT[]
+void DISPLAY_CW()                                                                //function that prints the array CW_FORMAT []
 {
    fprintf(PC,"\r\nCW:\r\n");
    for(int8 i = 0; i < 5; i++)
@@ -1723,118 +1809,6 @@ void DEL_MBP_DATA()
 }
 
 
-void DLP_test()
-{
-   if(CMD_FROM_COMM[0] && CMD_FROM_COMM[4] != 0xAB)
-   {
-
-      command[0] = CMD_FROM_COMM[4];
-      command[1] = CMD_FROM_COMM[5];
-      command[2] = CMD_FROM_COMM[6];
-      command[3] = CMD_FROM_COMM[7];
-      command[4] = CMD_FROM_COMM[8];
-      command[5] = CMD_FROM_COMM[9];
-      command[6] = CMD_FROM_COMM[10];
-      command[7] = CMD_FROM_COMM[11];
-      command[8] = 0x00;
-   }
-   
-   if(CMD_FROM_PC[0])
-   {
-      for(int m = 0; m < 9; m++)
-         {
-            command[m] = CMD_FROM_PC[m];
-         }
-   }
-   switch (command[0])
-   {
-      case 0x7E:
-         
-         output_high (PIN_A5); //SFM2 mission side access
-         fprintf (PC, "Start 0x7E - Turn ON DLP\r\n") ;
-         Forward_CMD_MBP();
-         fprintf (PC, "Finish 0x7E\r\n");
-         
-      break;
-      
-      case 0x70: //Turn off DLP RPi DIO for MOSFET on RAB to power RPI from 5V line
-      
-         output_high (PIN_A5); //SFM2 mission side access
-         fprintf (PC, "Start 0x70 - Turn off IMGCLS\r\n") ;
-         Forward_CMD_MBP();
-         fprintf (PC, "Finish 0x70\r\n"); 
-         
-      break;
-      
-      case 0x71: //Real time uplink command
-      
-         output_high (PIN_A5); //SFM2 mission side access
-         fprintf (PC, "Start 0x71 - Real time uplink DLP\r\n") ;
-         Forward_CMD_MBP();
-         fprintf (PC, "Finish 0x71\r\n"); 
-      break;
-      
-      case 0x72:
-         output_high (PIN_A5);
-         fprintf (PC, "Start 0x82 - Real time downlink DLP\r\n") ;
-         Forward_CMD_MBP();
-         int8 counter_dlp = 0;
-         for(int32 num_dlp = 0; num_dlp < 1500000; num_dlp++)
-         {
-            if(kbhit(DC))
-            {
-               DLP_DATA[counter_dlp] = fgetc(DC);
-               counter_dlp++;
-               if(counter_dlp == 81)
-               {
-                  break;
-               }
-            }
-         }
-         
-         fprintf(PC,"Data Recieved: ");
-         for(int8 c = 0; c < 81; c++)
-         {
-            fprintf(PC,"%x, ",DLP_DATA[c]);
-         }
-         fprintf(PC,"\r\n");
-         fprintf (PC, "Finish 0x72\r\n");
-         
-         for(c = 0; c < 81; c++)
-         {
-            DLP_DATA[c] = 0;
-         }
-      break;
-      
-      
-      case 0x73://Erase the data on SFM2 at the given address. Specify how much data to erase eg. 16 00 01 02 03 FF will erase the entire 64kB sector at address 00010203
-      
-         output_high (PIN_A5);
-         fprintf (PC, "Start 0x73\r\n") ;
-         Forward_CMD_MBP();
-         fprintf (PC, "Finish 0x73\r\n"); 
-         
-      break;
-      
-      case 0x74:
-         
-         fprintf (PC, "Start 0x74 - DLP Deployment\r\n") ;     
-         output_high (PIN_A5);
-         Forward_CMD_MBP();  
-         fprintf (PC, "Finish 0x74\r\n");
-         
-      break;
-      
-     
-   }
-   
-   for(int m = 0; m < 9; m++)
-   {
-      command[m] = 0;
-   }
-   
-}
-
 void Forward_CMD_MBP()
 {
       int count = 0;
@@ -2139,22 +2113,12 @@ void MULT_SPEC_Test()
       
       case 0x20: //Turn off CAM1 RPi DIO for MOSFET on MB1 to power RPI from 5V      
          
-         output_high (PIN_A5); //SFM2 mission side access
+         output_high (PIN_A5);                                                      //SFM2 mission side access
          fprintf (PC, "Start 0x20 - Turn OFF MULTSPEC CAM1 (MB1)\r\n") ;
-         output_low(pin_G3); //Turn off DIO for MULTSPEC CAM1
-         //Forward_CMD_MBP();
-//!         for(int16 num_reset = 0; num_reset < 200; num_reset++)
-//!         {
-//!            fputc(0xCD,reset);
-//!            delay_ms(100);
-//!            if(reset_bffr[0] == 0xCD)
-//!               {
-//!                  fprintf (PC, "RESET Turned off 5V\r\n");
-//!                  break;
-//!               }
-//!         }
-         //fputc(0xCD, reset);
-         
+         output_low(pin_G3);                                                        //Turn off DIO for MULTSPEC CAM1
+         MISSION_STATUS = 0;
+         MISSION_OPERATING = 0;
+         DELETE_CMD_ARRAY_DATA();
          fprintf (PC, "Finish 0x20\r\n");
          
       break;
@@ -2162,29 +2126,33 @@ void MULT_SPEC_Test()
       case 0x21: //Real time uplink command
          output_high (PIN_A5); //SFM2 mission side access
          fprintf (PC, "Start 0x21 - Real time uplink MULTSPEC CAM1\r\n") ;
-//!         fprintf(PC, "\r\nCommand Data:\r\n");
-//!         
-//!         for(int yz = 0; yz < 9; yz++)
-//!         {
-//!            fprintf(PC, "%x ",command[yz]);
-//!         
-//!         }
+         if (MISSION_STATUS == 1)
+         {
+            MISSION_OPERATING = 1;
+         }
+         else
+         {
+            MISSION_OPERATING = 0;
+         }
          Forward_CMD_MBP();
          DELETE_CMD_ARRAY_DATA();
+         MISSION_OPERATING = 0;
          fprintf (PC, "Finish 0x21\r\n");
 
       break;
       
       case 0x22: //Real time downlink command
       
-//!         output_high (PIN_A5); //SFM2 mission side access
-//!         fprintf (PC, "Start 0x22\r\n") ;
-//!         output_high(pin_G2); //Turn on DIO for trigger
-//!         delay_ms(10000);
-//!         output_low(pin_G2); //Turn off DIO for trigger
-//!         fprintf (PC, "Finish 0x22\r\n");
          fprintf (PC, "Start 0x22 - Request MULT-SPEC MB1 Downlink Data\r\n") ;
          output_high (PIN_A5); //SFM2 mission side access
+         if (MISSION_STATUS == 1)                                                 //Mission operating flag will only go high if MISSION STATUS is high. Mission STATUS is high when the mission turns on
+         {
+            MISSION_OPERATING = 1;
+         }
+         else
+         {
+            MISSION_OPERATING = 0;
+         }
          Forward_CMD_MBP();
          int8 counter = 0;
          for(int32 num = 0; num < 1500000; num++)
@@ -2210,7 +2178,10 @@ void MULT_SPEC_Test()
          {
             MULTSPEC1_DATA[l] = 0;
          }
-
+         
+         MISSION_OPERATING = 0;
+         DELETE_CMD_ARRAY_DATA();
+         
       break;
       
       case 0x23:
@@ -2219,6 +2190,14 @@ void MULT_SPEC_Test()
          //(1 image, captured immediately, saved to specified address) 
          //eg. 23 is command, 00 02 06 08 is the address location, 01 is number of images to capture, 00 00 00 for remaining unused command bytes (command: 23 00 02 06 08 01 00 00 00)
          fprintf (PC, "Start 0x23\r\n") ;
+         if (MISSION_STATUS == 1)                                                 //Mission operating flag will only go high if MISSION STATUS is high. Mission STATUS is high when the mission turns on
+         {
+            MISSION_OPERATING = 1;
+         }
+         else
+         {
+            MISSION_OPERATING = 0;
+         }
          output_high (PIN_A5); //SFM2 mission side access
          
          for (i = 1; i < 9; i++)
@@ -2227,7 +2206,8 @@ void MULT_SPEC_Test()
             delay_ms(20);
             fputc(command[i], PC);
          }
-         
+         MISSION_OPERATING = 0;
+         DELETE_CMD_ARRAY_DATA();
          fprintf (PC, "Finish 0x23\r\n");
       break;
       
@@ -2235,12 +2215,21 @@ void MULT_SPEC_Test()
 
          fprintf (PC, "Start 0x24\r\n") ;
          output_low (PIN_A5);
+         if (MISSION_STATUS == 1)                                                 //Mission operating flag will only go high if MISSION STATUS is high. Mission STATUS is high when the mission turns on
+         {
+            MISSION_OPERATING = 1;
+         }
+         else
+         {
+            MISSION_OPERATING = 0;
+         }
          RESERVE_TARGET_FLAG = 3;
 //!            if(RESERVE_MIN_FLAG >= RESERVE_TARGET_FLAG) 
 //!            {
 //!               
 //!            }
-//!
+         MISSION_OPERATING = 0;
+         DELETE_CMD_ARRAY_DATA();
          fprintf (PC, "Finish 0x24\r\n");    
       break;
       
@@ -2248,6 +2237,14 @@ void MULT_SPEC_Test()
       
          output_high (PIN_A5); //SFM2 mission side access
          fprintf (PC, "Start 0x25\r\n") ;
+         if (MISSION_STATUS == 1)                                                 //Mission operating flag will only go high if MISSION STATUS is high. Mission STATUS is high when the mission turns on
+         {
+            MISSION_OPERATING = 1;
+         }
+         else
+         {
+            MISSION_OPERATING = 0;
+         }
          for (i = 1; i < 9; i++)
          {
             fputc(command[i], DC);
@@ -2281,6 +2278,8 @@ void MULT_SPEC_Test()
          TRANSFER_DATA_NBYTE_TOPC_SCF(address, packet);
          
          fprintf (PC, "\r\n");
+         MISSION_OPERATING = 0;
+         DELETE_CMD_ARRAY_DATA();
          fprintf (PC, "Finish 0x25\r\n");
          
       break;
@@ -2288,6 +2287,14 @@ void MULT_SPEC_Test()
       case 0x26: //Transfer N packets of data from SFM2 to PC at the specified address locations
       
          fprintf (PC, "Start 0x12\r\n") ;
+         if (MISSION_STATUS == 1)                                                 //Mission operating flag will only go high if MISSION STATUS is high. Mission STATUS is high when the mission turns on
+         {
+            MISSION_OPERATING = 1;
+         }
+         else
+         {
+            MISSION_OPERATING = 0;
+         }
          output_low (PIN_A5);
          address_data[0] = command[1]<<24;
          address_data[1] = command[2]<<16;
@@ -2298,14 +2305,24 @@ void MULT_SPEC_Test()
          packet_data[1] = command[6];
          packet = (packet_data[0] + packet_data[1])*81;
          TRANSFER_DATA_NBYTE_TOPC_SMF(address, packet);
+         MISSION_OPERATING = 0;
+         DELETE_CMD_ARRAY_DATA();
          fprintf (PC, "Finish 0x12\r\n") ;
          
       break;
 
  
-      case 0x27://Uplink command to write the data on Flash Memory 2
+      case 0x27:                                                                  //Uplink command to write the data on Flash Memory 2
       
          output_low (PIN_A5) ;//Main side
+         if (MISSION_STATUS == 1)                                                 //Mission operating flag will only go high if MISSION STATUS is high. Mission STATUS is high when the mission turns on
+         {
+            MISSION_OPERATING = 1;
+         }
+         else
+         {
+            MISSION_OPERATING = 0;
+         }
          fprintf (PC, "Start 0x27\r\n") ;
          address_data[0] = command[1]<<24;
          address_data[1] = command[2]<<16;
@@ -2317,6 +2334,8 @@ void MULT_SPEC_Test()
          WRITE_DATA_BYTE_SMF (address + 1, command[6]) ;
          WRITE_DATA_BYTE_SMF (address + 2, command[7]) ;
          WRITE_DATA_BYTE_SMF (address + 3, command[8]) ;
+         MISSION_OPERATING = 0;
+         DELETE_CMD_ARRAY_DATA();
          fprintf (PC, "Finish 0x27\r\n");
       
       break;
@@ -2325,6 +2344,14 @@ void MULT_SPEC_Test()
       
          output_low (PIN_A5);
          fprintf(PC, "Start 0x28\r\n");
+         if (MISSION_STATUS == 1)                                                 //Mission operating flag will only go high if MISSION STATUS is high. Mission STATUS is high when the mission turns on
+         {
+            MISSION_OPERATING = 1;
+         }
+         else
+         {
+            MISSION_OPERATING = 0;
+         }
          address_data[0] = command[1]<<24;
          address_data[1] = command[2]<<16;
          address_data[2] = command[3]<<8;
@@ -2351,6 +2378,8 @@ void MULT_SPEC_Test()
                fprintf(PC, "Finish 0x28 Sector Erase\r\n");
                break;
          }
+         MISSION_OPERATING = 0;
+         DELETE_CMD_ARRAY_DATA();
          
       break;
       
@@ -2358,20 +2387,9 @@ void MULT_SPEC_Test()
          
          output_high (PIN_A5); //SFM2 mission side access
          fprintf (PC, "Start - Turn ON MULTSPEC CAM1 0x2E\r\n") ;
-         //fputc(0xEC, reset);
+         MISSION_STATUS = 1;
+         MISSION_OPERATING = 0;
          output_high(pin_G3); //Turn on DIO for MULTSPEC CAM1
-         //Forward_CMD_MBP();
-         
-//!         for(num_reset = 0; num_reset < 200; num_reset++)
-//!         {
-//!            fputc(0xEC,reset);
-//!            delay_ms(100);
-//!            if(reset_bffr[0] == 0xEC)
-//!               {
-//!                  fprintf (PC, "RESET Turned on 5V\r\n");
-//!                  break;
-//!               }
-//!         }
          DELETE_CMD_ARRAY_DATA();
          fprintf (PC, "Finish 0x2E\r\n"); 
       
@@ -2383,22 +2401,11 @@ void MULT_SPEC_Test()
       
          output_high (PIN_A5); //SFM2 mission side access
          fprintf (PC, "Start 0x30 - Turn OFF MULTSPEC CAM2 (MB2)\r\n") ;
-         //fputc(0xCD, reset);
          output_low(pin_F6); //Turn off DIO for MULTSPEC CAM2
-         //Forward_CMD_MBP();
-//!         
-//!         for(num_reset = 0; num_reset < 200; num_reset++)
-//!         {
-//!            fputc(0xCD,reset);
-//!            delay_ms(100);
-//!            if(reset_bffr[0] == 0xCD)
-//!               {
-//!                  fprintf (PC, "RESET Turned off 5V\r\n");
-//!                  break;
-//!               }
-//!         }
-         fprintf (PC, "Finish 0x30\r\n");
-         
+         MISSION_STATUS = 0;
+         MISSION_OPERATING = 0;
+         DELETE_CMD_ARRAY_DATA();
+         fprintf (PC, "Finish 0x30\r\n");        
          
       break;
       
@@ -2409,15 +2416,16 @@ void MULT_SPEC_Test()
       break;
       
       case 0x32: //Turn on CAM1 RPi trigger
-      
-//!         output_high (PIN_A5); //SFM2 mission side access
-//!         fprintf (PC, "Start 0x32\r\n") ;
-//!         output_high(pin_F7); //Turn on DIO for trigger
-//!         delay_ms(10000);
-//!         output_low(pin_F7); //Turn off DIO for trigger
-//!         fprintf (PC, "Finish 0x32\r\n");
 
          fprintf (PC, "Start 0x32 - Request MULT-SPEC MB2 Downlink Data\r\n") ;
+         if (MISSION_STATUS == 1)                                                 //Mission operating flag will only go high if MISSION STATUS is high. Mission STATUS is high when the mission turns on
+         {
+            MISSION_OPERATING = 1;
+         }
+         else
+         {
+            MISSION_OPERATING = 0;
+         }
          output_high (PIN_A5); //SFM2 mission side access
          Forward_CMD_MBP();
          counter = 0;
@@ -2444,7 +2452,10 @@ void MULT_SPEC_Test()
             MULTSPEC2_DATA[l] = 0;
          }
          fprintf(PC,"\r\n");
+         MISSION_OPERATING = 0;
+         DELETE_CMD_ARRAY_DATA();
          fprintf (PC, "Finish 0x32\r\n");
+
       break;
       
       case 0x33: 
@@ -2453,7 +2464,14 @@ void MULT_SPEC_Test()
          //eg. 23 is command, 00 02 06 08 is the address location, 01 is number of images to capture, 00 00 00 for remaining unused command bytes (command: 23 00 02 06 08 01 00 00 00)
          
          fprintf (PC, "Start 0x33\r\n") ;
-         
+         if (MISSION_STATUS == 1)                                                 //Mission operating flag will only go high if MISSION STATUS is high. Mission STATUS is high when the mission turns on
+         {
+            MISSION_OPERATING = 1;
+         }
+         else
+         {
+            MISSION_OPERATING = 0;
+         }
          output_high (PIN_A5); //SFM2 mission side access
          
          for (i = 1; i < 9; i++)
@@ -2462,15 +2480,24 @@ void MULT_SPEC_Test()
             delay_ms(20);
             fputc(command[i], PC);
          }
-         
+         MISSION_OPERATING = 0;
          fprintf (PC, "Finish 0x33\r\n");
+         DELETE_CMD_ARRAY_DATA();
+         
       break;
       
       case 0x34: //Turn on CAM1 RPi trigger at specific time from RESET_PIC time information
 
          fprintf (PC, "Start 0x34\r\n") ;
          output_low (PIN_A5);
-         
+         if (MISSION_STATUS == 1)                                                 //Mission operating flag will only go high if MISSION STATUS is high. Mission STATUS is high when the mission turns on
+         {
+            MISSION_OPERATING = 1;
+         }
+         else
+         {
+            MISSION_OPERATING = 0;
+         }
          //read command
          command_time_data[0] = command[1];
          command_time_data[1] = command[2];
@@ -2502,20 +2529,31 @@ void MULT_SPEC_Test()
                }
          }
          result = 1;
-         fprintf (PC, "Finish 0x34\r\n");    
+         MISSION_OPERATING = 0;
+         fprintf (PC, "Finish 0x34\r\n");
+         DELETE_CMD_ARRAY_DATA();
       break;
       
       case 0x35: //Turn on CAM1 and CAM2 RPi trigger
       
          output_high (PIN_A5); //SFM2 mission side access
          fprintf (PC, "Start 0x35\r\n") ;
+         if (MISSION_STATUS == 1)                                                 //Mission operating flag will only go high if MISSION STATUS is high. Mission STATUS is high when the mission turns on
+         {
+            MISSION_OPERATING = 1;
+         }
+         else
+         {
+            MISSION_OPERATING = 0;
+         }
          output_high(pin_F7); //Turn on DIO for trigger MB2
          output_high(pin_G2); //Turn on DIO for trigger MB1
          delay_ms(10000);
          output_low(pin_F7); //Turn off DIO for trigger
          output_low(pin_G2); //Turn off DIO for trigger
+         MISSION_OPERATING = 0;
          fprintf (PC, "Finish 0x35\r\n");   
-         
+         DELETE_CMD_ARRAY_DATA();
       break;
       
       case 0x36: //Turn on CAM1 and CAM2 RPi
@@ -2526,7 +2564,7 @@ void MULT_SPEC_Test()
          delay_ms(5000);
          output_high(pin_F6); //Turn on DIO for trigger MB1
          fprintf (PC, "Finish 0x36\r\n");
-         
+         DELETE_CMD_ARRAY_DATA();
       break;
       
       case 0x3E: // Turn on MULTSPEC CAM2 (MB2)
@@ -2534,33 +2572,22 @@ void MULT_SPEC_Test()
          output_high (PIN_A5); //SFM2 mission side access
          fprintf (PC, "Start 0x3E - Turn ON MULTSPEC CAM2 (MB2)\r\n") ;
          output_high(pin_F6); //Turn on DIO for MULTSPEC CAM2
-         //fputc(0xEC, reset);
-         
-//!         for(num_reset = 0; num_reset < 200; num_reset++)
-//!         {
-//!            fputc(0xEC,reset);
-//!            delay_ms(100);
-//!            if(reset_bffr[0] == 0xEC)
-//!               {
-//!                  fprintf (PC, "RESET Turned on 5V\r\n");
-//!                  break;
-//!               }
-//!         }
-         
+         MISSION_STATUS = 1;
+         MISSION_OPERATING = 0;     
          fprintf (PC, "Finish 0x3E\r\n");
-         
+         DELETE_CMD_ARRAY_DATA();
       break;
       
       default:
+      
          fprintf (PC, "Command:%x", command[0]);
          fprintf (PC, " does not exist\r\n");
-         break;
+         MISSION_STATUS = 0;
+         MISSION_OPERATING = 0;
+         DELETE_CMD_ARRAY_DATA();
+      break;
    }
    
-   for(int m = 0; m < 9; m++)
-   {
-      command[m] = 0;
-   }
 }
 
 
@@ -2591,6 +2618,132 @@ void OITA_Test()
    
    //DELETE_CMD_ARRAY_DATA();
    
+   
+}
+
+
+void DLP_test()
+{
+   if(CMD_FROM_COMM[0] && CMD_FROM_COMM[4] != 0xAB)
+   {
+
+      command[0] = CMD_FROM_COMM[4];
+      command[1] = CMD_FROM_COMM[5];
+      command[2] = CMD_FROM_COMM[6];
+      command[3] = CMD_FROM_COMM[7];
+      command[4] = CMD_FROM_COMM[8];
+      command[5] = CMD_FROM_COMM[9];
+      command[6] = CMD_FROM_COMM[10];
+      command[7] = CMD_FROM_COMM[11];
+      command[8] = 0x00;
+   }
+   
+   if(CMD_FROM_PC[0])
+   {
+      for(int m = 0; m < 9; m++)
+         {
+            command[m] = CMD_FROM_PC[m];
+         }
+   }
+   switch (command[0])
+   {
+      case 0x7E:
+         
+         output_high (PIN_A5); //SFM2 mission side access
+         fprintf (PC, "Start 0x7E - Turn ON DLP\r\n") ;
+         Forward_CMD_MBP();
+         MISSION_STATUS = 1;
+         MISSION_OPERATING = 0;
+         fprintf (PC, "Finish 0x7E\r\n");
+         
+      break;
+      
+      case 0x70: //Turn off DLP RPi DIO for MOSFET on RAB to power RPI from 5V line
+      
+         output_high (PIN_A5); //SFM2 mission side access
+         fprintf (PC, "Start 0x70 - Turn off IMGCLS\r\n") ;
+         Forward_CMD_MBP();
+         MISSION_STATUS = 0;
+         MISSION_OPERATING = 0;
+         fprintf (PC, "Finish 0x70\r\n"); 
+         
+      break;
+      
+      case 0x71: //Real time uplink command
+      
+         output_high (PIN_A5); //SFM2 mission side access
+         fprintf (PC, "Start 0x71 - Real time uplink DLP\r\n") ;
+         MISSION_STATUS = 1;
+         MISSION_OPERATING = 1;
+         Forward_CMD_MBP();
+         MISSION_OPERATING = 0;
+         fprintf (PC, "Finish 0x71\r\n"); 
+      break;
+      
+      case 0x72:
+         output_high (PIN_A5);
+         fprintf (PC, "Start 0x82 - Real time downlink DLP\r\n") ;
+         MISSION_STATUS = 1;
+         MISSION_OPERATING = 1;
+         Forward_CMD_MBP();
+         int8 counter_dlp = 0;
+         for(int32 num_dlp = 0; num_dlp < 1500000; num_dlp++)
+         {
+            if(kbhit(DC))
+            {
+               DLP_DATA[counter_dlp] = fgetc(DC);
+               counter_dlp++;
+               if(counter_dlp == 81)
+               {
+                  break;
+               }
+            }
+         }
+         
+         fprintf(PC,"Data Recieved: ");
+         for(int8 c = 0; c < 81; c++)
+         {
+            fprintf(PC,"%x, ",DLP_DATA[c]);
+         }
+         fprintf(PC,"\r\n");
+         fprintf (PC, "Finish 0x72\r\n");
+         
+         for(c = 0; c < 81; c++)
+         {
+            DLP_DATA[c] = 0;
+         }
+         
+         MISSION_OPERATING = 0;
+      break;
+      
+      
+      case 0x73://Erase the data on SFM2 at the given address. Specify how much data to erase eg. 16 00 01 02 03 FF will erase the entire 64kB sector at address 00010203
+      
+         output_high (PIN_A5);
+         fprintf (PC, "Start 0x73\r\n") ;
+         Forward_CMD_MBP();
+         fprintf (PC, "Finish 0x73\r\n"); 
+         
+      break;
+      
+      case 0x74:
+         
+         fprintf (PC, "Start 0x74 - DLP Deployment\r\n") ;     
+         output_high (PIN_A5);
+         MISSION_STATUS = 1;
+         Forward_CMD_MBP(); 
+         MISSION_OPERATING = 0;
+         fprintf (PC, "Finish 0x74\r\n");
+         
+      break;
+      
+     
+   }
+   
+   for(int m = 0; m < 9; m++)
+   {
+      command[m] = 0;
+   }
    
 }
 
