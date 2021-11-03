@@ -152,13 +152,17 @@ void main()
    {
       //BC_ON_30min();                                                             //Attempt 1st antenna deployment after 30mins
       
-      if(FAB_FLAG > 89 && MISSION_OPERATING == 0)   //ADD MISSION FLAG AND MISSION FLAG CHECK SO ADCS DOES NOT INTERRUPT DATA WRITING TO SFM2                                                       //every 90 sec, OBC gather sensor data and update CW format 
+      
+      if(FAB_FLAG > 89)                                                            //every 90 sec, OBC gather sensor data and update CW format 
       {
          FAB_FLAG = 0;
          fprintf(PC,"\r\n***NORMAL SAMPLING HOUSEKEEPING DATA COLLECTION***\r\n"); //every 90seconds
          FAB_TEST_OPERATION();
          COM_DATA = 0;
-         STORE_ADRESS_DATA_TO_FLASH();                                           //for store the address info
+         if(MISSION_STATUS == 0)
+         {
+            STORE_ADRESS_DATA_TO_FLASH();                                           //for store the address info
+         }
          fprintf(PC,"CW:");
          for(int i = 0; i < 4; i++)                                              //show CW format
          {

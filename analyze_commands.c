@@ -67,7 +67,7 @@ void EXECUTE_COMMAND_from_PC(int8 CMD1,int8 CMD2,int8 CMD3,int8 CMD4,int8 CMD5,i
    {
    
       case 0x01:
-      
+         UPLINK_SUCCESS_CHECK();
          fprintf(PC,"Collect HK Data From FAB: ");
          fputc(0x61, FAB);
          FAB_DATA = 0;
@@ -76,7 +76,7 @@ void EXECUTE_COMMAND_from_PC(int8 CMD1,int8 CMD2,int8 CMD3,int8 CMD4,int8 CMD5,i
       
       
       case 0x02:
-      
+         UPLINK_SUCCESS_CHECK();
          fprintf(PC,"Collect ADCS Data From FAB: ");
          fputc(0x69, FAB);
          FAB_DATA = 0;
@@ -85,7 +85,7 @@ void EXECUTE_COMMAND_from_PC(int8 CMD1,int8 CMD2,int8 CMD3,int8 CMD4,int8 CMD5,i
       
       
       case 0x03:
-      
+         UPLINK_SUCCESS_CHECK();
          fprintf(PC,"Collect Data from RESET: \r\n");
          RESET_DATA = 0;
          int8 dayh;
@@ -128,7 +128,7 @@ void EXECUTE_COMMAND_from_PC(int8 CMD1,int8 CMD2,int8 CMD3,int8 CMD4,int8 CMD5,i
       
       
       case 0x04:
-      
+         UPLINK_SUCCESS_CHECK();
          fprintf(PC, "\r\nBPB POWER ON\r\n");
          Turn_ON_MBP();
          
@@ -136,21 +136,21 @@ void EXECUTE_COMMAND_from_PC(int8 CMD1,int8 CMD2,int8 CMD3,int8 CMD4,int8 CMD5,i
          
       
       case 0x05:
-      
+         UPLINK_SUCCESS_CHECK();
          fprintf(PC, "\r\nBPB POWER OFF\r\n");
          Turn_OFF_MBP();
          
       break;
       
       case 0x06:
-      
+         UPLINK_SUCCESS_CHECK();
          fprintf(PC, "\r\nRefresh Reservation Table\r\n");
          table_refresh();
          
       break;
       
       case 0x07:
-      
+         UPLINK_SUCCESS_CHECK();
          fprintf(PC, "\r\nDisplay Reservation Table\r\n");
          Disp_RSV();
          
@@ -158,7 +158,7 @@ void EXECUTE_COMMAND_from_PC(int8 CMD1,int8 CMD2,int8 CMD3,int8 CMD4,int8 CMD5,i
       
       
       case 0x12:
-      
+         UPLINK_SUCCESS_CHECK();
          fprintf (PC, "Start 0x12\r\n") ;
          output_low (PIN_A5);
          address_data[0] = command[2]<<24;
@@ -176,7 +176,7 @@ void EXECUTE_COMMAND_from_PC(int8 CMD1,int8 CMD2,int8 CMD3,int8 CMD4,int8 CMD5,i
       
       
       case 0x14://Uplink command to write the data on Flash Memory 2
-      
+         UPLINK_SUCCESS_CHECK();
          output_low (PIN_A5) ;//Main side
          fprintf (PC, "Start 0x14\r\n") ;
          address_data[0] = command[2]<<24;
@@ -194,7 +194,7 @@ void EXECUTE_COMMAND_from_PC(int8 CMD1,int8 CMD2,int8 CMD3,int8 CMD4,int8 CMD5,i
       
       
       case 0x16://Erase the data on Flash Memory 2
-      
+         UPLINK_SUCCESS_CHECK();
          output_low (PIN_A5);
          fprintf(PC, "Start 0x16\r\n");
          address_data[0] = command[2]<<24;

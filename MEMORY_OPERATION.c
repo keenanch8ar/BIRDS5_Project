@@ -58,6 +58,8 @@ int8 AUTO_MBP_DONE = 0;
 int8 AUTO_ADCS_DONE = 0;
 int8 ANT_DEP_STATUS = 0;
 int8 UPLINK_SUCCESS = 0;
+int8 MISSION_STATUS = 0;                                                         //MISSION STATUS FLAG
+int8 MISSION_OPERATING = 0;                                                      //MISSION OPERATING FLAG
 
 int8 RESERVE_SEC_FLAG = 0;
 
@@ -414,7 +416,7 @@ void TAKE_FLAG_INFO_FROM_OF()                                                   
 
 void STORE_ADRESS_DATA_TO_FLASH()                                                //save the address data in a new sector if the R / W cycle is reached
 {
-   fprintf(PC,"\r\nStoreing Address Data in Flash\r\n");
+   fprintf(PC,"\r\nStoring Address Data in Flash\r\n");
    ADDRESS_WRITING_COUNTER++;                                                    //contador de escrituras en una direccion
    CHANGE_ADDRESS_WRITING_LOCATION();                                            //cambia la direccion del lugar de escritura si se superan 95000 ciclos
    sec_add_bfr[0] = FLAG_DATA_ADDRESS >> 24;                                     //se carga el array sec_add_bfr[] con los datos de las direcciones
@@ -470,7 +472,7 @@ void STORE_ADRESS_DATA_TO_FLASH()                                               
    sec_add_bfr[39] = ADDRESS_WRITING_COUNTER >> 8;
    sec_add_bfr[40] = ADDRESS_WRITING_COUNTER;
    
-   output_low(PIN_A5);                                                           //CAM_MUX MAINSIDE
+
    output_low(PIN_C4);                                                           //COM_MUX MAINSIDE
    int8 num = 0;
    SUBSECTOR_4KB_ERASE_OF(ADD_INFO_ADDRESS);
@@ -487,12 +489,17 @@ void STORE_ADRESS_DATA_TO_FLASH()                                               
       WRITE_DATA_BYTE_SCF(ADD_INFO_ADDRESS + num,sec_add_bfr[num]);
       delay_us(10);
    }
-   SUBSECTOR_4KB_ERASE_SMF(ADD_INFO_ADDRESS);
-   delay_ms(200);
-   for(num = 0; num < FLASH_ADD_SIZE; num++)                                     //guarda todos los datos de direcciones en MISSION FLASH
-   {
-      WRITE_DATA_BYTE_SMF(ADD_INFO_ADDRESS + num,sec_add_bfr[num]);
-      delay_us(10);
+   if(MISSION_STATUS == 0)
+   {     
+      output_low(PIN_A5);                                                           //CAM_MUX MAINSIDE
+      delay_ms(10);
+      SUBSECTOR_4KB_ERASE_SMF(ADD_INFO_ADDRESS);
+      delay_ms(200);
+      for(num = 0; num < FLASH_ADD_SIZE; num++)                                     //guarda todos los datos de direcciones en MISSION FLASH
+      {
+         WRITE_DATA_BYTE_SMF(ADD_INFO_ADDRESS + num,sec_add_bfr[num]);
+         delay_us(10);
+      }
    }
    output_high(PIN_C4);                                                          //COM_MUX COMSIDE
   

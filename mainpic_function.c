@@ -1,7 +1,6 @@
 //--------Mission variables--------------------------------------------------//
 
-int8 MISSION_STATUS = 0;                                                         //MISSION STATUS FLAG
-int8 MISSION_OPERATING = 0;                                                      //MISSION OPERATING FLAG
+
 static int16 currenttime = 0;
 static int16 missiontime = 0;
 BYTE command[9];
@@ -31,6 +30,7 @@ int OitaTestArray[14] = {};
 float df;
 float dg;
 float dk;
+int8 CWtest[1] = {};
 
 //--------FAB HK collection--------------------------------------------------//
 #define HK_size 76                                                               //HK FORMAT ARRAY SIZE
@@ -835,9 +835,9 @@ void MAKE_CW2_FORMAT()
    CW_FORMAT[3] = CW_FORMAT[3] + RESERVE_CHECK * 2;                              //RSV Flag
    CW_FORMAT[3] = CW_FORMAT[3] + UPLINK_SUCCESS;                                 //UPLINK SUCCESS
    
-   CW_FORMAT[4] = MISSION_STATUS<<4;                                                //MISSION STATUS FLAG
-   CW_FORMAT[4] = MISSION_OPERATING>>4;
-   
+   CW_FORMAT[4] = MISSION_STATUS<<4;                                             //MISSION STATUS FLAG
+   CW_FORMAT[4] = CW_FORMAT[4] + (MISSION_OPERATING & 0x01);                     //MISSION OPERATION FLAG
+
    CW_IDENTIFIER = 1;
    CHECK_50_and_CW_RESPOND();
    ACK_for_COM[0] = 0xAA;                                                        //for safety (this byte should be always 0)
@@ -1219,65 +1219,74 @@ void Turn_Off_ADCS()
 
 void GET_ADCS_SENSOR_DATA()                                                      //after that, method will changed (ADCS make format and just send to MAIN PIC)
 {
-   Turn_On_ADCS();
-   delay_ms(50);
+
    
    CHECK_50_and_CW_RESPOND();
    
-   fputc(0x42, DC);                                                              //Request ADCS Data by sending command to Mission Boss to forward to ADCS MCU
-   delay_ms(10);
-   fputc(0xAA, DC);
-   delay_ms(10);
-   fputc(0x00, DC);
-   delay_ms(10);
-   fputc(0x00, DC);
-   delay_ms(10);
-   fputc(0x00, DC);
-   delay_ms(10);
-   fputc(0x00, DC);
-   delay_ms(10);
-   fputc(0x00, DC);
-   delay_ms(10);
-   fputc(0x00, DC);
-   delay_ms(10);
-   fputc(0x00, DC);
-   delay_ms(10);
-   
-   int8 counter = 0;
-   for(int32 adcs = 0; adcs < 100000; adcs++)
+   if (MISSION_STATUS == 0)
    {
-      if(kbhit(DC))
+      Turn_On_ADCS();
+      delay_ms(80);
+       
+      fputc(0x42, DC);                                                              //Request ADCS Data by sending command to Mission Boss to forward to ADCS MCU
+      delay_ms(10);
+      fputc(0xAA, DC);
+      delay_ms(10);
+      fputc(0x00, DC);
+      delay_ms(10);
+      fputc(0x00, DC);
+      delay_ms(10);
+      fputc(0x00, DC);
+      delay_ms(10);
+      fputc(0x00, DC);
+      delay_ms(10);
+      fputc(0x00, DC);
+      delay_ms(10);
+      fputc(0x00, DC);
+      delay_ms(10);
+      fputc(0x00, DC);
+      delay_ms(10);
+      
+      int8 counter = 0;
+      for(int32 adcs = 0; adcs < 100000; adcs++)
       {
-         int8 header = fgetc(DC);
-         if (header == 0x55)
+         if(kbhit(DC))
          {
-            fprintf(PC,"\r\nADCS DATA OBTAINED:\r\n");
-            ADCS_SENSOR_DATA[counter] = header;
-            counter++;
-            for(int32 num = 0; num < 100000; num++)
+            int8 header = fgetc(DC);
+            if (header == 0x55)
             {
-               if(kbhit(DC))
+               fprintf(PC,"\r\nADCS DATA OBTAINED:\r\n");
+               ADCS_SENSOR_DATA[counter] = header;
+               counter++;
+               for(int32 num = 0; num < 100000; num++)
                {
-                  ADCS_SENSOR_DATA[counter] = fgetc(DC);
-                  counter++;
-                  if(counter == 14)
+                  if(kbhit(DC))
                   {
-
-                     break;
+                     ADCS_SENSOR_DATA[counter] = fgetc(DC);
+                     counter++;
+                     if(counter == 14)
+                     {
+   
+                        break;
+                     }
                   }
                }
+               break;
             }
-            break;
          }
+          
       }
-       
+      
+      for(int l = 0; l < 14; l++)
+      {
+         fprintf(PC,"%x ",ADCS_SENSOR_DATA[l]);
+      }
+      fprintf(PC,"\r\n");
    }
-   
-   for(int l = 0; l < 14; l++)
+   else
    {
-      fprintf(PC,"%x ",ADCS_SENSOR_DATA[l]);
+      Delete_ADCS_data();
    }
-   fprintf(PC,"\r\n");
    
 //!   OitaTestArray[0] = ADCS_SENSOR_DATA[0];
 //!   OitaTestArray[1] = ADCS_SENSOR_DATA[1];
@@ -1362,8 +1371,6 @@ void GET_ADCS_SENSOR_DATA()                                                     
 
 void MAKE_ADCS_HKDATA()                                                          //loads into the HKDATA [] array the ADCS data in positions 53 to 106
 {
-   Turn_On_ADCS();
-   delay_ms(20);
    
    GET_ADCS_SENSOR_DATA();                                                       //function that loads the ADCS_SENSOR_DATA [] array with the ADCS data
    
@@ -1428,7 +1435,7 @@ void FAB_TEST_OPERATION()
    LOOP_FAB_CW_ADDRESS();                                                        //Rotate the save positions of the data if it reaches the end of the allocated space
    CHECK_50_and_CW_RESPOND();                                                    //check if command 0x50 arrived from COM PIC and send CW to COM
    Turn_On_MBP();
-   Turn_On_ADCS();                                                               //turn ON ADCS, RD6 = HIGH                                                               
+   //Turn_On_ADCS();                                                               //turn ON ADCS, RD6 = HIGH                                                               
    fprintf(PC,"FAB communication start\r\n");
    waiting(200000);                                                              //wait function, about 200.000=1s
    FAB_MEASURING_FLAG++;                                                         //count until 7(it means 10 min)
@@ -1478,43 +1485,56 @@ void FAB_TEST_OPERATION()
       CHECK_50_and_CW_RESPOND();
       
       DISPLAY_CW();                                                              //function that prints the array CW_FORMAT []
-      CHECK_FAB_RESPONSE = 0;                                                    //FAB flag to zero   
-      output_low(PIN_C4);                                                        //COM Flash memory, Main side
-      output_low(PIN_A5);                                                        //Shared Mission Flash, Main side
-      
-      SEND_HKDATA_to_SCF(FAB_HK_ADDRESS);                                        //save the HKDATA array in COM flash []
-      SEND_HKDATA_to_SMF(FAB_HK_ADDRESS);                                        //save the HKDATA array in SMF flash []
-      SEND_HKDATA_to_OF(FAB_HK_ADDRESS);                                         //save the HKDATA array in Main flash []
-      
-      SEND_CWFORMAT_TO_SCF(FAB_CW_ADDRESS);                                      //save the CWFORMAT array in COM flash []
-      SEND_CWFORMAT_TO_SMF(FAB_CW_ADDRESS);                                      //save the CWFORMAT array in SMF flash []
-      SEND_CWFORMAT_TO_OF(FAB_CW_ADDRESS);                                       //save the CWFORMAT array in Main flash []
-      
-      FAB_HK_ADDRESS = FAB_HK_ADDRESS + HK_size;                                 //prepare for next storing address
-      FAB_CW_ADDRESS = FAB_CW_ADDRESS + CW_size;                                 //prepare for next storing address
-      
-      fprintf(PC,"\r\nSENSORS DATA SAVED ON FLASH\r\n");
-      output_high(PIN_C4);                                                       //COM Flash memory COM side
-      CHECK_50_and_CW_RESPOND();
+      CHECK_FAB_RESPONSE = 0;                                                    //FAB flag to zero
+      if (MISSION_STATUS == 0)
+      {
+         output_low(PIN_C4);                                                        //COM Flash memory, Main side
+         output_low(PIN_A5);                                                        //Shared Mission Flash, Main side
+         
+         SEND_HKDATA_to_SCF(FAB_HK_ADDRESS);                                        //save the HKDATA array in COM flash []
+         if (MISSION_STATUS == 0)
+         {
+            SEND_HKDATA_to_SMF(FAB_HK_ADDRESS);                                        //save the HKDATA array in SMF flash []
+         }
+         SEND_HKDATA_to_OF(FAB_HK_ADDRESS);                                         //save the HKDATA array in Main flash []
+         
+         SEND_CWFORMAT_TO_SCF(FAB_CW_ADDRESS);                                      //save the CWFORMAT array in COM flash []
+         if (MISSION_STATUS == 0)
+         {
+            SEND_CWFORMAT_TO_SMF(FAB_CW_ADDRESS);                                      //save the CWFORMAT array in SMF flash []
+         }
+         SEND_CWFORMAT_TO_OF(FAB_CW_ADDRESS);                                       //save the CWFORMAT array in Main flash []
+         
+         FAB_HK_ADDRESS = FAB_HK_ADDRESS + HK_size;                                 //prepare for next storing address
+         FAB_CW_ADDRESS = FAB_CW_ADDRESS + CW_size;                                 //prepare for next storing address
+         
+         fprintf(PC,"\r\nSENSORS DATA SAVED ON FLASH\r\n");
+         output_high(PIN_C4);                                                       //COM Flash memory COM side
+         CHECK_50_and_CW_RESPOND();
+      }
+
    }
    else
    {
-      SEND_HKDATA_to_SCF(FAB_HK_ADDRESS);                                        //save the HKDATA array in COM flash []
-      SEND_HKDATA_to_SMF(FAB_HK_ADDRESS);                                        //save the HKDATA array in SMF flash []
-      SEND_HKDATA_to_OF(FAB_HK_ADDRESS);                                         //save the HKDATA array in Main flash []
-      
-      SEND_CWFORMAT_TO_SCF(FAB_CW_ADDRESS);                                      //save the CWFORMAT array in COM flash []
-      SEND_CWFORMAT_TO_SMF(FAB_CW_ADDRESS);                                      //save the CWFORMAT array in SMF flash []
-      SEND_CWFORMAT_TO_OF(FAB_CW_ADDRESS);                                       //save the CWFORMAT array in Main flash []
-      
-      FAB_HK_ADDRESS = FAB_HK_ADDRESS + HK_size;                                 //prepare for next storing address
-      FAB_CW_ADDRESS = FAB_CW_ADDRESS + CW_size;                                 //prepare for next storing address
-      
-      fprintf(PC,"NO RESPONSE FROM FAB\r\n\r\n");  
-      CHECK_50_and_CW_RESPOND();
-      for(int num = 0; num < HK_size; num++)
+      if (MISSION_STATUS == 0)
       {
-         fprintf(PC,"%x ",HKDATA[num]);
+         SEND_HKDATA_to_SCF(FAB_HK_ADDRESS);                                        //save the HKDATA array in COM flash []
+         SEND_HKDATA_to_SMF(FAB_HK_ADDRESS);                                        //save the HKDATA array in SMF flash []
+         SEND_HKDATA_to_OF(FAB_HK_ADDRESS);                                         //save the HKDATA array in Main flash []
+         
+         SEND_CWFORMAT_TO_SCF(FAB_CW_ADDRESS);                                      //save the CWFORMAT array in COM flash []
+         SEND_CWFORMAT_TO_SMF(FAB_CW_ADDRESS);                                      //save the CWFORMAT array in SMF flash []
+         SEND_CWFORMAT_TO_OF(FAB_CW_ADDRESS);                                       //save the CWFORMAT array in Main flash []
+         
+         FAB_HK_ADDRESS = FAB_HK_ADDRESS + HK_size;                                 //prepare for next storing address
+         FAB_CW_ADDRESS = FAB_CW_ADDRESS + CW_size;                                 //prepare for next storing address
+         
+         fprintf(PC,"NO RESPONSE FROM FAB\r\n\r\n");  
+         CHECK_50_and_CW_RESPOND();
+         for(int num = 0; num < HK_size; num++)
+         {
+            fprintf(PC,"%x ",HKDATA[num]);
+         }
       }
       CHECK_50_and_CW_RESPOND();
    
@@ -2110,6 +2130,24 @@ void MULT_SPEC_Test()
    {
    
 ////////////////////////////FOR CAM1 RPi on MB1////////////////////////////////
+      case 0x2E: //Turn on CAM1 RPi for MOSFET on MB1 to power RPI from 5V
+         
+         output_high (PIN_A5); //SFM2 mission side access
+         fprintf (PC, "Start - Turn ON MULTSPEC CAM1 0x2E\r\n") ;
+         MISSION_STATUS = 1;
+         MISSION_OPERATING = 0;
+         
+         CWtest[0] = MISSION_STATUS<<4;
+         CWtest[0] = CWtest[0] + (MISSION_OPERATING & 0x01);
+         fprintf(PC,"%x",CWtest[0]);
+         fprintf (PC, "\r\n");
+         
+         output_high(pin_G3); //Turn on DIO for MULTSPEC CAM1
+         DELETE_CMD_ARRAY_DATA();
+         fprintf (PC, "Finish 0x2E\r\n"); 
+      
+      break;
+      
       
       case 0x20: //Turn off CAM1 RPi DIO for MOSFET on MB1 to power RPI from 5V      
          
@@ -2118,6 +2156,12 @@ void MULT_SPEC_Test()
          output_low(pin_G3);                                                        //Turn off DIO for MULTSPEC CAM1
          MISSION_STATUS = 0;
          MISSION_OPERATING = 0;
+         
+         CWtest[0] = MISSION_STATUS<<4;
+         CWtest[0] = CWtest[0] + (MISSION_OPERATING & 0x01);
+         fprintf(PC,"%x",CWtest[0]);
+         fprintf (PC, "\r\n");
+         
          DELETE_CMD_ARRAY_DATA();
          fprintf (PC, "Finish 0x20\r\n");
          
@@ -2154,6 +2198,12 @@ void MULT_SPEC_Test()
             MISSION_OPERATING = 0;
          }
          Forward_CMD_MBP();
+         
+         CWtest[0] = MISSION_STATUS<<4;
+         CWtest[0] = CWtest[0] + (MISSION_OPERATING & 0x01);
+         fprintf(PC,"%x",CWtest[0]);
+         fprintf (PC, "\r\n");
+         
          int8 counter = 0;
          for(int32 num = 0; num < 1500000; num++)
             {
@@ -2383,17 +2433,7 @@ void MULT_SPEC_Test()
          
       break;
       
-      case 0x2E: //Turn on CAM1 RPi for MOSFET on MB1 to power RPI from 5V
-         
-         output_high (PIN_A5); //SFM2 mission side access
-         fprintf (PC, "Start - Turn ON MULTSPEC CAM1 0x2E\r\n") ;
-         MISSION_STATUS = 1;
-         MISSION_OPERATING = 0;
-         output_high(pin_G3); //Turn on DIO for MULTSPEC CAM1
-         DELETE_CMD_ARRAY_DATA();
-         fprintf (PC, "Finish 0x2E\r\n"); 
-      
-      break;
+
       
 ////////////////////////////FOR CAM2 RPi on MB2////////////////////////////////
       
@@ -2773,23 +2813,37 @@ void IMGCLS_Test()
    }
    switch (command[0])
    {
+   
+      case 0x8E:
+         
+         output_high (PIN_A5); //SFM2 mission side access
+         fprintf (PC, "Start 0x8E - Turn ON IMGCLS\r\n") ;
+         
+         MISSION_STATUS = 1;
+         MISSION_OPERATING = 0;
+         
+         CWtest[0] = MISSION_STATUS<<4;
+         CWtest[0] = CWtest[0] + (MISSION_OPERATING & 0x01);
+         fprintf(PC,"%x",CWtest[0]);
+         fprintf (PC, "\r\n");
+         fprintf (PC, "Finish 0x8E\r\n");
+         
+
+      break;
       
       case 0x80: //Turn off IMGCLS RPi DIO for MOSFET on RAB to power RPI from 5V line
       
          output_high (PIN_A5); //SFM2 mission side access
          fprintf (PC, "Start 0x80 - Turn off IMGCLS\r\n") ;
-         Forward_CMD_MBP();
          
-         for(int16 num_reset_ic = 0; num_reset_ic < 200; num_reset_ic++)
-         {
-            fputc(0xCD,reset);
-            delay_ms(100);
-            if(reset_bffr[0] == 0xCD)
-               {
-                  fprintf (PC, "RESET Turned off 5V\r\n");
-                  break;
-               }
-         }
+         MISSION_STATUS = 0;
+         MISSION_OPERATING = 0;
+         
+         CWtest[0] = MISSION_STATUS<<4;
+         CWtest[0] = CWtest[0] + (MISSION_OPERATING & 0x01);
+         fprintf(PC,"%x",CWtest[0]);
+         fprintf (PC, "\r\n");
+         missiontime = 0;
          fprintf (PC, "Finish 0x80\r\n"); 
          //fputc(0xCD, reset);
          
@@ -2800,13 +2854,34 @@ void IMGCLS_Test()
          output_high (PIN_A5); //SFM2 mission side access
          fprintf (PC, "Start 0x81 - Real time uplink IMGCLS\r\n") ;
          Forward_CMD_MBP();
+         
+         CWtest[0] = MISSION_STATUS<<4;
+         CWtest[0] = CWtest[0] + (MISSION_OPERATING & 0x01);
+         fprintf(PC,"%x",CWtest[0]);
+         fprintf (PC, "\r\n");
+         
+         
          DELETE_CMD_ARRAY_DATA();
+         
          fprintf (PC, "Finish 0x81\r\n"); 
       break;
       
       case 0x82: //Real time downlink IMGCLS
          output_high (PIN_A5);
          fprintf (PC, "Start 0x82 - Real time downlink IMGCLS\r\n") ;
+         if (MISSION_STATUS == 1)                                                 //Mission operating flag will only go high if MISSION STATUS is high. Mission STATUS is high when the mission turns on
+         {
+            MISSION_OPERATING = 1;
+         }
+         else
+         {
+            MISSION_OPERATING = 0;
+         }
+         
+         CWtest[0] = MISSION_STATUS<<4;
+         CWtest[0] = CWtest[0] + (MISSION_OPERATING & 0x01);
+         fprintf(PC,"%x",CWtest[0]);
+         fprintf (PC, "\r\n");
          Forward_CMD_MBP();
          int8 counter_cls = 0;
          for(int32 num_cls = 0; num_cls < 1500000; num_cls++)
@@ -2827,18 +2902,39 @@ void IMGCLS_Test()
             fprintf(PC,"%x, ",IMGCLS_DATA[c]);
          }
          fprintf(PC,"\r\n");
+         
+         MISSION_OPERATING = 0;
+         
          fprintf (PC, "Finish 0x82\r\n"); 
          for(c = 0; c < 81; c++)
          {
             IMGCLS_DATA[c] = 0;
          }
+         
+         DELETE_CMD_ARRAY_DATA();
       break;
       
       
-      case 0x83://Erase the data on SFM2 at the given address. Specify how much data to erase eg. 16 00 01 02 03 FF will erase the entire 64kB sector at address 00010203
+      case 0x83:
          output_high (PIN_A5);
          fprintf (PC, "Start 0x83 - Mission Mode 1 IMGCLS\r\n") ;
+         if (MISSION_STATUS == 1)                                                 //Mission operating flag will only go high if MISSION STATUS is high. Mission STATUS is high when the mission turns on
+         {
+            MISSION_OPERATING = 1;
+         }
+         else
+         {
+            MISSION_OPERATING = 0;
+         }
+         
+         CWtest[0] = MISSION_STATUS<<4;
+         CWtest[0] = CWtest[0] + (MISSION_OPERATING & 0x01);
+         fprintf(PC,"%x",CWtest[0]);
+         fprintf (PC, "\r\n");
          Forward_CMD_MBP();
+
+         DELETE_CMD_ARRAY_DATA();
+         
          fprintf (PC, "Finish 0x83\r\n"); 
          
       break;
@@ -2907,27 +3003,7 @@ void IMGCLS_Test()
          fprintf (PC, "Finish 0x85\r\n");
          break;
          
-         case 0x8E:
-         
-         output_high (PIN_A5); //SFM2 mission side access
-         fprintf (PC, "Start 0x8E - Turn ON IMGCLS\r\n") ;
-         //fputc(0xEC, reset);
-         Forward_CMD_MBP();
-         
-         for(num_reset_ic = 0; num_reset_ic < 200; num_reset_ic++)
-         {
-            fputc(0xEC,reset);
-            delay_ms(100);
-            if(reset_bffr[0] == 0xEC)
-               {
-                  fprintf (PC, "RESET Turned on 5V\r\n");
-                  break;
-               }
-         }
-         fprintf (PC, "Finish 0x8E\r\n");
-         
-         
-         break;
+
      
    }
    for(int m = 0; m < 9; m++)
