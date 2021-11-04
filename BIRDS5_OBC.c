@@ -55,7 +55,7 @@ void UART2_RXD(void)
    //SerialDataReceive();  //get 32 byte
    //COM_ONEBYTE_COMMAND = fgetc(COM);
 //!   in_bffr_main[COM_DATA] = fgetc(COM);                                          //load the array in_bffr_main [] with the data sent by COM PIC
-//!   fprintf(PC,"I receive from COM PIC: %x \r\n", in_bffr_main[COM_DATA]);
+//!   fprintf(PC,"%x, ", in_bffr_main[COM_DATA]);
 //!   COM_DATA = ((COM_DATA + 1) % 16);                                             //when the data is obtained in position 16, COM_DATA = 0
    CMD_FROM_COMM[COM_DATA] = fgetc(COM);   
    fprintf(PC,"%x,", CMD_FROM_COMM[COM_DATA]);
@@ -200,6 +200,7 @@ void main()
 //!         {
             fprintf(PC,"\r\n");
             fprintf(PC,"COMMAND RECEIVED FROM PC: ");
+            
             for(int m = 0; m < 9; m++)
             {
                fprintf(PC,"%x",CMD_FROM_PC[m]);
@@ -222,6 +223,7 @@ void main()
             if(command_ID == 0x20 || command_ID == 0x30)
             {
                fprintf(PC,"MULT-SPEC Command\r\n");
+               missiontime = 0;
                MULT_SPEC_Test();
             }
             
@@ -240,7 +242,9 @@ void main()
             if(command_ID == 0x80)
             {
                fprintf(PC,"IMG-CLS Command\r\n");
+               missiontime = 0;
                IMGCLS_test();
+               
             }
             
             if(command_ID == 0x90)
@@ -256,6 +260,7 @@ void main()
 //!         }
 
          DELETE_CMD_FROM_PC();                                                   //clear CMD_FROM_PC[] array
+         DELETE_CMD_FROM_COMM();
          Delete_Buffer();                                                        //clear in_bffr_main[] array
          CMD_FROM_PC[1] = 0;
          COM_DATA = 0;                                                           //clear COM correct receiving data flag
@@ -324,7 +329,23 @@ void main()
          }
       }
       
-      DELETE_CMD_FROM_COMM();
+      if(MISSION_STATUS)
+      {
+
+         if(missiontime > 9)
+         {
+            fprintf (PC, "Mission Time: %x \r\n", missiontime);
+            fprintf (PC, "Start 0x20 - Turn OFF MULTSPEC CAM1 (MB1)\r\n") ;
+            output_low(pin_G3);
+            fprintf (PC, "Start 0x30 - Turn OFF MULTSPEC CAM2 (MB2)\r\n") ;
+            output_low(pin_F6); //Turn off DIO for MULTSPEC CAM2
+            //Turn off IMGCLS Pi command
+            missiontime = 0;
+            MISSION_STATUS = 0;
+            MISSION_OPERATING = 0;
+         }  
+      }
+      
       
       if(COM_DATA != 0 || PC_DATA != 0)                                          //COM_DATA AND PC_DATA WILL BE ZERO IF THE CORRECT NUMBER OF CHARACTERS ARE RECEIVED
       {
@@ -343,7 +364,7 @@ void main()
             PC_DATA = 0;
          }
       }
-      delay_ms(400); 
+      delay_ms(100); 
    }
 
 }

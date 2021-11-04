@@ -156,6 +156,13 @@ void EXECUTE_COMMAND_from_PC(int8 CMD1,int8 CMD2,int8 CMD3,int8 CMD4,int8 CMD5,i
          
       break;
       
+      case 0x08:
+         UPLINK_SUCCESS_CHECK();
+         fprintf(PC, "\r\nRESET SATELLITE\r\n");
+         SEND_CMD_FOR_RESET_SATELLITE ();
+         
+      break;
+      
       
       case 0x12:
          UPLINK_SUCCESS_CHECK();
@@ -273,9 +280,11 @@ void EXECUTE_COMMAND_from_PC(int8 CMD1,int8 CMD2,int8 CMD3,int8 CMD4,int8 CMD5,i
       
       case 0x19:
       
-         unsigned int16 duration = (unsigned int16)CMD3*12;                //CMD2 is operation time(min), maximum number of readings in 2 hours = 1440
-         if(duration > 1440){duration = 1440;}                                   // 12 readings in 1 min, every 5 seconds
+         unsigned int16 duration = (unsigned int16)CMD3*6;                //CMD2 is operation time(min), maximum number of readings in 2 hours = 720
+         if(duration > 720){duration = 720;}                                   // 6 readings in 1 min, every 10 seconds
+         MISSION_STATUS = 1;
          HIGHSAMP_SENSOR_COLLECTION(duration);
+         MISSION_STATUS = 0;
 
       break;
       

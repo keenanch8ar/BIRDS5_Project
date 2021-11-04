@@ -224,6 +224,24 @@ void MAIN_MB_CMD()
       break;
       
       
+      case 0x06:
+         fprintf(PC, "\r\nRefresh Reservation Table\r\n");
+         table_refresh();
+         
+      break;
+      
+      case 0x07:
+         fprintf(PC, "\r\nDisplay Reservation Table\r\n");
+         Disp_RSV();
+         
+      break;
+      
+      case 0x08:
+         fprintf(PC, "\r\nRESET SATELLITE\r\n");
+         SEND_CMD_FOR_RESET_SATELLITE ();
+         
+      break;
+      
       case 0x12:
          fprintf (PC, "Start 0x12\r\n") ;
          output_low (PIN_A5);
@@ -329,8 +347,8 @@ void MAIN_MB_CMD()
       break;
       
       case 0x19:
-         unsigned int16 duration = (unsigned int16)command[2]*12;                //CMD2 is operation time(min), maximum number of readings in 2 hours = 1440
-         if(duration > 1440){duration = 1440;}                                   // 12 readings in 1 min, every 5 seconds
+         unsigned int16 duration = (unsigned int16)command[2]*6;                //CMD2 is operation time(min), maximum number of readings in 2 hours = 720
+         if(duration > 720){duration = 720;}                                   // 6 readings in 1 min, every 10 seconds
          MISSION_STATUS = 1;
          HIGHSAMP_SENSOR_COLLECTION(duration);
          MISSION_STATUS = 0;
@@ -767,10 +785,11 @@ void CW_RESPOND()                                                               
 
 void CHECK_50_and_CW_RESPOND()                                                   //check if command 0x50 arrived from COM PIC and send CW to COM
 {
-   if(in_bffr_main[4] == 0x50)
+   if((in_bffr_main[4] == 0xAB) || (CMD_FROM_COMM[4] == 0xab))
    {
       CW_RESPOND();                                                              //load array ACK_for_COM [] with data from array CW_FORMAT [] and send to COM PIC
       Delete_Buffer();                                                           //delete in_bffr_main[] (COM command buffer)
+      DELETE_CMD_FROM_COMM();
       COM_DATA = 0;                                                              //flag to zero
    }
    return;
@@ -2141,7 +2160,7 @@ void MULT_SPEC_Test()
          CWtest[0] = CWtest[0] + (MISSION_OPERATING & 0x01);
          fprintf(PC,"%x",CWtest[0]);
          fprintf (PC, "\r\n");
-         
+         missiontime = 0;
          output_high(pin_G3); //Turn on DIO for MULTSPEC CAM1
          DELETE_CMD_ARRAY_DATA();
          fprintf (PC, "Finish 0x2E\r\n"); 
@@ -2161,7 +2180,7 @@ void MULT_SPEC_Test()
          CWtest[0] = CWtest[0] + (MISSION_OPERATING & 0x01);
          fprintf(PC,"%x",CWtest[0]);
          fprintf (PC, "\r\n");
-         
+         missiontime = 0;
          DELETE_CMD_ARRAY_DATA();
          fprintf (PC, "Finish 0x20\r\n");
          
@@ -2436,7 +2455,20 @@ void MULT_SPEC_Test()
 
       
 ////////////////////////////FOR CAM2 RPi on MB2////////////////////////////////
+      case 0x3E: // Turn on MULTSPEC CAM2 (MB2)
       
+         output_high (PIN_A5); //SFM2 mission side access
+         fprintf (PC, "Start 0x3E - Turn ON MULTSPEC CAM2 (MB2)\r\n") ;
+         output_high(pin_F6); //Turn on DIO for MULTSPEC CAM2
+         MISSION_STATUS = 1;
+         MISSION_OPERATING = 0;
+         missiontime = 0;
+         fprintf (PC, "Finish 0x3E\r\n");
+         DELETE_CMD_ARRAY_DATA();
+         
+      break;
+     
+     
      case 0x30: //Turn off CAM2 RPi DIO for MOSFET on MB2 to power RPI from 5V
       
          output_high (PIN_A5); //SFM2 mission side access
@@ -2444,6 +2476,7 @@ void MULT_SPEC_Test()
          output_low(pin_F6); //Turn off DIO for MULTSPEC CAM2
          MISSION_STATUS = 0;
          MISSION_OPERATING = 0;
+         missiontime = 0;
          DELETE_CMD_ARRAY_DATA();
          fprintf (PC, "Finish 0x30\r\n");        
          
@@ -2607,16 +2640,7 @@ void MULT_SPEC_Test()
          DELETE_CMD_ARRAY_DATA();
       break;
       
-      case 0x3E: // Turn on MULTSPEC CAM2 (MB2)
-      
-         output_high (PIN_A5); //SFM2 mission side access
-         fprintf (PC, "Start 0x3E - Turn ON MULTSPEC CAM2 (MB2)\r\n") ;
-         output_high(pin_F6); //Turn on DIO for MULTSPEC CAM2
-         MISSION_STATUS = 1;
-         MISSION_OPERATING = 0;     
-         fprintf (PC, "Finish 0x3E\r\n");
-         DELETE_CMD_ARRAY_DATA();
-      break;
+
       
       default:
       
@@ -2826,6 +2850,7 @@ void IMGCLS_Test()
          CWtest[0] = CWtest[0] + (MISSION_OPERATING & 0x01);
          fprintf(PC,"%x",CWtest[0]);
          fprintf (PC, "\r\n");
+         missiontime = 0;
          fprintf (PC, "Finish 0x8E\r\n");
          
 
@@ -2934,6 +2959,7 @@ void IMGCLS_Test()
          Forward_CMD_MBP();
 
          DELETE_CMD_ARRAY_DATA();
+         MISSION_OPERATING = 0;
          
          fprintf (PC, "Finish 0x83\r\n"); 
          
