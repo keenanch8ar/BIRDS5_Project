@@ -1787,6 +1787,7 @@ void HIGH_SAMP_FAB_OPERATION()
 
 void HIGHSAMP_SENSOR_COLLECTION(int16 times)
 {
+   HIGH_SAMP_FAB_MEASURING_FLAG = 0;
    Turn_ON_ADCS();                                                               //ADCS ON   
    LOOP_HIGH_SAMP_HK_ADDRESS();                                                  //loop in memory to save data, keep first 3 sectors forever
    int32 num = 0;
