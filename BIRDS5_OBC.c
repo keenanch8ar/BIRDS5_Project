@@ -180,7 +180,7 @@ void main()
       {
          fprintf(PC,"Execute reserved command\r\n");
          MISSION_CONTENTS = CHECK_MEMORY_FUNCTION(MISSION_CONTENTS);             //avoid erase or transfer sectors from memory as reserved commands
-         EXECUTE_COMMAND_from_PC(MISSION_CONTENTS,MISSION_DETAIL,RESERVE_ADDRESS_1,RESERVE_ADDRESS_2,RESERVE_ADDRESS_3,RESERVE_ADDRESS_4,RESERVE_PACKET_NUM, 0x00, 0x00);    //execute command
+         EXECUTE_COMMAND_from_PC(MISSION_CONTENTS,MISSION_DETAIL,RESERVE_ADDRESS_1,RESERVE_ADDRESS_2,RESERVE_ADDRESS_3,RESERVE_ADDRESS_4,RESERVE_PACKET_NUM, 0x00);    //execute command
          Remove_1_Reservation();                                                 //remove the finished command and sort again and save updated command table
          if(reserve_table[80] != 0x00)                                           //if next reservation is registered, wait until time will be come
          {
@@ -210,14 +210,12 @@ void main()
             
             BYTE command_ID = CMD_FROM_PC[0];
             command_ID &= 0xF0;
-            //fprintf(PC,"%x",command_ID);
-            //fprintf(PC,"\r\n");
             
             if(command_ID == 0x00 || command_ID == 0x10)
             {
                fprintf(PC,"Main PIC or MB Command only\r\n");
                //MAIN_MB_CMD();
-               EXECUTE_COMMAND_from_PC(CMD_FROM_PC[0], CMD_FROM_PC[1], CMD_FROM_PC[2], CMD_FROM_PC[3], CMD_FROM_PC[4], CMD_FROM_PC[5], CMD_FROM_PC[6], CMD_FROM_PC[7], CMD_FROM_PC[8]);
+               EXECUTE_COMMAND_from_PC(CMD_FROM_PC[0], CMD_FROM_PC[2], CMD_FROM_PC[3], CMD_FROM_PC[4], CMD_FROM_PC[5], CMD_FROM_PC[6], CMD_FROM_PC[7], CMD_FROM_PC[8]);
             }
             
             if(command_ID == 0x20 || command_ID == 0x30)

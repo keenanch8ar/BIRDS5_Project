@@ -32,6 +32,30 @@ float dg;
 float dk;
 int8 CWtest[1] = {};
 
+void GIVE_ACCESS_SCF_Nsec(int8 min)
+{
+   fprintf(PC,"\r\nGiving access to COM for %d min\r\n", min);
+   fputc(0x35,COM);
+   output_high(PIN_C4);
+   if(min > 5)                                                                   //for accidentaly send the long time delay, maximum should be 5 min
+   {
+      min = 5;
+   }
+   for(int16 i = 0; i < min * 60; i++)
+   {
+      delay_ms(1000);                                                            //wait 1 sec
+      if(in_bffr_main[4] == 0xab || CMD_FROM_PC[0] == 0xab)
+      {
+         CMD_FROM_PC[0] = 0;
+         CMD_FROM_PC[1] = 0;
+         PC_DATA = 0;
+         break;
+      }
+   }
+   fprintf(PC,"\r\nBack to Normal Operation\r\n");
+   return;
+}
+
 //--------FAB HK collection--------------------------------------------------//
 #define HK_size 76                                                               //HK FORMAT ARRAY SIZE
 #define CW_size 5                                                                //CW FORMAT ARRAY SIZE
@@ -108,6 +132,33 @@ void Delete_Buffer()
     in_bffr_main[num] = 0x00;
    }
    COM_DATA = 0;
+   return;
+}
+
+//-------Kill Switch-----------------------------------------------------------
+Static int8 KILL_COUNTER = 0;
+void Count_Kill_Flag()
+{
+   KILL_COUNTER++;
+   if(Kill_COUNTER > 4)
+   {
+      Kill_FLAG_MAIN = 1;
+      output_high(PIN_A4);                                                       //Kill Switch ON
+      fputc(0x17,FAB);
+   }
+   fprintf(PC,"Kill counter: %x\r\n",KILL_COUNTER);
+   return;
+}
+
+void Disable_Kill()
+{
+   KILL_COUNTER = 0;
+   
+   Kill_FLAG_MAIN = 0;
+   output_low(PIN_A4);                                                           //Kill Switch OFF
+   fputc(0x18,FAB);
+   
+   fprintf(PC,"Kill counter: %x\r\n",KILL_COUNTER);
    return;
 }
 
@@ -342,8 +393,8 @@ void MAIN_MB_CMD()
       break;
       
       case 0x18:
-         ERASE_EEPROM_INFO();                                                    //erase 512byte(from 0x18000 to 0x181ff)
-         MEMORY_ERASE(); 
+         ERASE_EEPROM_INFO(command[2], command[3], command[4]);                                                    //erase 512byte(from 0x18000 to 0x181ff)
+         MEMORY_ERASE(command[2], command[3], command[4]); 
       break;
       
       case 0x19:
@@ -998,7 +1049,7 @@ void SEND_CWFORMAT_TO_OF(int32 address)
 
 void CHECK_HKDATA(int8 in,int32 delaytime)                                       //function that loads the HKDATA array []
 {
-   fprintf(PC,"\r\nGET FAB SENSOR DATA\r\n");
+   fprintf(PC,"\r\nGET FAB SENSOR DATA: ");
    Delete_HKDATA();                                                              //delete the HKDATA [] array
    waiting(delaytime);                                                           //waiting
    CHECK_50_and_CW_RESPOND();
@@ -1020,6 +1071,7 @@ void CHECK_HKDATA(int8 in,int32 delaytime)                                      
       /*fputc(HKDATA[num + 7+4],PC);*/                                           //prints the data from position 20 to 49
       fprintf(PC,"%x ",HKDATA[num + 7+4]);
    }
+   fprintf(PC,"\r\n");
    FAB_DATA = 0;                                                                 //reset the flag
    return;
 }
@@ -1144,7 +1196,7 @@ void GET_RESET_DATA()                                                           
    CHECK_50_and_CW_RESPOND();
    if(RESET_bffr[0] == 0x8e)                                                     //if the header byte is correct
    {
-      fprintf(PC,"\r\nRESET DATA OBTAINED:\r\n");
+      fprintf(PC,"\r\nRESET DATA OBTAINED: ");
       for(int num = 0; num < 5; num++)                                           //load the HKDATA array with timedata in positions 2 to 6
       {
          HKDATA[num + 2] = reset_bffr[num + 1];
@@ -1274,7 +1326,6 @@ void GET_ADCS_SENSOR_DATA()                                                     
             int8 header = fgetc(DC);
             if (header == 0x55)
             {
-               fprintf(PC,"\r\nADCS DATA OBTAINED:\r\n");
                ADCS_SENSOR_DATA[counter] = header;
                counter++;
                for(int32 num = 0; num < 100000; num++)
@@ -1293,9 +1344,10 @@ void GET_ADCS_SENSOR_DATA()                                                     
                break;
             }
          }
+         
           
       }
-      
+      fprintf(PC,"\r\nADCS DATA: ");
       for(int l = 0; l < 14; l++)
       {
          fprintf(PC,"%x ",ADCS_SENSOR_DATA[l]);
@@ -1567,7 +1619,7 @@ void FAB_TEST_OPERATION()
 
 void CHECK_HIGH_SAMP_FABDATA(int8 in)                                            //FAB sensor data collect
 {
-   fprintf(PC,"\r\nFAB DATA OBTAINED\r\n");
+   fprintf(PC,"\r\nFAB DATA OBTAINED: ");
    Delete_HKDATA();
    for(int8 num_fab = 1; num_fab < 11 - in; num_fab++)                                             //Collect HK DATA
    {
@@ -1584,6 +1636,7 @@ void CHECK_HIGH_SAMP_FABDATA(int8 in)                                           
       HKDATA[num_fab + 7+4] = in_HK[num_fab + 2 - in];
       fprintf(PC, "%x ", HKDATA[num_fab + 7+4]);
    }
+   fprintf(PC,"\r\n");
    FAB_DATA = 0;
 }
 
@@ -1627,7 +1680,7 @@ void GET_HIGH_SAMP_RESET_DATA()
    COLLECT_RESET_DATA();
    if(RESET_bffr[0] == 0x8e)
    {
-      fprintf(PC,"\r\nGET RESET\r\n");
+      fprintf(PC,"\r\nGET RESET: ");
       for(int num = 0; num < 5; num++)                                           //timedata
       {
          HKDATA[num + 2] = reset_bffr[num + 1];
@@ -1641,6 +1694,7 @@ void GET_HIGH_SAMP_RESET_DATA()
          //fputc(HKDATA[num + 68],PC);
          fprintf(PC,"%x ",HKDATA[num + 68]);
       }
+   fprintf(PC,"\r\n");
    }
    else
    {
@@ -1747,7 +1801,7 @@ void HIGH_SAMP_FAB_OPERATION()
          
       }else{
          Delete_in_HK();                                                         //delet HK array
-         GET_RESET_DATA();                                                       //funcion que carga el array HKDATA con los datos del Reset PIC
+         GET_RESET_DATA();                                                       //function that loads the HKDATA array with the Reset PIC data
          VERIFY_HIGH_SAMP_FABDATA(10000);                                        //get FAB data   
          GET_HIGH_SAMP_RESET_DATA();                                             //get reset data
          MAKE_HIGH_SAMP_ADCS_FORMAT();                                           //get ADCS data
@@ -1858,30 +1912,6 @@ void Forward_CMD_MBP()
          delay_ms(10);
       }
       
-//!      for(int32 num = 0; num < 1000000; num++)
-//!         {
-//!            if(kbhit(DC))
-//!            {
-//!               MBP_DATA[count] = fgetc(DC);
-//!               count++;
-//!            }
-//!            if(count == 9)
-//!               break;
-//!         }
-//!         
-//!      fprintf(PC,"Data Recieved from MBP:");
-//!      
-//!      for(n = 0; n < 9; n++)
-//!      {
-//!         
-//!         fprintf(PC,"%x,",MBP_DATA[n]);
-//!      }
-//!      
-//!      fprintf(PC,"\r\n");
-//!      DEL_MBP_DATA();
-//!        
-//!         
-//! 
    return;
 }
 

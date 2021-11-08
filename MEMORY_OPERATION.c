@@ -134,10 +134,14 @@ void CURRENT_ADDRESS_OF_FLASH()                                                 
    return;
 }
 
-void ERASE_EEPROM_INFO()
+void ERASE_EEPROM_INFO(int8 CMD1, int8 CMD2, int8 CMD3)
 {
+   if (CMD1 == 0xAA && CMD2 == 0xBB && CMD3 == 0xCC)
+   {
    erase_program_eeprom(FLAG_ADDRESS_EEPROM);//erase 512byte(from 0x18000 to 0x181ff)
+   }
    return;
+   
 }
 
 void WRITE_FLAG_to_EEPROM()                                                      //saves the flags in the EEPROM from the address 0x18000 (75%)
@@ -690,72 +694,75 @@ void CHECK_ADDRESS_DATA()                                                       
 //CAM_ADDRESS           //
 //DC_STATUS_ADDRESS     //
 //////////////////////////
-void MEMORY_ERASE()
+void MEMORY_ERASE(int8 CMD1, int8 CMD2, int8 CMD3)
 {
-   fprintf(PC,"FLASH MEMORY ERASE START\r\n");
-   
-   output_low(PIN_A5);                                                           //CAM_MUX MAINSIDE
-   output_low(PIN_C4);                                                           //COM_MUX MAINSIDE
-   
-   sector_erase_OF(0);
-   sector_erase_SCF(0);
-   sector_erase_SMF(0);
-   
-   sector_erase_OF(FAB_CW_ADDRESS);
-   sector_erase_SCF(FAB_CW_ADDRESS);
-   sector_erase_SMF(FAB_CW_ADDRESS);
-   
-   
-   for(int8 num = 0; num < 5; num++)
+   if (CMD1 == 0xAA && CMD2 == 0xBB && CMD3 == 0xCC)
    {
-      sector_erase_OF(FLAG_DATA_ADDRESS + SECT*num);                             //65536*num
-      sector_erase_OF(CAM_ADDRESS + SECT*num);                                   //65536*num
-      sector_erase_OF(FAB_HK_ADDRESS + SECT*num);                                //65536*num
-      sector_erase_OF(ADCS_SENSOR_ADDRESS + SECT*num);                           //65536*num
-      sector_erase_OF(DC_STATUS_ADDRESS + SECT*num);                             //65536*num
-      sector_erase_OF(HIGH_SAMP_HK_ADDRESS + SECT*num);                          //65536*num
+      fprintf(PC,"FLASH MEMORY ERASE START\r\n");
       
-      sector_erase_SCF(FLAG_DATA_ADDRESS + SECT*num);                            //65536*num
-      sector_erase_SCF(CAM_ADDRESS + SECT*num);                                  //65536*num
-      sector_erase_SCF(FAB_HK_ADDRESS + SECT*num);                               //65536*num
-      sector_erase_SCF(ADCS_SENSOR_ADDRESS + SECT*num);                          //65536*num
-      sector_erase_SCF(DC_STATUS_ADDRESS + SECT*num);                            //65536*num
-      sector_erase_SCF(HIGH_SAMP_HK_ADDRESS + SECT*num);                         //65536*num
+      output_low(PIN_A5);                                                           //CAM_MUX MAINSIDE
+      output_low(PIN_C4);                                                           //COM_MUX MAINSIDE
       
-      sector_erase_SMF(FLAG_DATA_ADDRESS + SECT*num);                            //65536*num
-      sector_erase_SMF(CAM_ADDRESS + SECT*num);                                  //65536*num
-      sector_erase_SMF(FAB_HK_ADDRESS + SECT*num);                               //65536*num
-      sector_erase_SMF(ADCS_SENSOR_ADDRESS + SECT*num);                          //65536*num
-      sector_erase_SMF(DC_STATUS_ADDRESS + SECT*num);                            //65536*num
-      sector_erase_SMF(HIGH_SAMP_HK_ADDRESS + SECT*num);                         //65536*num
+      sector_erase_OF(0);
+      sector_erase_SCF(0);
+      sector_erase_SMF(0);
+      
+      sector_erase_OF(FAB_CW_ADDRESS);
+      sector_erase_SCF(FAB_CW_ADDRESS);
+      sector_erase_SMF(FAB_CW_ADDRESS);
+      
+      
+      for(int8 num = 0; num < 5; num++)
+      {
+         sector_erase_OF(FLAG_DATA_ADDRESS + SECT*num);                             //65536*num
+         sector_erase_OF(CAM_ADDRESS + SECT*num);                                   //65536*num
+         sector_erase_OF(FAB_HK_ADDRESS + SECT*num);                                //65536*num
+         sector_erase_OF(ADCS_SENSOR_ADDRESS + SECT*num);                           //65536*num
+         sector_erase_OF(DC_STATUS_ADDRESS + SECT*num);                             //65536*num
+         sector_erase_OF(HIGH_SAMP_HK_ADDRESS + SECT*num);                          //65536*num
+         
+         sector_erase_SCF(FLAG_DATA_ADDRESS + SECT*num);                            //65536*num
+         sector_erase_SCF(CAM_ADDRESS + SECT*num);                                  //65536*num
+         sector_erase_SCF(FAB_HK_ADDRESS + SECT*num);                               //65536*num
+         sector_erase_SCF(ADCS_SENSOR_ADDRESS + SECT*num);                          //65536*num
+         sector_erase_SCF(DC_STATUS_ADDRESS + SECT*num);                            //65536*num
+         sector_erase_SCF(HIGH_SAMP_HK_ADDRESS + SECT*num);                         //65536*num
+         
+         sector_erase_SMF(FLAG_DATA_ADDRESS + SECT*num);                            //65536*num
+         sector_erase_SMF(CAM_ADDRESS + SECT*num);                                  //65536*num
+         sector_erase_SMF(FAB_HK_ADDRESS + SECT*num);                               //65536*num
+         sector_erase_SMF(ADCS_SENSOR_ADDRESS + SECT*num);                          //65536*num
+         sector_erase_SMF(DC_STATUS_ADDRESS + SECT*num);                            //65536*num
+         sector_erase_SMF(HIGH_SAMP_HK_ADDRESS + SECT*num);                         //65536*num
+      }
+      for(num = 5; num < 10; num++)
+      {
+         sector_erase_OF(CAM_ADDRESS + SECT*num);                                   //65536*num
+         sector_erase_OF(FAB_HK_ADDRESS + SECT*num);                                //65536*num
+         sector_erase_OF(HIGH_SAMP_HK_ADDRESS + SECT*num);                          //65536*num
+         
+         sector_erase_SCF(CAM_ADDRESS + SECT*num);                                  //65536*num
+         sector_erase_SCF(FAB_HK_ADDRESS + SECT*num);                               //65536*num
+         sector_erase_SCF(HIGH_SAMP_HK_ADDRESS + SECT*num);                         //65536*num
+         
+         sector_erase_SMF(CAM_ADDRESS + SECT*num);                                  //65536*num
+         sector_erase_SMF(FAB_HK_ADDRESS + SECT*num);                               //65536*num
+         sector_erase_SMF(HIGH_SAMP_HK_ADDRESS + SECT*num);                         //65536*num
+      }
+      
+      sector_erase_OF(0x06650000);                                                  //erase ADCS TLE address
+      sector_erase_SCF(0x06650000);
+      sector_erase_SMF(0x06650000);
+      
+      output_high(PIN_C4);                                                          //COM_MUX COMSIDE
+      delay_ms(10000);
+      fprintf(PC,"FLASH MEMORY ERASE DONE\r\n");
+      for(int t=60; t>0; t--){
+      fprintf(PC,"Remaining time: %d  \r", t);
+      delay_ms(1000);
+      }
+      //delay_ms(60000);
    }
-   for(num = 5; num < 10; num++)
-   {
-      sector_erase_OF(CAM_ADDRESS + SECT*num);                                   //65536*num
-      sector_erase_OF(FAB_HK_ADDRESS + SECT*num);                                //65536*num
-      sector_erase_OF(HIGH_SAMP_HK_ADDRESS + SECT*num);                          //65536*num
-      
-      sector_erase_SCF(CAM_ADDRESS + SECT*num);                                  //65536*num
-      sector_erase_SCF(FAB_HK_ADDRESS + SECT*num);                               //65536*num
-      sector_erase_SCF(HIGH_SAMP_HK_ADDRESS + SECT*num);                         //65536*num
-      
-      sector_erase_SMF(CAM_ADDRESS + SECT*num);                                  //65536*num
-      sector_erase_SMF(FAB_HK_ADDRESS + SECT*num);                               //65536*num
-      sector_erase_SMF(HIGH_SAMP_HK_ADDRESS + SECT*num);                         //65536*num
-   }
-   
-   sector_erase_OF(0x06650000);                                                  //erase ADCS TLE address
-   sector_erase_SCF(0x06650000);
-   sector_erase_SMF(0x06650000);
-   
-   output_high(PIN_C4);                                                          //COM_MUX COMSIDE
-   delay_ms(10000);
-   fprintf(PC,"FLASH MEMORY ERASE DONE\r\n");
-   for(int t=60; t>0; t--){
-   fprintf(PC,"Remaining time: %d  \r", t);
-   delay_ms(1000);
-   }
-   //delay_ms(60000);
    return;
 }
 /*

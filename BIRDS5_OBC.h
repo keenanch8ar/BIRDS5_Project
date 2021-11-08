@@ -49,6 +49,9 @@ void SAVE_SAT_LOG(int8 data, int8 data2, int8 data3);
 void RESET_SATELLITE();
 void MAIN_MB_CMD();
 
+/////////////KILL FUNCTION///////////////////////
+void Count_Kill_Flag();
+
 /////////////FAB SENSOR collection/////////////
 void Delete_in_HK();
 void Delete_HKDATA();

@@ -2,9 +2,9 @@
 #define SPIPORT_2 COM_FM
 #define SPIPORT_3 MISSION_FM
 
-#define CS_PIN PIN_E2
-#define CS_PIN_2 PIN_B3
-#define CS_PIN_3 PIN_A2
+#define CS_PIN PIN_E2                                                            //CS PIN for dedicated Main Flash (MF or OF) for Main PIC
+#define CS_PIN_2 PIN_B3                                                          //CS PIN for Shared COM Flash (SCF) between Main PIC and COM PIC
+#define CS_PIN_3 PIN_A2                                                          //CS PIN for Shared Mission Flash (SMF) between Main PIC and Missions
 
 #define READ_ID              0x9F
 #define READ_STATUS_REG      0x05 
@@ -542,6 +542,8 @@ int8 READ_STATUS_REGISTER_SCF()
  output_high(CS_PIN_2);         //take CS PIN higher back
  return status_reg;
 }
+
+
 int8 READ_STATUS_REGISTER_SMF()
 {
  output_low(CS_PIN_3);           //lower the CS PIN
@@ -642,6 +644,140 @@ int8 READ_DATA_BYTE_SMF(unsigned INT32 ADDRESS)
  return data;
  
 }
+
+
+void TRANSFER_DATA_NBYTE_TOPC_OF(unsigned INT32 ADDRESS,int32 data_byte)          //read and send the specified data
+{
+   for (int32 i=0 ; i < data_byte ; i++)
+   {
+      //fputc(READ_DATA_BYTE_OF(ADDRESS),PC);
+      fprintf(PC, "%x", READ_DATA_BYTE_OF(ADDRESS));
+      ADDRESS++;
+   }
+   fprintf(PC, "\r\n");
+   return;
+}
+
+
+void TRANSFER_DATA_NBYTE_TOPC_SCF(unsigned INT32 ADDRESS,int32 data_byte)         //read and send the specified data
+{
+   for (int32 i=0 ; i < data_byte ; i++)
+   {
+      fprintf(PC,"%x",READ_DATA_BYTE_SCF(ADDRESS));
+      ADDRESS++;
+   }
+   fprintf(PC, "\r\n");
+   return;
+}
+
+
+void TRANSFER_DATA_NBYTE_TOPC_SMF(unsigned INT32 ADDRESS,int32 data_byte)         //read and send the specified data
+{
+   for (int32 i=0 ; i < data_byte ; i++)
+   {
+      //fputc(READ_DATA_BYTE_SMF(ADDRESS),PC);
+      fprintf(PC, "%x", READ_DATA_BYTE_SMF(ADDRESS));
+      ADDRESS++;
+   }
+   fprintf(PC, "\r\n");
+   return;
+}
+
+
+void TRANSFER_DATA_NBYTE_TOFAB_SMF(unsigned INT32 ADRESS,int32 data_byte)         //read and send the specified data
+{
+   for (int32 i=0 ; i < data_byte ; i++)
+   {
+      fputc(READ_DATA_BYTE_SMF(ADRESS),fab);
+      ADRESS++;
+   }
+   return;
+}
+
+
+void TRANSFER_DATA_NBYTE_OFtoSCF(unsigned INT32 FROM_ADRESS,unsigned INT32 TO_ADRESS,int32 data_byte) //transfer data from MAIN FLASH to COM FLASH
+{
+   for (int32 i=0 ; i < data_byte ; i++)
+   {
+      WRITE_DATA_BYTE_SCF(TO_ADRESS,READ_DATA_BYTE_OF(FROM_ADRESS));
+      FROM_ADRESS++;
+      TO_ADRESS++;
+   }
+   return;
+}
+
+
+void TRANSFER_DATA_NBYTE_SCFtoOF(unsigned INT32 FROM_ADRESS,unsigned INT32 TO_ADRESS,int32 data_byte) //transfer data from COM FLASH to MAIN FLASH
+{
+   for (int32 i=0 ; i < data_byte ; i++)
+   {
+      WRITE_DATA_BYTE_OF(TO_ADRESS,READ_DATA_BYTE_SCF(FROM_ADRESS));
+      FROM_ADRESS++;
+      TO_ADRESS++;
+   }
+   return;
+}
+
+
+void TRANSFER_DATA_NBYTE_OFtoSMF(unsigned INT32 FROM_ADRESS,unsigned INT32 TO_ADRESS,int32 data_byte) //transfer data from MAIN FLASH to MISSION FLASH
+{
+   for (int32 i=0 ; i < data_byte ; i++)
+   {
+      WRITE_DATA_BYTE_SMF(TO_ADRESS,READ_DATA_BYTE_OF(FROM_ADRESS));
+      FROM_ADRESS++;
+      TO_ADRESS++;
+   }
+   return;
+}
+
+
+void TRANSFER_DATA_NBYTE_SMFtoOF(unsigned INT32 FROM_ADRESS,unsigned INT32 TO_ADRESS,int32 data_byte) //transfer data from MISSION FLASH to MAIN FLASH
+{
+   for (int32 i=0 ; i < data_byte ; i++)
+   {
+      WRITE_DATA_BYTE_OF(TO_ADRESS,READ_DATA_BYTE_SMF(FROM_ADRESS));
+      FROM_ADRESS++;
+      TO_ADRESS++;
+   }
+   return;
+}
+
+
+void TRANSFER_DATA_NBYTE_SMFtoSCF(unsigned INT32 FROM_ADRESS,unsigned INT32 TO_ADRESS,int32 data_byte) //transfer data from MISSION FLASH to COM FLASH
+{
+   for (int32 i=0 ; i < data_byte ; i++)
+   {
+      WRITE_DATA_BYTE_SCF(TO_ADRESS,READ_DATA_BYTE_SMF(FROM_ADRESS));
+      FROM_ADRESS++;
+      TO_ADRESS++;
+   }
+   return;
+}
+
+
+void TRANSFER_DATA_NBYTE_SCFtoSMF(unsigned INT32 FROM_ADRESS,unsigned INT32 TO_ADRESS,int32 data_byte) //transfer data from COM FLASH to MISSION FLASH
+{
+   for (int32 i=0 ; i < data_byte ; i++)
+   {
+      WRITE_DATA_BYTE_SMF(TO_ADRESS,READ_DATA_BYTE_SCF(FROM_ADRESS));
+      FROM_ADRESS++;
+      TO_ADRESS++;
+   }
+   return;
+}
+
+
+void TRANSFER_DATA_NBYTE_SCF(unsigned INT32 FROM_ADRESS,unsigned INT32 TO_ADRESS,int32 data_byte) //read and send the specified data
+{
+   for (int32 i=0 ; i < data_byte ; i++)
+   {
+      WRITE_DATA_BYTE_SMF(TO_ADRESS,READ_DATA_BYTE_SCF(FROM_ADRESS));
+      FROM_ADRESS++;
+      TO_ADRESS++;
+   }
+   return;
+}
+
 
 
 /*
@@ -764,130 +900,3 @@ void WRITE_DATA_NBYTE_SMF(unsigned INT32 ADDRES,int32 data_byte) //read and send
    return;
 }
 */
-
-
-void TRANSFER_DATA_NBYTE_TOPC_OF(unsigned INT32 ADDRESS,int32 data_byte)          //read and send the specified data
-{
-   for (int32 i=0 ; i < data_byte ; i++)
-   {
-      //fputc(READ_DATA_BYTE_OF(ADDRESS),PC);
-      fprintf(PC, "%x", READ_DATA_BYTE_OF(ADDRESS));
-      ADDRESS++;
-   }
-   fprintf(PC, "\r\n");
-   return;
-}
-
-
-void TRANSFER_DATA_NBYTE_TOPC_SCF(unsigned INT32 ADDRESS,int32 data_byte)         //read and send the specified data
-{
-   for (int32 i=0 ; i < data_byte ; i++)
-   {
-      fprintf(PC,"%x",READ_DATA_BYTE_SCF(ADDRESS));
-      ADDRESS++;
-   }
-   fprintf(PC, "\r\n");
-   return;
-}
-
-
-void TRANSFER_DATA_NBYTE_TOPC_SMF(unsigned INT32 ADDRESS,int32 data_byte)         //read and send the specified data
-{
-   for (int32 i=0 ; i < data_byte ; i++)
-   {
-      //fputc(READ_DATA_BYTE_SMF(ADDRESS),PC);
-      fprintf(PC, "%x", READ_DATA_BYTE_SMF(ADDRESS));
-      ADDRESS++;
-   }
-   fprintf(PC, "\r\n");
-   return;
-}
-
-void TRANSFER_DATA_NBYTE_TOFAB_SMF(unsigned INT32 ADRESS,int32 data_byte)         //read and send the specified data
-{
-   for (int32 i=0 ; i < data_byte ; i++)
-   {
-      fputc(READ_DATA_BYTE_SMF(ADRESS),fab);
-      ADRESS++;
-   }
-   return;
-}
-
-
-/*
-void TRANSFER_DATA_NBYTE_OFtoSCF(unsigned INT32 FROM_ADRESS,unsigned INT32 TO_ADRESS,int32 data_byte) //transfer data from MAIN FLASH to COM FLASH
-{
-   for (int32 i=0 ; i < data_byte ; i++)
-   {
-      WRITE_DATA_BYTE_SCF(TO_ADRESS,READ_DATA_BYTE_OF(FROM_ADRESS));
-      FROM_ADRESS++;
-      TO_ADRESS++;
-   }
-   return;
-}
-void TRANSFER_DATA_NBYTE_SCFtoOF(unsigned INT32 FROM_ADRESS,unsigned INT32 TO_ADRESS,int32 data_byte) //transfer data from COM FLASH to MAIN FLASH
-{
-   for (int32 i=0 ; i < data_byte ; i++)
-   {
-      WRITE_DATA_BYTE_OF(TO_ADRESS,READ_DATA_BYTE_SCF(FROM_ADRESS));
-      FROM_ADRESS++;
-      TO_ADRESS++;
-   }
-   return;
-}
-void TRANSFER_DATA_NBYTE_OFtoSMF(unsigned INT32 FROM_ADRESS,unsigned INT32 TO_ADRESS,int32 data_byte) //transfer data from MAIN FLASH to MISSION FLASH
-{
-   for (int32 i=0 ; i < data_byte ; i++)
-   {
-      WRITE_DATA_BYTE_SMF(TO_ADRESS,READ_DATA_BYTE_OF(FROM_ADRESS));
-      FROM_ADRESS++;
-      TO_ADRESS++;
-   }
-   return;
-}*/
-
-
-void TRANSFER_DATA_NBYTE_SMFtoOF(unsigned INT32 FROM_ADRESS,unsigned INT32 TO_ADRESS,int32 data_byte) //transfer data from MISSION FLASH to MAIN FLASH
-{
-   for (int32 i=0 ; i < data_byte ; i++)
-   {
-      WRITE_DATA_BYTE_OF(TO_ADRESS,READ_DATA_BYTE_SMF(FROM_ADRESS));
-      FROM_ADRESS++;
-      TO_ADRESS++;
-   }
-   return;
-}
-
-
-void TRANSFER_DATA_NBYTE_SMFtoSCF(unsigned INT32 FROM_ADRESS,unsigned INT32 TO_ADRESS,int32 data_byte) //transfer data from MISSION FLASH to COM FLASH
-{
-   for (int32 i=0 ; i < data_byte ; i++)
-   {
-      WRITE_DATA_BYTE_SCF(TO_ADRESS,READ_DATA_BYTE_SMF(FROM_ADRESS));
-      FROM_ADRESS++;
-      TO_ADRESS++;
-   }
-   return;
-}/*
-void TRANSFER_DATA_NBYTE_SCFtoSMF(unsigned INT32 FROM_ADRESS,unsigned INT32 TO_ADRESS,int32 data_byte) //transfer data from COM FLASH to MISSION FLASH
-{
-   for (int32 i=0 ; i < data_byte ; i++)
-   {
-      WRITE_DATA_BYTE_SMF(TO_ADRESS,READ_DATA_BYTE_SCF(FROM_ADRESS));
-      FROM_ADRESS++;
-      TO_ADRESS++;
-   }
-   return;
-}
-void TRANSFER_DATA_NBYTE_SCF(unsigned INT32 FROM_ADRESS,unsigned INT32 TO_ADRESS,int32 data_byte) //read and send the specified data
-{
-   for (int32 i=0 ; i < data_byte ; i++)
-   {
-      WRITE_DATA_BYTE_SMF(TO_ADRESS,READ_DATA_BYTE_SCF(FROM_ADRESS));
-      FROM_ADRESS++;
-      TO_ADRESS++;
-   }
-   return;
-}
-*/
-
