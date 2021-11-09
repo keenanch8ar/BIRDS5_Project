@@ -849,11 +849,13 @@ void CHECK_50_and_CW_RESPOND()                                                  
 
 void Delete_CW_FORMAT()                                                           //clear array CW_FORMAT [5]
 {
+
    for(int num = 0; num < CW_size; num++)
    {
       CW_FORMAT[num] = 0;
    }
    return;
+   
 }
 
 
@@ -2876,7 +2878,7 @@ void IMGCLS_Test()
          
          MISSION_STATUS = 1;
          MISSION_OPERATING = 0;
-         
+         Forward_CMD_MBP();
          CWtest[0] = MISSION_STATUS<<4;
          CWtest[0] = CWtest[0] + (MISSION_OPERATING & 0x01);
          fprintf(PC,"%x",CWtest[0]);
@@ -2890,8 +2892,8 @@ void IMGCLS_Test()
       case 0x80: //Turn off IMGCLS RPi DIO for MOSFET on RAB to power RPI from 5V line
       
          output_high (PIN_A5); //SFM2 mission side access
-         fprintf (PC, "Start 0x80 - Turn off IMGCLS\r\n") ;
-         
+         fprintf (PC, "Start 0x80 - Turn off IMGCLS\r\n");
+         Forward_CMD_MBP();
          MISSION_STATUS = 0;
          MISSION_OPERATING = 0;
          
@@ -2901,7 +2903,6 @@ void IMGCLS_Test()
          fprintf (PC, "\r\n");
          missiontime = 0;
          fprintf (PC, "Finish 0x80\r\n"); 
-         //fputc(0xCD, reset);
          
       break;
       
