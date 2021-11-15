@@ -400,9 +400,7 @@ void MAIN_MB_CMD()
       case 0x19:
          unsigned int16 duration = (unsigned int16)command[2]*6;                //CMD2 is operation time(min), maximum number of readings in 2 hours = 720
          if(duration > 720){duration = 720;}                                   // 6 readings in 1 min, every 10 seconds
-         MISSION_STATUS = 1;
          HIGHSAMP_SENSOR_COLLECTION(duration);
-         MISSION_STATUS = 0;
       break;
       
       case 0x1F:
@@ -967,6 +965,7 @@ void Send_HKDATA_to_SMF(int32 address)
 {
    Save_HKDATA_to_SMF(address);  //save HK to COM PIC
    CHECK_50_and_CW_RESPOND();
+   fprintf(PC,"\r\nHK SAVED:\r\n");
    return;
 }
 
@@ -985,6 +984,7 @@ void SAVE_HKDATA_TO_OF(unsigned int32 Memory_Address)
 void Send_HKDATA_to_OF(int32 address)
 {
    Save_HKDATA_to_OF(address);  //save HK to COM PIC
+   TRANSFER_DATA_NBYTE_TOPC_OF(address,HK_size);
    CHECK_50_and_CW_RESPOND();
    return;
 }
@@ -1025,7 +1025,7 @@ void SEND_CWFORMAT_TO_SMF(int32 address)
 {
    SAVE_CWFORMAT_TO_SMF(address);  //save HK to COM PIC
    CHECK_50_and_CW_RESPOND();
-   fprintf(PC,"\r\nCW SAVED\r\n");
+   fprintf(PC,"\r\nCW SAVED:\r\n");
    return;
 }
 
@@ -1042,7 +1042,7 @@ void SAVE_CWFORMAT_TO_OF(unsigned int32 Memory_Address)
 
 void SEND_CWFORMAT_TO_OF(int32 address)
 {
-   SAVE_CWFORMAT_TO_SCF(address);                                                 //save HK to COM PIC
+   SAVE_CWFORMAT_TO_OF(address);                                                 //save HK to COM PIC
    TRANSFER_DATA_NBYTE_TOPC_OF(address,CW_size);                                  //for checking whether the data saved correctly
    CHECK_50_and_CW_RESPOND();
    return;
@@ -1292,15 +1292,12 @@ void Turn_Off_ADCS()
 
 void GET_ADCS_SENSOR_DATA()                                                      //after that, method will changed (ADCS make format and just send to MAIN PIC)
 {
-
    
    CHECK_50_and_CW_RESPOND();
    
    if (MISSION_STATUS == 0)
    {
-      Turn_On_ADCS();
-      delay_ms(80);
-       
+
       fputc(0x42, DC);                                                              //Request ADCS Data by sending command to Mission Boss to forward to ADCS MCU
       delay_ms(10);
       fputc(0xAA, DC);
@@ -1454,19 +1451,13 @@ void MAKE_ADCS_HKDATA()                                                         
       HKDATA[num] = ADCS_SENSOR_DATA[num - 52];                                  //ADCS[1] to ADCS[12]
    }
    
-
-   
-   //Delete_ADCS_data();
-   
-   //Turn_Off_ADCS();
-   
    return;
 }
 
 
-void DISPLAY_CW()                                                                //function that prints the array CW_FORMAT []
+void DISPLAY_CW()                                                               //function that prints the array CW_FORMAT []
 {
-   fprintf(PC,"\r\nCW:\r\n");
+   fprintf(PC,"\r\nCW Data:\r\n");
    for(int8 i = 0; i < 5; i++)
    {
       fprintf(PC,"%x",CW_FORMAT[i]);
@@ -1550,10 +1541,7 @@ void FAB_TEST_OPERATION()
          fprintf(PC,"%x ",HKDATA[num]);                                          //just for test
       }
       CHECK_50_and_CW_RESPOND();
-//!      for(num = 113; num < HK_Size; num++)                                       //array[113] to [124]
-//!      {
-//!         fprintf(PC,"%x ",HKDATA[num]);
-//!      }
+
       fprintf(PC,"\r\n");
       CHECK_50_and_CW_RESPOND();
       
@@ -1561,21 +1549,15 @@ void FAB_TEST_OPERATION()
       CHECK_FAB_RESPONSE = 0;                                                    //FAB flag to zero
       if (MISSION_STATUS == 0)
       {
-         output_low(PIN_C4);                                                        //COM Flash memory, Main side
+         output_low(PIN_C4);                                                        //Shared COM Flash memory, Main side
          output_low(PIN_A5);                                                        //Shared Mission Flash, Main side
          
          SEND_HKDATA_to_SCF(FAB_HK_ADDRESS);                                        //save the HKDATA array in COM flash []
-         if (MISSION_STATUS == 0)
-         {
-            SEND_HKDATA_to_SMF(FAB_HK_ADDRESS);                                        //save the HKDATA array in SMF flash []
-         }
+         SEND_HKDATA_to_SMF(FAB_HK_ADDRESS);                                        //save the HKDATA array in SMF flash []
          SEND_HKDATA_to_OF(FAB_HK_ADDRESS);                                         //save the HKDATA array in Main flash []
          
          SEND_CWFORMAT_TO_SCF(FAB_CW_ADDRESS);                                      //save the CWFORMAT array in COM flash []
-         if (MISSION_STATUS == 0)
-         {
-            SEND_CWFORMAT_TO_SMF(FAB_CW_ADDRESS);                                      //save the CWFORMAT array in SMF flash []
-         }
+         SEND_CWFORMAT_TO_SMF(FAB_CW_ADDRESS);                                      //save the CWFORMAT array in SMF flash []
          SEND_CWFORMAT_TO_OF(FAB_CW_ADDRESS);                                       //save the CWFORMAT array in Main flash []
          
          FAB_HK_ADDRESS = FAB_HK_ADDRESS + HK_size;                                 //prepare for next storing address
@@ -1709,10 +1691,6 @@ void GET_HIGH_SAMP_RESET_DATA()
 void MAKE_HIGH_SAMP_ADCS_FORMAT()
 {
    GET_ADCS_SENSOR_DATA();
-//!   for(int num = 53; num < 113; num++)                                           //12byte+48byte = 60 byte
-//!   {
-//!      HKDATA[num] = ADCS_SENSOR_DATA[num - 52];                                  //ADCS[1] to ADCS[60]
-//!   }
    
    for(int num = 53; num < 65; num++)                                           //12byte(MAG6,GYRO6)
    {
@@ -1721,13 +1699,6 @@ void MAKE_HIGH_SAMP_ADCS_FORMAT()
    
    Delete_ADCS_data();
    
-//!   for(num = 65; num < 113; num++)                                           //48byte(GPS) = 60
-//!   {
-//!      HKDATA[num] = 0;                                                           //ADCS[13] to ADCS[60]
-//!      ADCS_SENSOR_DATA[num] = 0;
-//!   }
-   
-
    return;
 }
 
@@ -1844,7 +1815,8 @@ void HIGH_SAMP_FAB_OPERATION()
 void HIGHSAMP_SENSOR_COLLECTION(int16 times)
 {
    HIGH_SAMP_FAB_MEASURING_FLAG = 0;
-   Turn_ON_ADCS();                                                               //ADCS ON   
+   Turn_On_MBP();
+   Turn_On_ADCS();
    LOOP_HIGH_SAMP_HK_ADDRESS();                                                  //loop in memory to save data, keep first 3 sectors forever
    int32 num = 0;
 
@@ -1872,7 +1844,8 @@ void HIGHSAMP_SENSOR_COLLECTION(int16 times)
       PC_DATA = 0;
       RESET_SATELLITE();                                                         //check reset command from RESET PIC
    }
-                                                                                  //ADCS GPS OFF   
+   Turn_Off_ADCS();
+   //Turn_Off_MBP();
    fprintf(PC,"HSSC DONE\r\n");
    return;
 }

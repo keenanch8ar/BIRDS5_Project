@@ -123,15 +123,13 @@ void settings()
    output_high(PIN_C4);                                                          //MUX: COM side (MAIN-COM)
    output_low(PIN_A5);                                                           //MUX: Main side (MAIN-MISSION)
   
-   Get_RSV();                                                                   //read the reservation table info from flash memory  
+   Get_RSV();                                                                    //read the reservation table info from flash memory  
    SAVE_SAT_LOG(0x25,0x25,0x25);                                                 //0X25 0X25 0X25 SATELLITE RESET INDICATOR
    delay_ms(500);
-   output_low(PIN_A5); //MUX MAIN SIDE
+   output_low(PIN_A5);                                                           //MUX MAIN SIDE
    
    fprintf(PC,"\r\n*********Start Operating*********\r\n");
-   
-   
-   
+
    return;                                                                       
   
 } 
@@ -143,7 +141,7 @@ void main()
 
    settings();                                                                   //Prepare all interrupts, timers, flag information, BC setup etc.
    
-   //Antenna_Deploy(); //Attempt deploying of antenna. This is the 2nd, 3rd and 4th attempts
+   //Antenna_Deploy();                                                           //Attempt deploying of antenna. This is the 2nd, 3rd and 4th attempts
    
    FAB_TEST_OPERATION();
 
@@ -196,66 +194,25 @@ void main()
       
       if(CMD_FROM_PC[0])
       {
-//!         if(CMD_FROM_PC[1] == 0)
-//!         {
-            fprintf(PC,"\r\n");
-            fprintf(PC,"COMMAND RECEIVED FROM PC: ");
-            
-            for(int m = 0; m < 9; m++)
-            {
-               fprintf(PC,"%x",CMD_FROM_PC[m]);
-            }
-            fprintf(PC,"\r\n");
-            //0000 0000 to 0001 FFFF is MAIN PIC/MB
-            
-            BYTE command_ID = CMD_FROM_PC[0];
-            command_ID &= 0xF0;
-            
-            if(command_ID == 0x00 || command_ID == 0x10)
-            {
-               fprintf(PC,"Main PIC or MB Command only\r\n");
-               //MAIN_MB_CMD();
-               EXECUTE_COMMAND_from_PC(CMD_FROM_PC[0], CMD_FROM_PC[2], CMD_FROM_PC[3], CMD_FROM_PC[4], CMD_FROM_PC[5], CMD_FROM_PC[6], CMD_FROM_PC[7], CMD_FROM_PC[8]);
-            }
-            
-            if(command_ID == 0x20 || command_ID == 0x30)
-            {
-               fprintf(PC,"MULT-SPEC Command\r\n");
-               missiontime = 0;
-               MULT_SPEC_Test();
-            }
-            
-            if(command_ID == 0x40)
-            {
-               fprintf(PC,"ADCS Command\r\n");
-               ADCS_test();
-            }
-            
-            if(command_ID == 0x50)
-            {
-               fprintf(PC,"S-FWD Command\r\n");
-               SFWD_test();
-            }
-            
-            if(command_ID == 0x80)
-            {
-               fprintf(PC,"IMG-CLS Command\r\n");
-               missiontime = 0;
-               IMGCLS_test();
-               
-            }
-            
-            if(command_ID == 0x90)
-            {
-               fprintf(PC,"PINO Command\r\n");
-               NEW_PINO_test();
-            }
-//!         }
-//!         else
-//!         {
-//!            SAVE_SAT_LOG(CMD_FROM_PC[0],CMD_FROM_PC[1],CMD_FROM_PC[2]);          //reservation command log
-//!            Reserve_command_PC(); 
-//!         }
+         
+         fprintf(PC,"\r\n");
+         fprintf(PC,"COMMAND RECEIVED FROM PC: ");
+         
+         for(int m = 0; m < 9; m++)
+         {
+            fprintf(PC,"%x",CMD_FROM_PC[m]);
+         }
+         fprintf(PC,"\r\n");
+         
+         if(CMD_FROM_PC[1] == 0)
+         {
+            EXECUTE_COMMAND_from_PC(CMD_FROM_PC[0], CMD_FROM_PC[2], CMD_FROM_PC[3], CMD_FROM_PC[4], CMD_FROM_PC[5], CMD_FROM_PC[6], CMD_FROM_PC[7], CMD_FROM_PC[8]);
+         }
+         else
+         {
+            SAVE_SAT_LOG(CMD_FROM_PC[0],CMD_FROM_PC[1],CMD_FROM_PC[2]);          //reservation command log
+            Reserve_command_PC(); 
+         }
 
          DELETE_CMD_FROM_PC();                                                   //clear CMD_FROM_PC[] array
          DELETE_CMD_FROM_COMM();
@@ -263,6 +220,7 @@ void main()
          CMD_FROM_PC[1] = 0;
          COM_DATA = 0;                                                           //clear COM correct receiving data flag
          PC_DATA = 0;                                                            //clear PC correct receiving data flag
+         
       }
       
       

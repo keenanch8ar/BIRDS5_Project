@@ -20,13 +20,13 @@ Static int32 CAM_ADDRESS = SECT*8;                                              
 Static int32 FAB_HK_ADDRESS = SECT*98;                                           //1000sector
 Static int32 FAB_CW_ADDRESS = SECT*1098;                                         //40sector
 Static int32 ADCS_SENSOR_ADDRESS = SECT*1138;                                    //500sector
-Static int32 ADCS_TLE_ADDRESS = SECT*1637;                                       //1sector (el ultimo no utilizado por ADCS data)
+Static int32 ADCS_TLE_ADDRESS = SECT*1637;                                       //1sector (the last one not used by ADCS data)
 Static int32 DC_STATUS_ADDRESS = SECT*1638;                                      //1sector
 Static int32 HIGH_SAMP_HK_ADDRESS = SECT*1639;                                   //409sector
 Static int32 FLAG_ADDRESS_EEPROM = 0x18000;                                      //from 75 percent of the programming memory
 Static int32 FLASH_AD_ADDRESS_EEPROM = 0x18000 + 28;                             //after flag info
-                                                                                 //Definicion de direcciones de espacio de memoria (fin)
-#define FLAG_DATA_ADDRESS_END  SECT*5-26                                         //considera la longitud de cada dato para determinar la direccion de finalizacion
+                                                                                 //Defining memory space addresses (end)
+#define FLAG_DATA_ADDRESS_END  SECT*5-26                                         //consider the length of each piece of data to determine the direction of completion
 #define RSV_DATA_ADDRESS_END  SECT*6-160
 #define SAT_LOG_END  SECT*8-22
 #define CAM_ADDRESS_END  SECT*98-SECT*2
@@ -68,7 +68,7 @@ int8 CMD_FROM_PC[9] = {};
 unsigned int8 CMD_FROM_COMM[16] = {};
 unsigned int8 in_bffr_main[16] = {};
 int8 COM_DATA= 0;
-static int8 CW_IDENTIFIER = 0;
+static int8 CW_IDENTIFIER = 1;
 int8 OPERATION_MODE = 0x00;
 int8 PC_DATA = 0;                                  
 int8 COM_ONEBYTE_COMMAND = 0;                                                    //for GS testing
@@ -99,6 +99,7 @@ int8 reset_flag = 0;
 #define FLAG_INFO_SIZE 16
 unsigned int8 sec_add_bfr[FLASH_ADD_SIZE] = {};                                  //vector utilizado para almacenar las direcciones leidas de la flash
 unsigned int8 flag_info_bffr[FLAG_INFO_SIZE] = {};
+
 
 void CURRENT_FLAG_STATUS()                                                      //Print on PC port current flag status
 {
@@ -134,6 +135,7 @@ void CURRENT_ADDRESS_OF_FLASH()                                                 
    return;
 }
 
+
 void ERASE_EEPROM_INFO(int8 CMD1, int8 CMD2, int8 CMD3)
 {
    if (CMD1 == 0xAA && CMD2 == 0xBB && CMD3 == 0xCC)
@@ -144,7 +146,8 @@ void ERASE_EEPROM_INFO(int8 CMD1, int8 CMD2, int8 CMD3)
    
 }
 
-void WRITE_FLAG_to_EEPROM()                                                      //saves the flags in the EEPROM from the address 0x18000 (75%)
+
+void WRITE_FLAG_to_EEPROM()     //saves the flags in the EEPROM from the address 0x18000 (75%)
 {
 //total programming memory size is 128KB
 //start writing the important flag from 75 percent of the programming memory(from the address of 96KB --> 0x18000)
@@ -181,6 +184,8 @@ void WRITE_FLAG_to_EEPROM()                                                     
    WRITE_PROGRAM_EEPROM(FLAG_ADDRESS_EEPROM+28, DATA);
    return;
 }
+
+
 /*
 void WRITE_AD_INFO_to_EEPROM()
 {
@@ -192,6 +197,8 @@ void WRITE_AD_INFO_to_EEPROM()
    return;
 }
 */
+
+
 void MAKE_FLAG_from_EEPROM()                                                     //toma de la eeprom la info de los flags y los carga en sus variables respectivas
 {
    if((READ_PROGRAM_EEPROM(FLAG_ADDRESS_EEPROM)!=0xffff)&&(READ_PROGRAM_EEPROM(FLAG_ADDRESS_EEPROM+26)!=0xffff))
@@ -227,6 +234,7 @@ void MAKE_FLAG_from_EEPROM()                                                    
    return;
 }
 
+
 void TAKE_AD_INFO_from_EEPROM()                                                  //Reads address data from de program memory
 {
    int16 DATA_high = READ_PROGRAM_EEPROM(FLASH_AD_ADDRESS_EEPROM);               
@@ -238,6 +246,7 @@ void TAKE_AD_INFO_from_EEPROM()                                                 
    }
    return;
 }
+
 
 void STORE_FLAG_INFO()                                                           //save flag data to flash memory
 {
@@ -291,6 +300,7 @@ void STORE_FLAG_INFO()                                                          
    
 }
 
+
 void RESET_FLAG_DATA()
 {
    BC_ATTEMPT_FLAG = 0;
@@ -313,9 +323,10 @@ void RESET_FLAG_DATA()
    return;
 }
 
+
 void READ_WRTITING_ADDRESS_LOCATION()                                            //load the variable ADD_INFO_ADDRESS, look for the data in OF, SCF, SMF and EEPROM (carga la variable ADD_INFO_ADDRESS, busca el dato en OF, SCF, SMF y EEPROM)
-{                                                                                //if you can't find it use the initial value (si no lo encuentra usa el valor inicial)
-   int i;
+{                                                                                
+   int i;                                                                        //if you can't find it use the initial value (si no lo encuentra usa el valor inicial)
    int8 ad_location_bfr[4];
    output_low(PIN_C4);                                                           //Main side
    output_low(PIN_A5);                                                           //Main side
@@ -330,21 +341,27 @@ void READ_WRTITING_ADDRESS_LOCATION()                                           
             ad_location_bfr[1] = ADD_INFO_ADDRESS >> 16;
             ad_location_bfr[2] = ADD_INFO_ADDRESS >> 8;
             ad_location_bfr[3] = ADD_INFO_ADDRESS;
-         }else{
+         }
+         else
+         {
             ad_location_bfr[0] = READ_DATA_BYTE_SMF(0);
             ad_location_bfr[1] = READ_DATA_BYTE_SMF(1);
             ad_location_bfr[2] = READ_DATA_BYTE_SMF(2);
             ad_location_bfr[3] = READ_DATA_BYTE_SMF(3);
             ADD_INFO_ADDRESS = make32(ad_location_bfr[0],ad_location_bfr[1],ad_location_bfr[2],ad_location_bfr[3]);
          }
-      }else{
+      }
+      else
+      {
          ad_location_bfr[0] = READ_DATA_BYTE_SCF(0);
          ad_location_bfr[1] = READ_DATA_BYTE_SCF(1);
          ad_location_bfr[2] = READ_DATA_BYTE_SCF(2);
          ad_location_bfr[3] = READ_DATA_BYTE_SCF(3);
          ADD_INFO_ADDRESS = make32(ad_location_bfr[0],ad_location_bfr[1],ad_location_bfr[2],ad_location_bfr[3]);
       }
-   }else{
+   }
+   else
+   {
       ad_location_bfr[0] = READ_DATA_BYTE_OF(0);
       ad_location_bfr[1] = READ_DATA_BYTE_OF(1);
       ad_location_bfr[2] = READ_DATA_BYTE_OF(2);
@@ -363,7 +380,8 @@ void READ_WRTITING_ADDRESS_LOCATION()                                           
    return;
 }
 
-void CHANGE_ADDRESS_WRITING_LOCATION()                                           //cambia la direccion de escritura de address locations cuando se superan los 95.000 ciclos
+
+void CHANGE_ADDRESS_WRITING_LOCATION()                                           //change the writing address of address locations when 95,000 cycles are exceeded
 {
    int32 AD_COUNTER = make32(READ_DATA_BYTE_OF(ADD_INFO_ADDRESS+37),READ_DATA_BYTE_OF(ADD_INFO_ADDRESS+38),READ_DATA_BYTE_OF(ADD_INFO_ADDRESS+39),READ_DATA_BYTE_OF(ADD_INFO_ADDRESS+40));//check counter value
    fprintf(PC,"AD COUNTER:%lx\r\n",AD_COUNTER);
@@ -388,7 +406,7 @@ void CHANGE_ADDRESS_WRITING_LOCATION()                                          
       output_low(PIN_C4);                                                        //COM_MUX MAINSIDE
       for(int i = 0; i < 4; i++)                                                 //store the new subsector(location) information
       {
-         WRITE_DATA_BYTE_OF(i,address_place[i]);                                 //se le pasa direccion y dato
+         WRITE_DATA_BYTE_OF(i,address_place[i]);                                 //address and data is passed to OF
          delay_us(10);
          WRITE_DATA_BYTE_SCF(i,address_place[i]);
          delay_us(10);
@@ -408,15 +426,17 @@ void CHANGE_ADDRESS_WRITING_LOCATION()                                          
    return;
 }
 
-void TAKE_FLAG_INFO_FROM_OF()                                                    //Funcion que lee de memoria el dato de los FLAGS
+
+void TAKE_FLAG_INFO_FROM_OF()                                                    //Function that reads data from FLAGS from memory
 {
    for(int8 num = 0; num < FLAG_INFO_SIZE; num++)
    {
-      flag_info_bffr[num] = READ_DATA_BYTE_OF(FLAG_DATA_ADDRESS + num);          //guarda los datos en el vector flag_info_bffr[]
+      flag_info_bffr[num] = READ_DATA_BYTE_OF(FLAG_DATA_ADDRESS + num);          //save the data in the vector flag_info_bffr []
       //delay_ms(1);
    }
    return;
 }
+
 
 void STORE_ADRESS_DATA_TO_FLASH()                                                //save the address data in a new sector if the R / W cycle is reached
 {
@@ -511,7 +531,8 @@ void STORE_ADRESS_DATA_TO_FLASH()                                               
    return;
 }
 
-void TAKE_ADDRESS_DATA_FROM_OF()                                                 //Funcion que toma de la memoria las direcciones almacenadas en los primeros lugares
+
+void TAKE_ADDRESS_DATA_FROM_OF()                                                 //Function that takes from memory the addresses stored in the first places
 {  
    
    for(int8 num = 0; num < FLASH_ADD_SIZE; num++)
@@ -520,6 +541,7 @@ void TAKE_ADDRESS_DATA_FROM_OF()                                                
    }
    return;
 }
+
 
 void TAKE_ADDRESS_DATA_FROM_SCF()
 {  
@@ -532,6 +554,7 @@ void TAKE_ADDRESS_DATA_FROM_SCF()
    return;
 }
 
+
 void TAKE_ADDRESS_DATA_FROM_SMF()
 {  
    output_low(PIN_A5);  
@@ -541,6 +564,7 @@ void TAKE_ADDRESS_DATA_FROM_SMF()
    }
    return;
 }
+
 
 void MAKE_FLAG_INFO()                                                            //Saves in each variable the information of flags retrieved from memory
 {
@@ -566,11 +590,12 @@ void MAKE_FLAG_INFO()                                                           
    }
    return;
 }
-                                                                            
-void MAKE_ADDRESS_DATA()                                                         //Funcion que separa los datos de direcciones en cada variable correspondiente
-{                                                                                //sec_add_bfr[] vector que contiene los datos de direcciones
 
 
+void MAKE_ADDRESS_DATA()                                                         //Function that separates the address data in each corresponding variable
+{                                                                                
+                                                                                 //sec_add_bfr [] vector containing the address data
+                                                                                 
    FLAG_DATA_ADDRESS = make32(sec_add_bfr[0],sec_add_bfr[1],sec_add_bfr[2],sec_add_bfr[3]);//FLAG_DATA_ADDRESS_1 | FLAG_DATA_ADDRESS_2 | FLAG_DATA_ADDRESS_3 | FLAG_DATA_ADDRESS_4;
    
    RSV_DATA_ADDRESS = make32(sec_add_bfr[4],sec_add_bfr[5],sec_add_bfr[6],sec_add_bfr[7]);//RSV_DATA_ADDRESS_1| RSV_DATA_ADDRESS_2 | RSV_DATA_ADDRESS_3 | RSV_DATA_ADDRESS_4;
@@ -594,13 +619,14 @@ void MAKE_ADDRESS_DATA()                                                        
    return;
 }
 
-void CHECK_FLAG_INFO()                                                           //funcion que imprime los datos de los flags y los separa en cada variable
+
+void CHECK_FLAG_INFO()                                                           //function that prints the data of the flags and separates them in each variable
 {
    int8 checksum = 0;
-   TAKE_FLAG_INFO_FROM_OF();                                                     //funcion que lee de la Main flash el estado de los flags y carga el array flag_info_bffr
+   TAKE_FLAG_INFO_FROM_OF();                                                     //function that reads from the Main flash the state of the flags and loads the flag_info_bffr array
    for(int8 num = 0; num < FLAG_INFO_SIZE; num++)
    {
-      if(flag_info_bffr[num] == 0xff)                                            //si la informacion recuperada es 0xff (no hay informacion) incrementa el checksum
+      if(flag_info_bffr[num] == 0xff)                                            //if the information retrieved is 0xff (no information) increases the checksum
       {
          checksum++;
       }
@@ -609,13 +635,13 @@ void CHECK_FLAG_INFO()                                                          
    
    if((flag_info_bffr[0]!=0xff)&&(flag_info_bffr[FLAG_INFO_SIZE-1]!=0xff))       //if something stored
    {
-      for(num = 0; num < FLAG_INFO_SIZE; num++)                                  //imprime la informacion de los flags
+      for(num = 0; num < FLAG_INFO_SIZE; num++)                                  //print the information of the flags
       {
          fprintf(PC,"%x",flag_info_bffr[num]);
       }
-      MAKE_FLAG_INFO();                                                          //separa el estado de los flags en cada variable
+      MAKE_FLAG_INFO();                                                          //separate the state of the flags in each variable
    }else{                                                                        //if nothing stored
-      MAKE_FLAG_from_EEPROM();                                                   //lee de la eeprom el estado de los flags
+      MAKE_FLAG_from_EEPROM();                                                   //read from the eeprom the state of the flags
    }
    checksum = 0;
    return;
@@ -687,6 +713,7 @@ void CHECK_ADDRESS_DATA()                                                       
    return;
 }
 
+
 //////////////////////////
 //FAB_HK_ADDRESS        //
 //FAB_CW_ADDRESS        //
@@ -694,6 +721,8 @@ void CHECK_ADDRESS_DATA()                                                       
 //CAM_ADDRESS           //
 //DC_STATUS_ADDRESS     //
 //////////////////////////
+
+
 void MEMORY_ERASE(int8 CMD1, int8 CMD2, int8 CMD3)
 {
    if (CMD1 == 0xAA && CMD2 == 0xBB && CMD3 == 0xCC)
@@ -765,6 +794,8 @@ void MEMORY_ERASE(int8 CMD1, int8 CMD2, int8 CMD3)
    }
    return;
 }
+
+
 /*
 //@@@@@@@@@@@@@@@@@@MISSION LOOP@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 void LOOP_FLAG_DATA_ADDRESS()
@@ -785,45 +816,49 @@ void LOOP_RSV_DATA_ADDRESS()
    return;
 }
 */
-void LOOP_SAT_LOG()                                                              //hace un loop en las posiciones de memoria para almacenar SAT_LOG
+
+
+void LOOP_SAT_LOG()                                                              //loops memory locations to store SAT_LOG
 {
-   if(SAT_LOG >= SAT_LOG_END)                                                    //si la posicion de escritura de SAT_LOG alcanza a SAT_LOG_END
+   if(SAT_LOG >= SAT_LOG_END)                                                    //if the write position of SAT_LOG reaches SAT_LOG_END
    {
-      sector_erase_OF(SECT*7);                                                   //borra un sector de la MAIN flash, 65536*7
+      sector_erase_OF(SECT*7);                                                   //deletes a sector of the MAIN flash, 65536 * 7
       
       output_low(PIN_C4);                                                        //COM_MUX MAINSIDE
-      sector_erase_SCF(SECT*7);                                                  //borra un sector de la COM flash,65536*7
+      sector_erase_SCF(SECT*7);                                                  //clears a sector from the COM flash, 65536 * 7
       output_high(PIN_C4);                                                       //CAM_MUX MAINSIDE
       
       output_low(PIN_A5);                                                        //CAM_MUX MAINSIDE
-      sector_erase_SMF(SECT*7);                                                  //borra un sector de la MISSION flash,65536*7
-      SAT_LOG = SECT*7;                                                          //Cambia la direccion de SAT_LOG y mantiene el primer sector,65536*7
-      STORE_ADRESS_DATA_TO_FLASH();                                              //guarda los datos de direcciones, sera en un nuevo sector si se cumple el ciclo de R/W
+      sector_erase_SMF(SECT*7);                                                  //deletes a sector of the MISSION flash, 65536 * 7
+      SAT_LOG = SECT*7;                                                          //Change the address of SAT_LOG and keep the first sector, 65536 * 7
+      STORE_ADRESS_DATA_TO_FLASH();                                              //saves the address data, it will be in a new sector if the R / W cycle is fulfilled
    }
    //output_high(PIN_C4);//COM_MUX COMSIDE
    return;
 }
 
-void LOOP_CAM_ADDRESS()                                                          //hace un loop en las posiciones de memoria para almacenar CAM data
+
+void LOOP_CAM_ADDRESS()                                                          //loops memory locations to store CAM data
 {
-   if(CAM_ADDRESS >= CAM_ADDRESS_END)                                            //si la posicion de escritura de CAM alcanza a CAM_ADDRESS_END
+   if(CAM_ADDRESS >= CAM_ADDRESS_END)                                            //if the write position of CAM reaches CAM_ADDRESS_END
    {
-      sector_erase_OF(SECT*9);                                                   //borra 1 sector de la MAIN flash, 65536*9
+      sector_erase_OF(SECT*9);                                                   //deletes 1 sector of the MAIN flash, 65536 * 9
       
       output_low(PIN_C4);                                                        //COM_MUX MAINSIDE
-      sector_erase_SCF(SECT*9);                                                  //borra 1 sector de la COM flash, 65536*9
+      sector_erase_SCF(SECT*9);                                                  //clears 1 sector of COM flash, 65536 * 9
       output_high(PIN_C4);                                                       //COM_MUX COMSIDE
       
       output_low(PIN_A5);                                                        //CAM_MUX MAINSIDE
-      sector_erase_SMF(SECT*9);                                                  //borra 1 sector de la MISSION flash, 65536*9
+      sector_erase_SMF(SECT*9);                                                  //deletes 1 sector of the MISSION flash, 65536 * 9
       
-      CAM_ADDRESS = SECT*9;                                                      //CAM address se ubica ahora en el comienzo del espacio designado a CAM
+      CAM_ADDRESS = SECT*9;                                                      //CAM address is now located at the beginning of the space designated to CAM
       STORE_ADRESS_DATA_TO_FLASH();
    }
    return;
 }
 
-void LOOP_FAB_HK_ADDRESS()                                                       //Rota las posiciones de guardado de los datos si llega al final del espacio asignado                                                       
+
+void LOOP_FAB_HK_ADDRESS()                                                       //Rotate data save positions if it reaches the end of the allocated space                                                      
 {
    int32 checksum = FAB_HK_ADDRESS && 0x0000ffff;
    if(FAB_HK_ADDRESS >= FAB_HK_ADDRESS_END)                                      
@@ -837,9 +872,11 @@ void LOOP_FAB_HK_ADDRESS()                                                      
       output_low(PIN_A5);                                                        //CAM_MUX MAINSIDE
       sector_erase_SMF(SECT*98);
       
-      FAB_HK_ADDRESS = 65536*8;                                                  //la nueva direccion vuelve a ser el comienzo del espacio asignado
-      STORE_ADRESS_DATA_TO_FLASH();                                              //guarda los datos de direcciones y en un nuevo sector si se cumple el ciclo de R/W
-   }else if(65536 - checksum < 119){                                             //if value will be close to the sector
+      FAB_HK_ADDRESS = 65536*8;                                                  //the new address is again the beginning of the allocated space
+      STORE_ADRESS_DATA_TO_FLASH();                                              //saves the address data and in a new sector if the R / W cycle is fulfilled
+   }
+   else if(65536 - checksum < 119)
+   {                                                                             //if value will be close to the sector
       fprintf(PC,"erasing next sector\r\n");
       
       sector_erase_OF(FAB_HK_ADDRESS + SECT);                                    //erase next sector in advance
@@ -854,7 +891,8 @@ void LOOP_FAB_HK_ADDRESS()                                                      
    return;
 }
 
-void LOOP_FAB_CW_ADDRESS()                                                       //Rota las posiciones de guardado de los datos si llega al final del espacio asignado 
+
+void LOOP_FAB_CW_ADDRESS()                                                       //Rotate data save positions if it reaches the end of the allocated space
 {
    int32 checksum = FAB_CW_ADDRESS && 0x0000ffff;
    if(FAB_CW_ADDRESS >= FAB_CW_ADDRESS_END)
@@ -870,7 +908,9 @@ void LOOP_FAB_CW_ADDRESS()                                                      
       
       FAB_CW_ADDRESS = SECT*1098;
       STORE_ADRESS_DATA_TO_FLASH();
-   }else if(SECT - checksum < 5){                                                //if value will be close to the sector
+   }
+   else if(SECT - checksum < 5)
+   {                                                                             //if value will be close to the sector
       fprintf(PC,"erasing next sector\r\n");
       
       sector_erase_OF(FAB_CW_ADDRESS + SECT);                                    //erase next sector in advance
@@ -927,6 +967,7 @@ void LOOP_ADCS_SENSOR_ADDRESS()
    return;
 }
 
+
 void LOOP_DC_STATUS_ADDRESS()
 {
    int32 checksum = DC_STATUS_ADDRESS && 0x00000fff;
@@ -958,6 +999,7 @@ void LOOP_DC_STATUS_ADDRESS()
    return;
 }
 
+
 void LOOP_HIGH_SAMP_HK_ADDRESS()
 {
    if(HIGH_SAMP_HK_ADDRESS >= HIGH_SAMP_HK_ADDRESS_END)                          //for 15min operation, data size will be more than 2sector
@@ -972,7 +1014,9 @@ void LOOP_HIGH_SAMP_HK_ADDRESS()
       sector_erase_SMF(SECT*1642);
       
       HIGH_SAMP_HK_ADDRESS = SECT*1642;                                          //keep first 3 sector forever
-   }else{                                                                        //if value will be close to the sector
+   }
+   else
+   {                                                                             //if value will be close to the sector
       fprintf(PC,"erasing next sector\r\n");
       
       sector_erase_OF(HIGH_SAMP_HK_ADDRESS + SECT);                              //erase next sector in advance
