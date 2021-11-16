@@ -230,52 +230,53 @@ void main()
          if(CMD_FROM_COMM[4]!= 0xAB)
          {
          
-            BYTE command_ID_from_COMM = CMD_FROM_COMM[4];
-            command_ID_from_COMM &= 0xF0;
-            //fprintf(PC,"%x",command_ID);
-            //fprintf(PC,"\r\n");
-            
-            if(command_ID_from_COMM == 0x00 || command_ID_from_COMM == 0x10)
-            {
-               fprintf(PC,"Main PIC or MB Comm Command only\r\n");
-               MAIN_MB_CMD();
-            }
-            
-            if(command_ID_from_COMM == 0x20 || command_ID_from_COMM == 0x30)
-            {
-               fprintf(PC,"MULT-SPEC Command\r\n");
-               MULT_SPEC_Test();
-            }
-            
-            if(command_ID_from_COMM == 0x40)
-            {
-               fprintf(PC,"ADCS Command\r\n");
-               ADCS_test();
-            }
-            
-            if(command_ID_from_COMM == 0x50)
-            {
-               fprintf(PC,"S-FWD Command\r\n");
-               SFWD_test();
-            }
-            
-            if(command_ID_from_COMM == 0x70)
-            {
-               fprintf(PC,"DLP Command\r\n");
-               DLP_test();
-            }
-            
-            if(command_ID_from_COMM == 0x80)
-            {
-               fprintf(PC,"IMG-CLS Command\r\n");
-               IMGCLS_test();
-            }
-            
-            if(command_ID_from_COMM == 0x90)
-            {
-               fprintf(PC,"PINO Command\r\n");
-               NEW_PINO_test();
-            }
+//!            BYTE command_ID_from_COMM = CMD_FROM_COMM[4];
+//!            command_ID_from_COMM &= 0xF0;
+//!            //fprintf(PC,"%x",command_ID);
+//!            //fprintf(PC,"\r\n");
+//!            
+//!            if(command_ID_from_COMM == 0x00 || command_ID_from_COMM == 0x10)
+//!            {
+//!               fprintf(PC,"Main PIC or MB Comm Command only\r\n");
+//!               MAIN_MB_CMD();
+//!            }
+//!            
+//!            if(command_ID_from_COMM == 0x20 || command_ID_from_COMM == 0x30)
+//!            {
+//!               fprintf(PC,"MULT-SPEC Command\r\n");
+//!               MULT_SPEC_Test();
+//!            }
+//!            
+//!            if(command_ID_from_COMM == 0x40)
+//!            {
+//!               fprintf(PC,"ADCS Command\r\n");
+//!               ADCS_test();
+//!            }
+//!            
+//!            if(command_ID_from_COMM == 0x50)
+//!            {
+//!               fprintf(PC,"S-FWD Command\r\n");
+//!               SFWD_test();
+//!            }
+//!            
+//!            if(command_ID_from_COMM == 0x70)
+//!            {
+//!               fprintf(PC,"DLP Command\r\n");
+//!               DLP_test();
+//!            }
+//!            
+//!            if(command_ID_from_COMM == 0x80)
+//!            {
+//!               fprintf(PC,"IMG-CLS Command\r\n");
+//!               IMGCLS_test();
+//!            }
+//!            
+//!            if(command_ID_from_COMM == 0x90)
+//!            {
+//!               fprintf(PC,"PINO Command\r\n");
+//!               NEW_PINO_test();
+//!            }
+            EXECUTE_COMMAND_from_COMM(CMD_FROM_COMM[4],CMD_FROM_COMM[6], CMD_FROM_COMM[7], CMD_FROM_COMM[8], CMD_FROM_COMM[9], CMD_FROM_COMM[10], CMD_FROM_COMM[11], 0x00);
             DELETE_CMD_FROM_COMM();
             DELETE_CMD_FROM_PC();                                                   //clear CMD_FROM_PC[] array
             Delete_Buffer();                                                        //clear in_bffr_main[] array

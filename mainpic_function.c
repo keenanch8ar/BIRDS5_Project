@@ -60,7 +60,7 @@ void GIVE_ACCESS_SCF_Nsec(int8 min)
 #define HK_size 76                                                               //HK FORMAT ARRAY SIZE
 #define CW_size 5                                                                //CW FORMAT ARRAY SIZE
 #define HIGH_SAMP_HK_size 76                                                     //High Sampling HK FORMAT ARRAY SIZE
-#define FAB_SENSOR_size 45                                                       //HK FAB Part
+#define FAB_SENSOR_size 45                                                       //HK FAB Part (intentionally larger than FAB data array incase data from FAB is shifted/incorrect. This is checked in FAB Verify function)
 
 static unsigned int8 CW_FORMAT[CW_size] = {};
 unsigned int8 in_HK[FAB_SENSOR_size] = {};
