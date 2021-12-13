@@ -287,7 +287,8 @@ void main()
 //!               fprintf(PC,"PINO Command\r\n");
 //!               NEW_PINO_test();
 //!            }
-            EXECUTE_COMMAND_from_COMM(CMD_FROM_COMM[4],CMD_FROM_COMM[6], CMD_FROM_COMM[7], CMD_FROM_COMM[8], CMD_FROM_COMM[9], CMD_FROM_COMM[10], CMD_FROM_COMM[11], 0x00);
+            //EXECUTE_COMMAND_from_COMM(CMD_FROM_COMM[4],CMD_FROM_COMM[6], CMD_FROM_COMM[7], CMD_FROM_COMM[8], CMD_FROM_COMM[9], CMD_FROM_COMM[10], CMD_FROM_COMM[11], 0x00);
+            EXECUTE_COMMAND_from_COMM(CMD_FROM_COMM[3],CMD_FROM_COMM[5], CMD_FROM_COMM[6], CMD_FROM_COMM[7], CMD_FROM_COMM[8], CMD_FROM_COMM[9], CMD_FROM_COMM[10], CMD_FROM_COMM[11]);
             DELETE_CMD_FROM_COMM();
             DELETE_CMD_FROM_PC();                                                   //clear CMD_FROM_PC[] array
             Delete_Buffer();                                                        //clear in_bffr_main[] array
