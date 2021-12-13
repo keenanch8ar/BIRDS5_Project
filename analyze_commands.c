@@ -2398,9 +2398,10 @@ void NEW_PINO_test_PC(int8 CMD0,int8 CMD2,int8 CMD3,int8 CMD4,int8 CMD5,int8 CMD
       case 0x9e: //Turn on PINO MCU
    
          fprintf (PC, "Start 0x9E - Turn ON PINO\r\n") ;
-         Forward_CMD_MBP();
+         FWD_CMD_MBP(CMD0, CMD2, CMD3, CMD4, CMD5, CMD6, CMD7, CMD8);
+         delay_ms(100);
          output_high (PIN_A5);
-         delay_ms(10);
+         delay_ms(50);
          output_high (PINO_power);
          //fputc(0xBC, reset);
          
