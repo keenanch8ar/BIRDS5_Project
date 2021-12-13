@@ -2287,6 +2287,7 @@ void IMGCLS_COMMAND_PC(int8 CMD0,int8 CMD2,int8 CMD3,int8 CMD4,int8 CMD5,int8 CM
    return;
 }
 
+
 void SF_COMMAND_PC(int8 CMD0,int8 CMD2,int8 CMD3,int8 CMD4,int8 CMD5,int8 CMD6, int8 CMD7, int8 CMD8)
 {
    switch(CMD0)
@@ -2373,6 +2374,7 @@ void SF_COMMAND_PC(int8 CMD0,int8 CMD2,int8 CMD3,int8 CMD4,int8 CMD5,int8 CMD6, 
    }
 }
 
+
 void NEW_PINO_test_PC(int8 CMD0,int8 CMD2,int8 CMD3,int8 CMD4,int8 CMD5,int8 CMD6, int8 CMD7, int8 CMD8)
 {
    fprintf(PC, "Start NEW_PINO_test_PC\r\n");
@@ -2382,7 +2384,7 @@ void NEW_PINO_test_PC(int8 CMD0,int8 CMD2,int8 CMD3,int8 CMD4,int8 CMD5,int8 CMD
       case 0x90: //Turn off SFWD MCU
 
          fprintf (PC, "Start 0x90 - Turn OFF PINO\r\n") ;
-         Forward_CMD_MBP();
+         FWD_CMD_MBP(CMD0, CMD2, CMD3, CMD4, CMD5, CMD6, CMD7, CMD8);
          output_high (hvs);
          delay_ms(15000);
          output_low (sel);
@@ -2428,7 +2430,7 @@ void NEW_PINO_test_PC(int8 CMD0,int8 CMD2,int8 CMD3,int8 CMD4,int8 CMD5,int8 CMD
             //fputc(0x9C,DC);
             //delay_ms(50);
             //GET_RESET_DATA_for_PINO();
-            Forward_CMD_MBP();
+            FWD_CMD_MBP(CMD0, CMD2, CMD3, CMD4, CMD5, CMD6, CMD7, CMD8);
             BYTE pp[1] = 0x00;
             for(i=0; i<39; i++)
             {
