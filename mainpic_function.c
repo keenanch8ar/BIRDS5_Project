@@ -3296,10 +3296,14 @@ void SFWD_Test()
 
    if(CMD_FROM_PC[0])
    {
+   
       for(int m = 0; m < 9; m++)
          {
             command[m] = CMD_FROM_PC[m];
          }
+         
+
+      
    }
       
    switch (command[0])
@@ -3453,7 +3457,7 @@ void NEW_PINO_Test()
          output_high (hvs);
          delay_ms(15000);
          output_low (sel);
-         output_high (PIN_A5);
+         output_low (PIN_A5);
          output_low (hvs);
          fputc(0xAB, reset);
          output_low (PINO_power);
@@ -3467,7 +3471,7 @@ void NEW_PINO_Test()
          Forward_CMD_MBP();
          output_high (PINO_power);
          fputc(0xBC, reset);
-         output_low (PIN_A5);
+         output_high (PIN_A5);
          output_high (sel);
          output_low (hvs);
          fprintf (PC, "Finish 0x9E\r\n");

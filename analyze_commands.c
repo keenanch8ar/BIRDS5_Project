@@ -371,7 +371,7 @@ void MAIN_COMMAND(int8 CMD0,int8 CMD2,int8 CMD3,int8 CMD4,int8 CMD5,int8 CMD6, i
          UPLINK_SUCCESS_CHECK();                                                 //put uplink succes flag in high and store flags
          ACK_for_COM[14] = 0x00;  
          fprintf(PC, "\r\Erase Flash Operation for Shared Mission Flash\r\n");
-         output_high (PIN_A5);                                                    //MF Main Side
+         output_low (PIN_A5);                                                    //MF Main Side
          address_data[0] = CMD2<<24;
          address_data[1] = CMD3<<16;
          address_data[2] = CMD4<<8;
@@ -395,6 +395,7 @@ void MAIN_COMMAND(int8 CMD0,int8 CMD2,int8 CMD3,int8 CMD4,int8 CMD5,int8 CMD6, i
                fprintf(PC, "error\r\n");
                break;
          }
+         output_high(PIN_A5);
          
       break;
       
@@ -914,6 +915,8 @@ void MAIN_COMMAND_PC(int8 CMD0,int8 CMD2,int8 CMD3,int8 CMD4,int8 CMD5,int8 CMD6
                break;
          }
          
+         output_high (PIN_A5);
+         
       break;
       
       case 0x13:
@@ -1157,6 +1160,7 @@ void MAIN_COMMAND_PC(int8 CMD0,int8 CMD2,int8 CMD3,int8 CMD4,int8 CMD5,int8 CMD6
          } 
          TRANSFER_DATA_NBYTE_TOPC_SMF(address, packet);
          fprintf (PC, "\r\nFinish 0x1F\r\n") ;
+         
 
       break;
       
@@ -2283,6 +2287,213 @@ void IMGCLS_COMMAND_PC(int8 CMD0,int8 CMD2,int8 CMD3,int8 CMD4,int8 CMD5,int8 CM
    return;
 }
 
+void SF_COMMAND_PC(int8 CMD0,int8 CMD2,int8 CMD3,int8 CMD4,int8 CMD5,int8 CMD6, int8 CMD7, int8 CMD8)
+{
+   switch(CMD0)
+   {
+      
+      case 0x5E: //Turn on
+         
+         Turn_On_MBP();
+         output_high (PIN_A5); //SFM2 mission side access
+         fprintf (PC, "Start 0x5E - Turn ON S&F\r\n") ;
+         delay_ms(1000);
+         MISSION_STATUS = 1;
+         MISSION_OPERATING = 0;
+         FWD_CMD_MBP(CMD0, CMD2, CMD3, CMD4, CMD5, CMD6, CMD7, CMD8);
+         missiontime = 0;
+         fprintf (PC, "Finish 0x5E\r\n");
+         
+
+      break;
+      
+      case 0x50: //Turn off
+         
+         output_low (PIN_A5); //SFM2 mission side access
+         fprintf (PC, "Start 0x50 - Turn off S&F\r\n");
+         FWD_CMD_MBP(CMD0, CMD2, CMD3, CMD4, CMD5, CMD6, CMD7, CMD8);
+         MISSION_STATUS = 0;
+         MISSION_OPERATING = 0;
+         missiontime = 0;
+         fprintf (PC, "Finish 0x50\r\n"); 
+         
+      break;
+      
+      case 0x51:                                                                  //Real time uplink command
+      
+         output_high (PIN_A5); //SFM2 mission side access
+         fprintf (PC, "Start 0x51 - Real time uplink S&F\r\n") ;
+         FWD_CMD_MBP(CMD0, CMD2, CMD3, CMD4, CMD5, CMD6, CMD7, CMD8);
+         
+         fprintf (PC, "Finish 0x51\r\n"); 
+      break;
+      
+      case 0x52:                                                                  //Real time downlink IMGCLS
+         output_high (PIN_A5);
+         fprintf (PC, "Start 0x52 - Real time downlink S&F\r\n") ;
+         if (MISSION_STATUS == 1)                                                 //Mission operating flag will only go high if MISSION STATUS is high. Mission STATUS is high when the mission turns on
+         {
+            MISSION_OPERATING = 1;
+         }
+         else
+         {
+            MISSION_OPERATING = 0;
+         }
+         
+         FWD_CMD_MBP(CMD0, CMD2, CMD3, CMD4, CMD5, CMD6, CMD7, CMD8);
+         int8 counter_sf = 0;
+         for(int32 num_sf = 0; num_sf < 1500000; num_sf++)
+            {
+               if(kbhit(DC))
+               {
+                  SFWD_DATA[counter_sf] = fgetc(DC);
+                  counter_sf++;
+                  if(counter_sf == 81)
+                  {
+                     break;
+                  }
+               }
+            }
+         fprintf(PC,"Data Recieved: ");
+         for(int8 sf = 0; sf < 81; sf++)
+         {
+            fprintf(PC,"%x, ",SFWD_DATA[sf]);
+         }
+         fprintf(PC,"\r\n");
+         
+         MISSION_OPERATING = 0;
+         
+         fprintf (PC, "Finish 0x52\r\n"); 
+         for(sf = 0; sf < 81; sf++)
+         {
+            SFWD_DATA[sf] = 0;
+         }
+
+      break;
+   }
+}
+
+void NEW_PINO_test_PC(int8 CMD0,int8 CMD2,int8 CMD3,int8 CMD4,int8 CMD5,int8 CMD6, int8 CMD7, int8 CMD8)
+{
+   fprintf(PC, "Start NEW_PINO_test_PC\r\n");
+   switch (CMD0)
+   {
+      
+      case 0x90: //Turn off SFWD MCU
+
+         fprintf (PC, "Start 0x90 - Turn OFF PINO\r\n") ;
+         Forward_CMD_MBP();
+         output_high (hvs);
+         delay_ms(15000);
+         output_low (sel);
+         output_low (PIN_A5);
+         delay_ms(10);
+         output_low (hvs);
+         //fputc(0xAB, reset);
+         output_low (PINO_power);
+         fprintf (PC, "Finish 0x90\r\n");
+         
+      break;
+      
+      case 0x9e: //Turn on PINO MCU
+   
+         fprintf (PC, "Start 0x9E - Turn ON PINO\r\n") ;
+         Forward_CMD_MBP();
+         output_high (PIN_A5);
+         delay_ms(10);
+         output_high (PINO_power);
+         //fputc(0xBC, reset);
+         
+         output_high (sel);
+         output_low (hvs);
+         fprintf (PC, "Finish 0x9E\r\n");
+         
+      break;
+      
+      case 0x91:
+         fprintf (PC, "Start 0x91 - Real Time Uplink Command");
+         output_high(PIN_A5);
+         delay_ms(10);
+         FWD_CMD_MBP(CMD0, CMD2, CMD3, CMD4, CMD5, CMD6, CMD7, CMD8);
+         fprintf (PC, "Finish 0x91\r\n");
+         break;
+         
+         case 0x9C://Time and attitude information
+         //output_high(PIN_A5);
+         int a=0;
+         fprintf (PC, "Start 0x9C\r\n") ;
+         
+         for(a=0; a<12; a++){
+            //fputc(0x9C,DC);
+            //delay_ms(50);
+            //GET_RESET_DATA_for_PINO();
+            Forward_CMD_MBP();
+            BYTE pp[1] = 0x00;
+            for(i=0; i<39; i++)
+            {
+               fputc(pp[0], DC);
+               fputc(pp[0], PC);
+               pp[0]++;
+               delay_ms(50);
+            }
+            
+            delay_ms(10000);
+         }
+         
+         fprintf (PC, "Finish 0x9C\r\n") ;
+         
+
+         break;
+         
+      
+      case 0x92:
+         fprintf (PC, "Start 0x92 - Request PINO Downlink Data\r\n") ;
+         output_high(PIN_A5);
+         delay_ms(10);
+         FWD_CMD_MBP(CMD0, CMD2, CMD3, CMD4, CMD5, CMD6, CMD7, CMD8);
+         int8 pino_counter = 0;
+         for(int32 num = 0; num < 1500000; num++)
+            {
+             
+               if(kbhit(DC))
+               {
+                  NEW_PINO_DATA[pino_counter] = fgetc(DC);
+                  pino_counter++;
+               }
+               if(pino_counter == 81)
+               {
+                  break;
+               }
+            }
+         fprintf(PC,"Data Recieved: ");
+         for(int l = 0; l < 81; l++)
+         {
+            fprintf(PC,"%x",NEW_PINO_DATA[l]);
+         }
+         fprintf(PC,"\r\n");
+         fprintf (PC, "Finish 0x92\r\n");
+         for(l = 0; l < 81; l++)
+         {
+            NEW_PINO_DATA[l] = 0;
+         }
+   
+         break;
+         
+         case 0x95:
+            output_high(hvs);
+            break;
+            
+         case 0x96:
+            output_low(hvs);
+            break;
+ 
+   }
+   
+   for(int m = 0; m < 9; m++)
+   {
+      command[m] = 0;
+   }
+}
 
 void EXECUTE_COMMAND_from_PC(int8 CMD0,int8 CMD2,int8 CMD3,int8 CMD4,int8 CMD5,int8 CMD6, int8 CMD7, int8 CMD8)
 {
@@ -2306,13 +2517,13 @@ void EXECUTE_COMMAND_from_PC(int8 CMD0,int8 CMD2,int8 CMD3,int8 CMD4,int8 CMD5,i
    if(command_ID == 0x40)
    {
       fprintf(PC,"ADCS Command\r\n");
-      //ADCS_test();
+      ADCS_test();
    }
    
    if(command_ID == 0x50)
    {
       fprintf(PC,"S-FWD Command\r\n");
-      //SFWD_test();
+      SF_COMMAND_PC(CMD0, CMD2, CMD3, CMD4, CMD5, CMD6, CMD7, CMD8);
    }
    
    if(command_ID == 0x80)
@@ -2326,11 +2537,12 @@ void EXECUTE_COMMAND_from_PC(int8 CMD0,int8 CMD2,int8 CMD3,int8 CMD4,int8 CMD5,i
    if(command_ID == 0x90)
    {
       fprintf(PC,"PINO Command\r\n");
-      //NEW_PINO_test();
+      NEW_PINO_test_PC(CMD0, CMD2, CMD3, CMD4, CMD5, CMD6, CMD7, CMD8);
    }
    
    return;
 }
+
 
 
 void EXECUTE_COMMAND_from_COMM(int8 CMD0,int8 CMD2,int8 CMD3,int8 CMD4,int8 CMD5,int8 CMD6, int8 CMD7, int8 CMD8)
@@ -2381,6 +2593,15 @@ void EXECUTE_COMMAND_from_COMM(int8 CMD0,int8 CMD2,int8 CMD3,int8 CMD4,int8 CMD5
    return;
 }
 
+
+void check_rsv(int8 rsvt)
+{
+   BYTE reservation_time = rsvt;
+   if(reservation_time != 0x00)
+   {
+      
+   }
+}
 
 int8 CHECK_MEMORY_FUNCTION(int8 data)                                            //evita operacion de memoria como comandos reservados
 {

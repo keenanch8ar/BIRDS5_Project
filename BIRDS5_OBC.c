@@ -144,6 +144,14 @@ void main()
    //Antenna_Deploy();                                                           //Attempt deploying of antenna. This is the 2nd, 3rd and 4th attempts
    
    FAB_TEST_OPERATION();
+   fprintf(PC, "\r\n********Finish FAB TEST OPERATION*******\r\n");   
+   
+   delay_ms(1000);
+   
+   
+   
+   
+   
 
 
    while(TRUE)
@@ -151,7 +159,7 @@ void main()
       //BC_ON_30min();                                                             //Attempt 1st antenna deployment after 30mins
       
       
-      if(FAB_FLAG > 89)                                                            //every 90 sec, OBC gather sensor data and update CW format 
+      /*if(FAB_FLAG > 89)                                                            //every 90 sec, OBC gather sensor data and update CW format 
       {
          FAB_FLAG = 0;
          fprintf(PC,"\r\n***NORMAL SAMPLING HOUSEKEEPING DATA COLLECTION***\r\n"); //every 90seconds
@@ -172,7 +180,7 @@ void main()
          COM_DATA = 0;                                                           //reset interrupt data for safety
          RESET_DATA = 0;                                                         //reset interrupt data for safety
          fprintf(PC,"\r\n");
-      }
+      }*/
       
       if((RESERVE_MIN_FLAG >= RESERVE_TARGET_FLAG) && RESERVE_CHECK == 1)        //check the reservation command, if time came, execute
       {
@@ -207,6 +215,7 @@ void main()
          if(CMD_FROM_PC[1] == 0)
          {
             EXECUTE_COMMAND_from_PC(CMD_FROM_PC[0], CMD_FROM_PC[2], CMD_FROM_PC[3], CMD_FROM_PC[4], CMD_FROM_PC[5], CMD_FROM_PC[6], CMD_FROM_PC[7], CMD_FROM_PC[8]);
+            //output_high(PIN_A5);
          }
          else
          {
@@ -220,8 +229,10 @@ void main()
          CMD_FROM_PC[1] = 0;
          COM_DATA = 0;                                                           //clear COM correct receiving data flag
          PC_DATA = 0;                                                            //clear PC correct receiving data flag
-         
+        
       }
+      //output_high(PIN_A5);
+      
       
       
       if(CMD_FROM_COMM[0] == 0xAA && CMD_FROM_COMM[15] == 0xBB)
