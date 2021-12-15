@@ -1,3 +1,5 @@
+int8 Mission_check_flag = 0;
+
 void UPLINK_SUCCESS_CHECK()
 {
    if(UPLINK_SUCCESS == 0)
@@ -92,7 +94,7 @@ void FWD_CMD_MBP(int8 CMD0,int8 CMD2,int8 CMD3,int8 CMD4,int8 CMD5,int8 CMD6, in
    fputc(CMD0, DC);
    delay_ms(10);
    
-   fputc(0x00, DC);                                                              //change MBP code;
+   fputc(0x00, DC);                                                              //RSV time = 0x00
    delay_ms(10);
    
    fputc(CMD2, DC);
@@ -1755,7 +1757,7 @@ void MULT_SPEC_COMMAND_PC(int8 CMD0,int8 CMD2,int8 CMD3,int8 CMD4,int8 CMD5,int8
       
      case 0x30: //Turn off CAM2 RPi DIO for MOSFET on MB2 to power RPI from 5V
          
-         MISSION_STATUS = 1;
+         MISSION_STATUS = 0;
          MISSION_OPERATING = 0;
          missiontime = 0;
          output_high (PIN_A5); //SFM2 mission side access
@@ -1815,57 +1817,74 @@ void MULT_SPEC_COMMAND_PC(int8 CMD0,int8 CMD2,int8 CMD3,int8 CMD4,int8 CMD5,int8
          //eg. 23 is command, 00 02 06 08 is the address location, 01 is number of images to capture, 00 00 00 for remaining unused command bytes (command: 23 00 02 06 08 01 00 00 00)
          
          fprintf (PC, "Start 0x33\r\n") ;
-         
+
          output_high (PIN_A5); //SFM2 mission side access
          
          FWD_CMD_MBP(CMD0, CMD2, CMD3, CMD4, CMD5, CMD6, CMD7, CMD8);
          
+         for(num = 0; num < 1000000; num++)
+         {
+            if(kbhit(DC))
+            {
+               Mission_check_flag = fgetc(DC);
+               fprintf (PC,"%x,",Mission_check_flag);
+               break;
+            }
+         }
+         if (Mission_check_flag == 0x33)
+         {
+            MISSION_OPERATING = 1;
+            fprintf (PC, "Mission operating\r\n");
+            
+         }
+         else
+         {
+            MISSION_OPERATING = 0;
+            fprintf (PC, "Mission NOT operating\r\n");
+         }
+         Mission_check_flag = 0;
+      
          fprintf (PC, "Finish 0x33\r\n");
       break;
       
       case 0x34: //Turn on CAM1 RPi trigger at specific time from RESET_PIC time information
 
          fprintf (PC, "Start 0x34\r\n") ;
-         output_low (PIN_A5);
          
-         //read command
-         command_time_data[0] = command[1];
-         command_time_data[1] = command[2];
-         command_time_data[2] = command[3];
-         command_time_data[3] = command[4];
-         command_time_data[4] = command[5];
+         output_high (PIN_A5);                                                   //SFM2 mission side access
          
-         //read time from reset_pic and compare command time and reset pic time every ten seconds
+         FWD_CMD_MBP(CMD0, CMD2, CMD3, CMD4, CMD5, CMD6, CMD7, CMD8);
          
-         for (j = 0; j<9; j++)
+         for(num = 0; num < 1000000; num++)
          {
-            //GET_TIME();
-            delay_ms(20);
-            result = trigger_time_data % command_time_data;
-         
-            if (result = 0)            
-               {
-                  fprintf(PC, "Trigger time occurred\r\n");
-                  //output_high(); Turn on DIO for MULTSPEC CAM1
-                  //delay_ms(10000);
-                  //output_low() Turn off DIO for MULTSPEC CAM1
-               }
-               
-            else
-
-               {
-                  fprintf(PC, "No trigger\r\n");
-                  delay_ms(5000);
-               }
+            if(kbhit(DC))
+            {
+               Mission_check_flag = fgetc(DC);
+               break;
+            }
          }
-         result = 1;
+         if (Mission_check_flag == 0x34)
+         {
+            MISSION_OPERATING = 1;
+            fprintf (PC, "Mission operating\r\n");
+            
+         }
+         else
+         {
+            MISSION_OPERATING = 0;
+            fprintf (PC, "Mission NOT operating\r\n");
+         }
+         Mission_check_flag = 0;
+         
          fprintf (PC, "Finish 0x34\r\n");    
+         
       break;
       
       case 0x35: //Turn on CAM1 and CAM2 RPi trigger
       
          output_high (PIN_A5); //SFM2 mission side access
-         fprintf (PC, "Start 0x35\r\n") ;
+         fprintf (PC, "Start 0x35\r\n");
+         MISSION_OPERATING = 1;
          output_high(pin_F7); //Turn on DIO for trigger MB2
          output_high(pin_G2); //Turn on DIO for trigger MB1
          delay_ms(10000);
@@ -1876,14 +1895,99 @@ void MULT_SPEC_COMMAND_PC(int8 CMD0,int8 CMD2,int8 CMD3,int8 CMD4,int8 CMD5,int8
       break;
       
       case 0x36: //Turn on CAM1 and CAM2 RPi
-      
-         output_high (PIN_A5); //SFM2 mission side access
-         fprintf (PC, "Start 0x36\r\n") ;
-         output_high(pin_G3); //Turn on DIO for trigger MB2
-         delay_ms(5000);
-         output_high(pin_F6); //Turn on DIO for trigger MB1
+
+         fprintf (PC, "Start 0x36\r\n");
+         
+         output_high (PIN_A5);                                                   //SFM2 mission side access
+         
+         FWD_CMD_MBP(CMD0, CMD2, CMD3, CMD4, CMD5, CMD6, CMD7, CMD8);
+         
+         for(num = 0; num < 1000000; num++)
+         {
+            if(kbhit(DC))
+            {
+               Mission_check_flag = fgetc(DC);
+               break;
+            }
+         }
+         if (Mission_check_flag == 0x36)
+         {
+            MISSION_OPERATING = 1;
+            fprintf (PC, "Mission operating\r\n");
+            
+         }
+         else
+         {
+            MISSION_OPERATING = 0;
+            fprintf (PC, "Mission NOT operating\r\n");
+         }
+         Mission_check_flag = 0;
          fprintf (PC, "Finish 0x36\r\n");
          
+      break;
+      
+      case 0x37:
+
+         fprintf (PC, "Start 0x37\r\n");
+         
+         output_high (PIN_A5);                                                   //SFM2 mission side access
+         
+         FWD_CMD_MBP(CMD0, CMD2, CMD3, CMD4, CMD5, CMD6, CMD7, CMD8);
+         
+         for(num = 0; num < 1000000; num++)
+         {
+            if(kbhit(DC))
+            {
+               Mission_check_flag = fgetc(DC);
+               break;
+            }
+         }
+         if (Mission_check_flag == 0x37)
+         {
+            MISSION_OPERATING = 1;
+            fprintf (PC, "Mission operating\r\n");
+            
+         }
+         else
+         {
+            MISSION_OPERATING = 0;
+            fprintf (PC, "Mission NOT operating\r\n");
+         }
+         Mission_check_flag = 0;
+         fprintf (PC, "Finish 0x37\r\n");
+           
+      break;
+      
+      case 0x38:
+
+         fprintf (PC, "Start 0x38\r\n");
+         
+         output_high (PIN_A5);                                                   //SFM2 mission side access
+         
+         FWD_CMD_MBP(CMD0, CMD2, CMD3, CMD4, CMD5, CMD6, CMD7, CMD8);
+         
+         for(num = 0; num < 1000000; num++)
+         {
+            if(kbhit(DC))
+            {
+               Mission_check_flag = fgetc(DC);
+               break;
+            }
+         }
+         if (Mission_check_flag == 0x38)
+         {
+            MISSION_OPERATING = 1;
+            fprintf (PC, "Mission operating\r\n");
+            
+         }
+         else
+         {
+            MISSION_OPERATING = 0;
+            fprintf (PC, "Mission NOT operating\r\n");
+         }
+         Mission_check_flag = 0;
+         fprintf (PC, "Finish 0x38\r\n");
+           
       break;
       
       default:
@@ -2498,6 +2602,7 @@ void NEW_PINO_test_PC(int8 CMD0,int8 CMD2,int8 CMD3,int8 CMD4,int8 CMD5,int8 CMD
    }
 }
 
+
 void EXECUTE_COMMAND_from_PC(int8 CMD0,int8 CMD2,int8 CMD3,int8 CMD4,int8 CMD5,int8 CMD6, int8 CMD7, int8 CMD8)
 {
    
@@ -2605,6 +2710,7 @@ void check_rsv(int8 rsvt)
       
    }
 }
+
 
 int8 CHECK_MEMORY_FUNCTION(int8 data)                                            //evita operacion de memoria como comandos reservados
 {

@@ -159,7 +159,7 @@ void main()
       //BC_ON_30min();                                                             //Attempt 1st antenna deployment after 30mins
       
       
-      /*if(FAB_FLAG > 89)                                                            //every 90 sec, OBC gather sensor data and update CW format 
+      if(FAB_FLAG > 89)                                                            //every 90 sec, OBC gather sensor data and update CW format 
       {
          FAB_FLAG = 0;
          fprintf(PC,"\r\n***NORMAL SAMPLING HOUSEKEEPING DATA COLLECTION***\r\n"); //every 90seconds
@@ -180,7 +180,7 @@ void main()
          COM_DATA = 0;                                                           //reset interrupt data for safety
          RESET_DATA = 0;                                                         //reset interrupt data for safety
          fprintf(PC,"\r\n");
-      }*/
+      }
       
       if((RESERVE_MIN_FLAG >= RESERVE_TARGET_FLAG) && RESERVE_CHECK == 1)        //check the reservation command, if time came, execute
       {
@@ -298,22 +298,22 @@ void main()
          }
       }
       
-      if(MISSION_STATUS)
-      {
-
-         if(missiontime > 9)
-         {
-            fprintf (PC, "Mission Time: %x \r\n", missiontime);
-            fprintf (PC, "Start 0x20 - Turn OFF MULTSPEC CAM1 (MB1)\r\n") ;
-            output_low(pin_G3);
-            fprintf (PC, "Start 0x30 - Turn OFF MULTSPEC CAM2 (MB2)\r\n") ;
-            output_low(pin_F6); //Turn off DIO for MULTSPEC CAM2
-            //Turn off IMGCLS Pi command
-            missiontime = 0;
-            MISSION_STATUS = 0;
-            MISSION_OPERATING = 0;
-         }  
-      }
+//!      if(MISSION_STATUS)
+//!      {
+//!
+//!         if(missiontime > 9)
+//!         {
+//!            fprintf (PC, "Mission Time: %x \r\n", missiontime);
+//!            fprintf (PC, "Start 0x20 - Turn OFF MULTSPEC CAM1 (MB1)\r\n") ;
+//!            output_low(pin_G3);
+//!            fprintf (PC, "Start 0x30 - Turn OFF MULTSPEC CAM2 (MB2)\r\n") ;
+//!            output_low(pin_F6); //Turn off DIO for MULTSPEC CAM2
+//!            //Turn off IMGCLS Pi command
+//!            missiontime = 0;
+//!            MISSION_STATUS = 0;
+//!            MISSION_OPERATING = 0;
+//!         }  
+//!      }
       
       
       if(COM_DATA != 0 || PC_DATA != 0)                                          //COM_DATA AND PC_DATA WILL BE ZERO IF THE CORRECT NUMBER OF CHARACTERS ARE RECEIVED
