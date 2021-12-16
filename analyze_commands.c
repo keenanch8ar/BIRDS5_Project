@@ -1827,10 +1827,11 @@ void MULT_SPEC_COMMAND_PC(int8 CMD0,int8 CMD2,int8 CMD3,int8 CMD4,int8 CMD5,int8
             if(kbhit(DC))
             {
                Mission_check_flag = fgetc(DC);
-               fprintf (PC,"%x,",Mission_check_flag);
                break;
             }
          }
+         
+         fprintf(PC,"\r\nMission Check Flag:%lx\r\n",(int8)Mission_check_flag);
          if (Mission_check_flag == 0x33)
          {
             MISSION_OPERATING = 1;
@@ -1863,6 +1864,8 @@ void MULT_SPEC_COMMAND_PC(int8 CMD0,int8 CMD2,int8 CMD3,int8 CMD4,int8 CMD5,int8
                break;
             }
          }
+         
+         fprintf(PC,"\r\nMission Check Flag:%lx\r\n",(int8)Mission_check_flag);
          if (Mission_check_flag == 0x34)
          {
             MISSION_OPERATING = 1;
@@ -1884,7 +1887,6 @@ void MULT_SPEC_COMMAND_PC(int8 CMD0,int8 CMD2,int8 CMD3,int8 CMD4,int8 CMD5,int8
       
          output_high (PIN_A5); //SFM2 mission side access
          fprintf (PC, "Start 0x35\r\n");
-         MISSION_OPERATING = 1;
          output_high(pin_F7); //Turn on DIO for trigger MB2
          output_high(pin_G2); //Turn on DIO for trigger MB1
          delay_ms(10000);
@@ -1910,6 +1912,8 @@ void MULT_SPEC_COMMAND_PC(int8 CMD0,int8 CMD2,int8 CMD3,int8 CMD4,int8 CMD5,int8
                break;
             }
          }
+         
+         fprintf(PC,"\r\nMission Check Flag:%lx\r\n",(int8)Mission_check_flag);
          if (Mission_check_flag == 0x36)
          {
             MISSION_OPERATING = 1;
@@ -1942,6 +1946,8 @@ void MULT_SPEC_COMMAND_PC(int8 CMD0,int8 CMD2,int8 CMD3,int8 CMD4,int8 CMD5,int8
                break;
             }
          }
+         
+         fprintf(PC,"\r\nMission Check Flag:%lx\r\n",(int8)Mission_check_flag);
          if (Mission_check_flag == 0x37)
          {
             MISSION_OPERATING = 1;
@@ -1974,6 +1980,7 @@ void MULT_SPEC_COMMAND_PC(int8 CMD0,int8 CMD2,int8 CMD3,int8 CMD4,int8 CMD5,int8
                break;
             }
          }
+         fprintf(PC,"\r\nMission Check Flag:%lx\r\n",(int8)Mission_check_flag);
          if (Mission_check_flag == 0x38)
          {
             MISSION_OPERATING = 1;
@@ -1987,6 +1994,72 @@ void MULT_SPEC_COMMAND_PC(int8 CMD0,int8 CMD2,int8 CMD3,int8 CMD4,int8 CMD5,int8
          }
          Mission_check_flag = 0;
          fprintf (PC, "Finish 0x38\r\n");
+           
+      break;
+      
+      case 0x39:
+
+         fprintf (PC, "Start 0x39\r\n");
+         
+         output_high (PIN_A5);                                                   //SFM2 mission side access
+         
+         FWD_CMD_MBP(CMD0, CMD2, CMD3, CMD4, CMD5, CMD6, CMD7, CMD8);
+         
+         for(num = 0; num < 1000000; num++)
+         {
+            if(kbhit(DC))
+            {
+               Mission_check_flag = fgetc(DC);
+               break;
+            }
+         }
+         fprintf(PC,"\r\nMission Check Flag:%lx\r\n",(int8)Mission_check_flag);
+         if (Mission_check_flag == 0x39)
+         {
+            MISSION_OPERATING = 1;
+            fprintf (PC, "Mission operating\r\n");
+            
+         }
+         else
+         {
+            MISSION_OPERATING = 0;
+            fprintf (PC, "Mission NOT operating\r\n");
+         }
+         Mission_check_flag = 0;
+         fprintf (PC, "Finish 0x39\r\n");
+           
+      break;
+      
+      case 0x3A:
+
+         fprintf (PC, "Start 0x3A\r\n");
+         
+         output_high (PIN_A5);                                                   //SFM2 mission side access
+         
+         FWD_CMD_MBP(CMD0, CMD2, CMD3, CMD4, CMD5, CMD6, CMD7, CMD8);
+         
+         for(num = 0; num < 1000000; num++)
+         {
+            if(kbhit(DC))
+            {
+               Mission_check_flag = fgetc(DC);
+               break;
+            }
+         }
+         fprintf(PC,"\r\nMission Check Flag:%lx\r\n",(int8)Mission_check_flag);
+         if (Mission_check_flag == 0x3A)
+         {
+            MISSION_OPERATING = 1;
+            fprintf (PC, "Mission operating\r\n");
+            
+         }
+         else
+         {
+            MISSION_OPERATING = 0;
+            fprintf (PC, "Mission NOT operating\r\n");
+         }
+         Mission_check_flag = 0;
+         fprintf (PC, "Finish 0x3A\r\n");
            
       break;
       
@@ -2069,14 +2142,6 @@ void IMGCLS_COMMAND(int8 CMD0,int8 CMD2,int8 CMD3,int8 CMD4,int8 CMD5,int8 CMD6,
          
          output_high (PIN_A5);
          fprintf (PC, "Start 0x82 - Real time downlink IMGCLS\r\n") ;
-         if (MISSION_STATUS == 1)                                                 //Mission operating flag will only go high if MISSION STATUS is high. Mission STATUS is high when the mission turns on
-         {
-            MISSION_OPERATING = 1;
-         }
-         else
-         {
-            MISSION_OPERATING = 0;
-         }
          
          FWD_CMD_MBP(CMD0, CMD2, CMD3, CMD4, CMD5, CMD6, CMD7, CMD8);
          int8 counter_cls = 0;
@@ -2098,9 +2163,7 @@ void IMGCLS_COMMAND(int8 CMD0,int8 CMD2,int8 CMD3,int8 CMD4,int8 CMD5,int8 CMD6,
             fprintf(PC,"%x, ",IMGCLS_DATA[c]);
          }
          fprintf(PC,"\r\n");
-         
-         MISSION_OPERATING = 0;
-         
+
          fprintf (PC, "Finish 0x82\r\n"); 
          for(c = 0; c < 81; c++)
          {
@@ -2260,14 +2323,6 @@ void IMGCLS_COMMAND_PC(int8 CMD0,int8 CMD2,int8 CMD3,int8 CMD4,int8 CMD5,int8 CM
       case 0x82:                                                                  //Real time downlink IMGCLS
          output_high (PIN_A5);
          fprintf (PC, "Start 0x82 - Real time downlink IMGCLS\r\n") ;
-         if (MISSION_STATUS == 1)                                                 //Mission operating flag will only go high if MISSION STATUS is high. Mission STATUS is high when the mission turns on
-         {
-            MISSION_OPERATING = 1;
-         }
-         else
-         {
-            MISSION_OPERATING = 0;
-         }
          
          FWD_CMD_MBP(CMD0, CMD2, CMD3, CMD4, CMD5, CMD6, CMD7, CMD8);
          int8 counter_cls = 0;
@@ -2302,81 +2357,388 @@ void IMGCLS_COMMAND_PC(int8 CMD0,int8 CMD2,int8 CMD3,int8 CMD4,int8 CMD5,int8 CM
       
       
       case 0x83:
-         output_high (PIN_A5);
-         fprintf (PC, "Start 0x83 - Mission Mode 1 IMGCLS\r\n") ;
-         if (MISSION_STATUS == 1)                                                 //Mission operating flag will only go high if MISSION STATUS is high. Mission STATUS is high when the mission turns on
+      
+         output_high (PIN_A5);                                                   //Mission Side
+         
+         fprintf (PC, "Start 0x83\r\n") ;
+
+         FWD_CMD_MBP(CMD0, CMD2, CMD3, CMD4, CMD5, CMD6, CMD7, CMD8);            //Forward command to Mission Boss
+
+         for(int8 num = 0; num < 1000000; num++)                                      //wait for MBP ack
+         {
+            if(kbhit(DC))
+            {
+               Mission_check_flag = fgetc(DC);
+               break;
+            }
+         }
+         
+         fprintf(PC,"\r\nMission Check Flag:%lx\r\n",(int8)Mission_check_flag);
+         if (Mission_check_flag == 0x83)
          {
             MISSION_OPERATING = 1;
+            fprintf (PC, "Mission operating\r\n");
+            
          }
          else
          {
             MISSION_OPERATING = 0;
+            fprintf (PC, "Mission NOT operating\r\n");
          }
          
-         FWD_CMD_MBP(CMD0, CMD2, CMD3, CMD4, CMD5, CMD6, CMD7, CMD8);
-
-         MISSION_OPERATING = 0;
-         
-         fprintf (PC, "Finish 0x83\r\n"); 
+         Mission_check_flag = 0;
+         fprintf (PC, "Finish 0x83\r\n");
          
       break;
       
       case 0x84:
       
-         //Capture in mode 1
-         //(1 image, captured immediately, saved to specified address) 
-         //eg. 23 is command, 00 02 06 08 is the address location, 01 is number of images to capture, 00 00 00 for remaining unused command bytes (command: 23 00 02 06 08 01 00 00 00)
+         output_high (PIN_A5);                                                   //Mission Side
          
          fprintf (PC, "Start 0x84\r\n") ;
+
+         FWD_CMD_MBP(CMD0, CMD2, CMD3, CMD4, CMD5, CMD6, CMD7, CMD8);            //Forward command to Mission Boss
+
+         for(num = 0; num < 1000000; num++)                                      //wait for MBP ack
+         {
+            if(kbhit(DC))
+            {
+               Mission_check_flag = fgetc(DC);
+               break;
+            }
+         }
          
-         output_high (PIN_A5); //SFM2 mission side access
+         fprintf(PC,"\r\nMission Check Flag:%lx\r\n",(int8)Mission_check_flag);
+         if (Mission_check_flag == 0x84)
+         {
+            MISSION_OPERATING = 1;
+            fprintf (PC, "Mission operating\r\n");
+            
+         }
+         else
+         {
+            MISSION_OPERATING = 0;
+            fprintf (PC, "Mission NOT operating\r\n");
+         }
          
-         
+         Mission_check_flag = 0;
          fprintf (PC, "Finish 0x84\r\n");
+         
       break;
       
       case 0x85:
       
-         output_high (PIN_A5); 
-         fprintf (PC, "Start 0x85\r\n");
+         output_high (PIN_A5);                                                   //Mission Side
          
-         fputc(0x48, DC); //Forward command to MB
-         fputc(0x48, PC); 
-         
-         int8 IMGCLS_ACK = 0;
-         for(int32 num = 0; num < 1000000; num++)
+         fprintf (PC, "Start 0x85\r\n") ;
+
+         FWD_CMD_MBP(CMD0, CMD2, CMD3, CMD4, CMD5, CMD6, CMD7, CMD8);            //Forward command to Mission Boss
+
+         for(num = 0; num < 1000000; num++)                                      //wait for MBP ack
          {
             if(kbhit(DC))
             {
-               IMGCLS_ACK = fgetc(DC);
+               Mission_check_flag = fgetc(DC);
                break;
             }
-            
          }
          
-         if(IMGCLS_ACK == 0x70)                                                          //acknowledge
+         fprintf(PC,"\r\nMission Check Flag:%lx\r\n",(int8)Mission_check_flag);
+         if (Mission_check_flag == 0x85)
          {
-            fputc(0x49, DC); 
-            fputc(0x49, PC); 
-            fprintf(PC,"\r\nIMGCLS ACK received\r\n");
-            fprintf(PC,"Recieved ACK: %x\r\n",IMGCLS_ACK);
-            for(int l = 1; l < 9; l++)
-            {
-               fputc(command[l], DC);
-               delay_ms(10);
-               fprintf(PC,"%x",command[l]);
-               delay_ms(10);
-            }
-            fprintf(PC,"\r\n");
-
+            MISSION_OPERATING = 1;
+            fprintf (PC, "Mission operating\r\n");
+            
          }
          else
          {
-            
-            fprintf(PC,"Recieved ACK: %x\r\n",IMGCLS_ACK);
-         
+            MISSION_OPERATING = 0;
+            fprintf (PC, "Mission NOT operating\r\n");
          }
+         
+         Mission_check_flag = 0;
          fprintf (PC, "Finish 0x85\r\n");
+         
+         break;
+         
+         case 0x86:
+      
+         output_high (PIN_A5);                                                   //Mission Side
+         
+         fprintf (PC, "Start 0x86\r\n") ;
+
+         FWD_CMD_MBP(CMD0, CMD2, CMD3, CMD4, CMD5, CMD6, CMD7, CMD8);            //Forward command to Mission Boss
+
+         for(num = 0; num < 1000000; num++)                                      //wait for MBP ack
+         {
+            if(kbhit(DC))
+            {
+               Mission_check_flag = fgetc(DC);
+               break;
+            }
+         }
+         
+         fprintf(PC,"\r\nMission Check Flag:%lx\r\n",(int8)Mission_check_flag);
+         if (Mission_check_flag == 0x86)
+         {
+            MISSION_OPERATING = 1;
+            fprintf (PC, "Mission operating\r\n");
+            
+         }
+         else
+         {
+            MISSION_OPERATING = 0;
+            fprintf (PC, "Mission NOT operating\r\n");
+         }
+         
+         Mission_check_flag = 0;
+         fprintf (PC, "Finish 0x86\r\n");
+         
+         break;
+         
+         case 0x87:
+      
+         output_high (PIN_A5);                                                   //Mission Side
+         
+         fprintf (PC, "Start 0x87\r\n") ;
+
+         FWD_CMD_MBP(CMD0, CMD2, CMD3, CMD4, CMD5, CMD6, CMD7, CMD8);            //Forward command to Mission Boss
+
+         for(num = 0; num < 1000000; num++)                                      //wait for MBP ack
+         {
+            if(kbhit(DC))
+            {
+               Mission_check_flag = fgetc(DC);
+               break;
+            }
+         }
+         
+         fprintf(PC,"\r\nMission Check Flag:%lx\r\n",(int8)Mission_check_flag);
+         if (Mission_check_flag == 0x87)
+         {
+            MISSION_OPERATING = 1;
+            fprintf (PC, "Mission operating\r\n");
+            
+         }
+         else
+         {
+            MISSION_OPERATING = 0;
+            fprintf (PC, "Mission NOT operating\r\n");
+         }
+         
+         Mission_check_flag = 0;
+         fprintf (PC, "Finish 0x87\r\n");
+         
+         break;
+         
+         case 0x88:
+      
+         output_high (PIN_A5);                                                   //Mission Side
+         
+         fprintf (PC, "Start 0x88\r\n") ;
+
+         FWD_CMD_MBP(CMD0, CMD2, CMD3, CMD4, CMD5, CMD6, CMD7, CMD8);            //Forward command to Mission Boss
+
+         for(num = 0; num < 1000000; num++)                                      //wait for MBP ack
+         {
+            if(kbhit(DC))
+            {
+               Mission_check_flag = fgetc(DC);
+               break;
+            }
+         }
+         
+         fprintf(PC,"\r\nMission Check Flag:%lx\r\n",(int8)Mission_check_flag);
+         if (Mission_check_flag == 0x88)
+         {
+            MISSION_OPERATING = 1;
+            fprintf (PC, "Mission operating\r\n");
+            
+         }
+         else
+         {
+            MISSION_OPERATING = 0;
+            fprintf (PC, "Mission NOT operating\r\n");
+         }
+         
+         Mission_check_flag = 0;
+         fprintf (PC, "Finish 0x88\r\n");
+         
+         break;
+         
+         case 0x89:
+      
+         output_high (PIN_A5);                                                   //Mission Side
+         
+         fprintf (PC, "Start 0x89\r\n") ;
+
+         FWD_CMD_MBP(CMD0, CMD2, CMD3, CMD4, CMD5, CMD6, CMD7, CMD8);            //Forward command to Mission Boss
+
+         for(num = 0; num < 1000000; num++)                                      //wait for MBP ack
+         {
+            if(kbhit(DC))
+            {
+               Mission_check_flag = fgetc(DC);
+               break;
+            }
+         }
+         
+         fprintf(PC,"\r\nMission Check Flag:%lx\r\n",(int8)Mission_check_flag);
+         if (Mission_check_flag == 0x89)
+         {
+            MISSION_OPERATING = 1;
+            fprintf (PC, "Mission operating\r\n");
+            
+         }
+         else
+         {
+            MISSION_OPERATING = 0;
+            fprintf (PC, "Mission NOT operating\r\n");
+         }
+         
+         Mission_check_flag = 0;
+         fprintf (PC, "Finish 0x89\r\n");
+         
+         break;
+
+         case 0x8A:
+      
+         output_high (PIN_A5);                                                   //Mission Side
+         
+         fprintf (PC, "Start 0x8A\r\n") ;
+
+         FWD_CMD_MBP(CMD0, CMD2, CMD3, CMD4, CMD5, CMD6, CMD7, CMD8);            //Forward command to Mission Boss
+
+         for(num = 0; num < 1000000; num++)                                      //wait for MBP ack
+         {
+            if(kbhit(DC))
+            {
+               Mission_check_flag = fgetc(DC);
+               break;
+            }
+         }
+         
+         fprintf(PC,"\r\nMission Check Flag:%lx\r\n",(int8)Mission_check_flag);
+         if (Mission_check_flag == 0x8A)
+         {
+            MISSION_OPERATING = 1;
+            fprintf (PC, "Mission operating\r\n");
+            
+         }
+         else
+         {
+            MISSION_OPERATING = 0;
+            fprintf (PC, "Mission NOT operating\r\n");
+         }
+         
+         Mission_check_flag = 0;
+         fprintf (PC, "Finish 0x8A\r\n");
+         
+         break;
+         
+         case 0x8B:
+      
+         output_high (PIN_A5);                                                   //Mission Side
+         
+         fprintf (PC, "Start 0x8B\r\n") ;
+
+         FWD_CMD_MBP(CMD0, CMD2, CMD3, CMD4, CMD5, CMD6, CMD7, CMD8);            //Forward command to Mission Boss
+
+         for(num = 0; num < 1000000; num++)                                      //wait for MBP ack
+         {
+            if(kbhit(DC))
+            {
+               Mission_check_flag = fgetc(DC);
+               break;
+            }
+         }
+         
+         fprintf(PC,"\r\nMission Check Flag:%lx\r\n",(int8)Mission_check_flag);
+         if (Mission_check_flag == 0x8B)
+         {
+            MISSION_OPERATING = 1;
+            fprintf (PC, "Mission operating\r\n");
+            
+         }
+         else
+         {
+            MISSION_OPERATING = 0;
+            fprintf (PC, "Mission NOT operating\r\n");
+         }
+         
+         Mission_check_flag = 0;
+         fprintf (PC, "Finish 0x8B\r\n");
+         
+         break;
+         
+         case 0x8C:
+      
+         output_high (PIN_A5);                                                   //Mission Side
+         
+         fprintf (PC, "Start 0x8C\r\n") ;
+
+         FWD_CMD_MBP(CMD0, CMD2, CMD3, CMD4, CMD5, CMD6, CMD7, CMD8);            //Forward command to Mission Boss
+
+         for(num = 0; num < 1000000; num++)                                      //wait for MBP ack
+         {
+            if(kbhit(DC))
+            {
+               Mission_check_flag = fgetc(DC);
+               break;
+            }
+         }
+         
+         fprintf(PC,"\r\nMission Check Flag:%lx\r\n",(int8)Mission_check_flag);
+         if (Mission_check_flag == 0x8C)
+         {
+            MISSION_OPERATING = 1;
+            fprintf (PC, "Mission operating\r\n");
+            
+         }
+         else
+         {
+            MISSION_OPERATING = 0;
+            fprintf (PC, "Mission NOT operating\r\n");
+         }
+         
+         Mission_check_flag = 0;
+         fprintf (PC, "Finish 0x8C\r\n");
+         
+         break;
+         
+         case 0x8D:
+      
+         output_high (PIN_A5);                                                   //Mission Side
+         
+         fprintf (PC, "Start 0x8D\r\n") ;
+
+         FWD_CMD_MBP(CMD0, CMD2, CMD3, CMD4, CMD5, CMD6, CMD7, CMD8);            //Forward command to Mission Boss
+
+         for(num = 0; num < 1000000; num++)                                      //wait for MBP ack
+         {
+            if(kbhit(DC))
+            {
+               Mission_check_flag = fgetc(DC);
+               break;
+            }
+         }
+         
+         fprintf(PC,"\r\nMission Check Flag:%lx\r\n",(int8)Mission_check_flag);
+         if (Mission_check_flag == 0x8D)
+         {
+            MISSION_OPERATING = 1;
+            fprintf (PC, "Mission operating\r\n");
+            
+         }
+         else
+         {
+            MISSION_OPERATING = 0;
+            fprintf (PC, "Mission NOT operating\r\n");
+         }
+         
+         Mission_check_flag = 0;
+         fprintf (PC, "Finish 0x8D\r\n");
+         
          break;
    
       default:
