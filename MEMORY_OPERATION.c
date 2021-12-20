@@ -108,12 +108,10 @@ void CURRENT_FLAG_STATUS()                                                      
    fprintf(PC,"Kill FLAG MAIN:%x\r\n",Kill_FLAG_MAIN);
    fprintf(PC,"Kill FLAG FAB:%x\r\n",Kill_FLAG_FAB);
    fprintf(PC,"AUTO HIGH SAMPLING:%x\r\n",FIRST_HSSC_DONE);
-   fprintf(PC,"AUTO CAM:%x\r\n",AUTO_CAM_DONE);
-   fprintf(PC,"AUTO MBP:%x\r\n",AUTO_MBP_DONE);
-   fprintf(PC,"AUTO ADCS:%x\r\n",AUTO_ADCS_DONE);
    fprintf(PC,"ANTENNA DEPLOY:%x\r\n",ANT_DEP_STATUS);
    fprintf(PC,"ANTENNA DEPLOY ATTEMPT:%x\r\n",BC_ATTEMPT_FLAG);
-   fprintf(PC,"UPLINK SUCCESS:%x\r\n\r\n",UPLINK_SUCCESS);
+   fprintf(PC,"UPLINK SUCCESS:%x\r\n\r\n",MISSION_STATUS);
+   fprintf(PC,"MISSION OPERATING:%x\r\n\r\n",MISSION_OPERATING);
    return;
 }
 

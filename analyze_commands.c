@@ -504,12 +504,7 @@ void MAIN_COMMAND(int8 CMD0,int8 CMD2,int8 CMD3,int8 CMD4,int8 CMD5,int8 CMD6, i
          delay_ms(1000);
          fprintf (PC, "From SCF:\r\n");
          output_low (PIN_C4); // Main side SCF
-         sector_erase_SCF(address);
-         if (packet > 40500)                                                      //limits to 500 packets (40500 bytes) HEX: 9E34
-         {
-            fprintf (PC, "LIMITED TO 500 PACKETS\r\n");
-            packet = 40500;
-         }                                     
+         sector_erase_SCF(address);                                   
          TRANSFER_DATA_NBYTE_OFtoSCF(address, address, packet);
          delay_ms(1000);
          TRANSFER_DATA_NBYTE_TOPC_SCF(address, packet);
@@ -546,11 +541,6 @@ void MAIN_COMMAND(int8 CMD0,int8 CMD2,int8 CMD3,int8 CMD4,int8 CMD5,int8 CMD6, i
          fprintf (PC, "From SCF:\r\n");
          output_low (PIN_C4); // Main side SCF
          sector_erase_SCF(address);
-         if (packet > 40500)                                                      //limits to 500 packets (40500 bytes)
-         {
-            fprintf (PC, "LIMITED TO 500 PACKETS\r\n");
-            packet = 40500;
-         } 
          TRANSFER_DATA_NBYTE_SMFtoSCF(address, address, packet);
          delay_ms(1000);
          TRANSFER_DATA_NBYTE_TOPC_SCF(address, packet);
@@ -585,11 +575,6 @@ void MAIN_COMMAND(int8 CMD0,int8 CMD2,int8 CMD3,int8 CMD4,int8 CMD5,int8 CMD6, i
          delay_ms(1000);
          fprintf (PC, "From OF:\r\n");
          sector_erase_SCF(address);
-         if (packet > 40500)                                                      //limits to 500 packets (40500 bytes)
-         {
-            fprintf (PC, "LIMITED TO 500 PACKETS\r\n");
-            packet = 40500;
-         } 
          TRANSFER_DATA_NBYTE_SMFtoOF(address, address, packet);
          delay_ms(1000);
          TRANSFER_DATA_NBYTE_TOPC_OF(address, packet);
@@ -616,12 +601,7 @@ void MAIN_COMMAND(int8 CMD0,int8 CMD2,int8 CMD3,int8 CMD4,int8 CMD5,int8 CMD6, i
          
          packet_data[0] = CMD6<<8;
          packet_data[1] = CMD7;
-         packet = (packet_data[0] + packet_data[1])*81;
-         if (packet > 40500)                                                      //limits to 500 packets (40500 bytes)
-         {
-            fprintf (PC, "LIMITED TO 500 PACKETS\r\n");
-            packet = 40500;
-         }   
+         packet = (packet_data[0] + packet_data[1])*81;  
          TRANSFER_DATA_NBYTE_TOPC_SCF(address, packet);
          output_high(PIN_C4); // COMM side
           
@@ -646,12 +626,7 @@ void MAIN_COMMAND(int8 CMD0,int8 CMD2,int8 CMD3,int8 CMD4,int8 CMD5,int8 CMD6, i
          
          packet_data[0] = CMD6<<8;
          packet_data[1] = CMD7;
-         packet = (packet_data[0] + packet_data[1])*81;
-         if (packet > 40500)                                                      //limits to 500 packets (40500 bytes)
-         {
-            fprintf (PC, "LIMITED TO 500 PACKETS\r\n");
-            packet = 40500;
-         }  
+         packet = (packet_data[0] + packet_data[1])*81; 
          TRANSFER_DATA_NBYTE_TOPC_OF(address, packet);
          
          fprintf (PC, "\r\nFinish 0x1D\r\n") ;
@@ -688,11 +663,6 @@ void MAIN_COMMAND(int8 CMD0,int8 CMD2,int8 CMD3,int8 CMD4,int8 CMD5,int8 CMD6, i
          packet_data[0] = CMD6<<8;
          packet_data[1] = CMD7;
          packet = (packet_data[0] + packet_data[1])*81;
-         if (packet > 40500)                                                      //limits to 500 packets (40500 bytes)
-         {
-            fprintf (PC, "LIMITED TO 500 PACKETS\r\n");
-            packet = 40500;
-         } 
          TRANSFER_DATA_NBYTE_TOPC_SMF(address, packet);
          fprintf (PC, "\r\nFinish 0x1F\r\n") ;
 
@@ -996,12 +966,7 @@ void MAIN_COMMAND_PC(int8 CMD0,int8 CMD2,int8 CMD3,int8 CMD4,int8 CMD5,int8 CMD6
          delay_ms(1000);
          fprintf (PC, "From SCF:\r\n");
          output_low (PIN_C4); // Main side SCF
-         sector_erase_SCF(address);
-         if (packet > 40500)                                                      //limits to 500 packets (40500 bytes) HEX: 9E34
-         {
-            fprintf (PC, "LIMITED TO 500 PACKETS\r\n");
-            packet = 40500;
-         }                                     
+         sector_erase_SCF(address);                                  
          TRANSFER_DATA_NBYTE_OFtoSCF(address, address, packet);
          delay_ms(1000);
          TRANSFER_DATA_NBYTE_TOPC_SCF(address, packet);
@@ -1034,11 +999,11 @@ void MAIN_COMMAND_PC(int8 CMD0,int8 CMD2,int8 CMD3,int8 CMD4,int8 CMD5,int8 CMD6
          fprintf (PC, "From SCF:\r\n");
          output_low (PIN_C4); // Main side SCF
          sector_erase_SCF(address);
-         if (packet > 40500)                                                      //limits to 500 packets (40500 bytes)
-         {
-            fprintf (PC, "LIMITED TO 500 PACKETS\r\n");
-            packet = 40500;
-         } 
+//!         if (packet > 40500)                                                      //limits to 500 packets (40500 bytes)
+//!         {
+//!            fprintf (PC, "LIMITED TO 500 PACKETS\r\n");
+//!            packet = 40500;
+//!         } 
          TRANSFER_DATA_NBYTE_SMFtoSCF(address, address, packet);
          delay_ms(1000);
          TRANSFER_DATA_NBYTE_TOPC_SCF(address, packet);
@@ -1069,11 +1034,6 @@ void MAIN_COMMAND_PC(int8 CMD0,int8 CMD2,int8 CMD3,int8 CMD4,int8 CMD5,int8 CMD6
          delay_ms(1000);
          fprintf (PC, "From OF:\r\n");
          sector_erase_SCF(address);
-         if (packet > 40500)                                                      //limits to 500 packets (40500 bytes)
-         {
-            fprintf (PC, "LIMITED TO 500 PACKETS\r\n");
-            packet = 40500;
-         } 
          TRANSFER_DATA_NBYTE_SMFtoOF(address, address, packet);
          delay_ms(1000);
          TRANSFER_DATA_NBYTE_TOPC_OF(address, packet);
@@ -1096,12 +1056,7 @@ void MAIN_COMMAND_PC(int8 CMD0,int8 CMD2,int8 CMD3,int8 CMD4,int8 CMD5,int8 CMD6
          
          packet_data[0] = CMD6<<8;
          packet_data[1] = CMD7;
-         packet = (packet_data[0] + packet_data[1])*81;
-         if (packet > 40500)                                                      //limits to 500 packets (40500 bytes)
-         {
-            fprintf (PC, "LIMITED TO 500 PACKETS\r\n");
-            packet = 40500;
-         }   
+         packet = (packet_data[0] + packet_data[1])*81; 
          TRANSFER_DATA_NBYTE_TOPC_SCF(address, packet);
          output_high(PIN_C4); // COMM side
           
@@ -1123,11 +1078,6 @@ void MAIN_COMMAND_PC(int8 CMD0,int8 CMD2,int8 CMD3,int8 CMD4,int8 CMD5,int8 CMD6
          packet_data[0] = CMD6<<8;
          packet_data[1] = CMD7;
          packet = (packet_data[0] + packet_data[1])*81;
-         if (packet > 40500)                                                      //limits to 500 packets (40500 bytes)
-         {
-            fprintf (PC, "LIMITED TO 500 PACKETS\r\n");
-            packet = 40500;
-         }  
          TRANSFER_DATA_NBYTE_TOPC_OF(address, packet);
          
          fprintf (PC, "\r\nFinish 0x1D\r\n") ;
@@ -1155,11 +1105,6 @@ void MAIN_COMMAND_PC(int8 CMD0,int8 CMD2,int8 CMD3,int8 CMD4,int8 CMD5,int8 CMD6
          packet_data[0] = CMD6<<8;
          packet_data[1] = CMD7;
          packet = (packet_data[0] + packet_data[1])*81;
-         if (packet > 40500)                                                      //limits to 500 packets (40500 bytes)
-         {
-            fprintf (PC, "LIMITED TO 500 PACKETS\r\n");
-            packet = 40500;
-         } 
          TRANSFER_DATA_NBYTE_TOPC_SMF(address, packet);
          fprintf (PC, "\r\nFinish 0x1F\r\n") ;
          
@@ -1602,7 +1547,7 @@ void MULT_SPEC_COMMAND_PC(int8 CMD0,int8 CMD2,int8 CMD3,int8 CMD4,int8 CMD5,int8
       
       case 0x20: //Turn off CAM1 RPi DIO for MOSFET on MB1 to power RPI from 5V      
          
-         output_high (PIN_A5);                                                      //SFM2 mission side access
+         output_low (PIN_A5);                                                      //SFM2 mission side access
          fprintf (PC, "Start 0x20 - Turn OFF MULTSPEC CAM1 (MB1)\r\n") ;
          output_low(pin_G3);                                                        //Turn off DIO for MULTSPEC CAM1
          MISSION_STATUS = 0;
@@ -1613,19 +1558,11 @@ void MULT_SPEC_COMMAND_PC(int8 CMD0,int8 CMD2,int8 CMD3,int8 CMD4,int8 CMD5,int8
       break;
       
       
-      case 0x21: //Real time uplink command
+      case 0x21:                                                                    //Real time uplink command
+      
          output_high (PIN_A5); //SFM2 mission side access
          fprintf (PC, "Start 0x21 - Real time uplink MULTSPEC CAM1\r\n") ;
-         if (MISSION_STATUS == 1)
-         {
-            MISSION_OPERATING = 1;
-         }
-         else
-         {
-            MISSION_OPERATING = 0;
-         }
          FWD_CMD_MBP(CMD0, CMD2, CMD3, CMD4, CMD5, CMD6, CMD7, CMD8);
-         MISSION_OPERATING = 0;
          fprintf (PC, "Finish 0x21\r\n");
 
       break;
@@ -1635,29 +1572,22 @@ void MULT_SPEC_COMMAND_PC(int8 CMD0,int8 CMD2,int8 CMD3,int8 CMD4,int8 CMD5,int8
       
          fprintf (PC, "Start 0x22 - Request MULT-SPEC MB1 Downlink Data\r\n") ;
          output_high (PIN_A5); //SFM2 mission side access
-         if (MISSION_STATUS == 1)                                                 //Mission operating flag will only go high if MISSION STATUS is high. Mission STATUS is high when the mission turns on
-         {
-            MISSION_OPERATING = 1;
-         }
-         else
-         {
-            MISSION_OPERATING = 0;
-         }
          FWD_CMD_MBP(CMD0, CMD2, CMD3, CMD4, CMD5, CMD6, CMD7, CMD8);
-         
+         MISSION_OPERATING = 1;
          int8 counter = 0;
          for(int32 num = 0; num < 1500000; num++)
+         {
+            if(kbhit(DC))
             {
-               if(kbhit(DC))
+               MULTSPEC1_DATA[counter] = fgetc(DC);
+               counter++;
+               if(counter == 81)
                {
-                  MULTSPEC1_DATA[counter] = fgetc(DC);
-                  counter++;
-                  if(counter == 81)
-                  {
-                     break;
-                  }
+                  break;
                }
             }
+         }
+         
          fprintf(PC,"Data Recieved: ");
          for(int l = 0; l < 81; l++)
          {
@@ -1665,6 +1595,7 @@ void MULT_SPEC_COMMAND_PC(int8 CMD0,int8 CMD2,int8 CMD3,int8 CMD4,int8 CMD5,int8
          }
          fprintf(PC,"\r\n");
          fprintf (PC, "Finish 0x22\r\n");
+         
          for(l = 0; l < 81; l++)
          {
             MULTSPEC1_DATA[l] = 0;
@@ -1675,69 +1606,219 @@ void MULT_SPEC_COMMAND_PC(int8 CMD0,int8 CMD2,int8 CMD3,int8 CMD4,int8 CMD5,int8
       break;
       
       
-      case 0x23:
-      
-         //Capture in mode 1
-         //(1 image, captured immediately, saved to specified address) 
-         //eg. 23 is command, 00 02 06 08 is the address location, 01 is number of images to capture, 00 00 00 for remaining unused command bytes (command: 23 00 02 06 08 01 00 00 00)
+      case 0x23: 
+         
          fprintf (PC, "Start 0x23\r\n") ;
-         if (MISSION_STATUS == 1)                                                 //Mission operating flag will only go high if MISSION STATUS is high. Mission STATUS is high when the mission turns on
+         output_high (PIN_A5); //SFM2 mission side access
+         FWD_CMD_MBP(CMD0, CMD2, CMD3, CMD4, CMD5, CMD6, CMD7, CMD8);
+         
+         for(num = 0; num < 1000000; num++)
+         {
+            if(kbhit(DC))
+            {
+               Mission_check_flag = fgetc(DC);
+               break;
+            }
+         }
+         
+         fprintf(PC,"\r\nMission Check Flag:%lx\r\n",(int8)Mission_check_flag);
+         if (Mission_check_flag == 0x23)
          {
             MISSION_OPERATING = 1;
+            fprintf (PC, "Mission operating\r\n");
+            
          }
          else
          {
             MISSION_OPERATING = 0;
+            fprintf (PC, "Mission NOT operating\r\n");
          }
-         output_high (PIN_A5); //SFM2 mission side access
-         
-         FWD_CMD_MBP(CMD0, CMD2, CMD3, CMD4, CMD5, CMD6, CMD7, CMD8);
-         
-         MISSION_OPERATING = 0;
+         Mission_check_flag = 0;
+      
          fprintf (PC, "Finish 0x23\r\n");
+         
       break;
       
       
-      case 0x24: //Turn on CAM1 RPi trigger at specific time from Reservation time
-
+      case 0x24: 
+         
          fprintf (PC, "Start 0x24\r\n") ;
-         output_low (PIN_A5);
-         if (MISSION_STATUS == 1)                                                 //Mission operating flag will only go high if MISSION STATUS is high. Mission STATUS is high when the mission turns on
-         {
-            MISSION_OPERATING = 1;
-         }
-         else
-         {
-            MISSION_OPERATING = 0;
-         }
-         RESERVE_TARGET_FLAG = 3;
-//!            if(RESERVE_MIN_FLAG >= RESERVE_TARGET_FLAG) 
-//!            {
-//!               
-//!            }
-         MISSION_OPERATING = 0;
-         fprintf (PC, "Finish 0x24\r\n");    
-      break;
-      
-      
-      case 0x25: //Copy specific images based on selected thumbnails selected from GS. Forwward all mission command data (8 bytes) to MB, MB will send command data (specific image name) to MB1 RPI
-      
          output_high (PIN_A5); //SFM2 mission side access
-         fprintf (PC, "Start 0x25\r\n") ;
-         if (MISSION_STATUS == 1)                                                 //Mission operating flag will only go high if MISSION STATUS is high. Mission STATUS is high when the mission turns on
+         FWD_CMD_MBP(CMD0, CMD2, CMD3, CMD4, CMD5, CMD6, CMD7, CMD8);
+         
+         for(num = 0; num < 1000000; num++)
+         {
+            if(kbhit(DC))
+            {
+               Mission_check_flag = fgetc(DC);
+               break;
+            }
+         }
+         
+         fprintf(PC,"\r\nMission Check Flag:%lx\r\n",(int8)Mission_check_flag);
+         if (Mission_check_flag == 0x24)
          {
             MISSION_OPERATING = 1;
+            fprintf (PC, "Mission operating\r\n");
+            
          }
          else
          {
             MISSION_OPERATING = 0;
+            fprintf (PC, "Mission NOT operating\r\n");
          }
-         
-         FWD_CMD_MBP(CMD0, CMD2, CMD3, CMD4, CMD5, CMD6, CMD7, CMD8);
-         MISSION_OPERATING = 0;
-         fprintf (PC, "Finish 0x25\r\n");
+         Mission_check_flag = 0;
+      
+         fprintf (PC, "Finish 0x24\r\n");
          
       break;
+      
+      
+      case 0x25:                                                                 //Trigger Command
+         
+         output_high (PIN_A5); //SFM2 mission side access
+         fprintf (PC, "Start 0x25\r\n");
+         output_high(pin_F7); //Turn on DIO for trigger MB2
+         output_high(pin_G2); //Turn on DIO for trigger MB1
+         delay_ms(10000);
+         output_low(pin_F7); //Turn off DIO for trigger
+         output_low(pin_G2); //Turn off DIO for trigger
+         fprintf (PC, "Finish 0x25\r\n");  
+         
+      break;
+      
+      case 0x26: 
+         
+         fprintf (PC, "Start 0x26\r\n") ;
+         output_high (PIN_A5); //SFM2 mission side access
+         FWD_CMD_MBP(CMD0, CMD2, CMD3, CMD4, CMD5, CMD6, CMD7, CMD8);
+         
+         for(num = 0; num < 1000000; num++)
+         {
+            if(kbhit(DC))
+            {
+               Mission_check_flag = fgetc(DC);
+               break;
+            }
+         }
+         
+         fprintf(PC,"\r\nMission Check Flag:%lx\r\n",(int8)Mission_check_flag);
+         if (Mission_check_flag == 0x26)
+         {
+            MISSION_OPERATING = 1;
+            fprintf (PC, "Mission operating\r\n");
+            
+         }
+         else
+         {
+            MISSION_OPERATING = 0;
+            fprintf (PC, "Mission NOT operating\r\n");
+         }
+         Mission_check_flag = 0;
+      
+         fprintf (PC, "Finish 0x26\r\n");
+         
+      break;
+      
+      case 0x27: 
+         
+         fprintf (PC, "Start 0x27\r\n") ;
+         output_high (PIN_A5); //SFM2 mission side access
+         FWD_CMD_MBP(CMD0, CMD2, CMD3, CMD4, CMD5, CMD6, CMD7, CMD8);
+         
+         for(num = 0; num < 1000000; num++)
+         {
+            if(kbhit(DC))
+            {
+               Mission_check_flag = fgetc(DC);
+               break;
+            }
+         }
+         
+         fprintf(PC,"\r\nMission Check Flag:%lx\r\n",(int8)Mission_check_flag);
+         if (Mission_check_flag == 0x27)
+         {
+            MISSION_OPERATING = 1;
+            fprintf (PC, "Mission operating\r\n");
+            
+         }
+         else
+         {
+            MISSION_OPERATING = 0;
+            fprintf (PC, "Mission NOT operating\r\n");
+         }
+         Mission_check_flag = 0;
+      
+         fprintf (PC, "Finish 0x27\r\n");
+         
+      break;
+      
+      case 0x28: 
+         
+         fprintf (PC, "Start 0x28\r\n") ;
+         output_high (PIN_A5); //SFM2 mission side access
+         FWD_CMD_MBP(CMD0, CMD2, CMD3, CMD4, CMD5, CMD6, CMD7, CMD8);
+         
+         for(num = 0; num < 1000000; num++)
+         {
+            if(kbhit(DC))
+            {
+               Mission_check_flag = fgetc(DC);
+               break;
+            }
+         }
+         
+         fprintf(PC,"\r\nMission Check Flag:%lx\r\n",(int8)Mission_check_flag);
+         if (Mission_check_flag == 0x28)
+         {
+            MISSION_OPERATING = 1;
+            fprintf (PC, "Mission operating\r\n");
+            
+         }
+         else
+         {
+            MISSION_OPERATING = 0;
+            fprintf (PC, "Mission NOT operating\r\n");
+         }
+         Mission_check_flag = 0;
+      
+         fprintf (PC, "Finish 0x28\r\n");
+         
+      break;
+      
+      case 0x29: 
+         
+         fprintf (PC, "Start 0x29\r\n") ;
+         output_high (PIN_A5); //SFM2 mission side access
+         FWD_CMD_MBP(CMD0, CMD2, CMD3, CMD4, CMD5, CMD6, CMD7, CMD8);
+         
+         for(num = 0; num < 1000000; num++)
+         {
+            if(kbhit(DC))
+            {
+               Mission_check_flag = fgetc(DC);
+               break;
+            }
+         }
+         
+         fprintf(PC,"\r\nMission Check Flag:%lx\r\n",(int8)Mission_check_flag);
+         if (Mission_check_flag == 0x29)
+         {
+            MISSION_OPERATING = 1;
+            fprintf (PC, "Mission operating\r\n");
+            
+         }
+         else
+         {
+            MISSION_OPERATING = 0;
+            fprintf (PC, "Mission NOT operating\r\n");
+         }
+         Mission_check_flag = 0;
+      
+         fprintf (PC, "Finish 0x29\r\n");
+         
+      break;
+      
       
       
 ////////////////////////////FOR CAM2 RPi on MB2////////////////////////////////
@@ -1760,13 +1841,10 @@ void MULT_SPEC_COMMAND_PC(int8 CMD0,int8 CMD2,int8 CMD3,int8 CMD4,int8 CMD5,int8
          MISSION_STATUS = 0;
          MISSION_OPERATING = 0;
          missiontime = 0;
-         output_high (PIN_A5); //SFM2 mission side access
+         output_low (PIN_A5);                                                    //SFM2 main side access
          fprintf (PC, "Start 0x30 - Turn OFF MULTSPEC CAM2 (MB2)\r\n") ;
-
          output_low(pin_F6); //Turn off DIO for MULTSPEC CAM2
-
          fprintf (PC, "Finish 0x30\r\n");
-         
          
       break;
       
@@ -1786,17 +1864,18 @@ void MULT_SPEC_COMMAND_PC(int8 CMD0,int8 CMD2,int8 CMD3,int8 CMD4,int8 CMD5,int8
          FWD_CMD_MBP(CMD0, CMD2, CMD3, CMD4, CMD5, CMD6, CMD7, CMD8);
          counter = 0;
          for(num = 0; num < 1500000; num++)
+         {
+            if(kbhit(DC))
             {
-               if(kbhit(DC))
+               MULTSPEC2_DATA[counter] = fgetc(DC);
+               counter++;
+               if(counter == 81)
                {
-                  MULTSPEC2_DATA[counter] = fgetc(DC);
-                  counter++;
-                  if(counter == 81)
-                  {
-                     break;
-                  }
+                  break;
                }
             }
+         }
+         
          fprintf(PC,"Data Recieved: ");
          for(l = 0; l < 81; l++)
          {
@@ -1809,17 +1888,13 @@ void MULT_SPEC_COMMAND_PC(int8 CMD0,int8 CMD2,int8 CMD3,int8 CMD4,int8 CMD5,int8
          }
          fprintf(PC,"\r\n");
          fprintf (PC, "Finish 0x32\r\n");
+         
       break;
       
       case 0x33: 
-         //Capture in mode 1
-         //(1 image, captured immediately, saved to specified address) 
-         //eg. 23 is command, 00 02 06 08 is the address location, 01 is number of images to capture, 00 00 00 for remaining unused command bytes (command: 23 00 02 06 08 01 00 00 00)
          
          fprintf (PC, "Start 0x33\r\n") ;
-
          output_high (PIN_A5); //SFM2 mission side access
-         
          FWD_CMD_MBP(CMD0, CMD2, CMD3, CMD4, CMD5, CMD6, CMD7, CMD8);
          
          for(num = 0; num < 1000000; num++)
@@ -1846,14 +1921,13 @@ void MULT_SPEC_COMMAND_PC(int8 CMD0,int8 CMD2,int8 CMD3,int8 CMD4,int8 CMD5,int8
          Mission_check_flag = 0;
       
          fprintf (PC, "Finish 0x33\r\n");
+         
       break;
       
       case 0x34: //Turn on CAM1 RPi trigger at specific time from RESET_PIC time information
 
-         fprintf (PC, "Start 0x34\r\n") ;
-         
-         output_high (PIN_A5);                                                   //SFM2 mission side access
-         
+         fprintf (PC, "Start 0x34\r\n") ; 
+         output_high (PIN_A5);                                                   //SFM2 mission side access   
          FWD_CMD_MBP(CMD0, CMD2, CMD3, CMD4, CMD5, CMD6, CMD7, CMD8);
          
          for(num = 0; num < 1000000; num++)
@@ -1917,8 +1991,7 @@ void MULT_SPEC_COMMAND_PC(int8 CMD0,int8 CMD2,int8 CMD3,int8 CMD4,int8 CMD5,int8
          if (Mission_check_flag == 0x36)
          {
             MISSION_OPERATING = 1;
-            fprintf (PC, "Mission operating\r\n");
-            
+            fprintf (PC, "Mission operating\r\n");  
          }
          else
          {
@@ -2027,39 +2100,6 @@ void MULT_SPEC_COMMAND_PC(int8 CMD0,int8 CMD2,int8 CMD3,int8 CMD4,int8 CMD5,int8
          }
          Mission_check_flag = 0;
          fprintf (PC, "Finish 0x39\r\n");
-           
-      break;
-      
-      case 0x3A:
-
-         fprintf (PC, "Start 0x3A\r\n");
-         
-         output_high (PIN_A5);                                                   //SFM2 mission side access
-         
-         FWD_CMD_MBP(CMD0, CMD2, CMD3, CMD4, CMD5, CMD6, CMD7, CMD8);
-         
-         for(num = 0; num < 1000000; num++)
-         {
-            if(kbhit(DC))
-            {
-               Mission_check_flag = fgetc(DC);
-               break;
-            }
-         }
-         fprintf(PC,"\r\nMission Check Flag:%lx\r\n",(int8)Mission_check_flag);
-         if (Mission_check_flag == 0x3A)
-         {
-            MISSION_OPERATING = 1;
-            fprintf (PC, "Mission operating\r\n");
-            
-         }
-         else
-         {
-            MISSION_OPERATING = 0;
-            fprintf (PC, "Mission NOT operating\r\n");
-         }
-         Mission_check_flag = 0;
-         fprintf (PC, "Finish 0x3A\r\n");
            
       break;
       
@@ -3012,7 +3052,6 @@ void EXECUTE_COMMAND_from_PC(int8 CMD0,int8 CMD2,int8 CMD3,int8 CMD4,int8 CMD5,i
    
    return;
 }
-
 
 
 void EXECUTE_COMMAND_from_COMM(int8 CMD0,int8 CMD2,int8 CMD3,int8 CMD4,int8 CMD5,int8 CMD6, int8 CMD7, int8 CMD8)

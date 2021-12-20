@@ -26,11 +26,6 @@ void intval()
       //fprintf(PC,"currenttime:%ld \r\n", currenttime);                        //Check TMR0 operation
       //fprintf(PC,"Done\r\n");
       
-      if((RESERVE_SEC_FLAG % 5) == 0)
-      {
-         FAB_DATA = 0;
-
-      }
       
       if(RESERVE_SEC_FLAG > 59)                                                  //the counters inside the if are incremented every 60s
       {
@@ -148,21 +143,16 @@ void main()
    
    delay_ms(1000);
    
-   
-   
-   
-   
 
-
-   while(TRUE)
+   while(TRUE)                                                                     //Main Operation Loop
    {
       //BC_ON_30min();                                                             //Attempt 1st antenna deployment after 30mins
       
       
-      if(FAB_FLAG > 89)                                                            //every 90 sec, OBC gather sensor data and update CW format 
+      if(FAB_FLAG > 89)                                                            //every 90 sec, OBC gathers sensor data and updates CW format 
       {
          FAB_FLAG = 0;
-         fprintf(PC,"\r\n***NORMAL SAMPLING HOUSEKEEPING DATA COLLECTION***\r\n"); //every 90seconds
+         fprintf(PC,"\r\n***NORMAL SAMPLING HOUSEKEEPING DATA COLLECTION***\r\n");
          FAB_TEST_OPERATION();
          COM_DATA = 0;
          if(MISSION_STATUS == 0)

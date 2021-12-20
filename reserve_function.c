@@ -1,4 +1,4 @@
-
+//TODO: change reservation commands to reserve 8 byte commands not 7 bytes
 
 #define table_size 80
 unsigned int8 reserve_table[table_size+1] = {};
