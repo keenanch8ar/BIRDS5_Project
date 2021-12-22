@@ -1,6 +1,5 @@
 //--------Mission variables--------------------------------------------------//
 
-
 static int16 currenttime = 0;
 static int16 missiontime = 0;
 BYTE command[9];
@@ -73,7 +72,7 @@ BYTE FAB_DATA = 0;
 static int8 FAB_MEASURING_FLAG= 0;
 static int8 HIGH_SAMP_FAB_MEASURING_FLAG = 0;
 int32 FAB_FLAG = 0;
-int8 CHECK_FAB_RESPONSE = 0;
+
 
 #define buffer_from_FAB  (in_bffr_main[0]==0x33)
 
@@ -836,11 +835,17 @@ void CHECK_50_and_CW_RESPOND()                                                  
 {
    if((in_bffr_main[4] == 0xAB) || (CMD_FROM_COMM[4] == 0xab))
    {
+      COM_TO_MAIN_FLAG = 1;
       CW_RESPOND();                                                              //load array ACK_for_COM [] with data from array CW_FORMAT [] and send to COM PIC
       Delete_Buffer();                                                           //delete in_bffr_main[] (COM command buffer)
       DELETE_CMD_FROM_COMM();
       COM_DATA = 0;                                                              //flag to zero
    }
+   else
+   {
+      COM_TO_MAIN_FLAG = 1;
+   }
+   
    return;
 }
 
@@ -898,9 +903,9 @@ void MAKE_CW2_FORMAT()
    
    CW_FORMAT[3] = CW_FORMAT[3] + 128;                                            //1:CW2
    CW_FORMAT[3] = CW_FORMAT[3] + FIRST_HSSC_DONE * 64;                           //High Sampling Sensor Collection Flag 0:not done, 1:done
-   CW_FORMAT[3] = CW_FORMAT[3] + AUTO_CAM_DONE * 32;                             //AUTO CAM MISSION DONE 0:not done, 1:done
-   CW_FORMAT[3] = CW_FORMAT[3] + AUTO_MBP_DONE * 16;                             //AUTO MBP MISSION DONE 0:not done, 1:done
-   CW_FORMAT[3] = CW_FORMAT[3] + AUTO_ADCS_DONE * 8;                             //AUTO ADCS MISSION DONE 0:not done, 1:done
+   CW_FORMAT[3] = CW_FORMAT[3] + COM_TO_MAIN_FLAG * 32;                          //COM TO MAIN Flag 0:no communication, 1:communication
+   CW_FORMAT[3] = CW_FORMAT[3] + RESET_TO_MAIN_FLAG * 16;                        //RESET TO MAIN Flag 0:no communication, 1:communication
+   CW_FORMAT[3] = CW_FORMAT[3] + CHECK_FAB_RESPONSE * 8;                         //FAB TO MAIN Flag 0:no communication, 1:communication
    CW_FORMAT[3] = CW_FORMAT[3] + HKDATA[48] * 4;                                 //Heater 0:OFF, 1:ON
    CW_FORMAT[3] = CW_FORMAT[3] + RESERVE_CHECK * 2;                              //RSV Flag
    CW_FORMAT[3] = CW_FORMAT[3] + UPLINK_SUCCESS;                                 //UPLINK SUCCESS
@@ -1109,6 +1114,10 @@ void VERIFY_FABDATA(int32 delaytime1,int32 delaytime2)
          CHECK_FAB_RESPONSE = 1;                                                 //1 is succeeded to get response from FAB
          break;
       }
+      else
+      {
+         CHECK_FAB_RESPONSE = 0;
+      }
    }
    return;
 }
@@ -1128,7 +1137,8 @@ void REPLY_TO_COM(int8 data1,int8 data2)
       }
       fprintf(PC,",AUTO\r\n");
    }
-   else{
+   else
+   {
       //REFLESH_MSN_ACK_for_COM();
 //!      for(int n = 7; n < 24; n++)//send back the acknowledge
 //!      {
@@ -1199,6 +1209,7 @@ void GET_RESET_DATA()                                                           
    if(RESET_bffr[0] == 0x8e)                                                     //if the header byte is correct
    {
       fprintf(PC,"\r\nRESET DATA OBTAINED: ");
+      RESET_TO_MAIN_FLAG = 1;
       for(int num = 0; num < 5; num++)                                           //load the HKDATA array with timedata in positions 2 to 6
       {
          HKDATA[num + 2] = reset_bffr[num + 1];
@@ -1220,6 +1231,7 @@ void GET_RESET_DATA()                                                           
    }
    else
    {
+      RESET_TO_MAIN_FLAG = 0;
       fprintf(PC,"\r\nRESET DATA NO OBTAINED\r\n");
    }
    //Delete_Reset();
@@ -1664,6 +1676,7 @@ void GET_HIGH_SAMP_RESET_DATA()
    COLLECT_RESET_DATA();
    if(RESET_bffr[0] == 0x8e)
    {
+      RESET_TO_MAIN_FLAG = 1;
       fprintf(PC,"\r\nGET RESET: ");
       for(int num = 0; num < 5; num++)                                           //timedata
       {
@@ -1682,6 +1695,7 @@ void GET_HIGH_SAMP_RESET_DATA()
    }
    else
    {
+      RESET_TO_MAIN_FLAG = 0;
       fprintf(PC,"\r\nNO RESET DATA\r\n");
    }
    //Delete_Reset();
@@ -1772,7 +1786,9 @@ void HIGH_SAMP_FAB_OPERATION()
          fprintf(PC,"\r\nCOUNT:%d\r\n",HIGH_SAMP_FAB_MEASURING_FLAG);
          HIGH_SAMP_FAB_MEASURING_FLAG = 0;
          
-      }else{
+      }
+      else
+      {
          Delete_in_HK();                                                         //delet HK array
          GET_RESET_DATA();                                                       //function that loads the HKDATA array with the Reset PIC data
          VERIFY_HIGH_SAMP_FABDATA(10000);                                        //get FAB data   

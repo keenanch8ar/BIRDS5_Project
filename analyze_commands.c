@@ -36,13 +36,6 @@ void UPLINK_SUCCESS_MBP()
    if(UPLINK_SUCCESS == 0)
    {
       UPLINK_SUCCESS = 1;
-      AUTO_MBP_DONE = 1;
-      STORE_FLAG_INFO();                                                         //store flag info on flash
-      WRITE_FLAG_to_EEPROM();                                                    //store flag info on EEPROM
-   }
-   else if(AUTO_MBP_DONE == 0)
-   {
-      AUTO_MBP_DONE = 1;
       STORE_FLAG_INFO();                                                         //store flag info on flash
       WRITE_FLAG_to_EEPROM();                                                    //store flag info on EEPROM
    }
@@ -54,14 +47,7 @@ void UPLINK_SUCCESS_MULT_CAM()
 {
    if(UPLINK_SUCCESS == 0)
    {
-      AUTO_CAM_DONE = 1;
       UPLINK_SUCCESS = 1;
-      STORE_FLAG_INFO();                                                         //store flag info on flash
-      WRITE_FLAG_to_EEPROM();                                                    //store flag info on EEPROM
-   }
-   else if(AUTO_CAM_DONE == 0)
-   {
-      AUTO_CAM_DONE = 1;
       STORE_FLAG_INFO();                                                         //store flag info on flash
       WRITE_FLAG_to_EEPROM();                                                    //store flag info on EEPROM
    }
@@ -73,14 +59,7 @@ void UPLINK_SUCCESS_IMGCLS_CAM()
 {
    if(UPLINK_SUCCESS == 0)
    {
-      AUTO_CAM_DONE = 1;
       UPLINK_SUCCESS = 1;
-      STORE_FLAG_INFO();                                                         //store flag info on flash
-      WRITE_FLAG_to_EEPROM();                                                    //store flag info on EEPROM
-   }
-   else if(AUTO_CAM_DONE == 0)
-   {
-      AUTO_CAM_DONE = 1;
       STORE_FLAG_INFO();                                                         //store flag info on flash
       WRITE_FLAG_to_EEPROM();                                                    //store flag info on EEPROM
    }
@@ -1015,7 +994,7 @@ void MAIN_COMMAND_PC(int8 CMD0,int8 CMD2,int8 CMD3,int8 CMD4,int8 CMD5,int8 CMD6
       
       case 0x1B:
 
-         fprintf (PC, "\r\nTransfer N Packets from SMF to SCF\r\n") ;
+         fprintf (PC, "\r\nTransfer N Packets from SMF to OF\r\n") ;
          fprintf (PC, "From SMF:\r\n");
          
          output_low (PIN_A5); // Main side

@@ -61,6 +61,10 @@ void TRANSFER_DATA_NBYTE_SCFtoSMF(unsigned INT32 FROM_ADRESS,unsigned INT32 TO_A
 
 void TRANSFER_DATA_NBYTE_OF(unsigned INT32 FROM_ADRESS,unsigned INT32 TO_ADRESS,int32 data_byte); //for testing
 
+void DIE_ERASE_OF();
+void DIE_ERASE_SCF();
+void DIE_ERASE_SMF();
+
 //void sector_erase(unsigned int32 sector_address);  //this is for sector erase
 
 //-----------------------------------------------------------------------------

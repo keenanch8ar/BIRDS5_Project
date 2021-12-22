@@ -14,30 +14,36 @@ Static int32 ADD_INFO_ADDRESS = 4096;                                           
 Static int32 ADDRESS_WRITING_COUNTER = 0;                                        //if address writing more than 30000 times, change the store address
 
 Static int32 FLAG_DATA_ADDRESS = SECT*4;                                         //1sector
-Static int32 RSV_DATA_ADDRESS=SECT*5;                                            //1sector
-Static int32 SAT_LOG = SECT*6;                                                   //2sector
-Static int32 CAM_ADDRESS = SECT*8;                                               //90sector
-Static int32 FAB_HK_ADDRESS = SECT*98;                                           //1000sector
-Static int32 FAB_CW_ADDRESS = SECT*1098;                                         //40sector
-Static int32 ADCS_SENSOR_ADDRESS = SECT*1138;                                    //500sector
-Static int32 ADCS_TLE_ADDRESS = SECT*1637;                                       //1sector (the last one not used by ADCS data)
-Static int32 DC_STATUS_ADDRESS = SECT*1638;                                      //1sector
-Static int32 HIGH_SAMP_HK_ADDRESS = SECT*1639;                                   //409sector
+Static int32 RSV_DATA_ADDRESS = SECT*5;                                          //1sector
+Static int32 SAT_LOG = SECT*6;                                                   //2sectors
+Static int32 IMGCLS_ADDRESS = SECT*8;                                            //100sectors
+Static int32 MCAM1_THMB_ADDRESS = SECT*108;                                      //50sectors
+Static int32 MCAM1_IMG_ADDRESS = SECT*158;                                       //50sectors
+Static int32 MCAM2_THMB_ADDRESS = SECT*208;                                      //50sectors
+Static int32 MCAM2_IMG_ADDRESS = SECT*258;                                       //50sectors
+Static int32 FAB_HK_ADDRESS = SECT*308;                                          //300sectors
+Static int32 FAB_CW_ADDRESS = SECT*608;                                          //50sectors
+Static int32 HIGH_SAMP_HK_ADDRESS = SECT*658;                                    //253sectors
+Static int32 DC_STATUS_ADDRESS = SECT*912;                                       //1sector
+Static int32 STORE_FORWARD_ADDRESS = SECT*913;                                   //9sectors
+Static int32 ADCS_SENSOR_ADDRESS = SECT*922;                                     //100sectors
+Static int32 PINO_ADDRESS = SECT*1023;                                           //1025sectors
+
+
 Static int32 FLAG_ADDRESS_EEPROM = 0x18000;                                      //from 75 percent of the programming memory
 Static int32 FLASH_AD_ADDRESS_EEPROM = 0x18000 + 28;                             //after flag info
                                                                                  //Defining memory space addresses (end)
 #define FLAG_DATA_ADDRESS_END  SECT*5-26                                         //consider the length of each piece of data to determine the direction of completion
 #define RSV_DATA_ADDRESS_END  SECT*6-160
 #define SAT_LOG_END  SECT*8-22
-#define CAM_ADDRESS_END  SECT*98-SECT*2
-#define FAB_HK_ADDRESS_END  SECT*1098-SECT-248
-#define FAB_CW_ADDRESS_END  SECT*1138-10
+#define IMGCLS_ADDRESS_END  SECT*108-SECT*2
+#define FAB_HK_ADDRESS_END  SECT*608-SECT-248
+#define FAB_CW_ADDRESS_END  SECT*658-10
 #define FAB_CW_ADDRESS_FOR_MF_END FAB_CW_ADDRESS_END
-#define ADCS_SENSOR_ADDRESS_END  SECT*1638-408000                                //408000 is for 2 hour data(85*3600*2/1.5)
-#define ADCS_TLE_ADDRESS_END  SECT*1638-TLE_size
-#define DC_STATUS_ADDRESS_END SECT*1639-415
-#define HIGH_SAMP_HK_ADDRESS_END  SECT*2047-178560                               //178560 is for 2 hour data(124*3600*2/5)
-                                                                                 //Flags definition
+#define DC_STATUS_ADDRESS_END SECT*913-415
+#define HIGH_SAMP_HK_ADDRESS_END  SECT*912-178560                               //178560 is for 2 hour data(124*3600*2/5)
+#define ADCS_SENSOR_ADDRESS_END  SECT*1023-14                                   //14 bytes per ADCS data collection
+                                                                                //Flags definition
 int8 BC_ATTEMPT_FLAG = 0;
 int16 PASSED_DAYS = 0;
 int8 RESERVE_CHECK = 0;
@@ -53,13 +59,13 @@ int8 RESERVE_PACKET_NUM = 0;
 int8 Kill_FLAG_MAIN = 0;
 int8 Kill_FLAG_FAB = 0;
 int8 FIRST_HSSC_DONE = 0;
-int8 AUTO_CAM_DONE = 0;
-int8 AUTO_MBP_DONE = 0;
-int8 AUTO_ADCS_DONE = 0;
 int8 ANT_DEP_STATUS = 0;
 int8 UPLINK_SUCCESS = 0;
 int8 MISSION_STATUS = 0;                                                         //MISSION STATUS FLAG
 int8 MISSION_OPERATING = 0;                                                      //MISSION OPERATING FLAG
+int8 COM_TO_MAIN_FLAG = 0;
+int8 RESET_TO_MAIN_FLAG = 0;
+int8 CHECK_FAB_RESPONSE = 0;
 
 int8 RESERVE_SEC_FLAG = 0;
 
@@ -95,9 +101,9 @@ int8 reset_bffr[Reset_size] = {};
 int8 reset_flag = 0;
 
 //---------OTHER FUNCTION------------------------------------------------------
-#define FLASH_ADD_SIZE 41                                                        //10 kinds of address(40byte), 1 flag(1byte), 1 WRITING COUNTER(2byte)
-#define FLAG_INFO_SIZE 16
-unsigned int8 sec_add_bfr[FLASH_ADD_SIZE] = {};                                  //vector utilizado para almacenar las direcciones leidas de la flash
+#define FLASH_ADD_SIZE 37                                                        //8 kinds of address(32byte), 1 flag(1byte), 1 WRITING COUNTER(2byte)
+#define FLAG_INFO_SIZE 15
+unsigned int8 sec_add_bfr[FLASH_ADD_SIZE] = {};                                  //vector used to store addresses read from flash
 unsigned int8 flag_info_bffr[FLAG_INFO_SIZE] = {};
 
 
@@ -110,7 +116,8 @@ void CURRENT_FLAG_STATUS()                                                      
    fprintf(PC,"AUTO HIGH SAMPLING:%x\r\n",FIRST_HSSC_DONE);
    fprintf(PC,"ANTENNA DEPLOY:%x\r\n",ANT_DEP_STATUS);
    fprintf(PC,"ANTENNA DEPLOY ATTEMPT:%x\r\n",BC_ATTEMPT_FLAG);
-   fprintf(PC,"UPLINK SUCCESS:%x\r\n\r\n",MISSION_STATUS);
+   fprintf(PC,"UPLINK SUCCESS:%x\r\n",UPLINK_SUCCESS);
+   fprintf(PC,"MISSION STATUS:%x\r\n",MISSION_STATUS);
    fprintf(PC,"MISSION OPERATING:%x\r\n\r\n",MISSION_OPERATING);
    return;
 }
@@ -122,11 +129,9 @@ void CURRENT_ADDRESS_OF_FLASH()                                                 
    fprintf(PC,"FLAG DATA ADDRESS:%x%x%x%x\r\n",FLAG_DATA_ADDRESS>>24,FLAG_DATA_ADDRESS>>16,FLAG_DATA_ADDRESS>>8,FLAG_DATA_ADDRESS);
    fprintf(PC,"RESERVATION TABLE ADDRESS:%x%x%x%x\r\n",RSV_DATA_ADDRESS>>24,RSV_DATA_ADDRESS>>16,RSV_DATA_ADDRESS>>8,RSV_DATA_ADDRESS);
    fprintf(PC,"SATELLITE LOG ADDRESS:%x%x%x%x\r\n",SAT_LOG>>24,SAT_LOG>>16,SAT_LOG>>8,SAT_LOG);
-   fprintf(PC,"CAM ADDRESS:%x%x%x%x\r\n",CAM_ADDRESS>>24,CAM_ADDRESS>>16,CAM_ADDRESS>>8,CAM_ADDRESS);
    fprintf(PC,"FAB HK ADDRESS:%x%x%x%x\r\n",FAB_HK_ADDRESS>>24,FAB_HK_ADDRESS>>16,FAB_HK_ADDRESS>>8,FAB_HK_ADDRESS);
    fprintf(PC,"FAB CW ADDRESS:%x%x%x%x\r\n",FAB_CW_ADDRESS>>24,FAB_CW_ADDRESS>>16,FAB_CW_ADDRESS>>8,FAB_CW_ADDRESS);
    fprintf(PC,"ADCS SENSOR ADDRESS:%x%x%x%x\r\n",ADCS_SENSOR_ADDRESS>>24,ADCS_SENSOR_ADDRESS>>16,ADCS_SENSOR_ADDRESS>>8,ADCS_SENSOR_ADDRESS);
-   fprintf(PC,"ADCS TLE ADDRESS:%x%x%x%x\r\n",ADCS_TLE_ADDRESS>>24,ADCS_TLE_ADDRESS>>16,ADCS_TLE_ADDRESS>>8,ADCS_TLE_ADDRESS);
    fprintf(PC,"MISSION BOSS ADDRESS:%x%x%x%x\r\n",DC_STATUS_ADDRESS>>24,DC_STATUS_ADDRESS>>16,DC_STATUS_ADDRESS>>8,DC_STATUS_ADDRESS);
    fprintf(PC,"HIGH SAMP HK ADDRESS:%x%x%x%x\r\n",HIGH_SAMP_HK_ADDRESS>>24,HIGH_SAMP_HK_ADDRESS>>16,HIGH_SAMP_HK_ADDRESS>>8,HIGH_SAMP_HK_ADDRESS);
    fprintf(PC,"WRITE %lx TIMES\r\n",ADDRESS_WRITING_COUNTER);
@@ -138,7 +143,7 @@ void ERASE_EEPROM_INFO(int8 CMD1, int8 CMD2, int8 CMD3)
 {
    if (CMD1 == 0xAA && CMD2 == 0xBB && CMD3 == 0xCC)
    {
-   erase_program_eeprom(FLAG_ADDRESS_EEPROM);//erase 512byte(from 0x18000 to 0x181ff)
+      erase_program_eeprom(FLAG_ADDRESS_EEPROM);//erase 512byte(from 0x18000 to 0x181ff)
    }
    return;
    
@@ -170,16 +175,14 @@ void WRITE_FLAG_to_EEPROM()     //saves the flags in the EEPROM from the address
    WRITE_PROGRAM_EEPROM(FLAG_ADDRESS_EEPROM+16, DATA);
    DATA = (int16)FIRST_HSSC_DONE;
    WRITE_PROGRAM_EEPROM(FLAG_ADDRESS_EEPROM+18, DATA);
-   DATA = (int16)AUTO_CAM_DONE;
-   WRITE_PROGRAM_EEPROM(FLAG_ADDRESS_EEPROM+20, DATA);
-   DATA = (int16)AUTO_MBP_DONE;
-   WRITE_PROGRAM_EEPROM(FLAG_ADDRESS_EEPROM+22, DATA);
-   DATA = (int16)AUTO_ADCS_DONE;
-   WRITE_PROGRAM_EEPROM(FLAG_ADDRESS_EEPROM+24, DATA);
    DATA = (int16)ANT_DEP_STATUS;
-   WRITE_PROGRAM_EEPROM(FLAG_ADDRESS_EEPROM+26, DATA);
+   WRITE_PROGRAM_EEPROM(FLAG_ADDRESS_EEPROM+20, DATA);
    DATA = (int16)UPLINK_SUCCESS;
-   WRITE_PROGRAM_EEPROM(FLAG_ADDRESS_EEPROM+28, DATA);
+   WRITE_PROGRAM_EEPROM(FLAG_ADDRESS_EEPROM+22, DATA);
+   DATA = (int16)MISSION_STATUS;
+   WRITE_PROGRAM_EEPROM(FLAG_ADDRESS_EEPROM+24, DATA);
+   DATA = (int16)MISSION_OPERATING;
+   WRITE_PROGRAM_EEPROM(FLAG_ADDRESS_EEPROM+26, DATA);
    return;
 }
 
@@ -197,7 +200,7 @@ void WRITE_AD_INFO_to_EEPROM()
 */
 
 
-void MAKE_FLAG_from_EEPROM()                                                     //toma de la eeprom la info de los flags y los carga en sus variables respectivas
+void MAKE_FLAG_from_EEPROM()                                                     //takes the info of the flags from the eeprom and loads them in their respective variables
 {
    if((READ_PROGRAM_EEPROM(FLAG_ADDRESS_EEPROM)!=0xffff)&&(READ_PROGRAM_EEPROM(FLAG_ADDRESS_EEPROM+26)!=0xffff))
    {
@@ -211,11 +214,10 @@ void MAKE_FLAG_from_EEPROM()                                                    
       Kill_FLAG_MAIN = (int8)READ_PROGRAM_EEPROM(FLAG_ADDRESS_EEPROM+14);
       Kill_FLAG_FAB = (int8)READ_PROGRAM_EEPROM(FLAG_ADDRESS_EEPROM+16);
       FIRST_HSSC_DONE = (int8)READ_PROGRAM_EEPROM(FLAG_ADDRESS_EEPROM+18);
-      AUTO_CAM_DONE = (int8)READ_PROGRAM_EEPROM(FLAG_ADDRESS_EEPROM+20);
-      AUTO_MBP_DONE = (int8)READ_PROGRAM_EEPROM(FLAG_ADDRESS_EEPROM+22);
-      AUTO_ADCS_DONE = (int8)READ_PROGRAM_EEPROM(FLAG_ADDRESS_EEPROM+24);
-      ANT_DEP_STATUS = (int8)READ_PROGRAM_EEPROM(FLAG_ADDRESS_EEPROM+26);
-      UPLINK_SUCCESS = (int8)READ_PROGRAM_EEPROM(FLAG_ADDRESS_EEPROM+28);
+      ANT_DEP_STATUS = (int8)READ_PROGRAM_EEPROM(FLAG_ADDRESS_EEPROM+20);
+      UPLINK_SUCCESS = (int8)READ_PROGRAM_EEPROM(FLAG_ADDRESS_EEPROM+22);
+      MISSION_STATUS = (int8)READ_PROGRAM_EEPROM(FLAG_ADDRESS_EEPROM+24);
+      MISSION_OPERATING = (int8)READ_PROGRAM_EEPROM(FLAG_ADDRESS_EEPROM+26);
    }
    
    fprintf(PC,"\r\nPASSED DAYS:%lx\r\n",PASSED_DAYS);
@@ -223,11 +225,10 @@ void MAKE_FLAG_from_EEPROM()                                                    
    fprintf(PC,"Kill FLAG MAIN:%x\r\n",Kill_FLAG_MAIN);
    fprintf(PC,"Kill FLAG FAB:%x\r\n",Kill_FLAG_FAB);
    fprintf(PC,"AUTO HIGH SAMPLING:%x\r\n",FIRST_HSSC_DONE);
-   fprintf(PC,"AUTO CAM:%x\r\n",AUTO_CAM_DONE);
-   fprintf(PC,"AUTO MBP:%x\r\n",AUTO_MBP_DONE);
-   fprintf(PC,"AUTO ADCS:%x\r\n",AUTO_ADCS_DONE);
    fprintf(PC,"ANTENNA DEPLOY:%x\r\n",ANT_DEP_STATUS);
-   fprintf(PC,"UPLINK SUCCESS:%x\r\n\r\n",UPLINK_SUCCESS);
+   fprintf(PC,"UPLINK SUCCESS:%x\r\n",UPLINK_SUCCESS);
+   fprintf(PC,"MISSION STATUS:%x\r\n",MISSION_STATUS);
+   fprintf(PC,"MISSION OPERATING:%x\r\n\r\n",MISSION_OPERATING);
    
    return;
 }
@@ -259,11 +260,10 @@ void STORE_FLAG_INFO()                                                          
    flag_info_bffr[8] = Kill_FLAG_MAIN;
    flag_info_bffr[9] = Kill_FLAG_FAB;
    flag_info_bffr[10] = FIRST_HSSC_DONE;
-   flag_info_bffr[11] = AUTO_CAM_DONE;
-   flag_info_bffr[12] = AUTO_MBP_DONE;
-   flag_info_bffr[13] = AUTO_ADCS_DONE;
-   flag_info_bffr[14] = ANT_DEP_STATUS;
-   flag_info_bffr[15] = UPLINK_SUCCESS;
+   flag_info_bffr[11] = ANT_DEP_STATUS;
+   flag_info_bffr[12] = UPLINK_SUCCESS;
+   flag_info_bffr[13] = MISSION_STATUS;
+   flag_info_bffr[14] = MISSION_OPERATING;
    
    output_low(PIN_A5);                                                           //CAM_MUX MAINSIDE
    output_low(PIN_C4);                                                           //COM_MUX MAINSIDE
@@ -311,11 +311,10 @@ void RESET_FLAG_DATA()
    Kill_FLAG_MAIN = 0;
    Kill_FLAG_FAB = 0;
    FIRST_HSSC_DONE = 0;
-   AUTO_CAM_DONE = 0;
-   AUTO_MBP_DONE = 0;
-   AUTO_ADCS_DONE = 0;
    ANT_DEP_STATUS = 0;
    UPLINK_SUCCESS = 0;
+   MISSION_STATUS = 0;
+   MISSION_OPERATING = 0;
    STORE_FLAG_INFO();
    WRITE_FLAG_to_EEPROM();
    return;
@@ -439,8 +438,8 @@ void TAKE_FLAG_INFO_FROM_OF()                                                   
 void STORE_ADRESS_DATA_TO_FLASH()                                                //save the address data in a new sector if the R / W cycle is reached
 {
    fprintf(PC,"\r\nStoring Address Data in Flash\r\n");
-   ADDRESS_WRITING_COUNTER++;                                                    //contador de escrituras en una direccion
-   CHANGE_ADDRESS_WRITING_LOCATION();                                            //cambia la direccion del lugar de escritura si se superan 95000 ciclos
+   ADDRESS_WRITING_COUNTER++;                                                    //write counter in one address
+   CHANGE_ADDRESS_WRITING_LOCATION();                                            //changes the address of the writing location if 95000 cycles are exceeded
    sec_add_bfr[0] = FLAG_DATA_ADDRESS >> 24;                                     //se carga el array sec_add_bfr[] con los datos de las direcciones
    sec_add_bfr[1] = FLAG_DATA_ADDRESS >> 16;
    sec_add_bfr[2] = FLAG_DATA_ADDRESS >> 8;
@@ -456,57 +455,52 @@ void STORE_ADRESS_DATA_TO_FLASH()                                               
    sec_add_bfr[10] = SAT_LOG >> 8;
    sec_add_bfr[11] = SAT_LOG;
    
-   sec_add_bfr[12] = CAM_ADDRESS >> 24;
-   sec_add_bfr[13] = CAM_ADDRESS >> 16;
-   sec_add_bfr[14] = CAM_ADDRESS >> 8;
-   sec_add_bfr[15] = CAM_ADDRESS;
+   sec_add_bfr[12] = FAB_HK_ADDRESS >> 24;
+   sec_add_bfr[13] = FAB_HK_ADDRESS >> 16;
+   sec_add_bfr[14] = FAB_HK_ADDRESS >> 8;
+   sec_add_bfr[15] = FAB_HK_ADDRESS;
    
-   sec_add_bfr[16] = FAB_HK_ADDRESS >> 24;
-   sec_add_bfr[17] = FAB_HK_ADDRESS >> 16;
-   sec_add_bfr[18] = FAB_HK_ADDRESS >> 8;
-   sec_add_bfr[19] = FAB_HK_ADDRESS;
+   sec_add_bfr[16] = FAB_CW_ADDRESS >> 24;
+   sec_add_bfr[17] = FAB_CW_ADDRESS >> 16;
+   sec_add_bfr[18] = FAB_CW_ADDRESS >> 8;
+   sec_add_bfr[19] = FAB_CW_ADDRESS;
    
-   sec_add_bfr[20] = FAB_CW_ADDRESS >> 24;
-   sec_add_bfr[21] = FAB_CW_ADDRESS >> 16;
-   sec_add_bfr[22] = FAB_CW_ADDRESS >> 8;
-   sec_add_bfr[23] = FAB_CW_ADDRESS;
+   sec_add_bfr[20] = ADCS_SENSOR_ADDRESS >> 24;
+   sec_add_bfr[21] = ADCS_SENSOR_ADDRESS >> 16;
+   sec_add_bfr[22] = ADCS_SENSOR_ADDRESS >> 8;
+   sec_add_bfr[23] = ADCS_SENSOR_ADDRESS;
    
-   sec_add_bfr[24] = ADCS_SENSOR_ADDRESS >> 24;
-   sec_add_bfr[25] = ADCS_SENSOR_ADDRESS >> 16;
-   sec_add_bfr[26] = ADCS_SENSOR_ADDRESS >> 8;
-   sec_add_bfr[27] = ADCS_SENSOR_ADDRESS;
+   sec_add_bfr[24] = DC_STATUS_ADDRESS >> 24;
+   sec_add_bfr[25] = DC_STATUS_ADDRESS >> 16;
+   sec_add_bfr[26] = DC_STATUS_ADDRESS >> 8;
+   sec_add_bfr[27] = DC_STATUS_ADDRESS;
    
-   sec_add_bfr[28] = DC_STATUS_ADDRESS >> 24;
-   sec_add_bfr[29] = DC_STATUS_ADDRESS >> 16;
-   sec_add_bfr[30] = DC_STATUS_ADDRESS >> 8;
-   sec_add_bfr[31] = DC_STATUS_ADDRESS;
+   sec_add_bfr[28] = HIGH_SAMP_HK_ADDRESS >> 24;
+   sec_add_bfr[29] = HIGH_SAMP_HK_ADDRESS >> 16;
+   sec_add_bfr[30] = HIGH_SAMP_HK_ADDRESS >> 8;
+   sec_add_bfr[31] = HIGH_SAMP_HK_ADDRESS;
    
-   sec_add_bfr[32] = HIGH_SAMP_HK_ADDRESS >> 24;
-   sec_add_bfr[33] = HIGH_SAMP_HK_ADDRESS >> 16;
-   sec_add_bfr[34] = HIGH_SAMP_HK_ADDRESS >> 8;
-   sec_add_bfr[35] = HIGH_SAMP_HK_ADDRESS;
-   
-   sec_add_bfr[36] = BC_ATTEMPT_FLAG;
+   sec_add_bfr[32] = BC_ATTEMPT_FLAG;
    
    
-   sec_add_bfr[37] = ADDRESS_WRITING_COUNTER >> 24;
-   sec_add_bfr[38] = ADDRESS_WRITING_COUNTER >> 16;
-   sec_add_bfr[39] = ADDRESS_WRITING_COUNTER >> 8;
-   sec_add_bfr[40] = ADDRESS_WRITING_COUNTER;
+   sec_add_bfr[33] = ADDRESS_WRITING_COUNTER >> 24;
+   sec_add_bfr[34] = ADDRESS_WRITING_COUNTER >> 16;
+   sec_add_bfr[35] = ADDRESS_WRITING_COUNTER >> 8;
+   sec_add_bfr[36] = ADDRESS_WRITING_COUNTER;
    
 
    output_low(PIN_C4);                                                           //COM_MUX MAINSIDE
    int8 num = 0;
    SUBSECTOR_4KB_ERASE_OF(ADD_INFO_ADDRESS);
    delay_ms(200);
-   for(num = 0; num < FLASH_ADD_SIZE; num++)                                     //guarda todos los datos de direcciones en OBC FLASH
+   for(num = 0; num < FLASH_ADD_SIZE; num++)                                     //saves all address data in OBC FLASH
    {
       WRITE_DATA_BYTE_OF(ADD_INFO_ADDRESS + num,sec_add_bfr[num]);
       delay_us(10);
    }
    SUBSECTOR_4KB_ERASE_SCF(ADD_INFO_ADDRESS);
    delay_ms(200);
-   for(num = 0; num < FLASH_ADD_SIZE; num++)                                     //guarda todos los datos de direcciones en COM FLASH
+   for(num = 0; num < FLASH_ADD_SIZE; num++)                                     //saves all address data in COM FLASH
    {
       WRITE_DATA_BYTE_SCF(ADD_INFO_ADDRESS + num,sec_add_bfr[num]);
       delay_us(10);
@@ -517,7 +511,7 @@ void STORE_ADRESS_DATA_TO_FLASH()                                               
       delay_ms(10);
       SUBSECTOR_4KB_ERASE_SMF(ADD_INFO_ADDRESS);
       delay_ms(200);
-      for(num = 0; num < FLASH_ADD_SIZE; num++)                                     //guarda todos los datos de direcciones en MISSION FLASH
+      for(num = 0; num < FLASH_ADD_SIZE; num++)                                     //gsaves all address data in MISSION FLASH
       {
          WRITE_DATA_BYTE_SMF(ADD_INFO_ADDRESS + num,sec_add_bfr[num]);
          delay_us(10);
@@ -576,15 +570,18 @@ void MAKE_FLAG_INFO()                                                           
    Kill_FLAG_MAIN      = flag_info_bffr[8];
    Kill_FLAG_FAB       = flag_info_bffr[9];
    FIRST_HSSC_DONE     = flag_info_bffr[10];
-   AUTO_CAM_DONE       = flag_info_bffr[11];
-   AUTO_MBP_DONE       = flag_info_bffr[12];
-   AUTO_ADCS_DONE      = flag_info_bffr[13];
-   ANT_DEP_STATUS      = flag_info_bffr[14];
-   UPLINK_SUCCESS      = flag_info_bffr[15];
+   ANT_DEP_STATUS      = flag_info_bffr[11];
+   UPLINK_SUCCESS      = flag_info_bffr[12];
+   MISSION_STATUS      = flag_info_bffr[13];
+   MISSION_OPERATING   = flag_info_bffr[14];
    if(PASSED_DAYS == 0xffff)
    {
       COLLECT_RESET_DATA();                                                      //function that sends command 0x28 to reset PIC and loads reset_bffr []
       PASSED_DAYS = make16(reset_bffr[4],reset_bffr[5]);
+   }
+   if(PASSED_DAYS == 0xffff)
+   {
+      PASSED_DAYS = make16(0x00,0x00);
    }
    return;
 }
@@ -600,19 +597,17 @@ void MAKE_ADDRESS_DATA()                                                        
    
    SAT_LOG = make32(sec_add_bfr[8],sec_add_bfr[9],sec_add_bfr[10],sec_add_bfr[11]);//SAT_LOG_1 | SAT_LOG_2 | SAT_LOG_3 | SAT_LOG_4;
    
-   CAM_ADDRESS = make32(sec_add_bfr[12],sec_add_bfr[13],sec_add_bfr[14],sec_add_bfr[15]);//CAM_ADDRESS_1 | CAM_ADDRESS_2 | CAM_ADDRESS_3 | CAM_ADDRESS_4;
-   
-   FAB_HK_ADDRESS = make32(sec_add_bfr[16],sec_add_bfr[17],sec_add_bfr[18],sec_add_bfr[19]);//FAB_HK_ADDRESS_1 | FAB_HK_ADDRESS_2 | FAB_HK_ADDRESS_3 | FAB_HK_ADDRESS_4;
+   FAB_HK_ADDRESS = make32(sec_add_bfr[12],sec_add_bfr[13],sec_add_bfr[14],sec_add_bfr[15]);//FAB_HK_ADDRESS_1 | FAB_HK_ADDRESS_2 | FAB_HK_ADDRESS_3 | FAB_HK_ADDRESS_4;
 
-   FAB_CW_ADDRESS = make32(sec_add_bfr[20],sec_add_bfr[21],sec_add_bfr[22],sec_add_bfr[23]);//FAB_CW_ADDRESS_1| FAB_CW_ADDRESS_2 | FAB_CW_ADDRESS_3 | FAB_CW_ADDRESS_4;
+   FAB_CW_ADDRESS = make32(sec_add_bfr[16],sec_add_bfr[17],sec_add_bfr[18],sec_add_bfr[19]);//FAB_CW_ADDRESS_1| FAB_CW_ADDRESS_2 | FAB_CW_ADDRESS_3 | FAB_CW_ADDRESS_4;
    
-   ADCS_SENSOR_ADDRESS = make32(sec_add_bfr[24],sec_add_bfr[25],sec_add_bfr[26],sec_add_bfr[27]);//ADCS_SENSOR_ADDRESS_1 | ADCS_SENSOR_ADDRESS_2 | ADCS_SENSOR_ADDRESS_3 | ADCS_SENSOR_ADDRESS_4;
+   ADCS_SENSOR_ADDRESS = make32(sec_add_bfr[20],sec_add_bfr[21],sec_add_bfr[22],sec_add_bfr[23]);//ADCS_SENSOR_ADDRESS_1 | ADCS_SENSOR_ADDRESS_2 | ADCS_SENSOR_ADDRESS_3 | ADCS_SENSOR_ADDRESS_4;
    
-   DC_STATUS_ADDRESS = make32(sec_add_bfr[28],sec_add_bfr[29],sec_add_bfr[30],sec_add_bfr[31]);//DC_STATUS_ADDRESS_1 | DC_STATUS_ADDRESS_2 | DC_STATUS_ADDRESS_3 | DC_STATUS_ADDRESS_4;
+   DC_STATUS_ADDRESS = make32(sec_add_bfr[24],sec_add_bfr[25],sec_add_bfr[26],sec_add_bfr[27]);//DC_STATUS_ADDRESS_1 | DC_STATUS_ADDRESS_2 | DC_STATUS_ADDRESS_3 | DC_STATUS_ADDRESS_4;
    
-   HIGH_SAMP_HK_ADDRESS = make32(sec_add_bfr[32],sec_add_bfr[33],sec_add_bfr[34],sec_add_bfr[35]);//HIGH_SAMP_HK_ADDRESS = HIGH_SAMP_HK_ADDRESS_1 | HIGH_SAMP_HK_ADDRESS_2 | HIGH_SAMP_HK_ADDRESS_3 | HIGH_SAMP_HK_ADDRESS_4;
+   HIGH_SAMP_HK_ADDRESS = make32(sec_add_bfr[28],sec_add_bfr[29],sec_add_bfr[30],sec_add_bfr[31]);//HIGH_SAMP_HK_ADDRESS = HIGH_SAMP_HK_ADDRESS_1 | HIGH_SAMP_HK_ADDRESS_2 | HIGH_SAMP_HK_ADDRESS_3 | HIGH_SAMP_HK_ADDRESS_4;
    
-   ADDRESS_WRITING_COUNTER = make32(sec_add_bfr[36],sec_add_bfr[37],sec_add_bfr[38],sec_add_bfr[39]);//ADDRESS_WRITING_COUNTER_1 | ADDRESS_WRITING_COUNTER_2
+   ADDRESS_WRITING_COUNTER = make32(sec_add_bfr[33],sec_add_bfr[34],sec_add_bfr[35],sec_add_bfr[36]);//ADDRESS_WRITING_COUNTER_1 | ADDRESS_WRITING_COUNTER_2
    
    return;
 }
@@ -645,11 +640,11 @@ void CHECK_FLAG_INFO()                                                          
    return;
 }
 
-void CHECK_ADDRESS_DATA()                                                        //imprime los datos de direcciones y los separa en cada variable correspondiente
+void CHECK_ADDRESS_DATA()                                                        //prints the address data and separates it into each corresponding variable
 {
    int8 checksum = 0;
-   TAKE_ADDRESS_DATA_FROM_OF();                                                  //craga el array sec_add_bfr[] con address location info y lo imprime                                                  
-   for(int8 num = 37; num < 41; num++)                                           //check the data of last 4 byte
+   TAKE_ADDRESS_DATA_FROM_OF();                                                  //load the array sec_add_bfr [] with address location info and print it                                                
+   for(int8 num = 33; num < 37; num++)                                           //check the data of last 4 byte
    {
       if(sec_add_bfr[num] == 0xff)                                               //if nothing, count checksum
       {
@@ -661,16 +656,16 @@ void CHECK_ADDRESS_DATA()                                                       
    {
       for(num = 0; num < FLASH_ADD_SIZE; num++)
       {
-         fprintf(PC,"%x",sec_add_bfr[num]);                                      //imprime el contenido de sec_add_bfr[] que contiene las direcciones
+         fprintf(PC,"%x",sec_add_bfr[num]);                                      //prints the content of sec_add_bfr [] containing the addresses
       }
       fprintf(PC,"\r\n");
-      MAKE_ADDRESS_DATA();                                                       //los separa en las variables correspondientes a cada direccion
+      MAKE_ADDRESS_DATA();                                                       //separates them into the variables corresponding to each address
    }else{                                                                        //if there is nothing, check from SCF
       output_low(PIN_C4);
       TAKE_ADDRESS_DATA_FROM_SCF();
       output_high(PIN_C4);
       checksum = 0;
-      for(num = 37; num < 41; num++)                                             //check the data of last 4 byte
+      for(num = 33; num < 37; num++)                                             //check the data of last 4 byte
       {
          if(sec_add_bfr[num] == 0xff)                                            //if nothing, count checksum
          {
@@ -689,7 +684,7 @@ void CHECK_ADDRESS_DATA()                                                       
          output_low(PIN_A5);
          TAKE_ADDRESS_DATA_FROM_SMF();
          checksum = 0;
-         for(num = 37; num < 41; num++)                                          //check the data of last 4 byte
+         for(num = 33; num < 37; num++)                                          //check the data of last 4 byte
          {
             if(sec_add_bfr[num] == 0xff)                                         //if nothing, count checksum
             {
@@ -729,6 +724,10 @@ void MEMORY_ERASE(int8 CMD1, int8 CMD2, int8 CMD3)
       
       output_low(PIN_A5);                                                           //CAM_MUX MAINSIDE
       output_low(PIN_C4);                                                           //COM_MUX MAINSIDE
+      //DIE_ERASE_OF();
+      //DIE_ERASE_SCF();
+      //DIE_ERASE_SMF();
+      
       
       sector_erase_OF(0);
       sector_erase_SCF(0);
@@ -742,37 +741,61 @@ void MEMORY_ERASE(int8 CMD1, int8 CMD2, int8 CMD3)
       for(int8 num = 0; num < 5; num++)
       {
          sector_erase_OF(FLAG_DATA_ADDRESS + SECT*num);                             //65536*num
-         sector_erase_OF(CAM_ADDRESS + SECT*num);                                   //65536*num
+         sector_erase_OF(IMGCLS_ADDRESS + SECT*num);                                //65536*num
+         sector_erase_OF(MCAM1_THMB_ADDRESS + SECT*num);                                //65536*num
+         sector_erase_OF(MCAM1_IMG_ADDRESS + SECT*num);                                //65536*num
+         sector_erase_OF(MCAM2_THMB_ADDRESS + SECT*num);                                //65536*num
+         sector_erase_OF(MCAM2_IMG_ADDRESS + SECT*num);                                //65536*num
          sector_erase_OF(FAB_HK_ADDRESS + SECT*num);                                //65536*num
          sector_erase_OF(ADCS_SENSOR_ADDRESS + SECT*num);                           //65536*num
          sector_erase_OF(DC_STATUS_ADDRESS + SECT*num);                             //65536*num
          sector_erase_OF(HIGH_SAMP_HK_ADDRESS + SECT*num);                          //65536*num
          
-         sector_erase_SCF(FLAG_DATA_ADDRESS + SECT*num);                            //65536*num
-         sector_erase_SCF(CAM_ADDRESS + SECT*num);                                  //65536*num
-         sector_erase_SCF(FAB_HK_ADDRESS + SECT*num);                               //65536*num
-         sector_erase_SCF(ADCS_SENSOR_ADDRESS + SECT*num);                          //65536*num
-         sector_erase_SCF(DC_STATUS_ADDRESS + SECT*num);                            //65536*num
-         sector_erase_SCF(HIGH_SAMP_HK_ADDRESS + SECT*num);                         //65536*num
+         sector_erase_SCF(FLAG_DATA_ADDRESS + SECT*num);                             //65536*num
+         sector_erase_SCF(IMGCLS_ADDRESS + SECT*num);                                //65536*num
+         sector_erase_SCF(MCAM1_THMB_ADDRESS + SECT*num);                                //65536*num
+         sector_erase_SCF(MCAM1_IMG_ADDRESS + SECT*num);                                //65536*num
+         sector_erase_SCF(MCAM2_THMB_ADDRESS + SECT*num);                                //65536*num
+         sector_erase_SCF(MCAM2_IMG_ADDRESS + SECT*num);                                //65536*num
+         sector_erase_SCF(FAB_HK_ADDRESS + SECT*num);                                //65536*num
+         sector_erase_SCF(ADCS_SENSOR_ADDRESS + SECT*num);                           //65536*num
+         sector_erase_SCF(DC_STATUS_ADDRESS + SECT*num);                             //65536*num
+         sector_erase_SCF(HIGH_SAMP_HK_ADDRESS + SECT*num);                          //65536*num
          
-         sector_erase_SMF(FLAG_DATA_ADDRESS + SECT*num);                            //65536*num
-         sector_erase_SMF(CAM_ADDRESS + SECT*num);                                  //65536*num
-         sector_erase_SMF(FAB_HK_ADDRESS + SECT*num);                               //65536*num
-         sector_erase_SMF(ADCS_SENSOR_ADDRESS + SECT*num);                          //65536*num
-         sector_erase_SMF(DC_STATUS_ADDRESS + SECT*num);                            //65536*num
-         sector_erase_SMF(HIGH_SAMP_HK_ADDRESS + SECT*num);                         //65536*num
+         sector_erase_SMF(FLAG_DATA_ADDRESS + SECT*num);                             //65536*num
+         sector_erase_SMF(IMGCLS_ADDRESS + SECT*num);                                //65536*num
+         sector_erase_SMF(MCAM1_THMB_ADDRESS + SECT*num);                                //65536*num
+         sector_erase_SMF(MCAM1_IMG_ADDRESS + SECT*num);                                //65536*num
+         sector_erase_SMF(MCAM2_THMB_ADDRESS + SECT*num);                                //65536*num
+         sector_erase_SMF(MCAM2_IMG_ADDRESS + SECT*num);                                //65536*num
+         sector_erase_SMF(FAB_HK_ADDRESS + SECT*num);                                //65536*num
+         sector_erase_SMF(ADCS_SENSOR_ADDRESS + SECT*num);                           //65536*num
+         sector_erase_SMF(DC_STATUS_ADDRESS + SECT*num);                             //65536*num
+         sector_erase_SMF(HIGH_SAMP_HK_ADDRESS + SECT*num);                          //65536*num
       }
       for(num = 5; num < 10; num++)
       {
-         sector_erase_OF(CAM_ADDRESS + SECT*num);                                   //65536*num
+         sector_erase_OF(IMGCLS_ADDRESS + SECT*num);                                   //65536*num
+         sector_erase_OF(MCAM1_THMB_ADDRESS + SECT*num);                                //65536*num
+         sector_erase_OF(MCAM1_IMG_ADDRESS + SECT*num);                                //65536*num
+         sector_erase_OF(MCAM2_THMB_ADDRESS + SECT*num);                                //65536*num
+         sector_erase_OF(MCAM2_IMG_ADDRESS + SECT*num);                                //65536*num
          sector_erase_OF(FAB_HK_ADDRESS + SECT*num);                                //65536*num
          sector_erase_OF(HIGH_SAMP_HK_ADDRESS + SECT*num);                          //65536*num
          
-         sector_erase_SCF(CAM_ADDRESS + SECT*num);                                  //65536*num
+         sector_erase_SCF(IMGCLS_ADDRESS + SECT*num);                                  //65536*num
+         sector_erase_SCF(MCAM1_THMB_ADDRESS + SECT*num);                                //65536*num
+         sector_erase_SCF(MCAM1_IMG_ADDRESS + SECT*num);                                //65536*num
+         sector_erase_SCF(MCAM2_THMB_ADDRESS + SECT*num);                                //65536*num
+         sector_erase_SCF(MCAM2_IMG_ADDRESS + SECT*num);                                //65536*num
          sector_erase_SCF(FAB_HK_ADDRESS + SECT*num);                               //65536*num
          sector_erase_SCF(HIGH_SAMP_HK_ADDRESS + SECT*num);                         //65536*num
          
-         sector_erase_SMF(CAM_ADDRESS + SECT*num);                                  //65536*num
+         sector_erase_SMF(IMGCLS_ADDRESS + SECT*num);                                  //65536*num
+         sector_erase_SMF(MCAM1_THMB_ADDRESS + SECT*num);                                //65536*num
+         sector_erase_SMF(MCAM1_IMG_ADDRESS + SECT*num);                                //65536*num
+         sector_erase_SMF(MCAM2_THMB_ADDRESS + SECT*num);                                //65536*num
+         sector_erase_SMF(MCAM2_IMG_ADDRESS + SECT*num);                                //65536*num
          sector_erase_SMF(FAB_HK_ADDRESS + SECT*num);                               //65536*num
          sector_erase_SMF(HIGH_SAMP_HK_ADDRESS + SECT*num);                         //65536*num
       }
@@ -836,24 +859,24 @@ void LOOP_SAT_LOG()                                                             
 }
 
 
-void LOOP_CAM_ADDRESS()                                                          //loops memory locations to store CAM data
-{
-   if(CAM_ADDRESS >= CAM_ADDRESS_END)                                            //if the write position of CAM reaches CAM_ADDRESS_END
-   {
-      sector_erase_OF(SECT*9);                                                   //deletes 1 sector of the MAIN flash, 65536 * 9
-      
-      output_low(PIN_C4);                                                        //COM_MUX MAINSIDE
-      sector_erase_SCF(SECT*9);                                                  //clears 1 sector of COM flash, 65536 * 9
-      output_high(PIN_C4);                                                       //COM_MUX COMSIDE
-      
-      output_low(PIN_A5);                                                        //CAM_MUX MAINSIDE
-      sector_erase_SMF(SECT*9);                                                  //deletes 1 sector of the MISSION flash, 65536 * 9
-      
-      CAM_ADDRESS = SECT*9;                                                      //CAM address is now located at the beginning of the space designated to CAM
-      STORE_ADRESS_DATA_TO_FLASH();
-   }
-   return;
-}
+//!void LOOP_CAM_ADDRESS()                                                          //loops memory locations to store CAM data
+//!{
+//!   if(CAM_ADDRESS >= CAM_ADDRESS_END)                                            //if the write position of CAM reaches CAM_ADDRESS_END
+//!   {
+//!      sector_erase_OF(SECT*9);                                                   //deletes 1 sector of the MAIN flash, 65536 * 9
+//!      
+//!      output_low(PIN_C4);                                                        //COM_MUX MAINSIDE
+//!      sector_erase_SCF(SECT*9);                                                  //clears 1 sector of COM flash, 65536 * 9
+//!      output_high(PIN_C4);                                                       //COM_MUX COMSIDE
+//!      
+//!      output_low(PIN_A5);                                                        //CAM_MUX MAINSIDE
+//!      sector_erase_SMF(SECT*9);                                                  //deletes 1 sector of the MISSION flash, 65536 * 9
+//!      
+//!      CAM_ADDRESS = SECT*9;                                                      //CAM address is now located at the beginning of the space designated to CAM
+//!      STORE_ADRESS_DATA_TO_FLASH();
+//!   }
+//!   return;
+//!}
 
 
 void LOOP_FAB_HK_ADDRESS()                                                       //Rotate data save positions if it reaches the end of the allocated space                                                      
@@ -861,16 +884,16 @@ void LOOP_FAB_HK_ADDRESS()                                                      
    int32 checksum = FAB_HK_ADDRESS && 0x0000ffff;
    if(FAB_HK_ADDRESS >= FAB_HK_ADDRESS_END)                                      
    {
-      sector_erase_OF(SECT*98);
+      sector_erase_OF(SECT*308);
       
       output_low(PIN_C4);                                                        //COM_MUX MAINSIDE
-      sector_erase_SCF(SECT*98);
+      sector_erase_SCF(SECT*308);
       output_high(PIN_C4);                                                       //COM_MUX COMSIDE
       
       output_low(PIN_A5);                                                        //CAM_MUX MAINSIDE
-      sector_erase_SMF(SECT*98);
+      sector_erase_SMF(SECT*308);
       
-      FAB_HK_ADDRESS = 65536*8;                                                  //the new address is again the beginning of the allocated space
+      FAB_HK_ADDRESS = 65536*309;                                                  //the new address is again the beginning of the allocated space
       STORE_ADRESS_DATA_TO_FLASH();                                              //saves the address data and in a new sector if the R / W cycle is fulfilled
    }
    else if(65536 - checksum < 119)
@@ -895,16 +918,16 @@ void LOOP_FAB_CW_ADDRESS()                                                      
    int32 checksum = FAB_CW_ADDRESS && 0x0000ffff;
    if(FAB_CW_ADDRESS >= FAB_CW_ADDRESS_END)
    {  
-      sector_erase_OF(SECT*1098);
+      sector_erase_OF(SECT*608);
       
       output_low(PIN_C4);                                                        //COM_MUX MAINSIDE
-      sector_erase_SCF(SECT*1098);
+      sector_erase_SCF(SECT*608);
       output_high(PIN_C4);                                                       //COM_MUX COMSIDE
       
       output_low(PIN_A5);                                                        //CAM_MUX MAINSIDE
-      sector_erase_SMF(SECT*1098);
+      sector_erase_SMF(SECT*608);
       
-      FAB_CW_ADDRESS = SECT*1098;
+      FAB_CW_ADDRESS = SECT*608;
       STORE_ADRESS_DATA_TO_FLASH();
    }
    else if(SECT - checksum < 5)
@@ -929,18 +952,20 @@ void LOOP_ADCS_SENSOR_ADDRESS()
 {
    if(ADCS_SENSOR_ADDRESS >= ADCS_SENSOR_ADDRESS_END)                            //for 15min operation, data size will be more than 1sector
    {
-      sector_erase_OF(SECT*1140);
+      sector_erase_OF(SECT*922);
       
       output_low(PIN_C4);                                                        //COM_MUX MAINSIDE
-      sector_erase_SCF(SECT*1140);
+      sector_erase_SCF(SECT*922);
       output_high(PIN_C4);                                                       //COM_MUX COMSIDE
       
       output_low(PIN_A5);                                                        //CAM_MUX MAINSIDE
-      sector_erase_SMF(SECT*1140);
+      sector_erase_SMF(SECT*922);
       
-      ADCS_SENSOR_ADDRESS = SECT*1140;                                           //keep first 2 sector forever
+      ADCS_SENSOR_ADDRESS = SECT*922;                                           //keep first 2 sector forever
       STORE_ADRESS_DATA_TO_FLASH();
-   }else{                                                                        //if value will be close to the sector
+   }
+   else
+   {                                                                        //if value will be close to the sector
       fprintf(PC,"erasing next sector\r\n");
       
       int i;
@@ -971,18 +996,20 @@ void LOOP_DC_STATUS_ADDRESS()
    int32 checksum = DC_STATUS_ADDRESS && 0x00000fff;
    if(DC_STATUS_ADDRESS >= DC_STATUS_ADDRESS_END)
    {
-      SUBSECTOR_4KB_ERASE_OF(SECT*1639+4096);
+      SUBSECTOR_4KB_ERASE_OF(SECT*912+4096);
       
       output_low(PIN_C4);                                                        //COM_MUX MAINSIDE
-      SUBSECTOR_4KB_ERASE_SCF(SECT*16394096);
+      SUBSECTOR_4KB_ERASE_SCF(SECT*912+4096);
       output_high(PIN_C4);                                                       //COM_MUX COMSIDE
       
       output_low(PIN_A5);                                                        //CAM_MUX MAINSIDE
-      SUBSECTOR_4KB_ERASE_SMF(SECT*1639+4096);
+      SUBSECTOR_4KB_ERASE_SMF(SECT*912+4096);
       
-      DC_STATUS_ADDRESS = SECT*1639+4096;                                        //keep first 1 SUBSECTOR forever
+      DC_STATUS_ADDRESS = SECT*912+4096;                                        //keep first 1 SUBSECTOR forever
       STORE_ADRESS_DATA_TO_FLASH();
-   }else if(4096 - checksum < 800){                                              //if value will be close to the sector
+   }
+   else if(4096 - checksum < 800)
+   {                                                                            //if value will be close to the sector
       fprintf(PC,"erasing next sector\r\n");
       
       SUBSECTOR_4KB_ERASE_OF(DC_STATUS_ADDRESS + 4096);                          //erase next SUBSECTOR in advance
@@ -1002,16 +1029,16 @@ void LOOP_HIGH_SAMP_HK_ADDRESS()
 {
    if(HIGH_SAMP_HK_ADDRESS >= HIGH_SAMP_HK_ADDRESS_END)                          //for 15min operation, data size will be more than 2sector
    {
-      sector_erase_OF(SECT*1642);                                                //delet from 066A0000 (keep first 3 sectors)
+      sector_erase_OF(SECT*660);                                                //delet from 066A0000 (keep first 3 sectors)
       
       output_low(PIN_C4);                                                        //COM_MUX MAINSIDE
-      sector_erase_SCF(SECT*1642);
+      sector_erase_SCF(SECT*660);
       output_high(PIN_C4);                                                       //COM_MUX COMSIDE
       
       output_low(PIN_A5);                                                        //CAM_MUX MAINSIDE
-      sector_erase_SMF(SECT*1642);
+      sector_erase_SMF(SECT*660);
       
-      HIGH_SAMP_HK_ADDRESS = SECT*1642;                                          //keep first 3 sector forever
+      HIGH_SAMP_HK_ADDRESS = SECT*660;                                          //keep first 2 sector forever
    }
    else
    {                                                                             //if value will be close to the sector

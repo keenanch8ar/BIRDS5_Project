@@ -350,23 +350,65 @@ void ALL_SECTOR_ERASE_OF()
 
 void ALL_SECTOR_ERASE_SCF()
 {
-   int32 ADRESS = 0;
+   int32 ADDRESS = 0;
    for(int16 i = 0; i < 2048; i++)
    {
-      sector_erase_SCF(ADRESS);
-      ADRESS = ADRESS + 65536;
+      sector_erase_SCF(ADDRESS);
+      ADDRESS = ADDRESS + 65536;
    }
 }
 
 
 void ALL_SECTOR_ERASE_SMF()
 {
-   int32 ADRESS = 0;
+   int32 ADDRESS = 0;
    for(int16 i = 0; i < 2048; i++)
    {
-      sector_erase_SMF(ADRESS);
-      ADRESS = ADRESS + 65536;
+      sector_erase_SMF(ADDRESS);
+      ADDRESS = ADDRESS + 65536;
    }
+}
+
+void DIE_ERASE_OF()
+{
+   
+   WRITE_ENABLE_OF();
+   output_low(CS_PIN);                                                           //lower the CS PIN
+   spi_xfer(SPIPORT,DIE_ERASE);                                                 //ERASE
+   spi_xfer(SPIPORT,0x00);    
+   spi_xfer(SPIPORT,0x00);    
+   spi_xfer(SPIPORT,0x00);    
+   spi_xfer(SPIPORT,0x00);
+   output_high(CS_PIN);                                                          //take CS PIN higher back
+   
+}
+
+void DIE_ERASE_SCF()
+{
+   
+   WRITE_ENABLE_SCF();
+   output_low(CS_PIN_2);                                                           //lower the CS PIN
+   spi_xfer(SPIPORT,DIE_ERASE);                                                 //ERASE
+   spi_xfer(SPIPORT,0x00);    
+   spi_xfer(SPIPORT,0x00);    
+   spi_xfer(SPIPORT,0x00);    
+   spi_xfer(SPIPORT,0x00);
+   output_high(CS_PIN_2);                                                          //take CS PIN higher back
+   
+}
+
+void DIE_ERASE_SMF()
+{
+   
+   WRITE_ENABLE_SMF();
+   output_low(CS_PIN_3);                                                           //lower the CS PIN
+   spi_xfer(SPIPORT,DIE_ERASE);                                                 //ERASE
+   spi_xfer(SPIPORT,0x00);    
+   spi_xfer(SPIPORT,0x00);    
+   spi_xfer(SPIPORT,0x00);    
+   spi_xfer(SPIPORT,0x00);
+   output_high(CS_PIN_3);                                                          //take CS PIN higher back
+   
 }
 
 

@@ -54,7 +54,8 @@ void UART2_RXD(void)
 //!   COM_DATA = ((COM_DATA + 1) % 16);                                             //when the data is obtained in position 16, COM_DATA = 0
    CMD_FROM_COMM[COM_DATA] = fgetc(COM);   
    fprintf(PC,"%x,", CMD_FROM_COMM[COM_DATA]);
-   COM_DATA = ((COM_DATA + 1) % 16);  
+   COM_DATA = ((COM_DATA + 1) % 16);
+
 }
 
 #INT_rda3                                                                        //FAB Interrupt, RS232 receive data available in buffer 3
@@ -64,7 +65,7 @@ void UART3_RXD(void)
    //fprintf(PC,"%x ",in_HK[FAB_DATA]);
    in_HK[FAB_DATA] = fgetc(FAB);                                                 //load the array in_HK [] with the data sent by the FAB PIC
    FAB_DATA = ((FAB_DATA + 1) % FAB_SENSOR_size);                                //when the data is obtained in position 45 FAB_DATA = 0
-   
+
 }
 
 #INT_rda4                                                                        //Reset PIC Interrupt, RS232 receive data available in buffer 4
@@ -78,7 +79,7 @@ void UART4_RXD(void)
       reset_flag = 1;                                                            //raise flag to reset (pone a alto bandera para reseteo)
       RESET_DATA = 0;                                                            //position indicator within reset_data vector (indicador de posicion dentro del vector reset_data)
    }
-   
+   RESET_TO_MAIN_FLAG = 1;   
 }
 
 void settings()
@@ -227,56 +228,10 @@ void main()
       
       if(CMD_FROM_COMM[0] == 0xAA && CMD_FROM_COMM[15] == 0xBB)
       {
-         
+         COM_TO_MAIN_FLAG = 1;
          if(CMD_FROM_COMM[4]!= 0xAB)
          {
          
-//!            BYTE command_ID_from_COMM = CMD_FROM_COMM[4];
-//!            command_ID_from_COMM &= 0xF0;
-//!            //fprintf(PC,"%x",command_ID);
-//!            //fprintf(PC,"\r\n");
-//!            
-//!            if(command_ID_from_COMM == 0x00 || command_ID_from_COMM == 0x10)
-//!            {
-//!               fprintf(PC,"Main PIC or MB Comm Command only\r\n");
-//!               MAIN_MB_CMD();
-//!            }
-//!            
-//!            if(command_ID_from_COMM == 0x20 || command_ID_from_COMM == 0x30)
-//!            {
-//!               fprintf(PC,"MULT-SPEC Command\r\n");
-//!               MULT_SPEC_Test();
-//!            }
-//!            
-//!            if(command_ID_from_COMM == 0x40)
-//!            {
-//!               fprintf(PC,"ADCS Command\r\n");
-//!               ADCS_test();
-//!            }
-//!            
-//!            if(command_ID_from_COMM == 0x50)
-//!            {
-//!               fprintf(PC,"S-FWD Command\r\n");
-//!               SFWD_test();
-//!            }
-//!            
-//!            if(command_ID_from_COMM == 0x70)
-//!            {
-//!               fprintf(PC,"DLP Command\r\n");
-//!               DLP_test();
-//!            }
-//!            
-//!            if(command_ID_from_COMM == 0x80)
-//!            {
-//!               fprintf(PC,"IMG-CLS Command\r\n");
-//!               IMGCLS_test();
-//!            }
-//!            
-//!            if(command_ID_from_COMM == 0x90)
-//!            {
-//!               fprintf(PC,"PINO Command\r\n");
-//!               NEW_PINO_test();
-//!            }
             //EXECUTE_COMMAND_from_COMM(CMD_FROM_COMM[4],CMD_FROM_COMM[6], CMD_FROM_COMM[7], CMD_FROM_COMM[8], CMD_FROM_COMM[9], CMD_FROM_COMM[10], CMD_FROM_COMM[11], 0x00);
             EXECUTE_COMMAND_from_COMM(CMD_FROM_COMM[3],CMD_FROM_COMM[5], CMD_FROM_COMM[6], CMD_FROM_COMM[7], CMD_FROM_COMM[8], CMD_FROM_COMM[9], CMD_FROM_COMM[10], CMD_FROM_COMM[11]);
             DELETE_CMD_FROM_COMM();
@@ -287,6 +242,8 @@ void main()
             PC_DATA = 0;                                                            //clear PC correct receiving data flag
          }
       }
+
+
       
 //!      if(MISSION_STATUS)
 //!      {
