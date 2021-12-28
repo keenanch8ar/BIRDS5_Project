@@ -62,8 +62,8 @@ void UART2_RXD(void)
 void UART3_RXD(void)
 {
 
-   //fprintf(PC,"%x ",in_HK[FAB_DATA]);
    in_HK[FAB_DATA] = fgetc(FAB);                                                 //load the array in_HK [] with the data sent by the FAB PIC
+   fprintf(PC,"%x ",in_HK[FAB_DATA]);
    FAB_DATA = ((FAB_DATA + 1) % FAB_SENSOR_size);                                //when the data is obtained in position 45 FAB_DATA = 0
 
 }
@@ -107,7 +107,7 @@ void settings()
   
    output_low(PIN_A4);                                                           //kill switch off
    Turn_ON_MBP();                                                                //Mission Boss switch ON, RF5=1
-   Turn_On_ADCS();
+   Turn_Off_ADCS();
    Turn_OFF_BC();                                                                //Burner Circuit switch OFF, RD5=0
 
    fprintf(PC,"\r\n");

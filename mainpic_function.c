@@ -34,7 +34,7 @@ int8 CWtest[1] = {};
 void GIVE_ACCESS_SCF_Nsec(int8 min)
 {
    fprintf(PC,"\r\nGiving access to COM for %d min\r\n", min);
-   fputc(0x35,COM);
+   //fputc(0x35,COM);
    output_high(PIN_C4);
    if(min > 5)                                                                   //for accidentaly send the long time delay, maximum should be 5 min
    {

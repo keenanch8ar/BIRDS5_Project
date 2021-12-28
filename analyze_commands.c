@@ -66,6 +66,17 @@ void UPLINK_SUCCESS_IMGCLS_CAM()
    return;
 }
 
+void UPLINK_SUCCESS_S_FWD()
+{
+   if(UPLINK_SUCCESS == 0)
+   {
+      UPLINK_SUCCESS = 1;
+      STORE_FLAG_INFO();                                                         //store flag info on flash
+      WRITE_FLAG_to_EEPROM();                                                    //store flag info on EEPROM
+   }
+   return;
+}
+
 
 void FWD_CMD_MBP(int8 CMD0,int8 CMD2,int8 CMD3,int8 CMD4,int8 CMD5,int8 CMD6, int8 CMD7, int8 CMD8)
 {
@@ -272,7 +283,8 @@ void MAIN_COMMAND(int8 CMD0,int8 CMD2,int8 CMD3,int8 CMD4,int8 CMD5,int8 CMD6, i
          REPLY_TO_COM(0x66,0);
          SAVE_SAT_LOG(CMD0, 0, CMD2);                                            //save reset data         
          UPLINK_SUCCESS_CHECK();                                                 //put uplink succes flag in high and store flags
-         ACK_for_COM[14] = 0x00;  
+         ACK_for_COM[14] = 0x00;
+         GIVE_ACCESS_SCF_Nsec(CMD8);
          fprintf(PC, "\r\nNothing Yet\r\n");
       
       break;
@@ -1124,6 +1136,7 @@ void MULT_SPEC_COMMAND(int8 CMD0,int8 CMD2,int8 CMD3,int8 CMD4,int8 CMD5,int8 CM
          MISSION_OPERATING = 0;
          missiontime = 0;
          output_high(pin_G3); //Turn on DIO for MULTSPEC CAM1
+         output_high(PIN_C4);                                                    //give access back to COMM
          fprintf (PC, "Finish 0x2E\r\n"); 
       
       break;
@@ -1142,6 +1155,7 @@ void MULT_SPEC_COMMAND(int8 CMD0,int8 CMD2,int8 CMD3,int8 CMD4,int8 CMD5,int8 CM
          MISSION_STATUS = 0;
          MISSION_OPERATING = 0;
          missiontime = 0;
+         output_high(PIN_C4);                                                    //give access back to COMM
          fprintf (PC, "Finish 0x20\r\n");
          
       break;
@@ -1166,6 +1180,7 @@ void MULT_SPEC_COMMAND(int8 CMD0,int8 CMD2,int8 CMD3,int8 CMD4,int8 CMD5,int8 CM
          }
          FWD_CMD_MBP(CMD0, CMD2, CMD3, CMD4, CMD5, CMD6, CMD7, CMD8);
          MISSION_OPERATING = 0;
+         output_high(PIN_C4);                                                    //give access back to COMM
          fprintf (PC, "Finish 0x21\r\n");
 
       break;
@@ -1214,7 +1229,7 @@ void MULT_SPEC_COMMAND(int8 CMD0,int8 CMD2,int8 CMD3,int8 CMD4,int8 CMD5,int8 CM
          {
             MULTSPEC1_DATA[l] = 0;
          }
-         
+         output_high(PIN_C4);                                                    //give access back to COMM
          MISSION_OPERATING = 0;
          
       break;
@@ -1245,6 +1260,7 @@ void MULT_SPEC_COMMAND(int8 CMD0,int8 CMD2,int8 CMD3,int8 CMD4,int8 CMD5,int8 CM
          FWD_CMD_MBP(CMD0, CMD2, CMD3, CMD4, CMD5, CMD6, CMD7, CMD8);
          
          MISSION_OPERATING = 0;
+         output_high(PIN_C4);                                                    //give access back to COMM
          fprintf (PC, "Finish 0x23\r\n");
       break;
       
@@ -1272,6 +1288,7 @@ void MULT_SPEC_COMMAND(int8 CMD0,int8 CMD2,int8 CMD3,int8 CMD4,int8 CMD5,int8 CM
 //!               
 //!            }
          MISSION_OPERATING = 0;
+         output_high(PIN_C4);                                                    //give access back to COMM
          fprintf (PC, "Finish 0x24\r\n");    
       break;
       
@@ -1296,6 +1313,7 @@ void MULT_SPEC_COMMAND(int8 CMD0,int8 CMD2,int8 CMD3,int8 CMD4,int8 CMD5,int8 CM
          
          FWD_CMD_MBP(CMD0, CMD2, CMD3, CMD4, CMD5, CMD6, CMD7, CMD8);
          MISSION_OPERATING = 0;
+         output_high(PIN_C4);                                                    //give access back to COMM
          fprintf (PC, "Finish 0x25\r\n");
          
       break;
@@ -1316,7 +1334,7 @@ void MULT_SPEC_COMMAND(int8 CMD0,int8 CMD2,int8 CMD3,int8 CMD4,int8 CMD5,int8 CM
          output_high (PIN_A5); //SFM2 mission side access
          fprintf (PC, "Start 0x3E - Turn ON MULTSPEC CAM2 (MB2)\r\n") ;
          output_high(pin_F6); //Turn on DIO for MULTSPEC CAM2
-       
+         output_high(PIN_C4);                                                    //give access back to COMM
          fprintf (PC, "Finish 0x3E\r\n");
          
       break;
@@ -1335,7 +1353,7 @@ void MULT_SPEC_COMMAND(int8 CMD0,int8 CMD2,int8 CMD3,int8 CMD4,int8 CMD5,int8 CM
          fprintf (PC, "Start 0x30 - Turn OFF MULTSPEC CAM2 (MB2)\r\n") ;
 
          output_low(pin_F6); //Turn off DIO for MULTSPEC CAM2
-
+         output_high(PIN_C4);                                                    //give access back to COMM
          fprintf (PC, "Finish 0x30\r\n");
          
          
@@ -1351,6 +1369,7 @@ void MULT_SPEC_COMMAND(int8 CMD0,int8 CMD2,int8 CMD3,int8 CMD4,int8 CMD5,int8 CM
          output_high (PIN_A5); //SFM2 mission side access
          fprintf (PC, "Start 0x21 - Real time uplink MULTSPEC CAM1\r\n") ;
          FWD_CMD_MBP(CMD0, CMD2, CMD3, CMD4, CMD5, CMD6, CMD7, CMD8);
+         output_high(PIN_C4);                                                    //give access back to COMM
          fprintf (PC, "Finish 0x21\r\n");
          
       break;
@@ -1389,6 +1408,7 @@ void MULT_SPEC_COMMAND(int8 CMD0,int8 CMD2,int8 CMD3,int8 CMD4,int8 CMD5,int8 CM
             MULTSPEC2_DATA[l] = 0;
          }
          fprintf(PC,"\r\n");
+         output_high(PIN_C4);                                                    //give access back to COMM
          fprintf (PC, "Finish 0x32\r\n");
       break;
       
@@ -1407,7 +1427,7 @@ void MULT_SPEC_COMMAND(int8 CMD0,int8 CMD2,int8 CMD3,int8 CMD4,int8 CMD5,int8 CM
          output_high (PIN_A5); //SFM2 mission side access
          
          FWD_CMD_MBP(CMD0, CMD2, CMD3, CMD4, CMD5, CMD6, CMD7, CMD8);
-         
+         output_high(PIN_C4);                                                    //give access back to COMM
          fprintf (PC, "Finish 0x33\r\n");
       break;
       
@@ -1452,6 +1472,7 @@ void MULT_SPEC_COMMAND(int8 CMD0,int8 CMD2,int8 CMD3,int8 CMD4,int8 CMD5,int8 CM
                }
          }
          result = 1;
+         output_high(PIN_C4);                                                    //give access back to COMM
          fprintf (PC, "Finish 0x34\r\n");    
       break;
       
@@ -1469,6 +1490,7 @@ void MULT_SPEC_COMMAND(int8 CMD0,int8 CMD2,int8 CMD3,int8 CMD4,int8 CMD5,int8 CM
          delay_ms(10000);
          output_low(pin_F7); //Turn off DIO for trigger
          output_low(pin_G2); //Turn off DIO for trigger
+         output_high(PIN_C4);                                                    //give access back to COMM
          fprintf (PC, "Finish 0x35\r\n");   
          
       break;
@@ -1485,6 +1507,7 @@ void MULT_SPEC_COMMAND(int8 CMD0,int8 CMD2,int8 CMD3,int8 CMD4,int8 CMD5,int8 CM
          output_high(pin_G3); //Turn on DIO for trigger MB2
          delay_ms(5000);
          output_high(pin_F6); //Turn on DIO for trigger MB1
+         output_high(PIN_C4);                                                    //give access back to COMM
          fprintf (PC, "Finish 0x36\r\n");
          
       break;
@@ -2817,14 +2840,6 @@ void SF_COMMAND_PC(int8 CMD0,int8 CMD2,int8 CMD3,int8 CMD4,int8 CMD5,int8 CMD6, 
       case 0x52:                                                                  //Real time downlink IMGCLS
          output_high (PIN_A5);
          fprintf (PC, "Start 0x52 - Real time downlink S&F\r\n") ;
-         if (MISSION_STATUS == 1)                                                 //Mission operating flag will only go high if MISSION STATUS is high. Mission STATUS is high when the mission turns on
-         {
-            MISSION_OPERATING = 1;
-         }
-         else
-         {
-            MISSION_OPERATING = 0;
-         }
          
          FWD_CMD_MBP(CMD0, CMD2, CMD3, CMD4, CMD5, CMD6, CMD7, CMD8);
          int8 counter_sf = 0;
@@ -2856,6 +2871,344 @@ void SF_COMMAND_PC(int8 CMD0,int8 CMD2,int8 CMD3,int8 CMD4,int8 CMD5,int8 CMD6, 
          }
 
       break;
+      
+      case 0x53:
+         
+         output_high (PIN_A5);
+         
+         fprintf (PC, "Start 0x53 - Transfer S&F Data\r\n") ;
+         MISSION_OPERATING = 1;
+     
+         FWD_CMD_MBP(CMD0, CMD2, CMD3, CMD4, CMD5, CMD6, CMD7, CMD8);
+         address_data[0] = 0x03<<24;
+         address_data[1] = 0x90<<16;
+         address_data[2] = 0x00<<8;
+         address_data[3] = 0x00;
+         address = address_data[0] + address_data[1] + address_data[2] + address_data[3];
+         
+         int8 PcktNo = CMD8;
+         int16 SFWD_DATAS = 0;
+         counter_sf = 0;
+         output_low(PIN_C4);
+         delay_ms(10);
+         sector_erase_SCF(address);
+         delay_ms(20);
+         
+         for(num_sf = 0; num_sf < 20000000; num_sf++)
+         {
+            if (kbhit(DC))
+            {
+               SFWD_DATAS = fgetc(DC);
+               fprintf(PC, "%x ", SFWD_DATAS);
+               WRITE_DATA_BYTE_SCF(address, SFWD_DATAS);
+               address++;
+               counter_sf++;
+               if (counter_sf == 81*PcktNo)
+               {
+                  break;
+               } 
+            }
+         }
+         
+//!         address = address-(81*PcktNo);
+//!         delay_ms(500);
+//!         fprintf (PC, "\r\nReading Data from SCFM\r\n") ;
+//!         
+//!         for(int32 w = 0; w < (81*pcktNo); w++)
+//!         {
+//!             int8 z = READ_DATA_BYTE_SCF(address);
+//!             fprintf(PC, "%x ", z);
+//!             address++;
+//!         }
+//!         fprintf (PC, "\r\nFinished  PC Display\r\n");
+//!         
+//!         delay_ms(1000);
+//!         address = address-(81*PcktNo);
+//!         fprintf (PC, "\r\n") ;
+         MISSION_OPERATING = 0;
+         fprintf (PC, "Finish 0x53 - Transfer S&F Data\r\n") ;
+      break;
+      
+      case 0x54:
+      
+         output_high (PIN_A5);
+         fprintf (PC, "Start 0x54 - Downlink SF Address Pointer S&F\r\n") ;
+         
+         FWD_CMD_MBP(CMD0, CMD2, CMD3, CMD4, CMD5, CMD6, CMD7, CMD8);
+         counter_sf = 0;
+         for(num_sf = 0; num_sf < 1500000; num_sf++)
+            {
+               if(kbhit(DC))
+               {
+                  SFWD_DATA[counter_sf] = fgetc(DC);
+                  counter_sf++;
+                  if(counter_sf == 81)
+                  {
+                     break;
+                  }
+               }
+            }
+         fprintf(PC,"Data Recieved: ");
+         for(sf = 0; sf < 81; sf++)
+         {
+            fprintf(PC,"%x, ",SFWD_DATA[sf]);
+         }
+         fprintf(PC,"\r\n");
+         
+         MISSION_OPERATING = 0;
+         
+         fprintf (PC, "Finish 0x54\r\n"); 
+         for(sf = 0; sf < 81; sf++)
+         {
+            SFWD_DATA[sf] = 0;
+         }
+      
+      break;
+      
+      case 0x55: //Turn on
+         
+         Turn_On_MBP();
+         output_high (PIN_A5); //SFM2 mission side access
+         fprintf (PC, "Start 0x55 - Erase S&F Flash\r\n") ;
+         delay_ms(1000);
+         MISSION_STATUS = 1;
+         MISSION_OPERATING = 0;
+         FWD_CMD_MBP(CMD0, CMD2, CMD3, CMD4, CMD5, CMD6, CMD7, CMD8);
+         missiontime = 0;
+         fprintf (PC, "Finish 0x55\r\n");
+         
+
+      break;
+      
+      
+   }
+}
+
+
+void SF_COMMAND(int8 CMD0,int8 CMD2,int8 CMD3,int8 CMD4,int8 CMD5,int8 CMD6, int8 CMD7, int8 CMD8)
+{
+   switch(CMD0)
+   {
+      
+      case 0x5E: //Turn on
+         
+         REPLY_TO_COM(0x66,0);
+         SAVE_SAT_LOG(CMD0, 0, CMD2);                                            //save reset data         
+         UPLINK_SUCCESS_S_FWD();                                                 //put uplink succes flag in high and store flags
+         ACK_for_COM[14] = 0x00;
+         
+         Turn_On_MBP();
+         output_high (PIN_A5); //SFM2 mission side access
+         fprintf (PC, "Start 0x5E - Turn ON S&F\r\n") ;
+         delay_ms(1000);
+         MISSION_STATUS = 1;
+         MISSION_OPERATING = 0;
+         FWD_CMD_MBP(CMD0, CMD2, CMD3, CMD4, CMD5, CMD6, CMD7, CMD8);
+         missiontime = 0;
+         output_high(PIN_C4);                                                    //give access back to COMM
+         fprintf (PC, "Finish 0x5E\r\n");
+         
+
+      break;
+      
+      case 0x50: //Turn off
+         
+         REPLY_TO_COM(0x66,0);
+         SAVE_SAT_LOG(CMD0, 0, CMD2);                                            //save reset data         
+         UPLINK_SUCCESS_S_FWD();                                                 //put uplink succes flag in high and store flags
+         ACK_for_COM[14] = 0x00;
+         
+         output_low (PIN_A5); //SFM2 mission side access
+         fprintf (PC, "Start 0x50 - Turn off S&F\r\n");
+         FWD_CMD_MBP(CMD0, CMD2, CMD3, CMD4, CMD5, CMD6, CMD7, CMD8);
+         MISSION_STATUS = 0;
+         MISSION_OPERATING = 0;
+         missiontime = 0;
+         output_high(PIN_C4);                                                    //give access back to COMM
+         fprintf (PC, "Finish 0x50\r\n"); 
+         
+      break;
+      
+      case 0x51:                                                                  //Real time uplink command
+
+         REPLY_TO_COM(0x66,0);
+         SAVE_SAT_LOG(CMD0, 0, CMD2);                                            //save reset data         
+         UPLINK_SUCCESS_S_FWD();                                                 //put uplink succes flag in high and store flags
+         ACK_for_COM[14] = 0x00;
+         
+         output_high (PIN_A5); //SFM2 mission side access
+         fprintf (PC, "Start 0x51 - Real time uplink S&F\r\n") ;
+         FWD_CMD_MBP(CMD0, CMD2, CMD3, CMD4, CMD5, CMD6, CMD7, CMD8);
+         output_high(PIN_C4);                                                    //give access back to COMM
+         fprintf (PC, "Finish 0x51\r\n"); 
+         
+      break;
+      
+      case 0x52:                                                                 //Real time downlink SF
+         
+         REPLY_TO_COM(0x66,0);
+         SAVE_SAT_LOG(CMD0, 0, CMD2);                                            //save reset data         
+         UPLINK_SUCCESS_S_FWD();                                                 //put uplink succes flag in high and store flags
+         ACK_for_COM[14] = 0x00;
+         output_high (PIN_A5);
+         fprintf (PC, "Start 0x52 - Real time downlink S&F\r\n") ;
+         MISSION_OPERATING = 1;
+         
+         FWD_CMD_MBP(CMD0, CMD2, CMD3, CMD4, CMD5, CMD6, CMD7, CMD8);
+         int8 counter_sf = 0;
+         for(int32 num_sf = 0; num_sf < 1500000; num_sf++)
+            {
+               if(kbhit(DC))
+               {
+                  SFWD_DATA[counter_sf] = fgetc(DC);
+                  counter_sf++;
+                  if(counter_sf == 81)
+                  {
+                     break;
+                  }
+               }
+            }
+         fprintf(PC,"Data Recieved: ");
+         for(int8 sf = 0; sf < 81; sf++)
+         {
+            fprintf(PC,"%x, ",SFWD_DATA[sf]);
+         }
+         fprintf(PC,"\r\n");
+         
+         MISSION_OPERATING = 0;
+         
+         fprintf (PC, "Finish 0x52\r\n"); 
+         for(sf = 0; sf < 81; sf++)
+         {
+            SFWD_DATA[sf] = 0;
+         }
+         output_high(PIN_C4);                                                    //give access back to COMM
+      break;
+      
+      case 0x53:
+         
+         REPLY_TO_COM(0x66,0);
+         SAVE_SAT_LOG(CMD0, 0, CMD2);                                            //save reset data         
+         UPLINK_SUCCESS_S_FWD();                                                 //put uplink succes flag in high and store flags
+         ACK_for_COM[14] = 0x00;
+         output_high (PIN_A5);
+         
+         fprintf (PC, "Start 0x53 - Transfer S&F Data\r\n") ;
+         MISSION_OPERATING = 1;
+     
+         FWD_CMD_MBP(CMD0, CMD2, CMD3, CMD4, CMD5, CMD6, CMD7, CMD8);
+         address_data[0] = 0x03<<24;
+         address_data[1] = 0x90<<16;
+         address_data[2] = 0x00<<8;
+         address_data[3] = 0x00;
+         address = address_data[0] + address_data[1] + address_data[2] + address_data[3];
+         
+         int8 PcktNo = CMD8;
+         int16 SFWD_DATAS = 0;
+         counter_sf = 0;
+         output_low(PIN_C4);
+         delay_ms(10);
+         sector_erase_SCF(address);
+         delay_ms(20);
+         
+         for(num_sf = 0; num_sf < 20000000; num_sf++)
+         {
+            if (kbhit(DC))
+            {
+               SFWD_DATAS = fgetc(DC);
+               fprintf(PC, "%x ", SFWD_DATAS);
+               WRITE_DATA_BYTE_SCF(address, SFWD_DATAS);
+               address++;
+               counter_sf++;
+               if (counter_sf == 81*PcktNo)
+               {
+                  break;
+               } 
+            }
+         }
+         
+//!         address = address-(81*PcktNo);
+//!         delay_ms(500);
+//!         fprintf (PC, "\r\nReading Data from SCFM\r\n") ;
+//!         
+//!         for(int32 w = 0; w < (81*pcktNo); w++)
+//!         {
+//!             int8 z = READ_DATA_BYTE_SCF(address);
+//!             fprintf(PC, "%x ", z);
+//!             address++;
+//!         }
+//!         fprintf (PC, "\r\nFinished  PC Display\r\n");
+//!         
+//!         delay_ms(1000);
+//!         address = address-(81*PcktNo);
+//!         fprintf (PC, "\r\n") ;
+         MISSION_OPERATING = 0;
+         output_high(PIN_C4);                                                    //give access back to COMM
+         fprintf (PC, "Finish 0x53 - Transfer S&F Data\r\n") ;
+      break;
+      
+      
+      case 0x54:
+         
+         REPLY_TO_COM(0x66,0);
+         SAVE_SAT_LOG(CMD0, 0, CMD2);                                            //save reset data         
+         UPLINK_SUCCESS_S_FWD();                                                 //put uplink succes flag in high and store flags
+         ACK_for_COM[14] = 0x00;
+         output_high (PIN_A5);
+         fprintf (PC, "Start 0x54 - Downlink SF Address Pointer S&F\r\n") ;
+         
+         FWD_CMD_MBP(CMD0, CMD2, CMD3, CMD4, CMD5, CMD6, CMD7, CMD8);
+         counter_sf = 0;
+         for(num_sf = 0; num_sf < 1500000; num_sf++)
+            {
+               if(kbhit(DC))
+               {
+                  SFWD_DATA[counter_sf] = fgetc(DC);
+                  counter_sf++;
+                  if(counter_sf == 81)
+                  {
+                     break;
+                  }
+               }
+            }
+         fprintf(PC,"Data Recieved: ");
+         for(sf = 0; sf < 81; sf++)
+         {
+            fprintf(PC,"%x, ",SFWD_DATA[sf]);
+         }
+         fprintf(PC,"\r\n");
+         
+         MISSION_OPERATING = 0;
+         output_high(PIN_C4);                                                    //give access back to COMM
+         fprintf (PC, "Finish 0x54\r\n"); 
+         for(sf = 0; sf < 81; sf++)
+         {
+            SFWD_DATA[sf] = 0;
+         }
+      
+      break;
+      
+      case 0x55: //Turn on
+         
+         REPLY_TO_COM(0x66,0);
+         SAVE_SAT_LOG(CMD0, 0, CMD2);                                            //save reset data         
+         UPLINK_SUCCESS_S_FWD();                                                 //put uplink succes flag in high and store flags
+         ACK_for_COM[14] = 0x00;
+         Turn_On_MBP();
+         output_high (PIN_A5); //SFM2 mission side access
+         fprintf (PC, "Start 0x55 - Erase S&F Flash\r\n") ;
+         
+         delay_ms(1000);
+         MISSION_STATUS = 1;
+         MISSION_OPERATING = 0;
+         FWD_CMD_MBP(CMD0, CMD2, CMD3, CMD4, CMD5, CMD6, CMD7, CMD8);
+         missiontime = 0;
+         output_high(PIN_C4);                                                    //give access back to COMM
+         fprintf (PC, "Finish 0x55\r\n");
+         
+
+      break;
+      
    }
 }
 
@@ -3062,7 +3415,13 @@ void EXECUTE_COMMAND_from_COMM(int8 CMD0,int8 CMD2,int8 CMD3,int8 CMD4,int8 CMD5
    if(command_ID == 0x50)
    {
       fprintf(PC,"S-FWD Command\r\n");
-      //SFWD_test();
+      SF_COMMAND(CMD0, CMD2, CMD3, CMD4, CMD5, CMD6, CMD7, CMD8); 
+   }
+   
+   if(command_ID == 0x60)
+   {
+      fprintf(PC,"APRS Command\r\n");
+      SF_COMMAND(CMD0, CMD2, CMD3, CMD4, CMD5, CMD6, CMD7, CMD8); 
    }
    
    if(command_ID == 0x80)
