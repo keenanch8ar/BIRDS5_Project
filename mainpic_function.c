@@ -870,9 +870,9 @@ void MAKE_CW1_FORMAT()
    CW_FORMAT[1] = HKDATA[45]<<4|HKDATA[46]>>4;                                   //battery current
    CW_FORMAT[2] = HKDATA[47];                                                    //battery temp
    
-//   CW_FORMAT[3] = CW_FORMAT[3];//0:CW1
+   CW_FORMAT[3] = CW_FORMAT[3];                                                  //0:CW1
 //   CW_FORMAT[3] = CW_FORMAT[3] + RESERVE_CHECK * 64;
-   CW_FORMAT[3] = CW_FORMAT[3] + OPERATION_MODE_VALUE(HKDATA[68]);              //96(=64+32-->0x01100000):nomal, 64(0x01000000):low, 16(0x00100000):safe
+   CW_FORMAT[3] = CW_FORMAT[3] + OPERATION_MODE_VALUE(HKDATA[68]);               //96(=64+32-->0x01100000):nomal, 64(0x01000000):low, 16(0x00100000):safe
    KILL_FLAG_FAB = (HKDATA[49] & 0x10)>>4;
    KILL_FLAG_MAIN = HKDATA[49] & 0x01;
    CW_FORMAT[3] = CW_FORMAT[3] + KILL_FLAG_MAIN * 16;
