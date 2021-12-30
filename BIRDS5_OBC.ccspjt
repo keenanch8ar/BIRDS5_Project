@@ -29,7 +29,7 @@ D1=
 V1=
 
 [ProjectLog]
-Days=77
+Days=78
 D1=06-07-2021
 D1_L=1
 D1_L1=[68611]Project Closed.
@@ -1633,6 +1633,12 @@ D77_L14=[64941]Project Opened.
 D77_L15=[65339]Started Editing.
 D77_L16=[65649]Stopped Editing.
 D77_L17=[84240]Project Closed.
+D78=30-12-2021
+D78_L=4
+D78_L1=[48701]Project Opened.
+D78_L2=[48724]Project Closed.
+D78_L3=[56142]Project Opened.
+D78_L4=[56189]Project Closed.
 
 [Opened Files]
 1=BIRDS5_OBC.c
@@ -1653,12 +1659,12 @@ t7=1
 t8=1
 9=analyze_commands.c
 t9=1
-Count=10
+Count=12
 10=reserve_function.c
 t10=1
 11=..\..\..\..\Program Files (x86)\PICC\Devices\18F67J94.h
 t11=1
-12=analyze_commands.c
+12=PIC18F67J94_registers.h
 t12=1
 
 [Directories]
