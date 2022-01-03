@@ -207,7 +207,9 @@ void input_reservation_COM()                                                    
    if(reserve_table[80] == 80)
    {
       fprintf(PC,"Reservation table is Full!\r\n\r\n");
-   }else{
+   }
+   else
+   {
       if(RESERVE_CHECK != 0x00)                                                  //if the table is in use
       {
          for(int num = 1; num < table_size - 6; num = num + 8)                   //check all command data placed in the table and update the time
@@ -222,30 +224,23 @@ void input_reservation_COM()                                                    
                }
             }
          }
-         reserve_table[table_num] = in_bffr_main[4];                             //input the data about mission content
-         reserve_table[table_num + 1] = in_bffr_main[5];                         //input data about time
-         reserve_table[table_num + 2] = in_bffr_main[6];                         //input the data about mission detail mode
-         reserve_table[table_num + 3] = in_bffr_main[7];                         //input address
-         reserve_table[table_num + 4] = in_bffr_main[8];                         //input address
-         reserve_table[table_num + 5] = in_bffr_main[9];                         //input address
-         reserve_table[table_num + 6] = in_bffr_main[10];                        //input address
-         reserve_table[table_num + 7] = in_bffr_main[11];                        //input packet number
+         reserve_table[table_num] = CMD_FROM_COMM[3];                             //input the data abou mission content
+         reserve_table[table_num + 1] = CMD_FROM_COMM[4];                         //input data about time
+         reserve_table[table_num + 2] = CMD_FROM_COMM[5];                         //input the data about mission detail mode
+         reserve_table[table_num + 3] = CMD_FROM_COMM[6];                         //input address
+         reserve_table[table_num + 4] = CMD_FROM_COMM[7];                         //input address
+         reserve_table[table_num + 5] = CMD_FROM_COMM[8];                         //input address
+         reserve_table[table_num + 6] = CMD_FROM_COMM[9];                        //input address
+         reserve_table[table_num + 7] = CMD_FROM_COMM[10];                        //input packet number
          if(RESERVE_MIN_FLAG != 0)                                               //RESERVE_MIN_FLAG = 0 --> no need to update the target flag
-         {
-            RESERVE_TARGET_FLAG = RESERVE_TARGET_FLAG - RESERVE_MIN_FLAG;
-            RESERVE_MIN_FLAG = 0;
-         }
-      }else{                                                                     //if first reservation
-         RESERVE_MIN_FLAG = 0;
-         RESERVE_SEC_FLAG = 0;
-         reserve_table[table_num] = in_bffr_main[4];                             //input the data about mission content
-         reserve_table[table_num + 1] = in_bffr_main[5];                         //input time data
-         reserve_table[table_num + 2] = in_bffr_main[6];                         //input the data about mission mode detail
-         reserve_table[table_num + 3] = in_bffr_main[7];                         //input address
-         reserve_table[table_num + 4] = in_bffr_main[8];                         //input address
-         reserve_table[table_num + 5] = in_bffr_main[9];                         //input address
-         reserve_table[table_num + 6] = in_bffr_main[10];                        //input address
-         reserve_table[table_num + 7] = in_bffr_main[11];                        //input packet number
+         reserve_table[table_num] = CMD_FROM_COMM[3];                             //input the data about mission content
+         reserve_table[table_num + 1] = CMD_FROM_COMM[4];                         //input data about time
+         reserve_table[table_num + 2] = CMD_FROM_COMM[5];                         //input the data about mission detail mode
+         reserve_table[table_num + 3] = CMD_FROM_COMM[6];                         //input address
+         reserve_table[table_num + 4] = CMD_FROM_COMM[7];                         //input address
+         reserve_table[table_num + 5] = CMD_FROM_COMM[8];                         //input address
+         reserve_table[table_num + 6] = CMD_FROM_COMM[9];                        //input address
+         reserve_table[table_num + 7] = CMD_FROM_COMM[10];                        //input packet number
       }
       //table_num = table_num + 3;
       //reserve_table[30] = table_num;
