@@ -40,7 +40,7 @@ D2_L2=[70832]Project Closed.
 D2_L3=[72287]Project Opened.
 D2_L4=[74572]Started Editing.
 D2_L5=[74632]Stopped Editing.
-TotalEdit=2274
+TotalEdit=2279
 TotalDebug=0
 D2_E=10
 D2_D=0
@@ -1642,9 +1642,13 @@ D78_L4=[56189]Project Closed.
 D78_L5=[67601]Project Opened.
 D78_L6=[68415]Project Closed.
 D79=03-01-2022
-D79_L=2
+D79_L=4
 D79_L1=[51965]Project Opened.
 D79_L2=[52124]Started Editing.
+D79_L3=[52708]Stopped Editing.
+D79_E=5
+D79_D=0
+D79_L4=[60269]Project Closed.
 
 [Opened Files]
 1=BIRDS5_OBC.c
