@@ -100,7 +100,7 @@ void SAVE_SAT_LOG(int8 data1, int8 data2, int8 data3)
       satellitelog[7] = data1;
       satellitelog[8] = data2;
       satellitelog[9] = data3;
-      satellitelog[10] = 0xef;                                                   //footer, fin del array
+      satellitelog[10] = 0xef;                                                   //footer, end of array
       
       output_low(PIN_A5);                                                        //CAM_MUX main side
       output_low(PIN_C4);                                                        //COM_MUX main side

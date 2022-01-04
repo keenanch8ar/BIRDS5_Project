@@ -321,7 +321,7 @@ void RESET_FLAG_DATA()
 }
 
 
-void READ_WRTITING_ADDRESS_LOCATION()                                            //load the variable ADD_INFO_ADDRESS, look for the data in OF, SCF, SMF and EEPROM (carga la variable ADD_INFO_ADDRESS, busca el dato en OF, SCF, SMF y EEPROM)
+void READ_WRITING_ADDRESS_LOCATION()                                            //load the variable ADD_INFO_ADDRESS, look for the data in OF, SCF, SMF and EEPROM (carga la variable ADD_INFO_ADDRESS, busca el dato en OF, SCF, SMF y EEPROM)
 {                                                                                
    int i;                                                                        //if you can't find it use the initial value (si no lo encuentra usa el valor inicial)
    int8 ad_location_bfr[4];
@@ -380,7 +380,7 @@ void READ_WRTITING_ADDRESS_LOCATION()                                           
 
 void CHANGE_ADDRESS_WRITING_LOCATION()                                           //change the writing address of address locations when 95,000 cycles are exceeded
 {
-   int32 AD_COUNTER = make32(READ_DATA_BYTE_OF(ADD_INFO_ADDRESS+37),READ_DATA_BYTE_OF(ADD_INFO_ADDRESS+38),READ_DATA_BYTE_OF(ADD_INFO_ADDRESS+39),READ_DATA_BYTE_OF(ADD_INFO_ADDRESS+40));//check counter value
+   int32 AD_COUNTER = make32(READ_DATA_BYTE_OF(ADD_INFO_ADDRESS+33),READ_DATA_BYTE_OF(ADD_INFO_ADDRESS+34),READ_DATA_BYTE_OF(ADD_INFO_ADDRESS+35),READ_DATA_BYTE_OF(ADD_INFO_ADDRESS+36));//check counter value
    fprintf(PC,"AD COUNTER:%lx\r\n",AD_COUNTER);
    if((AD_COUNTER > 95000) && (AD_COUNTER != 0xffffffff))
    {
@@ -440,7 +440,7 @@ void STORE_ADRESS_DATA_TO_FLASH()                                               
    fprintf(PC,"\r\nStoring Address Data in Flash\r\n");
    ADDRESS_WRITING_COUNTER++;                                                    //write counter in one address
    CHANGE_ADDRESS_WRITING_LOCATION();                                            //changes the address of the writing location if 95000 cycles are exceeded
-   sec_add_bfr[0] = FLAG_DATA_ADDRESS >> 24;                                     //se carga el array sec_add_bfr[] con los datos de las direcciones
+   sec_add_bfr[0] = FLAG_DATA_ADDRESS >> 24;                                     //the sec_add_bfr [] array is loaded with the address data
    sec_add_bfr[1] = FLAG_DATA_ADDRESS >> 16;
    sec_add_bfr[2] = FLAG_DATA_ADDRESS >> 8;
    sec_add_bfr[3] = FLAG_DATA_ADDRESS;
@@ -627,13 +627,16 @@ void CHECK_FLAG_INFO()                                                          
    //fprintf(PC,"%d",checksum);
    
    if((flag_info_bffr[0]!=0xff)&&(flag_info_bffr[FLAG_INFO_SIZE-1]!=0xff))       //if something stored
-   {
+   {  
+      fprintf(PC,"Flag Data: ");
       for(num = 0; num < FLAG_INFO_SIZE; num++)                                  //print the information of the flags
       {
          fprintf(PC,"%x",flag_info_bffr[num]);
       }
       MAKE_FLAG_INFO();                                                          //separate the state of the flags in each variable
-   }else{                                                                        //if nothing stored
+   }
+   else
+   {                                                                        //if nothing stored
       MAKE_FLAG_from_EEPROM();                                                   //read from the eeprom the state of the flags
    }
    checksum = 0;
@@ -653,14 +656,17 @@ void CHECK_ADDRESS_DATA()                                                       
    }
    
    if(checksum != 4)                                                             //if something stored (if last 4 byte were not 0xff)
-   {
+   {  
+      fprintf(PC,"Address Data: ");
       for(num = 0; num < FLASH_ADD_SIZE; num++)
       {
          fprintf(PC,"%x",sec_add_bfr[num]);                                      //prints the content of sec_add_bfr [] containing the addresses
       }
       fprintf(PC,"\r\n");
       MAKE_ADDRESS_DATA();                                                       //separates them into the variables corresponding to each address
-   }else{                                                                        //if there is nothing, check from SCF
+   }
+   else
+   {                                                                        //if there is nothing, check from SCF
       output_low(PIN_C4);
       TAKE_ADDRESS_DATA_FROM_SCF();
       output_high(PIN_C4);
@@ -718,7 +724,8 @@ void CHECK_ADDRESS_DATA()                                                       
 
 void MEMORY_ERASE(int8 CMD1, int8 CMD2, int8 CMD3)
 {
-   if (CMD1 == 0xAA && CMD2 == 0xBB && CMD3 == 0xCC)
+   if (CMD1 == 0xAA && CMD2 == 0xBB && CMD3 == 0xCC)                             //Unnecesarily convolouted as sometimes the flash erase will take forever or not at all so it is
+                                                                                 //broken into steps, usually takes ~5 minutes
    {
       fprintf(PC,"FLASH MEMORY ERASE START\r\n");
       

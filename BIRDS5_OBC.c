@@ -96,11 +96,12 @@ void settings()
    setup_timer_0(RTCC_INTERNAL | RTCC_DIV_256 | RTCC_8_BIT);                     //Config TMR0 interrupt, internal clock, prescaler 256, clock/counter 8bit
    set_timer0(0);                                                                //this sets timer0 register to 0
    
-   READ_WRTITING_ADDRESS_LOCATION();                                             //save in ADD_INFO_ADDRESS with address info location
+   READ_WRITING_ADDRESS_LOCATION();                                             //save in ADD_INFO_ADDRESS with address info location
    RESERVE_CHECK = 0;                                                            //flag that indicates if the reservation table is used, set to 0 to indicate false
    RESET_DATA = 0;                                                               //position indicator within reset_data vector
  
    CHECK_FLAG_INFO();                                                            //prints the state of the flags and separates them in each corresponding variable
+   fprintf(PC,"\r\n");
    CHECK_ADDRESS_DATA();                                                         //prints the address data and separates it into each corresponding variable
    
    BC_SETUP();                                                                   //configuration of the digital analog converter for temperature sensor reading
@@ -156,10 +157,9 @@ void main()
          fprintf(PC,"\r\n***NORMAL SAMPLING HOUSEKEEPING DATA COLLECTION***\r\n");
          FAB_TEST_OPERATION();
          COM_DATA = 0;
-         if(MISSION_STATUS == 0)
-         {
-            STORE_ADRESS_DATA_TO_FLASH();                                           //for store the address info
-         }
+         
+         STORE_ADRESS_DATA_TO_FLASH();                                           //for store the address info
+
          fprintf(PC,"CW:");
          for(int i = 0; i < 4; i++)                                              //show CW format
          {

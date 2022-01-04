@@ -565,7 +565,7 @@ void MAIN_COMMAND(int8 CMD0,int8 CMD2,int8 CMD3,int8 CMD4,int8 CMD5,int8 CMD6, i
          TRANSFER_DATA_NBYTE_TOPC_SMF(address, packet);
          delay_ms(1000);
          fprintf (PC, "From OF:\r\n");
-         sector_erase_SCF(address);
+         sector_erase_OF(address);
          TRANSFER_DATA_NBYTE_SMFtoOF(address, address, packet);
          delay_ms(1000);
          TRANSFER_DATA_NBYTE_TOPC_OF(address, packet);
@@ -1024,7 +1024,7 @@ void MAIN_COMMAND_PC(int8 CMD0,int8 CMD2,int8 CMD3,int8 CMD4,int8 CMD5,int8 CMD6
          TRANSFER_DATA_NBYTE_TOPC_SMF(address, packet);
          delay_ms(1000);
          fprintf (PC, "From OF:\r\n");
-         sector_erase_SCF(address);
+         sector_erase_OF(address);
          TRANSFER_DATA_NBYTE_SMFtoOF(address, address, packet);
          delay_ms(1000);
          TRANSFER_DATA_NBYTE_TOPC_OF(address, packet);
@@ -1064,7 +1064,7 @@ void MAIN_COMMAND_PC(int8 CMD0,int8 CMD2,int8 CMD3,int8 CMD4,int8 CMD5,int8 CMD6
          address_data[1] = CMD3<<16;
          address_data[2] = CMD4<<8;
          address_data[3] = CMD5;
-         address = address_data[0] + address_data[1] + address_data[2] + address_data[3];
+         address = address_data[0] + address_data[1] + address_data[2] + address_data[3]; //TODO: remove any PC commands from COMM
          
          packet_data[0] = CMD6<<8;
          packet_data[1] = CMD7;
@@ -1155,6 +1155,7 @@ void MULT_SPEC_COMMAND(int8 CMD0,int8 CMD2,int8 CMD3,int8 CMD4,int8 CMD5,int8 CM
          MISSION_STATUS = 0;
          MISSION_OPERATING = 0;
          missiontime = 0;
+         output_low (PIN_A5);                                                    //SFM2 main side access
          output_high(PIN_C4);                                                    //give access back to COMM
          fprintf (PC, "Finish 0x20\r\n");
          
@@ -1168,18 +1169,10 @@ void MULT_SPEC_COMMAND(int8 CMD0,int8 CMD2,int8 CMD3,int8 CMD4,int8 CMD5,int8 CM
          UPLINK_SUCCESS_MULT_CAM();                                              //put uplink succes flag in high and store flags
          ACK_for_COM[14] = 0x00;
          
-         output_high (PIN_A5); //SFM2 mission side access
+         output_high (PIN_A5);                                                  //SFM2 mission side access
          fprintf (PC, "Start 0x21 - Real time uplink MULTSPEC CAM1\r\n") ;
-         if (MISSION_STATUS == 1)
-         {
-            MISSION_OPERATING = 1;
-         }
-         else
-         {
-            MISSION_OPERATING = 0;
-         }
-         FWD_CMD_MBP(CMD0, CMD2, CMD3, CMD4, CMD5, CMD6, CMD7, CMD8);
          MISSION_OPERATING = 0;
+         FWD_CMD_MBP(CMD0, CMD2, CMD3, CMD4, CMD5, CMD6, CMD7, CMD8);
          output_high(PIN_C4);                                                    //give access back to COMM
          fprintf (PC, "Finish 0x21\r\n");
 
@@ -1195,29 +1188,22 @@ void MULT_SPEC_COMMAND(int8 CMD0,int8 CMD2,int8 CMD3,int8 CMD4,int8 CMD5,int8 CM
          
          fprintf (PC, "Start 0x22 - Request MULT-SPEC MB1 Downlink Data\r\n") ;
          output_high (PIN_A5); //SFM2 mission side access
-         if (MISSION_STATUS == 1)                                                 //Mission operating flag will only go high if MISSION STATUS is high. Mission STATUS is high when the mission turns on
-         {
-            MISSION_OPERATING = 1;
-         }
-         else
-         {
-            MISSION_OPERATING = 0;
-         }
          FWD_CMD_MBP(CMD0, CMD2, CMD3, CMD4, CMD5, CMD6, CMD7, CMD8);
-         
+         MISSION_OPERATING = 1;
          int8 counter = 0;
          for(int32 num = 0; num < 1500000; num++)
+         {
+            if(kbhit(DC))
             {
-               if(kbhit(DC))
+               MULTSPEC1_DATA[counter] = fgetc(DC);
+               counter++;
+               if(counter == 81)
                {
-                  MULTSPEC1_DATA[counter] = fgetc(DC);
-                  counter++;
-                  if(counter == 81)
-                  {
-                     break;
-                  }
+                  break;
                }
             }
+         }
+         
          fprintf(PC,"Data Recieved: ");
          for(int l = 0; l < 81; l++)
          {
@@ -1225,11 +1211,12 @@ void MULT_SPEC_COMMAND(int8 CMD0,int8 CMD2,int8 CMD3,int8 CMD4,int8 CMD5,int8 CM
          }
          fprintf(PC,"\r\n");
          fprintf (PC, "Finish 0x22\r\n");
+         
          for(l = 0; l < 81; l++)
          {
             MULTSPEC1_DATA[l] = 0;
          }
-         output_high(PIN_C4);                                                    //give access back to COMM
+         
          MISSION_OPERATING = 0;
          
       break;
@@ -1247,21 +1234,35 @@ void MULT_SPEC_COMMAND(int8 CMD0,int8 CMD2,int8 CMD3,int8 CMD4,int8 CMD5,int8 CM
          ACK_for_COM[14] = 0x00;
          
          fprintf (PC, "Start 0x23\r\n") ;
-         if (MISSION_STATUS == 1)                                                 //Mission operating flag will only go high if MISSION STATUS is high. Mission STATUS is high when the mission turns on
+         output_high (PIN_A5); //SFM2 mission side access
+         FWD_CMD_MBP(CMD0, CMD2, CMD3, CMD4, CMD5, CMD6, CMD7, CMD8);
+         
+         for(num = 0; num < 1000000; num++)
+         {
+            if(kbhit(DC))
+            {
+               Mission_check_flag = fgetc(DC);
+               break;
+            }
+         }
+         
+         fprintf(PC,"\r\nMission Check Flag:%lx\r\n",(int8)Mission_check_flag);
+         if (Mission_check_flag == 0x23)
          {
             MISSION_OPERATING = 1;
+            fprintf (PC, "Mission operating\r\n");
+            
          }
          else
          {
             MISSION_OPERATING = 0;
+            fprintf (PC, "Mission NOT operating\r\n");
          }
-         output_high (PIN_A5); //SFM2 mission side access
-         
-         FWD_CMD_MBP(CMD0, CMD2, CMD3, CMD4, CMD5, CMD6, CMD7, CMD8);
-         
-         MISSION_OPERATING = 0;
+         Mission_check_flag = 0;
          output_high(PIN_C4);                                                    //give access back to COMM
+      
          fprintf (PC, "Finish 0x23\r\n");
+         
       break;
       
       
@@ -1273,27 +1274,38 @@ void MULT_SPEC_COMMAND(int8 CMD0,int8 CMD2,int8 CMD3,int8 CMD4,int8 CMD5,int8 CM
          ACK_for_COM[14] = 0x00;
          
          fprintf (PC, "Start 0x24\r\n") ;
-         output_low (PIN_A5);
-         if (MISSION_STATUS == 1)                                                 //Mission operating flag will only go high if MISSION STATUS is high. Mission STATUS is high when the mission turns on
+         output_high (PIN_A5); //SFM2 mission side access
+         FWD_CMD_MBP(CMD0, CMD2, CMD3, CMD4, CMD5, CMD6, CMD7, CMD8);
+         
+         for(num = 0; num < 1000000; num++)
+         {
+            if(kbhit(DC))
+            {
+               Mission_check_flag = fgetc(DC);
+               break;
+            }
+         }
+         
+         fprintf(PC,"\r\nMission Check Flag:%lx\r\n",(int8)Mission_check_flag);
+         if (Mission_check_flag == 0x24)
          {
             MISSION_OPERATING = 1;
+            fprintf (PC, "Mission operating\r\n");
+            
          }
          else
          {
             MISSION_OPERATING = 0;
+            fprintf (PC, "Mission NOT operating\r\n");
          }
-         RESERVE_TARGET_FLAG = 3;
-//!            if(RESERVE_MIN_FLAG >= RESERVE_TARGET_FLAG) 
-//!            {
-//!               
-//!            }
-         MISSION_OPERATING = 0;
+         Mission_check_flag = 0;
          output_high(PIN_C4);                                                    //give access back to COMM
-         fprintf (PC, "Finish 0x24\r\n");    
+         fprintf (PC, "Finish 0x24\r\n"); 
+         
       break;
       
       
-      case 0x25: //Copy specific images based on selected thumbnails selected from GS. Forwward all mission command data (8 bytes) to MB, MB will send command data (specific image name) to MB1 RPI
+      case 0x25:                                                                 //Trigger Command
          
          REPLY_TO_COM(0x66,0);
          SAVE_SAT_LOG(CMD0, 0, CMD2);                                            //save reset data         
@@ -1301,23 +1313,168 @@ void MULT_SPEC_COMMAND(int8 CMD0,int8 CMD2,int8 CMD3,int8 CMD4,int8 CMD5,int8 CM
          ACK_for_COM[14] = 0x00;
          
          output_high (PIN_A5); //SFM2 mission side access
-         fprintf (PC, "Start 0x25\r\n") ;
-         if (MISSION_STATUS == 1)                                                 //Mission operating flag will only go high if MISSION STATUS is high. Mission STATUS is high when the mission turns on
+         fprintf (PC, "Start 0x25\r\n");
+         output_high(pin_F7); //Turn on DIO for trigger MB2
+         output_high(pin_G2); //Turn on DIO for trigger MB1
+         delay_ms(10000);
+         output_low(pin_F7); //Turn off DIO for trigger
+         output_low(pin_G2); //Turn off DIO for trigger
+         output_high(PIN_C4);                                                    //give access back to COMM
+         fprintf (PC, "Finish 0x25\r\n");  
+         
+      break;
+      
+      case 0x26: 
+      
+         REPLY_TO_COM(0x66,0);
+         SAVE_SAT_LOG(CMD0, 0, CMD2);                                            //save reset data         
+         UPLINK_SUCCESS_MULT_CAM();                                              //put uplink succes flag in high and store flags
+         ACK_for_COM[14] = 0x00;
+         
+         fprintf (PC, "Start 0x26\r\n") ;
+         output_high (PIN_A5); //SFM2 mission side access
+         FWD_CMD_MBP(CMD0, CMD2, CMD3, CMD4, CMD5, CMD6, CMD7, CMD8);
+         
+         for(num = 0; num < 1000000; num++)
+         {
+            if(kbhit(DC))
+            {
+               Mission_check_flag = fgetc(DC);
+               break;
+            }
+         }
+         
+         fprintf(PC,"\r\nMission Check Flag:%lx\r\n",(int8)Mission_check_flag);
+         if (Mission_check_flag == 0x26)
          {
             MISSION_OPERATING = 1;
+            fprintf (PC, "Mission operating\r\n");
+            
          }
          else
          {
             MISSION_OPERATING = 0;
+            fprintf (PC, "Mission NOT operating\r\n");
+         }
+         Mission_check_flag = 0;
+         output_high(PIN_C4);                                                    //give access back to COMM
+         fprintf (PC, "Finish 0x26\r\n");
+         
+      break;
+
+      case 0x27:
+         
+         REPLY_TO_COM(0x66,0);
+         SAVE_SAT_LOG(CMD0, 0, CMD2);                                            //save reset data         
+         UPLINK_SUCCESS_MULT_CAM();                                              //put uplink succes flag in high and store flags
+         ACK_for_COM[14] = 0x00;
+         
+         fprintf (PC, "Start 0x27\r\n") ;
+         output_high (PIN_A5); //SFM2 mission side access
+         FWD_CMD_MBP(CMD0, CMD2, CMD3, CMD4, CMD5, CMD6, CMD7, CMD8);
+         
+         for(num = 0; num < 1000000; num++)
+         {
+            if(kbhit(DC))
+            {
+               Mission_check_flag = fgetc(DC);
+               break;
+            }
          }
          
-         FWD_CMD_MBP(CMD0, CMD2, CMD3, CMD4, CMD5, CMD6, CMD7, CMD8);
-         MISSION_OPERATING = 0;
-         output_high(PIN_C4);                                                    //give access back to COMM
-         fprintf (PC, "Finish 0x25\r\n");
+         fprintf(PC,"\r\nMission Check Flag:%lx\r\n",(int8)Mission_check_flag);
+         if (Mission_check_flag == 0x27)
+         {
+            MISSION_OPERATING = 1;
+            fprintf (PC, "Mission operating\r\n");
+            
+         }
+         else
+         {
+            MISSION_OPERATING = 0;
+            fprintf (PC, "Mission NOT operating\r\n");
+         }
+         Mission_check_flag = 0;
+         output_high(PIN_C4);                                                    //give access back to COMM     
+         fprintf (PC, "Finish 0x27\r\n");
          
       break;
       
+      case 0x28: 
+         
+         REPLY_TO_COM(0x66,0);
+         SAVE_SAT_LOG(CMD0, 0, CMD2);                                            //save reset data         
+         UPLINK_SUCCESS_MULT_CAM();                                              //put uplink succes flag in high and store flags
+         ACK_for_COM[14] = 0x00;
+         
+         fprintf (PC, "Start 0x28\r\n") ;
+         output_high (PIN_A5); //SFM2 mission side access
+         FWD_CMD_MBP(CMD0, CMD2, CMD3, CMD4, CMD5, CMD6, CMD7, CMD8);
+         
+         for(num = 0; num < 1000000; num++)
+         {
+            if(kbhit(DC))
+            {
+               Mission_check_flag = fgetc(DC);
+               break;
+            }
+         }
+         
+         fprintf(PC,"\r\nMission Check Flag:%lx\r\n",(int8)Mission_check_flag);
+         if (Mission_check_flag == 0x28)
+         {
+            MISSION_OPERATING = 1;
+            fprintf (PC, "Mission operating\r\n");
+            
+         }
+         else
+         {
+            MISSION_OPERATING = 0;
+            fprintf (PC, "Mission NOT operating\r\n");
+         }
+         Mission_check_flag = 0;
+         output_high(PIN_C4);                                                    //give access back to COMM     
+         fprintf (PC, "Finish 0x28\r\n");
+         
+      break;
+      
+      case 0x29: 
+         
+         REPLY_TO_COM(0x66,0);
+         SAVE_SAT_LOG(CMD0, 0, CMD2);                                            //save reset data         
+         UPLINK_SUCCESS_MULT_CAM();                                              //put uplink succes flag in high and store flags
+         ACK_for_COM[14] = 0x00;
+         
+         fprintf (PC, "Start 0x29\r\n") ;
+         output_high (PIN_A5); //SFM2 mission side access
+         FWD_CMD_MBP(CMD0, CMD2, CMD3, CMD4, CMD5, CMD6, CMD7, CMD8);
+         
+         for(num = 0; num < 1000000; num++)
+         {
+            if(kbhit(DC))
+            {
+               Mission_check_flag = fgetc(DC);
+               break;
+            }
+         }
+         
+         fprintf(PC,"\r\nMission Check Flag:%lx\r\n",(int8)Mission_check_flag);
+         if (Mission_check_flag == 0x29)
+         {
+            MISSION_OPERATING = 1;
+            fprintf (PC, "Mission operating\r\n");
+            
+         }
+         else
+         {
+            MISSION_OPERATING = 0;
+            fprintf (PC, "Mission NOT operating\r\n");
+         }
+         Mission_check_flag = 0;
+         output_high(PIN_C4);                                                    //give access back to COMM      
+         fprintf (PC, "Finish 0x29\r\n");
+         
+      break;
       
 ////////////////////////////FOR CAM2 RPi on MB2////////////////////////////////
       case 0x3E: // Turn on MULTSPEC CAM2 (MB2)
@@ -1346,13 +1503,12 @@ void MULT_SPEC_COMMAND(int8 CMD0,int8 CMD2,int8 CMD3,int8 CMD4,int8 CMD5,int8 CM
          UPLINK_SUCCESS_MULT_CAM();                                              //put uplink succes flag in high and store flags
          ACK_for_COM[14] = 0x00;
          
-         MISSION_STATUS = 1;
+         MISSION_STATUS = 0;
          MISSION_OPERATING = 0;
          missiontime = 0;
-         output_high (PIN_A5); //SFM2 mission side access
+         output_low(pin_F6);                                                     //Turn off DIO for MULTSPEC CAM2
          fprintf (PC, "Start 0x30 - Turn OFF MULTSPEC CAM2 (MB2)\r\n") ;
-
-         output_low(pin_F6); //Turn off DIO for MULTSPEC CAM2
+         output_low (PIN_A5);                                                    //SFM2 main side access
          output_high(PIN_C4);                                                    //give access back to COMM
          fprintf (PC, "Finish 0x30\r\n");
          
@@ -1367,10 +1523,10 @@ void MULT_SPEC_COMMAND(int8 CMD0,int8 CMD2,int8 CMD3,int8 CMD4,int8 CMD5,int8 CM
          ACK_for_COM[14] = 0x00;
          
          output_high (PIN_A5); //SFM2 mission side access
-         fprintf (PC, "Start 0x21 - Real time uplink MULTSPEC CAM1\r\n") ;
+         fprintf (PC, "Start 0x31 - Real time uplink MULTSPEC CAM2\r\n") ;
          FWD_CMD_MBP(CMD0, CMD2, CMD3, CMD4, CMD5, CMD6, CMD7, CMD8);
          output_high(PIN_C4);                                                    //give access back to COMM
-         fprintf (PC, "Finish 0x21\r\n");
+         fprintf (PC, "Finish 0x31\r\n");
          
       break;
       
@@ -1380,7 +1536,7 @@ void MULT_SPEC_COMMAND(int8 CMD0,int8 CMD2,int8 CMD3,int8 CMD4,int8 CMD5,int8 CM
          SAVE_SAT_LOG(CMD0, 0, CMD2);                                            //save reset data         
          UPLINK_SUCCESS_MULT_CAM();                                              //put uplink succes flag in high and store flags
          ACK_for_COM[14] = 0x00;
-         
+         MISSION_OPERATING = 1;
          fprintf (PC, "Start 0x32 - Request MULT-SPEC MB2 Downlink Data\r\n") ;
          output_high (PIN_A5); //SFM2 mission side access
          FWD_CMD_MBP(CMD0, CMD2, CMD3, CMD4, CMD5, CMD6, CMD7, CMD8);
@@ -1409,7 +1565,9 @@ void MULT_SPEC_COMMAND(int8 CMD0,int8 CMD2,int8 CMD3,int8 CMD4,int8 CMD5,int8 CM
          }
          fprintf(PC,"\r\n");
          output_high(PIN_C4);                                                    //give access back to COMM
+         MISSION_OPERATING = 0;
          fprintf (PC, "Finish 0x32\r\n");
+         
       break;
       
       case 0x33: 
@@ -1423,57 +1581,72 @@ void MULT_SPEC_COMMAND(int8 CMD0,int8 CMD2,int8 CMD3,int8 CMD4,int8 CMD5,int8 CM
          ACK_for_COM[14] = 0x00;
          
          fprintf (PC, "Start 0x33\r\n") ;
-         
          output_high (PIN_A5); //SFM2 mission side access
-         
          FWD_CMD_MBP(CMD0, CMD2, CMD3, CMD4, CMD5, CMD6, CMD7, CMD8);
+         
+         for(num = 0; num < 1000000; num++)
+         {
+            if(kbhit(DC))
+            {
+               Mission_check_flag = fgetc(DC);
+               break;
+            }
+         }
+         
+         fprintf(PC,"\r\nMission Check Flag:%lx\r\n",(int8)Mission_check_flag);
+         if (Mission_check_flag == 0x33)
+         {
+            MISSION_OPERATING = 1;
+            fprintf (PC, "Mission operating\r\n");
+            
+         }
+         else
+         {
+            MISSION_OPERATING = 0;
+            fprintf (PC, "Mission NOT operating\r\n");
+         }
+         Mission_check_flag = 0;
          output_high(PIN_C4);                                                    //give access back to COMM
          fprintf (PC, "Finish 0x33\r\n");
+         
       break;
       
-      case 0x34: //Turn on CAM1 RPi trigger at specific time from RESET_PIC time information
-         
+      case 0x34: 
+      
          REPLY_TO_COM(0x66,0);
          SAVE_SAT_LOG(CMD0, 0, CMD2);                                            //save reset data         
          UPLINK_SUCCESS_MULT_CAM();                                              //put uplink succes flag in high and store flags
          ACK_for_COM[14] = 0x00;
          
          fprintf (PC, "Start 0x34\r\n") ;
-         output_low (PIN_A5);
+         output_high (PIN_A5);                                                   //SFM2 mission side access   
+         FWD_CMD_MBP(CMD0, CMD2, CMD3, CMD4, CMD5, CMD6, CMD7, CMD8);
          
-         //read command
-         command_time_data[0] = command[1];
-         command_time_data[1] = command[2];
-         command_time_data[2] = command[3];
-         command_time_data[3] = command[4];
-         command_time_data[4] = command[5];
-         
-         //read time from reset_pic and compare command time and reset pic time every ten seconds
-         
-         for (j = 0; j<9; j++)
+         for(num = 0; num < 1000000; num++)
          {
-            //GET_TIME();
-            delay_ms(20);
-            result = trigger_time_data % command_time_data;
-         
-            if (result = 0)            
-               {
-                  fprintf(PC, "Trigger time occurred\r\n");
-                  //output_high(); Turn on DIO for MULTSPEC CAM1
-                  //delay_ms(10000);
-                  //output_low() Turn off DIO for MULTSPEC CAM1
-               }
-               
-            else
-
-               {
-                  fprintf(PC, "No trigger\r\n");
-                  delay_ms(5000);
-               }
+            if(kbhit(DC))
+            {
+               Mission_check_flag = fgetc(DC);
+               break;
+            }
          }
-         result = 1;
-         output_high(PIN_C4);                                                    //give access back to COMM
+         
+         fprintf(PC,"\r\nMission Check Flag:%lx\r\n",(int8)Mission_check_flag);
+         if (Mission_check_flag == 0x34)
+         {
+            MISSION_OPERATING = 1;
+            fprintf (PC, "Mission operating\r\n");
+            
+         }
+         else
+         {
+            MISSION_OPERATING = 0;
+            fprintf (PC, "Mission NOT operating\r\n");
+         }
+         Mission_check_flag = 0;
+         output_high(PIN_C4);                                                    //give access back to COMM         
          fprintf (PC, "Finish 0x34\r\n");    
+         
       break;
       
       case 0x35: //Turn on CAM1 and CAM2 RPi trigger
@@ -1484,32 +1657,164 @@ void MULT_SPEC_COMMAND(int8 CMD0,int8 CMD2,int8 CMD3,int8 CMD4,int8 CMD5,int8 CM
          ACK_for_COM[14] = 0x00;
          
          output_high (PIN_A5); //SFM2 mission side access
-         fprintf (PC, "Start 0x35\r\n") ;
+         fprintf (PC, "Start 0x35\r\n");
          output_high(pin_F7); //Turn on DIO for trigger MB2
          output_high(pin_G2); //Turn on DIO for trigger MB1
          delay_ms(10000);
          output_low(pin_F7); //Turn off DIO for trigger
          output_low(pin_G2); //Turn off DIO for trigger
-         output_high(PIN_C4);                                                    //give access back to COMM
-         fprintf (PC, "Finish 0x35\r\n");   
+         output_high(PIN_C4);                                                    //give access back to COMM         
+         fprintf (PC, "Finish 0x35\r\n");
          
       break;
       
       case 0x36: //Turn on CAM1 and CAM2 RPi
-         
+
          REPLY_TO_COM(0x66,0);
          SAVE_SAT_LOG(CMD0, 0, CMD2);                                            //save reset data         
          UPLINK_SUCCESS_MULT_CAM();                                              //put uplink succes flag in high and store flags
          ACK_for_COM[14] = 0x00;
          
-         output_high (PIN_A5); //SFM2 mission side access
-         fprintf (PC, "Start 0x36\r\n") ;
-         output_high(pin_G3); //Turn on DIO for trigger MB2
-         delay_ms(5000);
-         output_high(pin_F6); //Turn on DIO for trigger MB1
-         output_high(PIN_C4);                                                    //give access back to COMM
+         fprintf (PC, "Start 0x36\r\n");   
+         output_high (PIN_A5);                                                   //SFM2 mission side access
+         FWD_CMD_MBP(CMD0, CMD2, CMD3, CMD4, CMD5, CMD6, CMD7, CMD8);
+         
+         for(num = 0; num < 1000000; num++)
+         {
+            if(kbhit(DC))
+            {
+               Mission_check_flag = fgetc(DC);
+               break;
+            }
+         }
+         
+         fprintf(PC,"\r\nMission Check Flag:%lx\r\n",(int8)Mission_check_flag);
+         if (Mission_check_flag == 0x36)
+         {
+            MISSION_OPERATING = 1;
+            fprintf (PC, "Mission operating\r\n");  
+         }
+         else
+         {
+            MISSION_OPERATING = 0;
+            fprintf (PC, "Mission NOT operating\r\n");
+         }
+         Mission_check_flag = 0;
+         output_high(PIN_C4);                                                    //give access back to COMM      
          fprintf (PC, "Finish 0x36\r\n");
          
+      break;
+      
+      case 0x37:
+
+         REPLY_TO_COM(0x66,0);
+         SAVE_SAT_LOG(CMD0, 0, CMD2);                                            //save reset data         
+         UPLINK_SUCCESS_MULT_CAM();                                              //put uplink succes flag in high and store flags
+         ACK_for_COM[14] = 0x00;
+         
+         fprintf (PC, "Start 0x37\r\n");
+         output_high (PIN_A5);                                                   //SFM2 mission side access 
+         FWD_CMD_MBP(CMD0, CMD2, CMD3, CMD4, CMD5, CMD6, CMD7, CMD8);
+         
+         for(num = 0; num < 1000000; num++)
+         {
+            if(kbhit(DC))
+            {
+               Mission_check_flag = fgetc(DC);
+               break;
+            }
+         }
+         
+         fprintf(PC,"\r\nMission Check Flag:%lx\r\n",(int8)Mission_check_flag);
+         if (Mission_check_flag == 0x37)
+         {
+            MISSION_OPERATING = 1;
+            fprintf (PC, "Mission operating\r\n");
+            
+         }
+         else
+         {
+            MISSION_OPERATING = 0;
+            fprintf (PC, "Mission NOT operating\r\n");
+         }
+         Mission_check_flag = 0;
+         output_high(PIN_C4);                                                    //give access back to COMM 
+         fprintf (PC, "Finish 0x37\r\n");
+           
+      break;
+      
+      case 0x38:
+
+         REPLY_TO_COM(0x66,0);
+         SAVE_SAT_LOG(CMD0, 0, CMD2);                                            //save reset data         
+         UPLINK_SUCCESS_MULT_CAM();                                              //put uplink succes flag in high and store flags
+         ACK_for_COM[14] = 0x00;
+         
+         fprintf (PC, "Start 0x38\r\n");
+         output_high (PIN_A5);                                                   //SFM2 mission side access  
+         FWD_CMD_MBP(CMD0, CMD2, CMD3, CMD4, CMD5, CMD6, CMD7, CMD8);
+         
+         for(num = 0; num < 1000000; num++)
+         {
+            if(kbhit(DC))
+            {
+               Mission_check_flag = fgetc(DC);
+               break;
+            }
+         }
+         fprintf(PC,"\r\nMission Check Flag:%lx\r\n",(int8)Mission_check_flag);
+         if (Mission_check_flag == 0x38)
+         {
+            MISSION_OPERATING = 1;
+            fprintf (PC, "Mission operating\r\n");
+            
+         }
+         else
+         {
+            MISSION_OPERATING = 0;
+            fprintf (PC, "Mission NOT operating\r\n");
+         }
+         Mission_check_flag = 0;
+         output_high(PIN_C4);                                                    //give access back to COMM 
+         fprintf (PC, "Finish 0x38\r\n");
+           
+      break;
+      
+      case 0x39:
+
+         REPLY_TO_COM(0x66,0);
+         SAVE_SAT_LOG(CMD0, 0, CMD2);                                            //save reset data         
+         UPLINK_SUCCESS_MULT_CAM();                                              //put uplink succes flag in high and store flags
+         ACK_for_COM[14] = 0x00;
+         
+         fprintf (PC, "Start 0x39\r\n");
+         output_high (PIN_A5);                                                   //SFM2 mission side access
+         FWD_CMD_MBP(CMD0, CMD2, CMD3, CMD4, CMD5, CMD6, CMD7, CMD8);
+         
+         for(num = 0; num < 1000000; num++)
+         {
+            if(kbhit(DC))
+            {
+               Mission_check_flag = fgetc(DC);
+               break;
+            }
+         }
+         fprintf(PC,"\r\nMission Check Flag:%lx\r\n",(int8)Mission_check_flag);
+         if (Mission_check_flag == 0x39)
+         {
+            MISSION_OPERATING = 1;
+            fprintf (PC, "Mission operating\r\n");
+            
+         }
+         else
+         {
+            MISSION_OPERATING = 0;
+            fprintf (PC, "Mission NOT operating\r\n");
+         }
+         Mission_check_flag = 0;
+         output_high(PIN_C4);                                                    //give access back to COMM 
+         fprintf (PC, "Finish 0x39\r\n");
+           
       break;
       
       default:
@@ -2139,6 +2444,7 @@ void IMGCLS_COMMAND(int8 CMD0,int8 CMD2,int8 CMD3,int8 CMD4,int8 CMD5,int8 CMD6,
          MISSION_OPERATING = 0;
          FWD_CMD_MBP(CMD0, CMD2, CMD3, CMD4, CMD5, CMD6, CMD7, CMD8);
          missiontime = 0;
+         output_high(PIN_C4);                                                    //give access back to COMM
          fprintf (PC, "Finish 0x8E\r\n");
          
 
@@ -2157,6 +2463,7 @@ void IMGCLS_COMMAND(int8 CMD0,int8 CMD2,int8 CMD3,int8 CMD4,int8 CMD5,int8 CMD6,
          MISSION_STATUS = 0;
          MISSION_OPERATING = 0;
          missiontime = 0;
+         output_high(PIN_C4);                                                    //give access back to COMM
          fprintf (PC, "Finish 0x80\r\n"); 
          
       break;
@@ -2171,8 +2478,9 @@ void IMGCLS_COMMAND(int8 CMD0,int8 CMD2,int8 CMD3,int8 CMD4,int8 CMD5,int8 CMD6,
          output_high (PIN_A5); //SFM2 mission side access
          fprintf (PC, "Start 0x81 - Real time uplink IMGCLS\r\n") ;
          FWD_CMD_MBP(CMD0, CMD2, CMD3, CMD4, CMD5, CMD6, CMD7, CMD8);
+         output_high(PIN_C4);                                                    //give access back to COMM         
+         fprintf (PC, "Finish 0x81\r\n");
          
-         fprintf (PC, "Finish 0x81\r\n"); 
       break;
       
       case 0x82: //Real time downlink IMGCLS
@@ -2185,7 +2493,7 @@ void IMGCLS_COMMAND(int8 CMD0,int8 CMD2,int8 CMD3,int8 CMD4,int8 CMD5,int8 CMD6,
          output_high (PIN_A5);
          fprintf (PC, "Start 0x82 - Real time downlink IMGCLS\r\n") ;
          
-         FWD_CMD_MBP(CMD0, CMD2, CMD3, CMD4, CMD5, CMD6, CMD7, CMD8);
+         FWD_CMD_MBP(CMD0, CMD2, CMD3, CMD4, CMD5, CMD6, CMD7, CMD8);            //TODO: add 81bytes to be sent from IMGCLS so it doesnt wait forever for remaining data
          int8 counter_cls = 0;
          for(int32 num_cls = 0; num_cls < 1500000; num_cls++)
             {
@@ -2206,7 +2514,9 @@ void IMGCLS_COMMAND(int8 CMD0,int8 CMD2,int8 CMD3,int8 CMD4,int8 CMD5,int8 CMD6,
          }
          fprintf(PC,"\r\n");
 
-         fprintf (PC, "Finish 0x82\r\n"); 
+         fprintf (PC, "Finish 0x82\r\n");
+         output_high(PIN_C4);                                                    //give access back to COMM
+         
          for(c = 0; c < 81; c++)
          {
             IMGCLS_DATA[c] = 0;
@@ -2222,22 +2532,35 @@ void IMGCLS_COMMAND(int8 CMD0,int8 CMD2,int8 CMD3,int8 CMD4,int8 CMD5,int8 CMD6,
          UPLINK_SUCCESS_IMGCLS_CAM();                                             //put uplink succes flag in high and store flags
          ACK_for_COM[14] = 0x00;
          
-         output_high (PIN_A5);
-         fprintf (PC, "Start 0x83 - Mission Mode 1 IMGCLS\r\n") ;
-         if (MISSION_STATUS == 1)                                                 //Mission operating flag will only go high if MISSION STATUS is high. Mission STATUS is high when the mission turns on
+         output_high (PIN_A5);                                                   //Mission Side
+         fprintf (PC, "Start 0x83\r\n") ;
+         FWD_CMD_MBP(CMD0, CMD2, CMD3, CMD4, CMD5, CMD6, CMD7, CMD8);            //Forward command to Mission Boss
+
+         for(int8 num = 0; num < 1000000; num++)                                      //wait for MBP ack
+         {
+            if(kbhit(DC))
+            {
+               Mission_check_flag = fgetc(DC);
+               break;
+            }
+         }
+         
+         fprintf(PC,"\r\nMission Check Flag:%lx\r\n",(int8)Mission_check_flag);
+         if (Mission_check_flag == 0x83)
          {
             MISSION_OPERATING = 1;
+            fprintf (PC, "Mission operating\r\n");
+            
          }
          else
          {
             MISSION_OPERATING = 0;
+            fprintf (PC, "Mission NOT operating\r\n");
          }
          
-         FWD_CMD_MBP(CMD0, CMD2, CMD3, CMD4, CMD5, CMD6, CMD7, CMD8);
-
-         MISSION_OPERATING = 0;
-         
-         fprintf (PC, "Finish 0x83\r\n"); 
+         Mission_check_flag = 0;
+         output_high(PIN_C4);                                                    //give access back to COMM
+         fprintf (PC, "Finish 0x83\r\n");
          
       break;
       
@@ -2251,61 +2574,387 @@ void IMGCLS_COMMAND(int8 CMD0,int8 CMD2,int8 CMD3,int8 CMD4,int8 CMD5,int8 CMD6,
          UPLINK_SUCCESS_IMGCLS_CAM();                                             //put uplink succes flag in high and store flags
          ACK_for_COM[14] = 0x00;
          
+         output_high (PIN_A5);                                                   //Mission Side
+         
          fprintf (PC, "Start 0x84\r\n") ;
+
+         FWD_CMD_MBP(CMD0, CMD2, CMD3, CMD4, CMD5, CMD6, CMD7, CMD8);            //Forward command to Mission Boss
+
+         for(num = 0; num < 1000000; num++)                                      //wait for MBP ack
+         {
+            if(kbhit(DC))
+            {
+               Mission_check_flag = fgetc(DC);
+               break;
+            }
+         }
          
-         output_high (PIN_A5); //SFM2 mission side access
+         fprintf(PC,"\r\nMission Check Flag:%lx\r\n",(int8)Mission_check_flag);
+         if (Mission_check_flag == 0x84)
+         {
+            MISSION_OPERATING = 1;
+            fprintf (PC, "Mission operating\r\n");
+            
+         }
+         else
+         {
+            MISSION_OPERATING = 0;
+            fprintf (PC, "Mission NOT operating\r\n");
+         }
          
-         
+         Mission_check_flag = 0;
+         output_high(PIN_C4);                                                    //give access back to COMM
          fprintf (PC, "Finish 0x84\r\n");
-      break;
       
       case 0x85:
+      
+         REPLY_TO_COM(0x66,0);
+         SAVE_SAT_LOG(CMD0, 0, CMD2);                                            //save reset data         
+         UPLINK_SUCCESS_IMGCLS_CAM();                                             //put uplink succes flag in high and store flags
+         ACK_for_COM[14] = 0x00;
+         
+         output_high (PIN_A5);                                                   //Mission Side
+         fprintf (PC, "Start 0x85\r\n") ;
+         FWD_CMD_MBP(CMD0, CMD2, CMD3, CMD4, CMD5, CMD6, CMD7, CMD8);            //Forward command to Mission Boss
+
+         for(num = 0; num < 1000000; num++)                                      //wait for MBP ack
+         {
+            if(kbhit(DC))
+            {
+               Mission_check_flag = fgetc(DC);
+               break;
+            }
+         }
+         
+         fprintf(PC,"\r\nMission Check Flag:%lx\r\n",(int8)Mission_check_flag);
+         if (Mission_check_flag == 0x85)
+         {
+            MISSION_OPERATING = 1;
+            fprintf (PC, "Mission operating\r\n");
+            
+         }
+         else
+         {
+            MISSION_OPERATING = 0;
+            fprintf (PC, "Mission NOT operating\r\n");
+         }
+         
+         Mission_check_flag = 0;
+         output_high(PIN_C4);                                                    //give access back to COMM
+         fprintf (PC, "Finish 0x85\r\n");
+         
+         break;
+         
+         case 0x86:
+      
+         REPLY_TO_COM(0x66,0);
+         SAVE_SAT_LOG(CMD0, 0, CMD2);                                            //save reset data         
+         UPLINK_SUCCESS_IMGCLS_CAM();                                             //put uplink succes flag in high and store flags
+         ACK_for_COM[14] = 0x00;
+         
+         output_high (PIN_A5);                                                   //Mission Side
+         fprintf (PC, "Start 0x86\r\n") ;
+         FWD_CMD_MBP(CMD0, CMD2, CMD3, CMD4, CMD5, CMD6, CMD7, CMD8);            //Forward command to Mission Boss
+
+         for(num = 0; num < 1000000; num++)                                      //wait for MBP ack
+         {
+            if(kbhit(DC))
+            {
+               Mission_check_flag = fgetc(DC);
+               break;
+            }
+         }
+         
+         fprintf(PC,"\r\nMission Check Flag:%lx\r\n",(int8)Mission_check_flag);
+         if (Mission_check_flag == 0x86)
+         {
+            MISSION_OPERATING = 1;
+            fprintf (PC, "Mission operating\r\n");
+            
+         }
+         else
+         {
+            MISSION_OPERATING = 0;
+            fprintf (PC, "Mission NOT operating\r\n");
+         }
+         
+         Mission_check_flag = 0;
+         output_high(PIN_C4);                                                    //give access back to COMM
+         fprintf (PC, "Finish 0x86\r\n");
+         
+         break;
+         
+         case 0x87:
+      
+         REPLY_TO_COM(0x66,0);
+         SAVE_SAT_LOG(CMD0, 0, CMD2);                                            //save reset data         
+         UPLINK_SUCCESS_IMGCLS_CAM();                                             //put uplink succes flag in high and store flags
+         ACK_for_COM[14] = 0x00;
+         
+         output_high (PIN_A5);                                                   //Mission Side
+         fprintf (PC, "Start 0x87\r\n") ;
+         FWD_CMD_MBP(CMD0, CMD2, CMD3, CMD4, CMD5, CMD6, CMD7, CMD8);            //Forward command to Mission Boss
+
+         for(num = 0; num < 1000000; num++)                                      //wait for MBP ack
+         {
+            if(kbhit(DC))
+            {
+               Mission_check_flag = fgetc(DC);
+               break;
+            }
+         }
+         
+         fprintf(PC,"\r\nMission Check Flag:%lx\r\n",(int8)Mission_check_flag);
+         if (Mission_check_flag == 0x87)
+         {
+            MISSION_OPERATING = 1;
+            fprintf (PC, "Mission operating\r\n");
+            
+         }
+         else
+         {
+            MISSION_OPERATING = 0;
+            fprintf (PC, "Mission NOT operating\r\n");
+         }
+         
+         Mission_check_flag = 0;
+         output_high(PIN_C4);                                                    //give access back to COMM
+         fprintf (PC, "Finish 0x87\r\n");
+         
+         break;
+         
+         case 0x88:
+      
+         REPLY_TO_COM(0x66,0);
+         SAVE_SAT_LOG(CMD0, 0, CMD2);                                            //save reset data         
+         UPLINK_SUCCESS_IMGCLS_CAM();                                             //put uplink succes flag in high and store flags
+         ACK_for_COM[14] = 0x00;
+         
+         output_high (PIN_A5);                                                   //Mission Side
+         fprintf (PC, "Start 0x88\r\n") ;
+         FWD_CMD_MBP(CMD0, CMD2, CMD3, CMD4, CMD5, CMD6, CMD7, CMD8);            //Forward command to Mission Boss
+
+         for(num = 0; num < 1000000; num++)                                      //wait for MBP ack
+         {
+            if(kbhit(DC))
+            {
+               Mission_check_flag = fgetc(DC);
+               break;
+            }
+         }
+         
+         fprintf(PC,"\r\nMission Check Flag:%lx\r\n",(int8)Mission_check_flag);
+         if (Mission_check_flag == 0x88)
+         {
+            MISSION_OPERATING = 1;
+            fprintf (PC, "Mission operating\r\n");
+            
+         }
+         else
+         {
+            MISSION_OPERATING = 0;
+            fprintf (PC, "Mission NOT operating\r\n");
+         }
+         
+         Mission_check_flag = 0;
+         output_high(PIN_C4);                                                    //give access back to COMM
+         fprintf (PC, "Finish 0x88\r\n");
+         
+         break;
+         
+         case 0x89:
+      
+         REPLY_TO_COM(0x66,0);
+         SAVE_SAT_LOG(CMD0, 0, CMD2);                                            //save reset data         
+         UPLINK_SUCCESS_IMGCLS_CAM();                                             //put uplink succes flag in high and store flags
+         ACK_for_COM[14] = 0x00;
+         
+         output_high (PIN_A5);                                                   //Mission Side
+         fprintf (PC, "Start 0x89\r\n") ;
+         FWD_CMD_MBP(CMD0, CMD2, CMD3, CMD4, CMD5, CMD6, CMD7, CMD8);            //Forward command to Mission Boss
+
+         for(num = 0; num < 1000000; num++)                                      //wait for MBP ack
+         {
+            if(kbhit(DC))
+            {
+               Mission_check_flag = fgetc(DC);
+               break;
+            }
+         }
+         
+         fprintf(PC,"\r\nMission Check Flag:%lx\r\n",(int8)Mission_check_flag);
+         if (Mission_check_flag == 0x89)
+         {
+            MISSION_OPERATING = 1;
+            fprintf (PC, "Mission operating\r\n");
+            
+         }
+         else
+         {
+            MISSION_OPERATING = 0;
+            fprintf (PC, "Mission NOT operating\r\n");
+         }
+         
+         Mission_check_flag = 0;
+         output_high(PIN_C4);                                                    //give access back to COMM
+         fprintf (PC, "Finish 0x89\r\n");
+         
+         break;
+
+         case 0x8A:
+      
+         REPLY_TO_COM(0x66,0);
+         SAVE_SAT_LOG(CMD0, 0, CMD2);                                            //save reset data         
+         UPLINK_SUCCESS_IMGCLS_CAM();                                             //put uplink succes flag in high and store flags
+         ACK_for_COM[14] = 0x00;
+         
+         output_high (PIN_A5);                                                   //Mission Side        
+         fprintf (PC, "Start 0x8A\r\n") ;
+         FWD_CMD_MBP(CMD0, CMD2, CMD3, CMD4, CMD5, CMD6, CMD7, CMD8);            //Forward command to Mission Boss
+
+         for(num = 0; num < 1000000; num++)                                      //wait for MBP ack
+         {
+            if(kbhit(DC))
+            {
+               Mission_check_flag = fgetc(DC);
+               break;
+            }
+         }
+         
+         fprintf(PC,"\r\nMission Check Flag:%lx\r\n",(int8)Mission_check_flag);
+         if (Mission_check_flag == 0x8A)
+         {
+            MISSION_OPERATING = 1;
+            fprintf (PC, "Mission operating\r\n");
+            
+         }
+         else
+         {
+            MISSION_OPERATING = 0;
+            fprintf (PC, "Mission NOT operating\r\n");
+         }
+         
+         Mission_check_flag = 0;
+         output_high(PIN_C4);                                                    //give access back to COMM
+         fprintf (PC, "Finish 0x8A\r\n");
+         
+         break;
+         
+         case 0x8B:
          
          REPLY_TO_COM(0x66,0);
          SAVE_SAT_LOG(CMD0, 0, CMD2);                                            //save reset data         
          UPLINK_SUCCESS_IMGCLS_CAM();                                             //put uplink succes flag in high and store flags
          ACK_for_COM[14] = 0x00;
-      
-         output_high (PIN_A5); 
-         fprintf (PC, "Start 0x85\r\n");
          
-         fputc(0x48, DC); //Forward command to MB
-         fputc(0x48, PC); 
-         
-         int8 IMGCLS_ACK = 0;
-         for(int32 num = 0; num < 1000000; num++)
+         output_high (PIN_A5);                                                   //Mission Side         
+         fprintf (PC, "Start 0x8B\r\n") ;
+         FWD_CMD_MBP(CMD0, CMD2, CMD3, CMD4, CMD5, CMD6, CMD7, CMD8);            //Forward command to Mission Boss
+
+         for(num = 0; num < 1000000; num++)                                      //wait for MBP ack
          {
             if(kbhit(DC))
             {
-               IMGCLS_ACK = fgetc(DC);
+               Mission_check_flag = fgetc(DC);
                break;
             }
-            
          }
          
-         if(IMGCLS_ACK == 0x70)                                                          //acknowledge
+         fprintf(PC,"\r\nMission Check Flag:%lx\r\n",(int8)Mission_check_flag);
+         if (Mission_check_flag == 0x8B)
          {
-            fputc(0x49, DC); 
-            fputc(0x49, PC); 
-            fprintf(PC,"\r\nIMGCLS ACK received\r\n");
-            fprintf(PC,"Recieved ACK: %x\r\n",IMGCLS_ACK);
-            for(int l = 1; l < 9; l++)
-            {
-               fputc(command[l], DC);
-               delay_ms(10);
-               fprintf(PC,"%x",command[l]);
-               delay_ms(10);
-            }
-            fprintf(PC,"\r\n");
-
+            MISSION_OPERATING = 1;
+            fprintf (PC, "Mission operating\r\n");
+            
          }
          else
          {
-            
-            fprintf(PC,"Recieved ACK: %x\r\n",IMGCLS_ACK);
-         
+            MISSION_OPERATING = 0;
+            fprintf (PC, "Mission NOT operating\r\n");
          }
-         fprintf (PC, "Finish 0x85\r\n");
+         
+         Mission_check_flag = 0;
+         output_high(PIN_C4);                                                    //give access back to COMM
+         fprintf (PC, "Finish 0x8B\r\n");
+         
+         break;
+         
+         case 0x8C:
+      
+         REPLY_TO_COM(0x66,0);
+         SAVE_SAT_LOG(CMD0, 0, CMD2);                                            //save reset data         
+         UPLINK_SUCCESS_IMGCLS_CAM();                                             //put uplink succes flag in high and store flags
+         ACK_for_COM[14] = 0x00;
+         
+         output_high (PIN_A5);                                                   //Mission Side
+         fprintf (PC, "Start 0x8C\r\n") ;
+         FWD_CMD_MBP(CMD0, CMD2, CMD3, CMD4, CMD5, CMD6, CMD7, CMD8);            //Forward command to Mission Boss
+
+         for(num = 0; num < 1000000; num++)                                      //wait for MBP ack
+         {
+            if(kbhit(DC))
+            {
+               Mission_check_flag = fgetc(DC);
+               break;
+            }
+         }
+         
+         fprintf(PC,"\r\nMission Check Flag:%lx\r\n",(int8)Mission_check_flag);
+         if (Mission_check_flag == 0x8C)
+         {
+            MISSION_OPERATING = 1;
+            fprintf (PC, "Mission operating\r\n");
+            
+         }
+         else
+         {
+            MISSION_OPERATING = 0;
+            fprintf (PC, "Mission NOT operating\r\n");
+         }
+         
+         Mission_check_flag = 0;
+         output_high(PIN_C4);                                                    //give access back to COMM
+         fprintf (PC, "Finish 0x8C\r\n");
+         
+         break;
+         
+         case 0x8D:
+      
+         REPLY_TO_COM(0x66,0);
+         SAVE_SAT_LOG(CMD0, 0, CMD2);                                            //save reset data         
+         UPLINK_SUCCESS_IMGCLS_CAM();                                             //put uplink succes flag in high and store flags
+         ACK_for_COM[14] = 0x00;
+         
+         output_high (PIN_A5);                                                   //Mission Side
+         fprintf (PC, "Start 0x8D\r\n") ;
+         FWD_CMD_MBP(CMD0, CMD2, CMD3, CMD4, CMD5, CMD6, CMD7, CMD8);            //Forward command to Mission Boss
+
+         for(num = 0; num < 1000000; num++)                                      //wait for MBP ack
+         {
+            if(kbhit(DC))
+            {
+               Mission_check_flag = fgetc(DC);
+               break;
+            }
+         }
+         
+         fprintf(PC,"\r\nMission Check Flag:%lx\r\n",(int8)Mission_check_flag);
+         if (Mission_check_flag == 0x8D)
+         {
+            MISSION_OPERATING = 1;
+            fprintf (PC, "Mission operating\r\n");
+            
+         }
+         else
+         {
+            MISSION_OPERATING = 0;
+            fprintf (PC, "Mission NOT operating\r\n");
+         }
+         
+         Mission_check_flag = 0;
+         output_high(PIN_C4);                                                    //give access back to COMM
+         fprintf (PC, "Finish 0x8D\r\n");
+         
          break;
    
       default:
@@ -3093,7 +3742,7 @@ void SF_COMMAND(int8 CMD0,int8 CMD2,int8 CMD3,int8 CMD4,int8 CMD5,int8 CMD6, int
          ACK_for_COM[14] = 0x00;
          output_high (PIN_A5);
          
-         fprintf (PC, "Start 0x53 - Transfer S&F Data\r\n") ;
+         fprintf (PC, "Start 0x53 - Transfer S&F Data to SCF\r\n") ;
          MISSION_OPERATING = 1;
      
          FWD_CMD_MBP(CMD0, CMD2, CMD3, CMD4, CMD5, CMD6, CMD7, CMD8);
@@ -3199,7 +3848,6 @@ void SF_COMMAND(int8 CMD0,int8 CMD2,int8 CMD3,int8 CMD4,int8 CMD5,int8 CMD6, int
          fprintf (PC, "Start 0x55 - Erase S&F Flash\r\n") ;
          
          delay_ms(1000);
-         MISSION_STATUS = 1;
          MISSION_OPERATING = 0;
          FWD_CMD_MBP(CMD0, CMD2, CMD3, CMD4, CMD5, CMD6, CMD7, CMD8);
          missiontime = 0;
