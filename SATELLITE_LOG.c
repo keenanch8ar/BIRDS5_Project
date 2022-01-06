@@ -83,9 +83,9 @@ int8 satellitelog[logdata_size] = {};
 
 void SAVE_SAT_LOG(int8 data1, int8 data2, int8 data3)
 {
-   LOOP_SAT_LOG();                                                               //hace un loop en las posiciones de memoria para almacenar SAT_LOG
+   LOOP_SAT_LOG();                                                               //loops memory locations to store SAT_LOG
    RESET_DATA = 0;
-   COLLECT_RESET_DATA();                                                         //carga el RESET_bffr[] con los datos del reset PIC
+   COLLECT_RESET_DATA();                                                         //loads RESET_bffr [] with the PIC reset data
    if(RESET_bffr[0] == 0x8e)
    {
       satellitelog[0] = 0xda;                                                    //header of the satellite log

@@ -265,8 +265,9 @@ void STORE_FLAG_INFO()                                                          
    flag_info_bffr[13] = MISSION_STATUS;
    flag_info_bffr[14] = MISSION_OPERATING;
    
-   output_low(PIN_A5);                                                           //CAM_MUX MAINSIDE
+   output_low(PIN_A5);                                                           //MISSION_MUX MAINSIDE
    output_low(PIN_C4);                                                           //COM_MUX MAINSIDE
+   delay_ms(2000);
    SUBSECTOR_4KB_ERASE_OF(FLAG_DATA_ADDRESS);
    delay_ms(200);
    for(int8 num = 0; num < FLAG_INFO_SIZE; num++)
@@ -292,7 +293,7 @@ void STORE_FLAG_INFO()                                                          
    }
    
    output_high(PIN_C4);                                                          //COM_MUX COMSIDE
-   
+   output_high(PIN_A5);                                                           //MISSION_MUX MAINSIDE
    fprintf(PC,"FLAG INFO STORED IN FLASH\r\n");
    return;
    

@@ -8,6 +8,11 @@ void UPLINK_SUCCESS_CHECK()
       STORE_FLAG_INFO();                                                         //save flag data to flash memory
       WRITE_FLAG_to_EEPROM();                                                    //save flags on EEPROM from address 0x18000 (75%)
    }
+   else
+   {
+      STORE_FLAG_INFO();                                                         //save flag data to flash memory
+      WRITE_FLAG_to_EEPROM();                                                    //save flags on EEPROM from address 0x18000 (75%)
+   }
    return;
 }
 
@@ -27,6 +32,11 @@ void UPLINK_SUCCESS_HSSC()
       STORE_FLAG_INFO();
       WRITE_FLAG_to_EEPROM();
    }
+   else
+   {
+      STORE_FLAG_INFO();                                                         //save flag data to flash memory
+      WRITE_FLAG_to_EEPROM();                                                    //save flags on EEPROM from address 0x18000 (75%)
+   }
    return;
 }
 
@@ -38,6 +48,11 @@ void UPLINK_SUCCESS_MBP()
       UPLINK_SUCCESS = 1;
       STORE_FLAG_INFO();                                                         //store flag info on flash
       WRITE_FLAG_to_EEPROM();                                                    //store flag info on EEPROM
+   }
+   else
+   {
+      STORE_FLAG_INFO();                                                         //save flag data to flash memory
+      WRITE_FLAG_to_EEPROM();                                                    //save flags on EEPROM from address 0x18000 (75%)
    }
    return;
 }
@@ -51,6 +66,11 @@ void UPLINK_SUCCESS_MULT_CAM()
       STORE_FLAG_INFO();                                                         //store flag info on flash
       WRITE_FLAG_to_EEPROM();                                                    //store flag info on EEPROM
    }
+   else
+   {
+      STORE_FLAG_INFO();                                                         //save flag data to flash memory
+      WRITE_FLAG_to_EEPROM();                                                    //save flags on EEPROM from address 0x18000 (75%)
+   }
    return;
 }
 
@@ -63,6 +83,11 @@ void UPLINK_SUCCESS_IMGCLS_CAM()
       STORE_FLAG_INFO();                                                         //store flag info on flash
       WRITE_FLAG_to_EEPROM();                                                    //store flag info on EEPROM
    }
+   else
+   {
+      STORE_FLAG_INFO();                                                         //save flag data to flash memory
+      WRITE_FLAG_to_EEPROM();                                                    //save flags on EEPROM from address 0x18000 (75%)
+   }
    return;
 }
 
@@ -73,6 +98,11 @@ void UPLINK_SUCCESS_S_FWD()
       UPLINK_SUCCESS = 1;
       STORE_FLAG_INFO();                                                         //store flag info on flash
       WRITE_FLAG_to_EEPROM();                                                    //store flag info on EEPROM
+   }
+   else
+   {
+      STORE_FLAG_INFO();                                                         //save flag data to flash memory
+      WRITE_FLAG_to_EEPROM();                                                    //save flags on EEPROM from address 0x18000 (75%)
    }
    return;
 }
@@ -110,24 +140,12 @@ void MAIN_COMMAND(int8 CMD0,int8 CMD2,int8 CMD3,int8 CMD4,int8 CMD5,int8 CMD6, i
 {
    
    switch(CMD0)
-   {
-   
-      case 0x00:
-      
-         REPLY_TO_COM(0x66,0);
-         SAVE_SAT_LOG(CMD0, 0, CMD2);                                            //save reset data         
-         UPLINK_SUCCESS_CHECK();                                                 //put uplink succes flag in high and store flags
-         ACK_for_COM[14] = 0x00;  
-         fprintf(PC,"Collect HK Data From FAB: ");
-         fputc(0x61, FAB);
-         FAB_DATA = 0;
-      
-      break;
+   {   
    
       case 0x01:                                                                 //Uplink 3 bytes to SMF at specified address
       
          REPLY_TO_COM(0x66,0);
-         SAVE_SAT_LOG(CMD0, 0, CMD2);                                            //save reset data         
+         SAVE_SAT_LOG(0xCC, CMD0, CMD2);                                            //save reset data         
          UPLINK_SUCCESS_CHECK();                                                 //put uplink succes flag in high and store flags
          ACK_for_COM[14] = 0x00;  
          fprintf(PC, "Nothing yet\r\n");                                                    //Nothing for now
@@ -137,7 +155,7 @@ void MAIN_COMMAND(int8 CMD0,int8 CMD2,int8 CMD3,int8 CMD4,int8 CMD5,int8 CMD6, i
       case 0x02:
       
          REPLY_TO_COM(0x66,0);
-         SAVE_SAT_LOG(CMD0, 0, CMD2);                                            //save reset data         
+         SAVE_SAT_LOG(0xCC, CMD0, CMD2);                                            //save reset data          
          UPLINK_SUCCESS_CHECK();                                                 //put uplink succes flag in high and store flags
          ACK_for_COM[14] = 0x00;  
          fprintf(PC, "Nothing yet\r\n");                                                    //Nothing for now
@@ -147,7 +165,7 @@ void MAIN_COMMAND(int8 CMD0,int8 CMD2,int8 CMD3,int8 CMD4,int8 CMD5,int8 CMD6, i
       case 0x03:
       
          REPLY_TO_COM(0x66,0);
-         SAVE_SAT_LOG(CMD0, 0, CMD2);                                            //save reset data         
+         SAVE_SAT_LOG(0xCC, CMD0, CMD2);                                            //save reset data            
          UPLINK_SUCCESS_CHECK();                                                 //put uplink succes flag in high and store flags
          ACK_for_COM[14] = 0x00;  
          fprintf(PC, "\r\nRESET SATELLITE\r\n");
@@ -158,31 +176,31 @@ void MAIN_COMMAND(int8 CMD0,int8 CMD2,int8 CMD3,int8 CMD4,int8 CMD5,int8 CMD6, i
       case 0x04:
       
          REPLY_TO_COM(0x66,0);
-         SAVE_SAT_LOG(CMD0, 0, CMD2);                                            //save reset data         
+         SAVE_SAT_LOG(0xCC, CMD0, CMD2);                                            //save reset data       
          UPLINK_SUCCESS_CHECK();                                                 //put uplink succes flag in high and store flags
          ACK_for_COM[14] = 0x00;  
          fprintf(PC, "\r\nKILL SWITCH\r\n");
          Count_Kill_Flag();                                                      //Enable if Kill_COUNTER > 4
-         SAVE_SAT_LOG(CMD0, KILL_COUNTER, CMD2);                                 //save reset data and command
+         SAVE_SAT_LOG(0xEE, CMD0, KILL_COUNTER);                                 //save reset data and command
       
       break;
       
       case 0x05:
       
          REPLY_TO_COM(0x66,0);
-         SAVE_SAT_LOG(CMD0, 0, CMD2);                                            //save reset data         
+         SAVE_SAT_LOG(0xCC, CMD0, CMD2);                                            //save reset data           
          UPLINK_SUCCESS_CHECK();                                                 //put uplink succes flag in high and store flags
          ACK_for_COM[14] = 0x00;  
          fprintf(PC, "\r\nDISABLE KILL SWITCH\r\n");
          Disable_Kill();                                                         //Kill Switch OFF
-         SAVE_SAT_LOG(CMD0, KILL_COUNTER, CMD2);                                 //save reset data and command
+         SAVE_SAT_LOG(0xEE, CMD0, KILL_COUNTER);                                 //save reset data and command
       
       break;
       
       case 0x06:
       
          REPLY_TO_COM(0x66,0);
-         SAVE_SAT_LOG(CMD0, 0, CMD2);                                            //save reset data         
+         SAVE_SAT_LOG(0xCC, CMD0, CMD2);                                            //save reset data         
          UPLINK_SUCCESS_CHECK();                                                 //put uplink succes flag in high and store flags
          ACK_for_COM[14] = 0x00;  
          fprintf(PC, "\r\nBPB POWER ON\r\n");
@@ -193,7 +211,7 @@ void MAIN_COMMAND(int8 CMD0,int8 CMD2,int8 CMD3,int8 CMD4,int8 CMD5,int8 CMD6, i
       case 0x07:
       
          REPLY_TO_COM(0x66,0);
-         SAVE_SAT_LOG(CMD0, 0, CMD2);                                            //save reset data         
+         SAVE_SAT_LOG(0xCC, CMD0, CMD2);                                            //save reset data           
          UPLINK_SUCCESS_CHECK();                                                 //put uplink succes flag in high and store flags
          ACK_for_COM[14] = 0x00;  
          fprintf(PC, "\r\nBPB POWER OFF\r\n");
@@ -204,7 +222,7 @@ void MAIN_COMMAND(int8 CMD0,int8 CMD2,int8 CMD3,int8 CMD4,int8 CMD5,int8 CMD6, i
       case 0x08:
       
          REPLY_TO_COM(0x66,0);
-         SAVE_SAT_LOG(CMD0, 0, CMD2);                                            //save reset data         
+         SAVE_SAT_LOG(0xCC, CMD0, CMD2);                                            //save reset data           
          UPLINK_SUCCESS_CHECK();                                                 //put uplink succes flag in high and store flags
          ACK_for_COM[14] = 0x00;  
          fprintf(PC, "\r\nTurn On ADCS\r\n");
@@ -215,7 +233,7 @@ void MAIN_COMMAND(int8 CMD0,int8 CMD2,int8 CMD3,int8 CMD4,int8 CMD5,int8 CMD6, i
       case 0x09:
       
          REPLY_TO_COM(0x66,0);
-         SAVE_SAT_LOG(CMD0, 0, CMD2);                                            //save reset data         
+         SAVE_SAT_LOG(0xCC, CMD0, CMD2);                                            //save reset data         
          UPLINK_SUCCESS_CHECK();                                                 //put uplink succes flag in high and store flags
          ACK_for_COM[14] = 0x00;  
          fprintf(PC, "\r\nTurn Off ADCS\r\n");
@@ -226,7 +244,7 @@ void MAIN_COMMAND(int8 CMD0,int8 CMD2,int8 CMD3,int8 CMD4,int8 CMD5,int8 CMD6, i
       case 0x0A:
       
          REPLY_TO_COM(0x66,0);
-         SAVE_SAT_LOG(CMD0, 0, CMD2);                                            //save reset data         
+         SAVE_SAT_LOG(0xCC, CMD0, CMD2);                                            //save reset data         
          UPLINK_SUCCESS_CHECK();                                                 //put uplink succes flag in high and store flags
          ACK_for_COM[14] = 0x00;  
          fprintf(PC, "\r\nRefresh Reservation Table\r\n");
@@ -237,7 +255,7 @@ void MAIN_COMMAND(int8 CMD0,int8 CMD2,int8 CMD3,int8 CMD4,int8 CMD5,int8 CMD6, i
       case 0x0B:
       
          REPLY_TO_COM(0x66,0);
-         SAVE_SAT_LOG(CMD0, 0, CMD2);                                            //save reset data         
+         SAVE_SAT_LOG(0xCC, CMD0, CMD2);                                            //save reset data            
          UPLINK_SUCCESS_CHECK();                                                 //put uplink succes flag in high and store flags
          ACK_for_COM[14] = 0x00;  
          fprintf(PC, "\r\nDisplay Reservation Table\r\n");
@@ -249,7 +267,7 @@ void MAIN_COMMAND(int8 CMD0,int8 CMD2,int8 CMD3,int8 CMD4,int8 CMD5,int8 CMD6, i
          
          fprintf(PC, "\r\nGive Access to SCF\r\n");
          REPLY_TO_COM(0x66,0);
-         SAVE_SAT_LOG(CMD0, 0, CMD2);                                            //save reset data         
+         SAVE_SAT_LOG(0xCC, CMD0, CMD2);                                            //save reset data            
          UPLINK_SUCCESS_CHECK();                                                 //put uplink succes flag in high and store flags
          ACK_for_COM[14] = 0x00;  
          GIVE_ACCESS_SCF_Nsec(CMD2);
@@ -259,7 +277,7 @@ void MAIN_COMMAND(int8 CMD0,int8 CMD2,int8 CMD3,int8 CMD4,int8 CMD5,int8 CMD6, i
       case 0x0D:
          
          REPLY_TO_COM(0x66,0);
-         SAVE_SAT_LOG(CMD0, 0, CMD2);                                            //save reset data         
+         SAVE_SAT_LOG(0xCC, CMD0, CMD2);                                            //save reset data          
          UPLINK_SUCCESS_CHECK();                                                 //put uplink succes flag in high and store flags
          ACK_for_COM[14] = 0x00;  
          fprintf(PC, "\r\nNothing Yet\r\n");
@@ -270,7 +288,7 @@ void MAIN_COMMAND(int8 CMD0,int8 CMD2,int8 CMD3,int8 CMD4,int8 CMD5,int8 CMD6, i
       case 0x0E:
          
          REPLY_TO_COM(0x66,0);
-         SAVE_SAT_LOG(CMD0, 0, CMD2);                                            //save reset data         
+         SAVE_SAT_LOG(0xCC, CMD0, CMD2);                                            //save reset data           
          UPLINK_SUCCESS_CHECK();                                                 //put uplink succes flag in high and store flags
          ACK_for_COM[14] = 0x00;  
          fprintf(PC, "\r\nNothing Yet\r\n");
@@ -281,7 +299,7 @@ void MAIN_COMMAND(int8 CMD0,int8 CMD2,int8 CMD3,int8 CMD4,int8 CMD5,int8 CMD6, i
       case 0x0F:
          
          REPLY_TO_COM(0x66,0);
-         SAVE_SAT_LOG(CMD0, 0, CMD2);                                            //save reset data         
+         SAVE_SAT_LOG(0xCC, CMD0, CMD2);                                            //save reset data          
          UPLINK_SUCCESS_CHECK();                                                 //put uplink succes flag in high and store flags
          ACK_for_COM[14] = 0x00;
          GIVE_ACCESS_SCF_Nsec(CMD8);
@@ -292,7 +310,7 @@ void MAIN_COMMAND(int8 CMD0,int8 CMD2,int8 CMD3,int8 CMD4,int8 CMD5,int8 CMD6, i
       case 0x10:
          
          REPLY_TO_COM(0x66,0);
-         SAVE_SAT_LOG(CMD0, 0, CMD2);                                            //save reset data         
+         SAVE_SAT_LOG(0xCC, CMD0, CMD2);                                            //save reset data           
          UPLINK_SUCCESS_CHECK();                                                 //put uplink succes flag in high and store flags
          ACK_for_COM[14] = 0x00;  
          fprintf(PC, "\r\Erase Flash Operation for Main Flash\r\n");
@@ -326,7 +344,7 @@ void MAIN_COMMAND(int8 CMD0,int8 CMD2,int8 CMD3,int8 CMD4,int8 CMD5,int8 CMD6, i
       case 0x11:
          
          REPLY_TO_COM(0x66,0);
-         SAVE_SAT_LOG(CMD0, 0, CMD2);                                            //save reset data         
+         SAVE_SAT_LOG(0xCC, CMD0, CMD2);                                            //save reset data          
          UPLINK_SUCCESS_CHECK();                                                 //put uplink succes flag in high and store flags
          ACK_for_COM[14] = 0x00;  
          fprintf(PC, "\r\Erase Flash Operation for Shared COM Flash\r\n");
@@ -360,7 +378,7 @@ void MAIN_COMMAND(int8 CMD0,int8 CMD2,int8 CMD3,int8 CMD4,int8 CMD5,int8 CMD6, i
       case 0x12:
          
          REPLY_TO_COM(0x66,0);
-         SAVE_SAT_LOG(CMD0, 0, CMD2);                                            //save reset data         
+         SAVE_SAT_LOG(0xCC, CMD0, CMD2);                                            //save reset data          
          UPLINK_SUCCESS_CHECK();                                                 //put uplink succes flag in high and store flags
          ACK_for_COM[14] = 0x00;  
          fprintf(PC, "\r\Erase Flash Operation for Shared Mission Flash\r\n");
@@ -396,7 +414,7 @@ void MAIN_COMMAND(int8 CMD0,int8 CMD2,int8 CMD3,int8 CMD4,int8 CMD5,int8 CMD6, i
       
          fprintf(PC, "\r\nERASE ALL FLASH OPERATION\r\n");
          REPLY_TO_COM(0x66,0);
-         SAVE_SAT_LOG(CMD0, 0, CMD2);                                            //save reset data         
+         SAVE_SAT_LOG(0xCC, CMD0, CMD2);                                            //save reset data           
          UPLINK_SUCCESS_CHECK();                                                 //put uplink succes flag in high and store flags
          ACK_for_COM[14] = 0x00;  
          ERASE_EEPROM_INFO(CMD2,CMD3,CMD4);                                      //erase 512byte(from 0x18000 to 0x181ff)
@@ -407,9 +425,10 @@ void MAIN_COMMAND(int8 CMD0,int8 CMD2,int8 CMD3,int8 CMD4,int8 CMD5,int8 CMD6, i
       case 0x14:
       
          REPLY_TO_COM(0x66,0);
-         SAVE_SAT_LOG(CMD0, 0, CMD2);                                            //save reset data         
+         SAVE_SAT_LOG(0xCC, CMD0, CMD2);                                            //save reset data         
          UPLINK_SUCCESS_CHECK();                                                 //put uplink succes flag in high and store flags
          ACK_for_COM[14] = 0x00;  
+         
          fprintf (PC, "\r\nWrite 3 bytes to SMF\r\n") ;
          output_low (PIN_A5) ;                                                   //Main side
          address_data[0] = CMD2<<24;
@@ -428,7 +447,7 @@ void MAIN_COMMAND(int8 CMD0,int8 CMD2,int8 CMD3,int8 CMD4,int8 CMD5,int8 CMD6, i
       case 0x15:                                                                 //Uplink command to write the data on Flash Memory 2
          
          REPLY_TO_COM(0x66,0);
-         SAVE_SAT_LOG(CMD0, 0, CMD2);                                            //save reset data         
+         SAVE_SAT_LOG(0xCC, CMD0, CMD2);                                            //save reset data           
          UPLINK_SUCCESS_CHECK();                                                 //put uplink succes flag in high and store flags
          ACK_for_COM[14] = 0x00;  
          fprintf(PC, "Nothing yet\r\n");                                                    //Nothing for now
@@ -441,7 +460,7 @@ void MAIN_COMMAND(int8 CMD0,int8 CMD2,int8 CMD3,int8 CMD4,int8 CMD5,int8 CMD6, i
          
          fprintf(PC, "\r\Transfer 1 sector from MF to SCF\r\n");
          REPLY_TO_COM(0x66,0);
-         SAVE_SAT_LOG(CMD0, 0, CMD2);                                            //save reset data         
+         SAVE_SAT_LOG(0xCC, CMD0, CMD2);                                            //save reset data            
          UPLINK_SUCCESS_CHECK();                                                 //put uplink succes flag in high and store flags
          ACK_for_COM[14] = 0x00;                                                   //put uplink success flag in HIGH and store flags  
          TRANSFER_SECTOR_OF2SCF(CMD2,CMD3,CMD4,CMD5);                            //transfer 1 sector, also this function contains saving log
@@ -453,7 +472,7 @@ void MAIN_COMMAND(int8 CMD0,int8 CMD2,int8 CMD3,int8 CMD4,int8 CMD5,int8 CMD6, i
          
          fprintf(PC, "\r\Transfer 1 sector from SMF to SCF\r\n");
          REPLY_TO_COM(0x66,0);
-         SAVE_SAT_LOG(CMD0, 0, CMD2);                                            //save reset data         
+         SAVE_SAT_LOG(0xCC, CMD0, CMD2);                                            //save reset data            
          UPLINK_SUCCESS_CHECK();                                                 //put uplink succes flag in high and store flags
          ACK_for_COM[14] = 0x00;                                                   //put uplink success flag in HIGH and store flags  
          TRANSFER_SECTOR_SMF2SCF(CMD2,CMD3,CMD4,CMD5);                           //transfer 1 sector, also this function contains saving log
@@ -465,7 +484,7 @@ void MAIN_COMMAND(int8 CMD0,int8 CMD2,int8 CMD3,int8 CMD4,int8 CMD5,int8 CMD6, i
          
          fprintf(PC, "\r\Transfer 1 sector from SMF to MF\r\n");
          REPLY_TO_COM(0x66,0);
-         SAVE_SAT_LOG(CMD0, 0, CMD2);                                            //save reset data         
+         SAVE_SAT_LOG(0xCC, CMD0, CMD2);                                            //save reset data           
          UPLINK_SUCCESS_CHECK();                                                 //put uplink succes flag in high and store flags
          ACK_for_COM[14] = 0x00;                                                   //put uplink success flag in HIGH and store flags  
          TRANSFER_SECTOR_SMF2OF(CMD2,CMD3,CMD4,CMD5);                            //transfer 1 sector, also this function contains saving log
@@ -475,11 +494,15 @@ void MAIN_COMMAND(int8 CMD0,int8 CMD2,int8 CMD3,int8 CMD4,int8 CMD5,int8 CMD6, i
       case 0x19:
          
          REPLY_TO_COM(0x66,0);
-         SAVE_SAT_LOG(CMD0, 0, CMD2);                                            //save reset data         
+         SAVE_SAT_LOG(0xCC, CMD0, CMD2);                                            //save reset data           
          UPLINK_SUCCESS_CHECK();                                                 //put uplink succes flag in high and store flags
          ACK_for_COM[14] = 0x00;  
          fprintf (PC, "\r\nTransfer N Packets from OF to SCF\r\n") ;
          fprintf (PC, "From OF:\r\n");
+         
+         output_low (PIN_A5);                                                    // Main side TODO: confirm these commands work properly
+         output_low (PIN_C4);                                                    // Main side SCF
+         delay_ms(1000);
          
          address_data[0] = CMD2<<24;
          address_data[1] = CMD3<<16;
@@ -509,14 +532,15 @@ void MAIN_COMMAND(int8 CMD0,int8 CMD2,int8 CMD3,int8 CMD4,int8 CMD5,int8 CMD6, i
       case 0x1A:
          
          REPLY_TO_COM(0x66,0);
-         SAVE_SAT_LOG(CMD0, 0, CMD2);                                            //save reset data         
+         SAVE_SAT_LOG(0xCC, CMD0, CMD2);                                            //save reset data           
          UPLINK_SUCCESS_CHECK();                                                 //put uplink succes flag in high and store flags
          ACK_for_COM[14] = 0x00;  
          fprintf (PC, "\r\nTransfer N Packets from SMF to SCF\r\n") ;
          fprintf (PC, "From SMF:\r\n");
          
          output_low (PIN_A5);                                                    // Main side
-         
+         output_low (PIN_C4);                                                    // Main side SCF
+         delay_ms(1000);
          address_data[0] = CMD2<<24;
          address_data[1] = CMD3<<16;
          address_data[2] = CMD4<<8;
@@ -530,7 +554,7 @@ void MAIN_COMMAND(int8 CMD0,int8 CMD2,int8 CMD3,int8 CMD4,int8 CMD5,int8 CMD6, i
          TRANSFER_DATA_NBYTE_TOPC_SMF(address, packet);
          delay_ms(1000);
          fprintf (PC, "From SCF:\r\n");
-         output_low (PIN_C4); // Main side SCF
+         output_low (PIN_C4);                                                    // Main side SCF
          sector_erase_SCF(address);
          TRANSFER_DATA_NBYTE_SMFtoSCF(address, address, packet);
          delay_ms(1000);
@@ -544,13 +568,15 @@ void MAIN_COMMAND(int8 CMD0,int8 CMD2,int8 CMD3,int8 CMD4,int8 CMD5,int8 CMD6, i
       case 0x1B:
          
          REPLY_TO_COM(0x66,0);
-         SAVE_SAT_LOG(CMD0, 0, CMD2);                                            //save reset data         
+         SAVE_SAT_LOG(0xCC, CMD0, CMD2);                                            //save reset data         
          UPLINK_SUCCESS_CHECK();                                                 //put uplink succes flag in high and store flags
          ACK_for_COM[14] = 0x00;  
          fprintf (PC, "\r\nTransfer N Packets from SMF to SCF\r\n") ;
          fprintf (PC, "From SMF:\r\n");
          
-         output_low (PIN_A5); // Main side
+         output_low (PIN_A5);                                                    // Main side TODO: confirm these commands work properly
+         output_low (PIN_C4);                                                    // Main side SCF
+         delay_ms(1000);
          
          address_data[0] = CMD2<<24;
          address_data[1] = CMD3<<16;
@@ -578,7 +604,7 @@ void MAIN_COMMAND(int8 CMD0,int8 CMD2,int8 CMD3,int8 CMD4,int8 CMD5,int8 CMD6, i
       case 0x1C:                                                                 //Uplink command to write the data on Flash Memory 2
          
          REPLY_TO_COM(0x66,0);
-         SAVE_SAT_LOG(CMD0, 0, CMD2);                                            //save reset data         
+         SAVE_SAT_LOG(0xCC, CMD0, CMD2);                                            //save reset data           
          UPLINK_SUCCESS_CHECK();                                                 //put uplink succes flag in high and store flags
          ACK_for_COM[14] = 0x00;  
          fprintf (PC, "\r\nRead N packets from SCF to PC\r\n") ;
@@ -604,7 +630,7 @@ void MAIN_COMMAND(int8 CMD0,int8 CMD2,int8 CMD3,int8 CMD4,int8 CMD5,int8 CMD6, i
       case 0x1D:                                                                 //Uplink command to write the data on Flash Memory 2
          
          REPLY_TO_COM(0x66,0);
-         SAVE_SAT_LOG(CMD0, 0, CMD2);                                            //save reset data         
+         SAVE_SAT_LOG(0xCC, CMD0, CMD2);                                            //save reset data         
          UPLINK_SUCCESS_CHECK();                                                 //put uplink succes flag in high and store flags
          ACK_for_COM[14] = 0x00;  
          fprintf (PC, "\r\nRead N packets from MF to PC\r\n") ;
@@ -627,7 +653,7 @@ void MAIN_COMMAND(int8 CMD0,int8 CMD2,int8 CMD3,int8 CMD4,int8 CMD5,int8 CMD6, i
       case 0x1E:
          
          REPLY_TO_COM(0x66,0);
-         SAVE_SAT_LOG(CMD0, 0, CMD2);                                            //save reset data         
+         SAVE_SAT_LOG(0xCC, CMD0, CMD2);                                            //save reset data           
          UPLINK_SUCCESS_HSSC();                                                  //put uplink succes flag in high and store flags
          ACK_for_COM[14] = 0x00;  
 
@@ -640,8 +666,8 @@ void MAIN_COMMAND(int8 CMD0,int8 CMD2,int8 CMD3,int8 CMD4,int8 CMD5,int8 CMD6, i
       case 0x1F:                                                                 //Uplink command to write the data on Flash Memory 2
          
          REPLY_TO_COM(0x66,0);
-         SAVE_SAT_LOG(CMD0, 0, CMD2);                                            //save reset data         
-         UPLINK_SUCCESS_HSSC();                                                  //put uplink succes flag in high and store flags
+         SAVE_SAT_LOG(0xCC, CMD0, CMD2);                                            //save reset data            
+         UPLINK_SUCCESS_CHECK();                                                 //put uplink succes flag in high and store flags
          ACK_for_COM[14] = 0x00;
          fprintf (PC, "\r\nRead N packets from SMF to PC\r\n") ;
          output_low (PIN_A5);
@@ -659,12 +685,6 @@ void MAIN_COMMAND(int8 CMD0,int8 CMD2,int8 CMD3,int8 CMD4,int8 CMD5,int8 CMD6, i
 
       break;
       
-      default:
-         
-         fprintf (PC, "Command:%x", CMD0);
-         fprintf (PC, " does not exist\r\n");
-         
-      break;
       
    }
    
@@ -709,7 +729,7 @@ void MAIN_COMMAND_PC(int8 CMD0,int8 CMD2,int8 CMD3,int8 CMD4,int8 CMD5,int8 CMD6
 
          fprintf(PC, "\r\nKILL SWITCH\r\n");
          Count_Kill_Flag();                                                      //Enable if Kill_COUNTER > 4
-         SAVE_SAT_LOG(CMD0, KILL_COUNTER, CMD2);                                 //save reset data and command
+         SAVE_SAT_LOG(0xEE, CMD0, KILL_COUNTER);                                 //save reset data and command
       
       break;
       
@@ -717,7 +737,7 @@ void MAIN_COMMAND_PC(int8 CMD0,int8 CMD2,int8 CMD3,int8 CMD4,int8 CMD5,int8 CMD6
 
          fprintf(PC, "\r\nDISABLE KILL SWITCH\r\n");
          Disable_Kill();                                                         //Kill Switch OFF
-         SAVE_SAT_LOG(CMD0, KILL_COUNTER, CMD2);                                 //save reset data and command
+         SAVE_SAT_LOG(0xEE, CMD0, KILL_COUNTER);                                 //save reset data and command
       
       break;
       
@@ -1125,8 +1145,7 @@ void MULT_SPEC_COMMAND(int8 CMD0,int8 CMD2,int8 CMD3,int8 CMD4,int8 CMD5,int8 CM
       case 0x2E: //Turn on CAM1 RPi for MOSFET on MB1 to power RPI from 5V
          
          REPLY_TO_COM(0x66,0);
-         SAVE_SAT_LOG(CMD0, 0, CMD2);                                            //save reset data         
-         UPLINK_SUCCESS_MULT_CAM();                                              //put uplink succes flag in high and store flags
+         SAVE_SAT_LOG(0xCC, CMD0, CMD2);                                            //save reset data         
          ACK_for_COM[14] = 0x00;
          
          Turn_On_MBP();
@@ -1137,6 +1156,7 @@ void MULT_SPEC_COMMAND(int8 CMD0,int8 CMD2,int8 CMD3,int8 CMD4,int8 CMD5,int8 CM
          missiontime = 0;
          output_high(pin_G3); //Turn on DIO for MULTSPEC CAM1
          output_high(PIN_C4);                                                    //give access back to COMM
+         UPLINK_SUCCESS_MULT_CAM();                                              //put uplink success flag in high and store flags
          fprintf (PC, "Finish 0x2E\r\n"); 
       
       break;
@@ -1145,8 +1165,7 @@ void MULT_SPEC_COMMAND(int8 CMD0,int8 CMD2,int8 CMD3,int8 CMD4,int8 CMD5,int8 CM
       case 0x20: //Turn off CAM1 RPi DIO for MOSFET on MB1 to power RPI from 5V      
 
          REPLY_TO_COM(0x66,0);
-         SAVE_SAT_LOG(CMD0, 0, CMD2);                                            //save reset data         
-         UPLINK_SUCCESS_MULT_CAM();                                              //put uplink succes flag in high and store flags
+         SAVE_SAT_LOG(0xCC, CMD0, CMD2);                                            //save reset data        
          ACK_for_COM[14] = 0x00;
          
          output_high (PIN_A5);                                                      //SFM2 mission side access
@@ -1157,6 +1176,7 @@ void MULT_SPEC_COMMAND(int8 CMD0,int8 CMD2,int8 CMD3,int8 CMD4,int8 CMD5,int8 CM
          missiontime = 0;
          output_low (PIN_A5);                                                    //SFM2 main side access
          output_high(PIN_C4);                                                    //give access back to COMM
+         UPLINK_SUCCESS_MULT_CAM();                                              //put uplink success flag in high and store flags
          fprintf (PC, "Finish 0x20\r\n");
          
       break;
@@ -1165,8 +1185,7 @@ void MULT_SPEC_COMMAND(int8 CMD0,int8 CMD2,int8 CMD3,int8 CMD4,int8 CMD5,int8 CM
       case 0x21: //Real time uplink command
 
          REPLY_TO_COM(0x66,0);
-         SAVE_SAT_LOG(CMD0, 0, CMD2);                                            //save reset data         
-         UPLINK_SUCCESS_MULT_CAM();                                              //put uplink succes flag in high and store flags
+         SAVE_SAT_LOG(0xCC, CMD0, CMD2);                                            //save reset data     
          ACK_for_COM[14] = 0x00;
          
          output_high (PIN_A5);                                                  //SFM2 mission side access
@@ -1174,6 +1193,7 @@ void MULT_SPEC_COMMAND(int8 CMD0,int8 CMD2,int8 CMD3,int8 CMD4,int8 CMD5,int8 CM
          MISSION_OPERATING = 0;
          FWD_CMD_MBP(CMD0, CMD2, CMD3, CMD4, CMD5, CMD6, CMD7, CMD8);
          output_high(PIN_C4);                                                    //give access back to COMM
+         UPLINK_SUCCESS_MULT_CAM();                                              //put uplink success flag in high and store flags
          fprintf (PC, "Finish 0x21\r\n");
 
       break;
@@ -1182,8 +1202,7 @@ void MULT_SPEC_COMMAND(int8 CMD0,int8 CMD2,int8 CMD3,int8 CMD4,int8 CMD5,int8 CM
       case 0x22: //Real time downlink command
       
          REPLY_TO_COM(0x66,0);
-         SAVE_SAT_LOG(CMD0, 0, CMD2);                                            //save reset data         
-         UPLINK_SUCCESS_MULT_CAM();                                              //put uplink succes flag in high and store flags
+         SAVE_SAT_LOG(0xCC, CMD0, CMD2);                                            //save reset data        
          ACK_for_COM[14] = 0x00;
          
          fprintf (PC, "Start 0x22 - Request MULT-SPEC MB1 Downlink Data\r\n") ;
@@ -1218,6 +1237,7 @@ void MULT_SPEC_COMMAND(int8 CMD0,int8 CMD2,int8 CMD3,int8 CMD4,int8 CMD5,int8 CM
          }
          
          MISSION_OPERATING = 0;
+         UPLINK_SUCCESS_MULT_CAM();                                              //put uplink success flag in high and store flags
          
       break;
       
@@ -1229,8 +1249,7 @@ void MULT_SPEC_COMMAND(int8 CMD0,int8 CMD2,int8 CMD3,int8 CMD4,int8 CMD5,int8 CM
          //eg. 23 is command, 00 02 06 08 is the address location, 01 is number of images to capture, 00 00 00 for remaining unused command bytes (command: 23 00 02 06 08 01 00 00 00)
          
          REPLY_TO_COM(0x66,0);
-         SAVE_SAT_LOG(CMD0, 0, CMD2);                                            //save reset data         
-         UPLINK_SUCCESS_MULT_CAM();                                              //put uplink succes flag in high and store flags
+         SAVE_SAT_LOG(0xCC, CMD0, CMD2);                                            //save reset data          
          ACK_for_COM[14] = 0x00;
          
          fprintf (PC, "Start 0x23\r\n") ;
@@ -1259,6 +1278,7 @@ void MULT_SPEC_COMMAND(int8 CMD0,int8 CMD2,int8 CMD3,int8 CMD4,int8 CMD5,int8 CM
             fprintf (PC, "Mission NOT operating\r\n");
          }
          Mission_check_flag = 0;
+         UPLINK_SUCCESS_MULT_CAM();                                              //put uplink success flag in high and store flags
          output_high(PIN_C4);                                                    //give access back to COMM
       
          fprintf (PC, "Finish 0x23\r\n");
@@ -1269,8 +1289,7 @@ void MULT_SPEC_COMMAND(int8 CMD0,int8 CMD2,int8 CMD3,int8 CMD4,int8 CMD5,int8 CM
       case 0x24: //Turn on CAM1 RPi trigger at specific time from Reservation time
          
          REPLY_TO_COM(0x66,0);
-         SAVE_SAT_LOG(CMD0, 0, CMD2);                                            //save reset data         
-         UPLINK_SUCCESS_MULT_CAM();                                              //put uplink succes flag in high and store flags
+         SAVE_SAT_LOG(0xCC, CMD0, CMD2);                                            //save reset data          
          ACK_for_COM[14] = 0x00;
          
          fprintf (PC, "Start 0x24\r\n") ;
@@ -1299,6 +1318,7 @@ void MULT_SPEC_COMMAND(int8 CMD0,int8 CMD2,int8 CMD3,int8 CMD4,int8 CMD5,int8 CM
             fprintf (PC, "Mission NOT operating\r\n");
          }
          Mission_check_flag = 0;
+         UPLINK_SUCCESS_MULT_CAM();                                              //put uplink success flag in high and store flags
          output_high(PIN_C4);                                                    //give access back to COMM
          fprintf (PC, "Finish 0x24\r\n"); 
          
@@ -1308,8 +1328,7 @@ void MULT_SPEC_COMMAND(int8 CMD0,int8 CMD2,int8 CMD3,int8 CMD4,int8 CMD5,int8 CM
       case 0x25:                                                                 //Trigger Command
          
          REPLY_TO_COM(0x66,0);
-         SAVE_SAT_LOG(CMD0, 0, CMD2);                                            //save reset data         
-         UPLINK_SUCCESS_MULT_CAM();                                              //put uplink succes flag in high and store flags
+         SAVE_SAT_LOG(0xCC, CMD0, CMD2);                                            //save reset data         
          ACK_for_COM[14] = 0x00;
          
          output_high (PIN_A5); //SFM2 mission side access
@@ -1320,6 +1339,7 @@ void MULT_SPEC_COMMAND(int8 CMD0,int8 CMD2,int8 CMD3,int8 CMD4,int8 CMD5,int8 CM
          output_low(pin_F7); //Turn off DIO for trigger
          output_low(pin_G2); //Turn off DIO for trigger
          output_high(PIN_C4);                                                    //give access back to COMM
+         UPLINK_SUCCESS_MULT_CAM();                                              //put uplink success flag in high and store flags
          fprintf (PC, "Finish 0x25\r\n");  
          
       break;
@@ -1327,8 +1347,7 @@ void MULT_SPEC_COMMAND(int8 CMD0,int8 CMD2,int8 CMD3,int8 CMD4,int8 CMD5,int8 CM
       case 0x26: 
       
          REPLY_TO_COM(0x66,0);
-         SAVE_SAT_LOG(CMD0, 0, CMD2);                                            //save reset data         
-         UPLINK_SUCCESS_MULT_CAM();                                              //put uplink succes flag in high and store flags
+         SAVE_SAT_LOG(0xCC, CMD0, CMD2);                                            //save reset data         
          ACK_for_COM[14] = 0x00;
          
          fprintf (PC, "Start 0x26\r\n") ;
@@ -1357,6 +1376,7 @@ void MULT_SPEC_COMMAND(int8 CMD0,int8 CMD2,int8 CMD3,int8 CMD4,int8 CMD5,int8 CM
             fprintf (PC, "Mission NOT operating\r\n");
          }
          Mission_check_flag = 0;
+         UPLINK_SUCCESS_MULT_CAM();                                              //put uplink success flag in high and store flags
          output_high(PIN_C4);                                                    //give access back to COMM
          fprintf (PC, "Finish 0x26\r\n");
          
@@ -1365,8 +1385,7 @@ void MULT_SPEC_COMMAND(int8 CMD0,int8 CMD2,int8 CMD3,int8 CMD4,int8 CMD5,int8 CM
       case 0x27:
          
          REPLY_TO_COM(0x66,0);
-         SAVE_SAT_LOG(CMD0, 0, CMD2);                                            //save reset data         
-         UPLINK_SUCCESS_MULT_CAM();                                              //put uplink succes flag in high and store flags
+         SAVE_SAT_LOG(0xCC, CMD0, CMD2);                                            //save reset data         
          ACK_for_COM[14] = 0x00;
          
          fprintf (PC, "Start 0x27\r\n") ;
@@ -1395,6 +1414,7 @@ void MULT_SPEC_COMMAND(int8 CMD0,int8 CMD2,int8 CMD3,int8 CMD4,int8 CMD5,int8 CM
             fprintf (PC, "Mission NOT operating\r\n");
          }
          Mission_check_flag = 0;
+         UPLINK_SUCCESS_MULT_CAM();                                              //put uplink success flag in high and store flags
          output_high(PIN_C4);                                                    //give access back to COMM     
          fprintf (PC, "Finish 0x27\r\n");
          
@@ -1403,8 +1423,7 @@ void MULT_SPEC_COMMAND(int8 CMD0,int8 CMD2,int8 CMD3,int8 CMD4,int8 CMD5,int8 CM
       case 0x28: 
          
          REPLY_TO_COM(0x66,0);
-         SAVE_SAT_LOG(CMD0, 0, CMD2);                                            //save reset data         
-         UPLINK_SUCCESS_MULT_CAM();                                              //put uplink succes flag in high and store flags
+         SAVE_SAT_LOG(0xCC, CMD0, CMD2);                                            //save reset data        
          ACK_for_COM[14] = 0x00;
          
          fprintf (PC, "Start 0x28\r\n") ;
@@ -1433,6 +1452,7 @@ void MULT_SPEC_COMMAND(int8 CMD0,int8 CMD2,int8 CMD3,int8 CMD4,int8 CMD5,int8 CM
             fprintf (PC, "Mission NOT operating\r\n");
          }
          Mission_check_flag = 0;
+         UPLINK_SUCCESS_MULT_CAM();                                              //put uplink success flag in high and store flags
          output_high(PIN_C4);                                                    //give access back to COMM     
          fprintf (PC, "Finish 0x28\r\n");
          
@@ -1441,8 +1461,7 @@ void MULT_SPEC_COMMAND(int8 CMD0,int8 CMD2,int8 CMD3,int8 CMD4,int8 CMD5,int8 CM
       case 0x29: 
          
          REPLY_TO_COM(0x66,0);
-         SAVE_SAT_LOG(CMD0, 0, CMD2);                                            //save reset data         
-         UPLINK_SUCCESS_MULT_CAM();                                              //put uplink succes flag in high and store flags
+         SAVE_SAT_LOG(0xCC, CMD0, CMD2);                                            //save reset data          
          ACK_for_COM[14] = 0x00;
          
          fprintf (PC, "Start 0x29\r\n") ;
@@ -1471,6 +1490,7 @@ void MULT_SPEC_COMMAND(int8 CMD0,int8 CMD2,int8 CMD3,int8 CMD4,int8 CMD5,int8 CM
             fprintf (PC, "Mission NOT operating\r\n");
          }
          Mission_check_flag = 0;
+         UPLINK_SUCCESS_MULT_CAM();                                              //put uplink success flag in high and store flags
          output_high(PIN_C4);                                                    //give access back to COMM      
          fprintf (PC, "Finish 0x29\r\n");
          
@@ -1480,8 +1500,7 @@ void MULT_SPEC_COMMAND(int8 CMD0,int8 CMD2,int8 CMD3,int8 CMD4,int8 CMD5,int8 CM
       case 0x3E: // Turn on MULTSPEC CAM2 (MB2)
          
          REPLY_TO_COM(0x66,0);
-         SAVE_SAT_LOG(CMD0, 0, CMD2);                                            //save reset data         
-         UPLINK_SUCCESS_MULT_CAM();                                              //put uplink succes flag in high and store flags
+         SAVE_SAT_LOG(0xCC, CMD0, CMD2);                                            //save reset data       
          ACK_for_COM[14] = 0x00;
          
          Turn_On_MBP();
@@ -1492,6 +1511,7 @@ void MULT_SPEC_COMMAND(int8 CMD0,int8 CMD2,int8 CMD3,int8 CMD4,int8 CMD5,int8 CM
          fprintf (PC, "Start 0x3E - Turn ON MULTSPEC CAM2 (MB2)\r\n") ;
          output_high(pin_F6); //Turn on DIO for MULTSPEC CAM2
          output_high(PIN_C4);                                                    //give access back to COMM
+         UPLINK_SUCCESS_MULT_CAM();                                              //put uplink success flag in high and store flags
          fprintf (PC, "Finish 0x3E\r\n");
          
       break;
@@ -1499,8 +1519,7 @@ void MULT_SPEC_COMMAND(int8 CMD0,int8 CMD2,int8 CMD3,int8 CMD4,int8 CMD5,int8 CM
      case 0x30: //Turn off CAM2 RPi DIO for MOSFET on MB2 to power RPI from 5V
          
          REPLY_TO_COM(0x66,0);
-         SAVE_SAT_LOG(CMD0, 0, CMD2);                                            //save reset data         
-         UPLINK_SUCCESS_MULT_CAM();                                              //put uplink succes flag in high and store flags
+         SAVE_SAT_LOG(0xCC, CMD0, CMD2);                                            //save reset data         
          ACK_for_COM[14] = 0x00;
          
          MISSION_STATUS = 0;
@@ -1510,6 +1529,7 @@ void MULT_SPEC_COMMAND(int8 CMD0,int8 CMD2,int8 CMD3,int8 CMD4,int8 CMD5,int8 CM
          fprintf (PC, "Start 0x30 - Turn OFF MULTSPEC CAM2 (MB2)\r\n") ;
          output_low (PIN_A5);                                                    //SFM2 main side access
          output_high(PIN_C4);                                                    //give access back to COMM
+         UPLINK_SUCCESS_MULT_CAM();                                              //put uplink success flag in high and store flags
          fprintf (PC, "Finish 0x30\r\n");
          
          
@@ -1518,14 +1538,14 @@ void MULT_SPEC_COMMAND(int8 CMD0,int8 CMD2,int8 CMD3,int8 CMD4,int8 CMD5,int8 CM
       case 0x31: //Turn off CAM1 RPi for MOSFET on MB1 to power RPI from 5V
          
          REPLY_TO_COM(0x66,0);
-         SAVE_SAT_LOG(CMD0, 0, CMD2);                                            //save reset data         
-         UPLINK_SUCCESS_MULT_CAM();                                              //put uplink succes flag in high and store flags
+         SAVE_SAT_LOG(0xCC, CMD0, CMD2);                                            //save reset data       
          ACK_for_COM[14] = 0x00;
          
          output_high (PIN_A5); //SFM2 mission side access
          fprintf (PC, "Start 0x31 - Real time uplink MULTSPEC CAM2\r\n") ;
          FWD_CMD_MBP(CMD0, CMD2, CMD3, CMD4, CMD5, CMD6, CMD7, CMD8);
          output_high(PIN_C4);                                                    //give access back to COMM
+         UPLINK_SUCCESS_MULT_CAM();                                              //put uplink success flag in high and store flags
          fprintf (PC, "Finish 0x31\r\n");
          
       break;
@@ -1533,9 +1553,9 @@ void MULT_SPEC_COMMAND(int8 CMD0,int8 CMD2,int8 CMD3,int8 CMD4,int8 CMD5,int8 CM
       case 0x32: //Turn on CAM1 RPi trigger
          
          REPLY_TO_COM(0x66,0);
-         SAVE_SAT_LOG(CMD0, 0, CMD2);                                            //save reset data         
-         UPLINK_SUCCESS_MULT_CAM();                                              //put uplink succes flag in high and store flags
+         SAVE_SAT_LOG(0xCC, CMD0, CMD2);                                            //save reset data         
          ACK_for_COM[14] = 0x00;
+         
          MISSION_OPERATING = 1;
          fprintf (PC, "Start 0x32 - Request MULT-SPEC MB2 Downlink Data\r\n") ;
          output_high (PIN_A5); //SFM2 mission side access
@@ -1566,18 +1586,15 @@ void MULT_SPEC_COMMAND(int8 CMD0,int8 CMD2,int8 CMD3,int8 CMD4,int8 CMD5,int8 CM
          fprintf(PC,"\r\n");
          output_high(PIN_C4);                                                    //give access back to COMM
          MISSION_OPERATING = 0;
+         UPLINK_SUCCESS_MULT_CAM();                                              //put uplink success flag in high and store flags
          fprintf (PC, "Finish 0x32\r\n");
          
       break;
       
       case 0x33: 
-         //Capture in mode 1
-         //(1 image, captured immediately, saved to specified address) 
-         //eg. 23 is command, 00 02 06 08 is the address location, 01 is number of images to capture, 00 00 00 for remaining unused command bytes (command: 23 00 02 06 08 01 00 00 00)
-         
+
          REPLY_TO_COM(0x66,0);
-         SAVE_SAT_LOG(CMD0, 0, CMD2);                                            //save reset data         
-         UPLINK_SUCCESS_MULT_CAM();                                              //put uplink succes flag in high and store flags
+         SAVE_SAT_LOG(0xCC, CMD0, CMD2);                                            //save reset data         
          ACK_for_COM[14] = 0x00;
          
          fprintf (PC, "Start 0x33\r\n") ;
@@ -1606,6 +1623,7 @@ void MULT_SPEC_COMMAND(int8 CMD0,int8 CMD2,int8 CMD3,int8 CMD4,int8 CMD5,int8 CM
             fprintf (PC, "Mission NOT operating\r\n");
          }
          Mission_check_flag = 0;
+         UPLINK_SUCCESS_MULT_CAM();                                              //put uplink success flag in high and store flags
          output_high(PIN_C4);                                                    //give access back to COMM
          fprintf (PC, "Finish 0x33\r\n");
          
@@ -1614,8 +1632,7 @@ void MULT_SPEC_COMMAND(int8 CMD0,int8 CMD2,int8 CMD3,int8 CMD4,int8 CMD5,int8 CM
       case 0x34: 
       
          REPLY_TO_COM(0x66,0);
-         SAVE_SAT_LOG(CMD0, 0, CMD2);                                            //save reset data         
-         UPLINK_SUCCESS_MULT_CAM();                                              //put uplink succes flag in high and store flags
+         SAVE_SAT_LOG(0xCC, CMD0, CMD2);                                            //save reset data         
          ACK_for_COM[14] = 0x00;
          
          fprintf (PC, "Start 0x34\r\n") ;
@@ -1644,6 +1661,7 @@ void MULT_SPEC_COMMAND(int8 CMD0,int8 CMD2,int8 CMD3,int8 CMD4,int8 CMD5,int8 CM
             fprintf (PC, "Mission NOT operating\r\n");
          }
          Mission_check_flag = 0;
+         UPLINK_SUCCESS_MULT_CAM();                                              //put uplink success flag in high and store flags
          output_high(PIN_C4);                                                    //give access back to COMM         
          fprintf (PC, "Finish 0x34\r\n");    
          
@@ -1652,8 +1670,7 @@ void MULT_SPEC_COMMAND(int8 CMD0,int8 CMD2,int8 CMD3,int8 CMD4,int8 CMD5,int8 CM
       case 0x35: //Turn on CAM1 and CAM2 RPi trigger
          
          REPLY_TO_COM(0x66,0);
-         SAVE_SAT_LOG(CMD0, 0, CMD2);                                            //save reset data         
-         UPLINK_SUCCESS_MULT_CAM();                                              //put uplink succes flag in high and store flags
+         SAVE_SAT_LOG(0xCC, CMD0, CMD2);                                            //save reset data         
          ACK_for_COM[14] = 0x00;
          
          output_high (PIN_A5); //SFM2 mission side access
@@ -1663,7 +1680,8 @@ void MULT_SPEC_COMMAND(int8 CMD0,int8 CMD2,int8 CMD3,int8 CMD4,int8 CMD5,int8 CM
          delay_ms(10000);
          output_low(pin_F7); //Turn off DIO for trigger
          output_low(pin_G2); //Turn off DIO for trigger
-         output_high(PIN_C4);                                                    //give access back to COMM         
+         output_high(PIN_C4);                                                    //give access back to COMM
+         UPLINK_SUCCESS_MULT_CAM();                                              //put uplink success flag in high and store flags
          fprintf (PC, "Finish 0x35\r\n");
          
       break;
@@ -1671,8 +1689,7 @@ void MULT_SPEC_COMMAND(int8 CMD0,int8 CMD2,int8 CMD3,int8 CMD4,int8 CMD5,int8 CM
       case 0x36: //Turn on CAM1 and CAM2 RPi
 
          REPLY_TO_COM(0x66,0);
-         SAVE_SAT_LOG(CMD0, 0, CMD2);                                            //save reset data         
-         UPLINK_SUCCESS_MULT_CAM();                                              //put uplink succes flag in high and store flags
+         SAVE_SAT_LOG(0xCC, CMD0, CMD2);                                            //save reset data        
          ACK_for_COM[14] = 0x00;
          
          fprintf (PC, "Start 0x36\r\n");   
@@ -1700,6 +1717,7 @@ void MULT_SPEC_COMMAND(int8 CMD0,int8 CMD2,int8 CMD3,int8 CMD4,int8 CMD5,int8 CM
             fprintf (PC, "Mission NOT operating\r\n");
          }
          Mission_check_flag = 0;
+         UPLINK_SUCCESS_MULT_CAM();                                              //put uplink success flag in high and store flags
          output_high(PIN_C4);                                                    //give access back to COMM      
          fprintf (PC, "Finish 0x36\r\n");
          
@@ -1708,8 +1726,7 @@ void MULT_SPEC_COMMAND(int8 CMD0,int8 CMD2,int8 CMD3,int8 CMD4,int8 CMD5,int8 CM
       case 0x37:
 
          REPLY_TO_COM(0x66,0);
-         SAVE_SAT_LOG(CMD0, 0, CMD2);                                            //save reset data         
-         UPLINK_SUCCESS_MULT_CAM();                                              //put uplink succes flag in high and store flags
+         SAVE_SAT_LOG(0xCC, CMD0, CMD2);                                            //save reset data       
          ACK_for_COM[14] = 0x00;
          
          fprintf (PC, "Start 0x37\r\n");
@@ -1738,6 +1755,7 @@ void MULT_SPEC_COMMAND(int8 CMD0,int8 CMD2,int8 CMD3,int8 CMD4,int8 CMD5,int8 CM
             fprintf (PC, "Mission NOT operating\r\n");
          }
          Mission_check_flag = 0;
+         UPLINK_SUCCESS_MULT_CAM();                                              //put uplink success flag in high and store flags
          output_high(PIN_C4);                                                    //give access back to COMM 
          fprintf (PC, "Finish 0x37\r\n");
            
@@ -1746,8 +1764,7 @@ void MULT_SPEC_COMMAND(int8 CMD0,int8 CMD2,int8 CMD3,int8 CMD4,int8 CMD5,int8 CM
       case 0x38:
 
          REPLY_TO_COM(0x66,0);
-         SAVE_SAT_LOG(CMD0, 0, CMD2);                                            //save reset data         
-         UPLINK_SUCCESS_MULT_CAM();                                              //put uplink succes flag in high and store flags
+         SAVE_SAT_LOG(0xCC, CMD0, CMD2);                                            //save reset data         
          ACK_for_COM[14] = 0x00;
          
          fprintf (PC, "Start 0x38\r\n");
@@ -1775,6 +1792,7 @@ void MULT_SPEC_COMMAND(int8 CMD0,int8 CMD2,int8 CMD3,int8 CMD4,int8 CMD5,int8 CM
             fprintf (PC, "Mission NOT operating\r\n");
          }
          Mission_check_flag = 0;
+         UPLINK_SUCCESS_MULT_CAM();                                              //put uplink success flag in high and store flags
          output_high(PIN_C4);                                                    //give access back to COMM 
          fprintf (PC, "Finish 0x38\r\n");
            
@@ -1783,8 +1801,7 @@ void MULT_SPEC_COMMAND(int8 CMD0,int8 CMD2,int8 CMD3,int8 CMD4,int8 CMD5,int8 CM
       case 0x39:
 
          REPLY_TO_COM(0x66,0);
-         SAVE_SAT_LOG(CMD0, 0, CMD2);                                            //save reset data         
-         UPLINK_SUCCESS_MULT_CAM();                                              //put uplink succes flag in high and store flags
+         SAVE_SAT_LOG(0xCC, CMD0, CMD2);                                            //save reset data          
          ACK_for_COM[14] = 0x00;
          
          fprintf (PC, "Start 0x39\r\n");
@@ -1812,6 +1829,7 @@ void MULT_SPEC_COMMAND(int8 CMD0,int8 CMD2,int8 CMD3,int8 CMD4,int8 CMD5,int8 CM
             fprintf (PC, "Mission NOT operating\r\n");
          }
          Mission_check_flag = 0;
+         UPLINK_SUCCESS_MULT_CAM();                                              //put uplink success flag in high and store flags
          output_high(PIN_C4);                                                    //give access back to COMM 
          fprintf (PC, "Finish 0x39\r\n");
            
@@ -2432,7 +2450,10 @@ void IMGCLS_COMMAND(int8 CMD0,int8 CMD2,int8 CMD3,int8 CMD4,int8 CMD5,int8 CMD6,
       case 0x8E:
          
          REPLY_TO_COM(0x66,0);
-         SAVE_SAT_LOG(CMD0, 0, CMD2);                                            //save reset data         
+         SAVE_SAT_LOG(0xCC, CMD0, CMD2);                                            //save reset data 
+         MISSION_STATUS = 1;
+         MISSION_OPERATING = 0;
+         missiontime = 0;
          UPLINK_SUCCESS_IMGCLS_CAM();                                             //put uplink succes flag in high and store flags
          ACK_for_COM[14] = 0x00;
          
@@ -2440,10 +2461,8 @@ void IMGCLS_COMMAND(int8 CMD0,int8 CMD2,int8 CMD3,int8 CMD4,int8 CMD5,int8 CMD6,
          output_high (PIN_A5); //SFM2 mission side access
          fprintf (PC, "Start 0x8E - Turn ON IMGCLS\r\n") ;
          
-         MISSION_STATUS = 1;
-         MISSION_OPERATING = 0;
          FWD_CMD_MBP(CMD0, CMD2, CMD3, CMD4, CMD5, CMD6, CMD7, CMD8);
-         missiontime = 0;
+
          output_high(PIN_C4);                                                    //give access back to COMM
          fprintf (PC, "Finish 0x8E\r\n");
          
@@ -2453,16 +2472,17 @@ void IMGCLS_COMMAND(int8 CMD0,int8 CMD2,int8 CMD3,int8 CMD4,int8 CMD5,int8 CMD6,
       case 0x80: //Turn off IMGCLS RPi DIO for MOSFET on RAB to power RPI from 5V line
          
          REPLY_TO_COM(0x66,0);
-         SAVE_SAT_LOG(CMD0, 0, CMD2);                                            //save reset data         
+         SAVE_SAT_LOG(0xCC, CMD0, CMD2);                                            //save reset data 
+         MISSION_STATUS = 0;
+         MISSION_OPERATING = 0;   
+         missiontime = 0;
          UPLINK_SUCCESS_IMGCLS_CAM();                                             //put uplink succes flag in high and store flags
          ACK_for_COM[14] = 0x00;
          
          output_high (PIN_A5); //SFM2 mission side access
          fprintf (PC, "Start 0x80 - Turn off IMGCLS\r\n");
          FWD_CMD_MBP(CMD0, CMD2, CMD3, CMD4, CMD5, CMD6, CMD7, CMD8);
-         MISSION_STATUS = 0;
-         MISSION_OPERATING = 0;
-         missiontime = 0;
+
          output_high(PIN_C4);                                                    //give access back to COMM
          fprintf (PC, "Finish 0x80\r\n"); 
          
@@ -2471,7 +2491,7 @@ void IMGCLS_COMMAND(int8 CMD0,int8 CMD2,int8 CMD3,int8 CMD4,int8 CMD5,int8 CMD6,
       case 0x81: //Real time uplink command
          
          REPLY_TO_COM(0x66,0);
-         SAVE_SAT_LOG(CMD0, 0, CMD2);                                            //save reset data         
+         SAVE_SAT_LOG(0xCC, CMD0, CMD2);                                            //save reset data         
          UPLINK_SUCCESS_IMGCLS_CAM();                                            //put uplink succes flag in high and store flags
          ACK_for_COM[14] = 0x00;
          
@@ -2486,7 +2506,7 @@ void IMGCLS_COMMAND(int8 CMD0,int8 CMD2,int8 CMD3,int8 CMD4,int8 CMD5,int8 CMD6,
       case 0x82: //Real time downlink IMGCLS
          
          REPLY_TO_COM(0x66,0);
-         SAVE_SAT_LOG(CMD0, 0, CMD2);                                            //save reset data         
+         SAVE_SAT_LOG(0xCC, CMD0, CMD2);                                            //save reset data       
          UPLINK_SUCCESS_IMGCLS_CAM();                                             //put uplink succes flag in high and store flags
          ACK_for_COM[14] = 0x00;
          
@@ -2528,8 +2548,7 @@ void IMGCLS_COMMAND(int8 CMD0,int8 CMD2,int8 CMD3,int8 CMD4,int8 CMD5,int8 CMD6,
       case 0x83:
          
          REPLY_TO_COM(0x66,0);
-         SAVE_SAT_LOG(CMD0, 0, CMD2);                                            //save reset data         
-         UPLINK_SUCCESS_IMGCLS_CAM();                                             //put uplink succes flag in high and store flags
+         SAVE_SAT_LOG(0xCC, CMD0, CMD2);                                            //save reset data          
          ACK_for_COM[14] = 0x00;
          
          output_high (PIN_A5);                                                   //Mission Side
@@ -2559,6 +2578,7 @@ void IMGCLS_COMMAND(int8 CMD0,int8 CMD2,int8 CMD3,int8 CMD4,int8 CMD5,int8 CMD6,
          }
          
          Mission_check_flag = 0;
+         UPLINK_SUCCESS_IMGCLS_CAM();                                             //put uplink succes flag in high and store flags
          output_high(PIN_C4);                                                    //give access back to COMM
          fprintf (PC, "Finish 0x83\r\n");
          
@@ -2570,8 +2590,7 @@ void IMGCLS_COMMAND(int8 CMD0,int8 CMD2,int8 CMD3,int8 CMD4,int8 CMD5,int8 CMD6,
          //(1 image, captured immediately, saved to specified address) 
          //eg. 23 is command, 00 02 06 08 is the address location, 01 is number of images to capture, 00 00 00 for remaining unused command bytes (command: 23 00 02 06 08 01 00 00 00)
          REPLY_TO_COM(0x66,0);
-         SAVE_SAT_LOG(CMD0, 0, CMD2);                                            //save reset data         
-         UPLINK_SUCCESS_IMGCLS_CAM();                                             //put uplink succes flag in high and store flags
+         SAVE_SAT_LOG(0xCC, CMD0, CMD2);                                            //save reset data         
          ACK_for_COM[14] = 0x00;
          
          output_high (PIN_A5);                                                   //Mission Side
@@ -2603,14 +2622,14 @@ void IMGCLS_COMMAND(int8 CMD0,int8 CMD2,int8 CMD3,int8 CMD4,int8 CMD5,int8 CMD6,
          }
          
          Mission_check_flag = 0;
+         UPLINK_SUCCESS_IMGCLS_CAM();                                             //put uplink succes flag in high and store flags
          output_high(PIN_C4);                                                    //give access back to COMM
          fprintf (PC, "Finish 0x84\r\n");
       
       case 0x85:
       
          REPLY_TO_COM(0x66,0);
-         SAVE_SAT_LOG(CMD0, 0, CMD2);                                            //save reset data         
-         UPLINK_SUCCESS_IMGCLS_CAM();                                             //put uplink succes flag in high and store flags
+         SAVE_SAT_LOG(0xCC, CMD0, CMD2);                                            //save reset data        
          ACK_for_COM[14] = 0x00;
          
          output_high (PIN_A5);                                                   //Mission Side
@@ -2640,6 +2659,7 @@ void IMGCLS_COMMAND(int8 CMD0,int8 CMD2,int8 CMD3,int8 CMD4,int8 CMD5,int8 CMD6,
          }
          
          Mission_check_flag = 0;
+         UPLINK_SUCCESS_IMGCLS_CAM();                                             //put uplink succes flag in high and store flags
          output_high(PIN_C4);                                                    //give access back to COMM
          fprintf (PC, "Finish 0x85\r\n");
          
@@ -2648,8 +2668,7 @@ void IMGCLS_COMMAND(int8 CMD0,int8 CMD2,int8 CMD3,int8 CMD4,int8 CMD5,int8 CMD6,
          case 0x86:
       
          REPLY_TO_COM(0x66,0);
-         SAVE_SAT_LOG(CMD0, 0, CMD2);                                            //save reset data         
-         UPLINK_SUCCESS_IMGCLS_CAM();                                             //put uplink succes flag in high and store flags
+         SAVE_SAT_LOG(0xCC, CMD0, CMD2);                                            //save reset data        
          ACK_for_COM[14] = 0x00;
          
          output_high (PIN_A5);                                                   //Mission Side
@@ -2679,6 +2698,7 @@ void IMGCLS_COMMAND(int8 CMD0,int8 CMD2,int8 CMD3,int8 CMD4,int8 CMD5,int8 CMD6,
          }
          
          Mission_check_flag = 0;
+         UPLINK_SUCCESS_IMGCLS_CAM();                                             //put uplink succes flag in high and store flags
          output_high(PIN_C4);                                                    //give access back to COMM
          fprintf (PC, "Finish 0x86\r\n");
          
@@ -2687,8 +2707,7 @@ void IMGCLS_COMMAND(int8 CMD0,int8 CMD2,int8 CMD3,int8 CMD4,int8 CMD5,int8 CMD6,
          case 0x87:
       
          REPLY_TO_COM(0x66,0);
-         SAVE_SAT_LOG(CMD0, 0, CMD2);                                            //save reset data         
-         UPLINK_SUCCESS_IMGCLS_CAM();                                             //put uplink succes flag in high and store flags
+         SAVE_SAT_LOG(0xCC, CMD0, CMD2);                                            //save reset data        
          ACK_for_COM[14] = 0x00;
          
          output_high (PIN_A5);                                                   //Mission Side
@@ -2718,6 +2737,7 @@ void IMGCLS_COMMAND(int8 CMD0,int8 CMD2,int8 CMD3,int8 CMD4,int8 CMD5,int8 CMD6,
          }
          
          Mission_check_flag = 0;
+         UPLINK_SUCCESS_IMGCLS_CAM();                                             //put uplink succes flag in high and store flags
          output_high(PIN_C4);                                                    //give access back to COMM
          fprintf (PC, "Finish 0x87\r\n");
          
@@ -2726,8 +2746,7 @@ void IMGCLS_COMMAND(int8 CMD0,int8 CMD2,int8 CMD3,int8 CMD4,int8 CMD5,int8 CMD6,
          case 0x88:
       
          REPLY_TO_COM(0x66,0);
-         SAVE_SAT_LOG(CMD0, 0, CMD2);                                            //save reset data         
-         UPLINK_SUCCESS_IMGCLS_CAM();                                             //put uplink succes flag in high and store flags
+         SAVE_SAT_LOG(0xCC, CMD0, CMD2);                                            //save reset data          
          ACK_for_COM[14] = 0x00;
          
          output_high (PIN_A5);                                                   //Mission Side
@@ -2757,6 +2776,7 @@ void IMGCLS_COMMAND(int8 CMD0,int8 CMD2,int8 CMD3,int8 CMD4,int8 CMD5,int8 CMD6,
          }
          
          Mission_check_flag = 0;
+         UPLINK_SUCCESS_IMGCLS_CAM();                                             //put uplink succes flag in high and store flags
          output_high(PIN_C4);                                                    //give access back to COMM
          fprintf (PC, "Finish 0x88\r\n");
          
@@ -2765,8 +2785,7 @@ void IMGCLS_COMMAND(int8 CMD0,int8 CMD2,int8 CMD3,int8 CMD4,int8 CMD5,int8 CMD6,
          case 0x89:
       
          REPLY_TO_COM(0x66,0);
-         SAVE_SAT_LOG(CMD0, 0, CMD2);                                            //save reset data         
-         UPLINK_SUCCESS_IMGCLS_CAM();                                             //put uplink succes flag in high and store flags
+         SAVE_SAT_LOG(0xCC, CMD0, CMD2);                                            //save reset data        
          ACK_for_COM[14] = 0x00;
          
          output_high (PIN_A5);                                                   //Mission Side
@@ -2796,6 +2815,7 @@ void IMGCLS_COMMAND(int8 CMD0,int8 CMD2,int8 CMD3,int8 CMD4,int8 CMD5,int8 CMD6,
          }
          
          Mission_check_flag = 0;
+         UPLINK_SUCCESS_IMGCLS_CAM();                                             //put uplink success flag in high and store flags
          output_high(PIN_C4);                                                    //give access back to COMM
          fprintf (PC, "Finish 0x89\r\n");
          
@@ -2804,8 +2824,7 @@ void IMGCLS_COMMAND(int8 CMD0,int8 CMD2,int8 CMD3,int8 CMD4,int8 CMD5,int8 CMD6,
          case 0x8A:
       
          REPLY_TO_COM(0x66,0);
-         SAVE_SAT_LOG(CMD0, 0, CMD2);                                            //save reset data         
-         UPLINK_SUCCESS_IMGCLS_CAM();                                             //put uplink succes flag in high and store flags
+         SAVE_SAT_LOG(0xCC, CMD0, CMD2);                                            //save reset data         
          ACK_for_COM[14] = 0x00;
          
          output_high (PIN_A5);                                                   //Mission Side        
@@ -2835,6 +2854,7 @@ void IMGCLS_COMMAND(int8 CMD0,int8 CMD2,int8 CMD3,int8 CMD4,int8 CMD5,int8 CMD6,
          }
          
          Mission_check_flag = 0;
+         UPLINK_SUCCESS_IMGCLS_CAM();                                             //put uplink succes flag in high and store flags
          output_high(PIN_C4);                                                    //give access back to COMM
          fprintf (PC, "Finish 0x8A\r\n");
          
@@ -2843,8 +2863,7 @@ void IMGCLS_COMMAND(int8 CMD0,int8 CMD2,int8 CMD3,int8 CMD4,int8 CMD5,int8 CMD6,
          case 0x8B:
          
          REPLY_TO_COM(0x66,0);
-         SAVE_SAT_LOG(CMD0, 0, CMD2);                                            //save reset data         
-         UPLINK_SUCCESS_IMGCLS_CAM();                                             //put uplink succes flag in high and store flags
+         SAVE_SAT_LOG(0xCC, CMD0, CMD2);                                            //save reset data         
          ACK_for_COM[14] = 0x00;
          
          output_high (PIN_A5);                                                   //Mission Side         
@@ -2874,6 +2893,7 @@ void IMGCLS_COMMAND(int8 CMD0,int8 CMD2,int8 CMD3,int8 CMD4,int8 CMD5,int8 CMD6,
          }
          
          Mission_check_flag = 0;
+         UPLINK_SUCCESS_IMGCLS_CAM();                                             //put uplink succes flag in high and store flags
          output_high(PIN_C4);                                                    //give access back to COMM
          fprintf (PC, "Finish 0x8B\r\n");
          
@@ -2882,8 +2902,7 @@ void IMGCLS_COMMAND(int8 CMD0,int8 CMD2,int8 CMD3,int8 CMD4,int8 CMD5,int8 CMD6,
          case 0x8C:
       
          REPLY_TO_COM(0x66,0);
-         SAVE_SAT_LOG(CMD0, 0, CMD2);                                            //save reset data         
-         UPLINK_SUCCESS_IMGCLS_CAM();                                             //put uplink succes flag in high and store flags
+         SAVE_SAT_LOG(0xCC, CMD0, CMD2);                                            //save reset data         
          ACK_for_COM[14] = 0x00;
          
          output_high (PIN_A5);                                                   //Mission Side
@@ -2913,6 +2932,7 @@ void IMGCLS_COMMAND(int8 CMD0,int8 CMD2,int8 CMD3,int8 CMD4,int8 CMD5,int8 CMD6,
          }
          
          Mission_check_flag = 0;
+         UPLINK_SUCCESS_IMGCLS_CAM();                                             //put uplink succes flag in high and store flags
          output_high(PIN_C4);                                                    //give access back to COMM
          fprintf (PC, "Finish 0x8C\r\n");
          
@@ -2921,8 +2941,7 @@ void IMGCLS_COMMAND(int8 CMD0,int8 CMD2,int8 CMD3,int8 CMD4,int8 CMD5,int8 CMD6,
          case 0x8D:
       
          REPLY_TO_COM(0x66,0);
-         SAVE_SAT_LOG(CMD0, 0, CMD2);                                            //save reset data         
-         UPLINK_SUCCESS_IMGCLS_CAM();                                             //put uplink succes flag in high and store flags
+         SAVE_SAT_LOG(0xCC, CMD0, CMD2);                                            //save reset data         
          ACK_for_COM[14] = 0x00;
          
          output_high (PIN_A5);                                                   //Mission Side
@@ -2952,6 +2971,7 @@ void IMGCLS_COMMAND(int8 CMD0,int8 CMD2,int8 CMD3,int8 CMD4,int8 CMD5,int8 CMD6,
          }
          
          Mission_check_flag = 0;
+         UPLINK_SUCCESS_IMGCLS_CAM();                                             //put uplink succes flag in high and store flags
          output_high(PIN_C4);                                                    //give access back to COMM
          fprintf (PC, "Finish 0x8D\r\n");
          
@@ -3642,7 +3662,7 @@ void SF_COMMAND(int8 CMD0,int8 CMD2,int8 CMD3,int8 CMD4,int8 CMD5,int8 CMD6, int
       case 0x5E: //Turn on
          
          REPLY_TO_COM(0x66,0);
-         SAVE_SAT_LOG(CMD0, 0, CMD2);                                            //save reset data         
+         SAVE_SAT_LOG(0xCC, CMD0, CMD2);                                            //save reset data        
          UPLINK_SUCCESS_S_FWD();                                                 //put uplink succes flag in high and store flags
          ACK_for_COM[14] = 0x00;
          
@@ -3663,7 +3683,7 @@ void SF_COMMAND(int8 CMD0,int8 CMD2,int8 CMD3,int8 CMD4,int8 CMD5,int8 CMD6, int
       case 0x50: //Turn off
          
          REPLY_TO_COM(0x66,0);
-         SAVE_SAT_LOG(CMD0, 0, CMD2);                                            //save reset data         
+         SAVE_SAT_LOG(0xCC, CMD0, CMD2);                                            //save reset data          
          UPLINK_SUCCESS_S_FWD();                                                 //put uplink succes flag in high and store flags
          ACK_for_COM[14] = 0x00;
          
@@ -3681,7 +3701,7 @@ void SF_COMMAND(int8 CMD0,int8 CMD2,int8 CMD3,int8 CMD4,int8 CMD5,int8 CMD6, int
       case 0x51:                                                                  //Real time uplink command
 
          REPLY_TO_COM(0x66,0);
-         SAVE_SAT_LOG(CMD0, 0, CMD2);                                            //save reset data         
+         SAVE_SAT_LOG(0xCC, CMD0, CMD2);                                            //save reset data        
          UPLINK_SUCCESS_S_FWD();                                                 //put uplink succes flag in high and store flags
          ACK_for_COM[14] = 0x00;
          
@@ -3696,7 +3716,7 @@ void SF_COMMAND(int8 CMD0,int8 CMD2,int8 CMD3,int8 CMD4,int8 CMD5,int8 CMD6, int
       case 0x52:                                                                 //Real time downlink SF
          
          REPLY_TO_COM(0x66,0);
-         SAVE_SAT_LOG(CMD0, 0, CMD2);                                            //save reset data         
+         SAVE_SAT_LOG(0xCC, CMD0, CMD2);                                            //save reset data        
          UPLINK_SUCCESS_S_FWD();                                                 //put uplink succes flag in high and store flags
          ACK_for_COM[14] = 0x00;
          output_high (PIN_A5);
@@ -3737,7 +3757,7 @@ void SF_COMMAND(int8 CMD0,int8 CMD2,int8 CMD3,int8 CMD4,int8 CMD5,int8 CMD6, int
       case 0x53:
          
          REPLY_TO_COM(0x66,0);
-         SAVE_SAT_LOG(CMD0, 0, CMD2);                                            //save reset data         
+         SAVE_SAT_LOG(0xCC, CMD0, CMD2);                                            //save reset data         
          UPLINK_SUCCESS_S_FWD();                                                 //put uplink succes flag in high and store flags
          ACK_for_COM[14] = 0x00;
          output_high (PIN_A5);
@@ -3800,7 +3820,7 @@ void SF_COMMAND(int8 CMD0,int8 CMD2,int8 CMD3,int8 CMD4,int8 CMD5,int8 CMD6, int
       case 0x54:
          
          REPLY_TO_COM(0x66,0);
-         SAVE_SAT_LOG(CMD0, 0, CMD2);                                            //save reset data         
+         SAVE_SAT_LOG(0xCC, CMD0, CMD2);                                            //save reset data         
          UPLINK_SUCCESS_S_FWD();                                                 //put uplink succes flag in high and store flags
          ACK_for_COM[14] = 0x00;
          output_high (PIN_A5);
@@ -3840,7 +3860,7 @@ void SF_COMMAND(int8 CMD0,int8 CMD2,int8 CMD3,int8 CMD4,int8 CMD5,int8 CMD6, int
       case 0x55: //Turn on
          
          REPLY_TO_COM(0x66,0);
-         SAVE_SAT_LOG(CMD0, 0, CMD2);                                            //save reset data         
+         SAVE_SAT_LOG(0xCC, CMD0, CMD2);                                            //save reset data          
          UPLINK_SUCCESS_S_FWD();                                                 //put uplink succes flag in high and store flags
          ACK_for_COM[14] = 0x00;
          Turn_On_MBP();

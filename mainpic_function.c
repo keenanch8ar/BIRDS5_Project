@@ -628,7 +628,7 @@ void BC_ON_30min()
          RESET_DATA = 0;
          delay_ms(1000);
          delay_ms(20000);                                                        //wait until RESET goes back to normal loop
-         SAVE_SAT_LOG(0xBC,0x30,0x30);                                           //first 30 min antenna deployment
+         SAVE_SAT_LOG(0xBB,0x30,0x30);                                           //first 30 min antenna deployment
       }
    }
    return;
@@ -662,7 +662,7 @@ void Antenna_Deploy()
          RESET_DATA = 0;
          delay_ms(1000);
          delay_ms(20000);                                                        //wait until RESET goes back to normal loop
-         SAVE_SAT_LOG(0xBC,BC_ATTEMPT_FLAG,BC_ATTEMPT_FLAG);
+         SAVE_SAT_LOG(0xBB,BC_ATTEMPT_FLAG,BC_ATTEMPT_FLAG);
       }
    }
    return;

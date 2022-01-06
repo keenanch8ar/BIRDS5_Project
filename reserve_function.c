@@ -161,7 +161,9 @@ void Get_RSV()
       RESERVE_ADDRESS_3 = reserve_table[5];                                      //closest mission address
       RESERVE_ADDRESS_4 = reserve_table[6];                                      //closest mission address
       RESERVE_PACKET_NUM = reserve_table[7];                                     //closest mission pckt number
-   }else{
+   }
+   else
+   {
       RESERVE_CHECK = 0;                                                         //The table is not used
       MISSION_CONTENTS = 0xff;                                                   //closest mission command
       RESERVE_TARGET_FLAG = 0xff;                                                //closest time data
@@ -196,7 +198,7 @@ void Disp_RSV()                                                                 
 }
 
 
-
+//TODO: ADD FINAL COMM COMMAND BYTE WHEN INPUTTING RESERVATION COMMAND, RIGHT NOW IT DOES NOT SAVE CMD_FROM_COMM[11]
 void input_reservation_COM()                                                     //put the command from COM into the table and sort in ascending form
 {
 //!   reserve_table[table_num] = CMD_FROM_PC[0];                                 //input the data about mission content
@@ -206,7 +208,7 @@ void input_reservation_COM()                                                    
    table_num = reserve_table[80];
    if(reserve_table[80] == 80)
    {
-      fprintf(PC,"Reservation table is Full!\r\n\r\n");
+      fprintf(PC,"Reservation table is Full!\r\n\r\n"); 
    }
    else
    {
@@ -219,7 +221,9 @@ void input_reservation_COM()                                                    
                if(reserve_table[num] > RESERVE_MIN_FLAG)
                {
                   reserve_table[num] = reserve_table[num] - RESERVE_MIN_FLAG;    //update the time of all commands
-               }else{
+               }
+               else
+               {
                   reserve_table[num] = 0;
                }
             }
@@ -233,6 +237,15 @@ void input_reservation_COM()                                                    
          reserve_table[table_num + 6] = CMD_FROM_COMM[9];                        //input address
          reserve_table[table_num + 7] = CMD_FROM_COMM[10];                        //input packet number
          if(RESERVE_MIN_FLAG != 0)                                               //RESERVE_MIN_FLAG = 0 --> no need to update the target flag
+         {
+            RESERVE_TARGET_FLAG = RESERVE_TARGET_FLAG - RESERVE_MIN_FLAG;
+            RESERVE_MIN_FLAG = 0;
+         }                                               
+      }
+      else
+      {
+         RESERVE_MIN_FLAG = 0;
+         RESERVE_SEC_FLAG = 0;
          reserve_table[table_num] = CMD_FROM_COMM[3];                             //input the data about mission content
          reserve_table[table_num + 1] = CMD_FROM_COMM[4];                         //input data about time
          reserve_table[table_num + 2] = CMD_FROM_COMM[5];                         //input the data about mission detail mode
@@ -266,7 +279,9 @@ void input_reservation_PC()                                                     
    if(reserve_table[80] == 80)
    {
       fprintf(PC,"Reservation table is Full!\r\n\r\n");
-   }else{
+   }
+   else
+   {
       if(RESERVE_CHECK != 0x00)                                                  //if new reservation is faster than target time
       {
          for(int num = 1; num < table_size - 6; num = num + 8)
@@ -276,7 +291,9 @@ void input_reservation_PC()                                                     
                if(reserve_table[num] > RESERVE_MIN_FLAG)
                {
                   reserve_table[num] = reserve_table[num] - RESERVE_MIN_FLAG;    //update the time of all commands
-               }else{
+               }
+               else
+               {
                   reserve_table[num] = 0;
                }
             }
@@ -295,7 +312,9 @@ void input_reservation_PC()                                                     
             RESERVE_TARGET_FLAG = RESERVE_TARGET_FLAG - RESERVE_MIN_FLAG;
             RESERVE_MIN_FLAG = 0;
          }
-      }else{                                                                     //if first reservation
+      }
+      else
+      {                                                                     //if first reservation
          RESERVE_MIN_FLAG = 0;
          RESERVE_SEC_FLAG = 0;
          reserve_table[table_num] = CMD_FROM_PC[0];                              //input the data about mission content

@@ -6,7 +6,7 @@ void REFRESH_SECTOR_OF(int8 data1,int8 data2,int8 data3,int8 data4)
    int32 address = make32(data1,data2,data3,data4);
    sector_erase_OF(address);                                                     //erase 1 sector
    
-   int16 DATA = address/SECT;                                                    //maximum 2048, data almacena el nro de sector borrado
+   int16 DATA = address/SECT;                                                    //maximum 2048, data stores the deleted sector number
    int8 D1 = DATA >> 8;
    int8 D2 = DATA;
    
@@ -67,7 +67,7 @@ void TRANSFER_SECTOR_OF2SCF(int8 data1,int8 data2,int8 data3,int8 data4)        
    int8 D1 = DATA >> 8;
    int8 D2 = DATA;
    
-   SAVE_SAT_LOG(0x12, D1, D2);                                                   //0xE0+16bit sector info
+   SAVE_SAT_LOG(0xAB, D1, D2);                                                   //0xE0+16bit sector info
    return;
 }
 
@@ -89,7 +89,7 @@ void TRANSFER_SECTOR_OF2SMF(int8 data1,int8 data2,int8 data3,int8 data4)
    int8 D1 = DATA >> 8;
    int8 D2 = DATA;
    
-   SAVE_SAT_LOG(0x13, D1, D2);                                                   //0xE0+16bit sector info
+   SAVE_SAT_LOG(0xAC, D1, D2);                                                   //0xE0+16bit sector info
    
    return;
 }
@@ -114,7 +114,7 @@ void TRANSFER_SECTOR_SCF2OF(int8 data1,int8 data2,int8 data3,int8 data4)
    int8 D1 = DATA >> 8;
    int8 D2 = DATA;
    
-   SAVE_SAT_LOG(0x21, D1, D2);                                                   //0xE0+16bit sector info
+   SAVE_SAT_LOG(0xBA, D1, D2);                                                   //0xE0+16bit sector info
    
    return;
 }
@@ -139,7 +139,7 @@ void TRANSFER_SECTOR_SCF2SMF(int8 data1,int8 data2,int8 data3,int8 data4)
    int8 D1 = DATA >> 8;
    int8 D2 = DATA;
    
-   SAVE_SAT_LOG(0x23, D1, D2);                                                   //0xE0+16bit sector info
+   SAVE_SAT_LOG(0xBC, D1, D2);                                                   //0xE0+16bit sector info
    
    return;
 }
@@ -162,7 +162,7 @@ void TRANSFER_SECTOR_SMF2OF(int8 data1,int8 data2,int8 data3,int8 data4)
    int8 D1 = DATA >> 8;
    int8 D2 = DATA;
    
-   SAVE_SAT_LOG(0x31, D1, D2);                                                   //0xE0+16bit sector info
+   SAVE_SAT_LOG(0xCA, D1, D2);                                                   //0xE0+16bit sector info
    
    return;
 }
@@ -187,7 +187,7 @@ void TRANSFER_SECTOR_SMF2SCF(int8 data1,int8 data2,int8 data3,int8 data4)       
    int8 D1 = DATA >> 8;
    int8 D2 = DATA;
    
-   SAVE_SAT_LOG(0x32, D1, D2);                                                   //0xE0+16bit sector info
+   SAVE_SAT_LOG(0xCB, D1, D2);                                                   //0xE0+16bit sector info
    return;
 }
 

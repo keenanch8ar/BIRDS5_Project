@@ -150,34 +150,13 @@ void main()
    {
       //BC_ON_30min();                                                             //Attempt 1st antenna deployment after 30mins
       
-      
-      if(FAB_FLAG > 89)                                                            //every 90 sec, OBC gathers sensor data and updates CW format 
-      {
-         FAB_FLAG = 0;
-         fprintf(PC,"\r\n***NORMAL SAMPLING HOUSEKEEPING DATA COLLECTION***\r\n");
-         FAB_TEST_OPERATION();
-         COM_DATA = 0;
-         
-         STORE_ADRESS_DATA_TO_FLASH();                                           //for store the address info
-
-         fprintf(PC,"CW:");
-         for(int i = 0; i < 4; i++)                                              //show CW format
-         {
-            fprintf(PC,"%x,",CW_FORMAT[i]);
-         }
-         fprintf(PC,"%x\r\n",CW_FORMAT[4]);
-         DELETE_CMD_FROM_PC();                                                   //delete PC command
-         PC_DATA = 0;                                                            //reset interrupt data for safety
-         COM_DATA = 0;                                                           //reset interrupt data for safety
-         RESET_DATA = 0;                                                         //reset interrupt data for safety
-         fprintf(PC,"\r\n");
-      }
+      delay_ms(100); 
       
       if((RESERVE_MIN_FLAG >= RESERVE_TARGET_FLAG) && RESERVE_CHECK == 1)        //check the reservation command, if time came, execute
       {
          fprintf(PC,"Execute reserved command\r\n");
          MISSION_CONTENTS = CHECK_MEMORY_FUNCTION(MISSION_CONTENTS);             //avoid erase or transfer sectors from memory as reserved commands
-         EXECUTE_COMMAND_from_PC(MISSION_CONTENTS,MISSION_DETAIL,RESERVE_ADDRESS_1,RESERVE_ADDRESS_2,RESERVE_ADDRESS_3,RESERVE_ADDRESS_4,RESERVE_PACKET_NUM, 0x00);    //execute command
+         EXECUTE_COMMAND_from_COMM(MISSION_CONTENTS,MISSION_DETAIL,RESERVE_ADDRESS_1,RESERVE_ADDRESS_2,RESERVE_ADDRESS_3,RESERVE_ADDRESS_4,RESERVE_PACKET_NUM, 0x00);    //execute command TODO: fix rsv table to add last byteto command
          Remove_1_Reservation();                                                 //remove the finished command and sort again and save updated command table
          if(reserve_table[80] != 0x00)                                           //if next reservation is registered, wait until time will be come
          {
@@ -210,7 +189,7 @@ void main()
          }
          else
          {
-            SAVE_SAT_LOG(CMD_FROM_PC[0],CMD_FROM_PC[1],CMD_FROM_PC[2]);          //reservation command log
+            SAVE_SAT_LOG(0xDD,CMD_FROM_PC[0],CMD_FROM_PC[1]);          //reservation command log
             Reserve_command_PC(); 
          }
 
@@ -229,38 +208,71 @@ void main()
       if(CMD_FROM_COMM[0] == 0xAA && CMD_FROM_COMM[15] == 0xBB)
       {
          COM_TO_MAIN_FLAG = 1;
-         if(CMD_FROM_COMM[4]!= 0xAB)
+         
+         CHECK_50_and_CW_RESPOND(); 
+         
+         if(CMD_FROM_COMM[4] == 0x00)
          {
          
             //EXECUTE_COMMAND_from_COMM(CMD_FROM_COMM[4],CMD_FROM_COMM[6], CMD_FROM_COMM[7], CMD_FROM_COMM[8], CMD_FROM_COMM[9], CMD_FROM_COMM[10], CMD_FROM_COMM[11], 0x00);
             EXECUTE_COMMAND_from_COMM(CMD_FROM_COMM[3],CMD_FROM_COMM[5], CMD_FROM_COMM[6], CMD_FROM_COMM[7], CMD_FROM_COMM[8], CMD_FROM_COMM[9], CMD_FROM_COMM[10], CMD_FROM_COMM[11]);
-            DELETE_CMD_FROM_COMM();
-            DELETE_CMD_FROM_PC();                                                   //clear CMD_FROM_PC[] array
-            Delete_Buffer();                                                        //clear in_bffr_main[] array
-            CMD_FROM_PC[1] = 0;
-            COM_DATA = 0;                                                           //clear COM correct receiving data flag
-            PC_DATA = 0;                                                            //clear PC correct receiving data flag
          }
+         else
+         {
+            SAVE_SAT_LOG(0xDD,CMD_FROM_COMM[3],CMD_FROM_COMM[4]);                //reservation command log
+            Reserve_command_COM();
+         }
+         DELETE_CMD_FROM_COMM();
+         DELETE_CMD_FROM_PC();                                                   //clear CMD_FROM_PC[] array
+         Delete_Buffer();                                                        //clear in_bffr_main[] array
+         CMD_FROM_PC[1] = 0;
+         COM_DATA = 0;                                                           //clear COM correct receiving data flag
+         PC_DATA = 0;   
       }
 
 
       
-//!      if(MISSION_STATUS)
-//!      {
-//!
-//!         if(missiontime > 9)
-//!         {
-//!            fprintf (PC, "Mission Time: %x \r\n", missiontime);
-//!            fprintf (PC, "Start 0x20 - Turn OFF MULTSPEC CAM1 (MB1)\r\n") ;
-//!            output_low(pin_G3);
-//!            fprintf (PC, "Start 0x30 - Turn OFF MULTSPEC CAM2 (MB2)\r\n") ;
-//!            output_low(pin_F6); //Turn off DIO for MULTSPEC CAM2
-//!            //Turn off IMGCLS Pi command
-//!            missiontime = 0;
-//!            MISSION_STATUS = 0;
-//!            MISSION_OPERATING = 0;
-//!         }  
-//!      }
+      if(MISSION_STATUS)
+      {
+
+         if(missiontime > 15)
+         {
+            SAVE_SAT_LOG(0x99,0x99,0x99);          //mission time elapsed and resetted missions to off stage
+            fprintf (PC, "Mission Time: %x \r\n", missiontime);
+            fprintf (PC, "Start 0x20 - Turn OFF MULTSPEC CAM1 (MB1)\r\n") ;
+            output_low(pin_G3);
+            fprintf (PC, "Start 0x30 - Turn OFF MULTSPEC CAM2 (MB2)\r\n") ;
+            output_low(pin_F6); //Turn off DIO for MULTSPEC CAM2
+            
+            FWD_CMD_MBP(0x80, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00);         //Turn off IMGCLS Pi command
+            
+            missiontime = 0;
+            MISSION_STATUS = 0;
+            MISSION_OPERATING = 0;
+         }  
+      }
+      
+      if(FAB_FLAG > 89)                                                            //every 90 sec, OBC gathers sensor data and updates CW format 
+      {
+         FAB_FLAG = 0;
+         fprintf(PC,"\r\n***NORMAL SAMPLING HOUSEKEEPING DATA COLLECTION***\r\n");
+         FAB_TEST_OPERATION();
+         COM_DATA = 0;
+         
+         STORE_ADRESS_DATA_TO_FLASH();                                           //for store the address info
+
+         fprintf(PC,"CW:");
+         for(int i = 0; i < 4; i++)                                              //show CW format
+         {
+            fprintf(PC,"%x,",CW_FORMAT[i]);
+         }
+         fprintf(PC,"%x\r\n",CW_FORMAT[4]);
+         DELETE_CMD_FROM_PC();                                                   //delete PC command
+         PC_DATA = 0;                                                            //reset interrupt data for safety
+         COM_DATA = 0;                                                           //reset interrupt data for safety
+         RESET_DATA = 0;                                                         //reset interrupt data for safety
+         fprintf(PC,"\r\n");
+      }
       
       
       if(COM_DATA != 0 || PC_DATA != 0)                                          //COM_DATA AND PC_DATA WILL BE ZERO IF THE CORRECT NUMBER OF CHARACTERS ARE RECEIVED
@@ -280,7 +292,6 @@ void main()
             PC_DATA = 0;
          }
       }
-      delay_ms(100); 
    }
 
 }
