@@ -1830,11 +1830,12 @@ void HIGH_SAMP_FAB_OPERATION()
 
 void HIGHSAMP_SENSOR_COLLECTION(int16 times)
 {
-   HIGH_SAMP_FAB_MEASURING_FLAG = 0;
    Turn_On_MBP();
    Turn_On_ADCS();
    LOOP_HIGH_SAMP_HK_ADDRESS();                                                  //loop in memory to save data, keep first 3 sectors forever
    int32 num = 0;
+   delay_ms(3000);
+   HIGH_SAMP_FAB_MEASURING_FLAG = 0;
 
    while(num < times)
    {
@@ -1861,7 +1862,7 @@ void HIGHSAMP_SENSOR_COLLECTION(int16 times)
       RESET_SATELLITE();                                                         //check reset command from RESET PIC
    }
    Turn_Off_ADCS();
-   //Turn_Off_MBP();
+   Turn_Off_MBP();
    fprintf(PC,"HSSC DONE\r\n");
    return;
 }

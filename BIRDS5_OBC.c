@@ -107,7 +107,7 @@ void settings()
    BC_SETUP();                                                                   //configuration of the digital analog converter for temperature sensor reading
   
    output_low(PIN_A4);                                                           //kill switch off
-   Turn_ON_MBP();                                                                //Mission Boss switch ON, RF5=1
+   Turn_Off_MBP();                                                                //Mission Boss switch ON, RF5=1
    Turn_Off_ADCS();
    Turn_OFF_BC();                                                                //Burner Circuit switch OFF, RD5=0
 
@@ -154,6 +154,8 @@ void main()
       
       if((RESERVE_MIN_FLAG >= RESERVE_TARGET_FLAG) && RESERVE_CHECK == 1)        //check the reservation command, if time came, execute
       {
+         Turn_On_MBP();
+         delay_ms(1000);
          fprintf(PC,"Execute reserved command\r\n");
          MISSION_CONTENTS = CHECK_MEMORY_FUNCTION(MISSION_CONTENTS);             //avoid erase or transfer sectors from memory as reserved commands
          EXECUTE_COMMAND_from_COMM(MISSION_CONTENTS,MISSION_DETAIL,RESERVE_ADDRESS_1,RESERVE_ADDRESS_2,RESERVE_ADDRESS_3,RESERVE_ADDRESS_4,RESERVE_PACKET_NUM, 0x00);    //execute command TODO: fix rsv table to add last byteto command
@@ -161,7 +163,9 @@ void main()
          if(reserve_table[80] != 0x00)                                           //if next reservation is registered, wait until time will be come
          {
             Reserve_next();                                                      //take the next CMD from the table
-         }else{                                                                  //if all reservation finished, reset flag about reservation
+         }
+         else
+         {                                                                  //if all reservation finished, reset flag about reservation
             RESERVE_TARGET_FLAG = 0;                                             //reset flag
             RESERVE_CHECK = 0;
             MISSION_CONTENTS = 0;
@@ -184,6 +188,8 @@ void main()
          
          if(CMD_FROM_PC[1] == 0)
          {
+            Turn_On_MBP();
+            delay_ms(1000);
             EXECUTE_COMMAND_from_PC(CMD_FROM_PC[0], CMD_FROM_PC[2], CMD_FROM_PC[3], CMD_FROM_PC[4], CMD_FROM_PC[5], CMD_FROM_PC[6], CMD_FROM_PC[7], CMD_FROM_PC[8]);
             //output_high(PIN_A5);
          }
@@ -215,6 +221,8 @@ void main()
          {
          
             //EXECUTE_COMMAND_from_COMM(CMD_FROM_COMM[4],CMD_FROM_COMM[6], CMD_FROM_COMM[7], CMD_FROM_COMM[8], CMD_FROM_COMM[9], CMD_FROM_COMM[10], CMD_FROM_COMM[11], 0x00);
+            Turn_On_MBP();
+            delay_ms(1000);
             EXECUTE_COMMAND_from_COMM(CMD_FROM_COMM[3],CMD_FROM_COMM[5], CMD_FROM_COMM[6], CMD_FROM_COMM[7], CMD_FROM_COMM[8], CMD_FROM_COMM[9], CMD_FROM_COMM[10], CMD_FROM_COMM[11]);
          }
          else
@@ -241,11 +249,16 @@ void main()
             fprintf (PC, "Mission Time: %x \r\n", missiontime);
             fprintf (PC, "Start 0x20 - Turn OFF MULTSPEC CAM1 (MB1)\r\n") ;
             output_low(pin_G3);
+            
             fprintf (PC, "Start 0x30 - Turn OFF MULTSPEC CAM2 (MB2)\r\n") ;
             output_low(pin_F6); //Turn off DIO for MULTSPEC CAM2
             
+            fprintf (PC, "Start 0x80 - Turn OFF IMGCLS (RAB)\r\n") ;
             FWD_CMD_MBP(0x80, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00);         //Turn off IMGCLS Pi command
             
+            fprintf (PC, "Start 0x50 - Turn OFF SFWD (RAB)\r\n") ;            
+            FWD_CMD_MBP(0x50, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00);         //Turn off IMGCLS Pi command
+            Turn_Off_MBP();
             missiontime = 0;
             MISSION_STATUS = 0;
             MISSION_OPERATING = 0;
