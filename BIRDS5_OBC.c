@@ -285,6 +285,7 @@ void main()
          COM_DATA = 0;                                                           //reset interrupt data for safety
          RESET_DATA = 0;                                                         //reset interrupt data for safety
          fprintf(PC,"\r\n");
+         //OITA_Test();
       }
       
       

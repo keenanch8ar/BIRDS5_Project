@@ -1150,6 +1150,7 @@ void MULT_SPEC_COMMAND(int8 CMD0,int8 CMD2,int8 CMD3,int8 CMD4,int8 CMD5,int8 CM
          
          Turn_On_MBP();
          output_high (PIN_A5); //SFM2 mission side access
+         delay_ms(1000);
          fprintf (PC, "Start 0x2E - Turn ON MULTSPEC CAM1\r\n") ;
          MISSION_STATUS = 1;
          MISSION_OPERATING = 0;
@@ -1168,7 +1169,9 @@ void MULT_SPEC_COMMAND(int8 CMD0,int8 CMD2,int8 CMD3,int8 CMD4,int8 CMD5,int8 CM
          SAVE_SAT_LOG(0xCC, CMD0, CMD2);                                            //save reset data        
          ACK_for_COM[14] = 0x00;
          
-         output_high (PIN_A5);                                                      //SFM2 mission side access
+         Turn_On_MBP();
+         output_high (PIN_A5); //SFM2 mission side access
+         delay_ms(1000);                                                      //SFM2 mission side access
          fprintf (PC, "Start 0x20 - Turn OFF MULTSPEC CAM1 (MB1)\r\n") ;
          output_low(pin_G3);                                                        //Turn off DIO for MULTSPEC CAM1
          MISSION_STATUS = 0;
@@ -1188,7 +1191,9 @@ void MULT_SPEC_COMMAND(int8 CMD0,int8 CMD2,int8 CMD3,int8 CMD4,int8 CMD5,int8 CM
          SAVE_SAT_LOG(0xCC, CMD0, CMD2);                                            //save reset data     
          ACK_for_COM[14] = 0x00;
          
-         output_high (PIN_A5);                                                  //SFM2 mission side access
+         Turn_On_MBP();
+         output_high (PIN_A5); //SFM2 mission side access
+         delay_ms(1000);
          fprintf (PC, "Start 0x21 - Real time uplink MULTSPEC CAM1\r\n") ;
          MISSION_OPERATING = 0;
          FWD_CMD_MBP(CMD0, CMD2, CMD3, CMD4, CMD5, CMD6, CMD7, CMD8);
@@ -1205,8 +1210,10 @@ void MULT_SPEC_COMMAND(int8 CMD0,int8 CMD2,int8 CMD3,int8 CMD4,int8 CMD5,int8 CM
          SAVE_SAT_LOG(0xCC, CMD0, CMD2);                                            //save reset data        
          ACK_for_COM[14] = 0x00;
          
-         fprintf (PC, "Start 0x22 - Request MULT-SPEC MB1 Downlink Data\r\n") ;
+         Turn_On_MBP();
          output_high (PIN_A5); //SFM2 mission side access
+         delay_ms(1000);
+         fprintf (PC, "Start 0x22 - Request MULT-SPEC MB1 Downlink Data\r\n") ;
          FWD_CMD_MBP(CMD0, CMD2, CMD3, CMD4, CMD5, CMD6, CMD7, CMD8);
          MISSION_OPERATING = 1;
          int8 counter = 0;
@@ -1252,8 +1259,10 @@ void MULT_SPEC_COMMAND(int8 CMD0,int8 CMD2,int8 CMD3,int8 CMD4,int8 CMD5,int8 CM
          SAVE_SAT_LOG(0xCC, CMD0, CMD2);                                            //save reset data          
          ACK_for_COM[14] = 0x00;
          
-         fprintf (PC, "Start 0x23\r\n") ;
+         Turn_On_MBP();
          output_high (PIN_A5); //SFM2 mission side access
+         delay_ms(1000);
+         fprintf (PC, "Start 0x23\r\n") ;
          FWD_CMD_MBP(CMD0, CMD2, CMD3, CMD4, CMD5, CMD6, CMD7, CMD8);
          
          for(num = 0; num < 1000000; num++)
@@ -1292,8 +1301,10 @@ void MULT_SPEC_COMMAND(int8 CMD0,int8 CMD2,int8 CMD3,int8 CMD4,int8 CMD5,int8 CM
          SAVE_SAT_LOG(0xCC, CMD0, CMD2);                                            //save reset data          
          ACK_for_COM[14] = 0x00;
          
-         fprintf (PC, "Start 0x24\r\n") ;
+         Turn_On_MBP();
          output_high (PIN_A5); //SFM2 mission side access
+         delay_ms(1000);
+         fprintf (PC, "Start 0x24\r\n") ;
          FWD_CMD_MBP(CMD0, CMD2, CMD3, CMD4, CMD5, CMD6, CMD7, CMD8);
          
          for(num = 0; num < 1000000; num++)
@@ -1350,8 +1361,10 @@ void MULT_SPEC_COMMAND(int8 CMD0,int8 CMD2,int8 CMD3,int8 CMD4,int8 CMD5,int8 CM
          SAVE_SAT_LOG(0xCC, CMD0, CMD2);                                            //save reset data         
          ACK_for_COM[14] = 0x00;
          
-         fprintf (PC, "Start 0x26\r\n") ;
+         Turn_On_MBP();
          output_high (PIN_A5); //SFM2 mission side access
+         delay_ms(1000);
+         fprintf (PC, "Start 0x26\r\n") ;
          FWD_CMD_MBP(CMD0, CMD2, CMD3, CMD4, CMD5, CMD6, CMD7, CMD8);
          
          for(num = 0; num < 1000000; num++)
@@ -1388,8 +1401,10 @@ void MULT_SPEC_COMMAND(int8 CMD0,int8 CMD2,int8 CMD3,int8 CMD4,int8 CMD5,int8 CM
          SAVE_SAT_LOG(0xCC, CMD0, CMD2);                                            //save reset data         
          ACK_for_COM[14] = 0x00;
          
-         fprintf (PC, "Start 0x27\r\n") ;
+         Turn_On_MBP();
          output_high (PIN_A5); //SFM2 mission side access
+         delay_ms(1000);
+         fprintf (PC, "Start 0x27\r\n") ;
          FWD_CMD_MBP(CMD0, CMD2, CMD3, CMD4, CMD5, CMD6, CMD7, CMD8);
          
          for(num = 0; num < 1000000; num++)
@@ -1426,8 +1441,10 @@ void MULT_SPEC_COMMAND(int8 CMD0,int8 CMD2,int8 CMD3,int8 CMD4,int8 CMD5,int8 CM
          SAVE_SAT_LOG(0xCC, CMD0, CMD2);                                            //save reset data        
          ACK_for_COM[14] = 0x00;
          
-         fprintf (PC, "Start 0x28\r\n") ;
+         Turn_On_MBP();
          output_high (PIN_A5); //SFM2 mission side access
+         delay_ms(1000);
+         fprintf (PC, "Start 0x28\r\n") ;
          FWD_CMD_MBP(CMD0, CMD2, CMD3, CMD4, CMD5, CMD6, CMD7, CMD8);
          
          for(num = 0; num < 1000000; num++)
@@ -1464,8 +1481,10 @@ void MULT_SPEC_COMMAND(int8 CMD0,int8 CMD2,int8 CMD3,int8 CMD4,int8 CMD5,int8 CM
          SAVE_SAT_LOG(0xCC, CMD0, CMD2);                                            //save reset data          
          ACK_for_COM[14] = 0x00;
          
-         fprintf (PC, "Start 0x29\r\n") ;
+         Turn_On_MBP();
          output_high (PIN_A5); //SFM2 mission side access
+         delay_ms(1000);
+         fprintf (PC, "Start 0x29\r\n") ;
          FWD_CMD_MBP(CMD0, CMD2, CMD3, CMD4, CMD5, CMD6, CMD7, CMD8);
          
          for(num = 0; num < 1000000; num++)
@@ -1541,7 +1560,9 @@ void MULT_SPEC_COMMAND(int8 CMD0,int8 CMD2,int8 CMD3,int8 CMD4,int8 CMD5,int8 CM
          SAVE_SAT_LOG(0xCC, CMD0, CMD2);                                            //save reset data       
          ACK_for_COM[14] = 0x00;
          
+         Turn_On_MBP();
          output_high (PIN_A5); //SFM2 mission side access
+         delay_ms(1000);
          fprintf (PC, "Start 0x31 - Real time uplink MULTSPEC CAM2\r\n") ;
          FWD_CMD_MBP(CMD0, CMD2, CMD3, CMD4, CMD5, CMD6, CMD7, CMD8);
          output_high(PIN_C4);                                                    //give access back to COMM
@@ -1556,9 +1577,11 @@ void MULT_SPEC_COMMAND(int8 CMD0,int8 CMD2,int8 CMD3,int8 CMD4,int8 CMD5,int8 CM
          SAVE_SAT_LOG(0xCC, CMD0, CMD2);                                            //save reset data         
          ACK_for_COM[14] = 0x00;
          
+         Turn_On_MBP();
+         output_high (PIN_A5); //SFM2 mission side access
+         delay_ms(1000);
          MISSION_OPERATING = 1;
          fprintf (PC, "Start 0x32 - Request MULT-SPEC MB2 Downlink Data\r\n") ;
-         output_high (PIN_A5); //SFM2 mission side access
          FWD_CMD_MBP(CMD0, CMD2, CMD3, CMD4, CMD5, CMD6, CMD7, CMD8);
          counter = 0;
          for(num = 0; num < 1500000; num++)
@@ -1597,8 +1620,10 @@ void MULT_SPEC_COMMAND(int8 CMD0,int8 CMD2,int8 CMD3,int8 CMD4,int8 CMD5,int8 CM
          SAVE_SAT_LOG(0xCC, CMD0, CMD2);                                            //save reset data         
          ACK_for_COM[14] = 0x00;
          
-         fprintf (PC, "Start 0x33\r\n") ;
+         Turn_On_MBP();
          output_high (PIN_A5); //SFM2 mission side access
+         delay_ms(1000);
+         fprintf (PC, "Start 0x33\r\n") ;
          FWD_CMD_MBP(CMD0, CMD2, CMD3, CMD4, CMD5, CMD6, CMD7, CMD8);
          
          for(num = 0; num < 1000000; num++)
@@ -1635,8 +1660,10 @@ void MULT_SPEC_COMMAND(int8 CMD0,int8 CMD2,int8 CMD3,int8 CMD4,int8 CMD5,int8 CM
          SAVE_SAT_LOG(0xCC, CMD0, CMD2);                                            //save reset data         
          ACK_for_COM[14] = 0x00;
          
-         fprintf (PC, "Start 0x34\r\n") ;
-         output_high (PIN_A5);                                                   //SFM2 mission side access   
+         Turn_On_MBP();
+         output_high (PIN_A5); //SFM2 mission side access
+         delay_ms(1000);
+         fprintf (PC, "Start 0x34\r\n") ;  
          FWD_CMD_MBP(CMD0, CMD2, CMD3, CMD4, CMD5, CMD6, CMD7, CMD8);
          
          for(num = 0; num < 1000000; num++)
@@ -1692,8 +1719,10 @@ void MULT_SPEC_COMMAND(int8 CMD0,int8 CMD2,int8 CMD3,int8 CMD4,int8 CMD5,int8 CM
          SAVE_SAT_LOG(0xCC, CMD0, CMD2);                                            //save reset data        
          ACK_for_COM[14] = 0x00;
          
+         Turn_On_MBP();
+         output_high (PIN_A5); //SFM2 mission side access
+         delay_ms(1000);
          fprintf (PC, "Start 0x36\r\n");   
-         output_high (PIN_A5);                                                   //SFM2 mission side access
          FWD_CMD_MBP(CMD0, CMD2, CMD3, CMD4, CMD5, CMD6, CMD7, CMD8);
          
          for(num = 0; num < 1000000; num++)
@@ -1729,8 +1758,10 @@ void MULT_SPEC_COMMAND(int8 CMD0,int8 CMD2,int8 CMD3,int8 CMD4,int8 CMD5,int8 CM
          SAVE_SAT_LOG(0xCC, CMD0, CMD2);                                            //save reset data       
          ACK_for_COM[14] = 0x00;
          
+         Turn_On_MBP();
+         output_high (PIN_A5); //SFM2 mission side access
+         delay_ms(1000);
          fprintf (PC, "Start 0x37\r\n");
-         output_high (PIN_A5);                                                   //SFM2 mission side access 
          FWD_CMD_MBP(CMD0, CMD2, CMD3, CMD4, CMD5, CMD6, CMD7, CMD8);
          
          for(num = 0; num < 1000000; num++)
@@ -1767,8 +1798,10 @@ void MULT_SPEC_COMMAND(int8 CMD0,int8 CMD2,int8 CMD3,int8 CMD4,int8 CMD5,int8 CM
          SAVE_SAT_LOG(0xCC, CMD0, CMD2);                                            //save reset data         
          ACK_for_COM[14] = 0x00;
          
+         Turn_On_MBP();
+         output_high (PIN_A5); //SFM2 mission side access
+         delay_ms(1000);
          fprintf (PC, "Start 0x38\r\n");
-         output_high (PIN_A5);                                                   //SFM2 mission side access  
          FWD_CMD_MBP(CMD0, CMD2, CMD3, CMD4, CMD5, CMD6, CMD7, CMD8);
          
          for(num = 0; num < 1000000; num++)
@@ -1804,8 +1837,10 @@ void MULT_SPEC_COMMAND(int8 CMD0,int8 CMD2,int8 CMD3,int8 CMD4,int8 CMD5,int8 CM
          SAVE_SAT_LOG(0xCC, CMD0, CMD2);                                            //save reset data          
          ACK_for_COM[14] = 0x00;
          
+         Turn_On_MBP();
+         output_high (PIN_A5); //SFM2 mission side access
+         delay_ms(1000);
          fprintf (PC, "Start 0x39\r\n");
-         output_high (PIN_A5);                                                   //SFM2 mission side access
          FWD_CMD_MBP(CMD0, CMD2, CMD3, CMD4, CMD5, CMD6, CMD7, CMD8);
          
          for(num = 0; num < 1000000; num++)
@@ -2495,7 +2530,9 @@ void IMGCLS_COMMAND(int8 CMD0,int8 CMD2,int8 CMD3,int8 CMD4,int8 CMD5,int8 CMD6,
          UPLINK_SUCCESS_IMGCLS_CAM();                                            //put uplink succes flag in high and store flags
          ACK_for_COM[14] = 0x00;
          
+         Turn_On_MBP();
          output_high (PIN_A5); //SFM2 mission side access
+         delay_ms(1000);
          fprintf (PC, "Start 0x81 - Real time uplink IMGCLS\r\n") ;
          FWD_CMD_MBP(CMD0, CMD2, CMD3, CMD4, CMD5, CMD6, CMD7, CMD8);
          output_high(PIN_C4);                                                    //give access back to COMM         
@@ -2510,7 +2547,9 @@ void IMGCLS_COMMAND(int8 CMD0,int8 CMD2,int8 CMD3,int8 CMD4,int8 CMD5,int8 CMD6,
          UPLINK_SUCCESS_IMGCLS_CAM();                                             //put uplink succes flag in high and store flags
          ACK_for_COM[14] = 0x00;
          
-         output_high (PIN_A5);
+         Turn_On_MBP();
+         output_high (PIN_A5); //SFM2 mission side access
+         delay_ms(1000);
          fprintf (PC, "Start 0x82 - Real time downlink IMGCLS\r\n") ;
          
          FWD_CMD_MBP(CMD0, CMD2, CMD3, CMD4, CMD5, CMD6, CMD7, CMD8);            //TODO: add 81bytes to be sent from IMGCLS so it doesnt wait forever for remaining data
@@ -2551,7 +2590,9 @@ void IMGCLS_COMMAND(int8 CMD0,int8 CMD2,int8 CMD3,int8 CMD4,int8 CMD5,int8 CMD6,
          SAVE_SAT_LOG(0xCC, CMD0, CMD2);                                            //save reset data          
          ACK_for_COM[14] = 0x00;
          
-         output_high (PIN_A5);                                                   //Mission Side
+         Turn_On_MBP();
+         output_high (PIN_A5); //SFM2 mission side access
+         delay_ms(1000);
          fprintf (PC, "Start 0x83\r\n") ;
          FWD_CMD_MBP(CMD0, CMD2, CMD3, CMD4, CMD5, CMD6, CMD7, CMD8);            //Forward command to Mission Boss
 
@@ -2593,7 +2634,9 @@ void IMGCLS_COMMAND(int8 CMD0,int8 CMD2,int8 CMD3,int8 CMD4,int8 CMD5,int8 CMD6,
          SAVE_SAT_LOG(0xCC, CMD0, CMD2);                                            //save reset data         
          ACK_for_COM[14] = 0x00;
          
-         output_high (PIN_A5);                                                   //Mission Side
+         Turn_On_MBP();
+         output_high (PIN_A5); //SFM2 mission side access
+         delay_ms(1000);
          
          fprintf (PC, "Start 0x84\r\n") ;
 
@@ -2632,7 +2675,9 @@ void IMGCLS_COMMAND(int8 CMD0,int8 CMD2,int8 CMD3,int8 CMD4,int8 CMD5,int8 CMD6,
          SAVE_SAT_LOG(0xCC, CMD0, CMD2);                                            //save reset data        
          ACK_for_COM[14] = 0x00;
          
-         output_high (PIN_A5);                                                   //Mission Side
+         Turn_On_MBP();
+         output_high (PIN_A5); //SFM2 mission side access
+         delay_ms(1000);
          fprintf (PC, "Start 0x85\r\n") ;
          FWD_CMD_MBP(CMD0, CMD2, CMD3, CMD4, CMD5, CMD6, CMD7, CMD8);            //Forward command to Mission Boss
 
@@ -2671,7 +2716,9 @@ void IMGCLS_COMMAND(int8 CMD0,int8 CMD2,int8 CMD3,int8 CMD4,int8 CMD5,int8 CMD6,
          SAVE_SAT_LOG(0xCC, CMD0, CMD2);                                            //save reset data        
          ACK_for_COM[14] = 0x00;
          
-         output_high (PIN_A5);                                                   //Mission Side
+         Turn_On_MBP();
+         output_high (PIN_A5); //SFM2 mission side access
+         delay_ms(1000);
          fprintf (PC, "Start 0x86\r\n") ;
          FWD_CMD_MBP(CMD0, CMD2, CMD3, CMD4, CMD5, CMD6, CMD7, CMD8);            //Forward command to Mission Boss
 
@@ -2710,7 +2757,9 @@ void IMGCLS_COMMAND(int8 CMD0,int8 CMD2,int8 CMD3,int8 CMD4,int8 CMD5,int8 CMD6,
          SAVE_SAT_LOG(0xCC, CMD0, CMD2);                                            //save reset data        
          ACK_for_COM[14] = 0x00;
          
-         output_high (PIN_A5);                                                   //Mission Side
+         Turn_On_MBP();
+         output_high (PIN_A5); //SFM2 mission side access
+         delay_ms(1000);
          fprintf (PC, "Start 0x87\r\n") ;
          FWD_CMD_MBP(CMD0, CMD2, CMD3, CMD4, CMD5, CMD6, CMD7, CMD8);            //Forward command to Mission Boss
 
@@ -2749,7 +2798,9 @@ void IMGCLS_COMMAND(int8 CMD0,int8 CMD2,int8 CMD3,int8 CMD4,int8 CMD5,int8 CMD6,
          SAVE_SAT_LOG(0xCC, CMD0, CMD2);                                            //save reset data          
          ACK_for_COM[14] = 0x00;
          
-         output_high (PIN_A5);                                                   //Mission Side
+         Turn_On_MBP();
+         output_high (PIN_A5); //SFM2 mission side access
+         delay_ms(1000);
          fprintf (PC, "Start 0x88\r\n") ;
          FWD_CMD_MBP(CMD0, CMD2, CMD3, CMD4, CMD5, CMD6, CMD7, CMD8);            //Forward command to Mission Boss
 
@@ -2788,7 +2839,9 @@ void IMGCLS_COMMAND(int8 CMD0,int8 CMD2,int8 CMD3,int8 CMD4,int8 CMD5,int8 CMD6,
          SAVE_SAT_LOG(0xCC, CMD0, CMD2);                                            //save reset data        
          ACK_for_COM[14] = 0x00;
          
-         output_high (PIN_A5);                                                   //Mission Side
+         Turn_On_MBP();
+         output_high (PIN_A5); //SFM2 mission side access
+         delay_ms(1000);
          fprintf (PC, "Start 0x89\r\n") ;
          FWD_CMD_MBP(CMD0, CMD2, CMD3, CMD4, CMD5, CMD6, CMD7, CMD8);            //Forward command to Mission Boss
 
@@ -2827,7 +2880,9 @@ void IMGCLS_COMMAND(int8 CMD0,int8 CMD2,int8 CMD3,int8 CMD4,int8 CMD5,int8 CMD6,
          SAVE_SAT_LOG(0xCC, CMD0, CMD2);                                            //save reset data         
          ACK_for_COM[14] = 0x00;
          
-         output_high (PIN_A5);                                                   //Mission Side        
+         Turn_On_MBP();
+         output_high (PIN_A5); //SFM2 mission side access
+         delay_ms(1000);       
          fprintf (PC, "Start 0x8A\r\n") ;
          FWD_CMD_MBP(CMD0, CMD2, CMD3, CMD4, CMD5, CMD6, CMD7, CMD8);            //Forward command to Mission Boss
 
@@ -2866,7 +2921,9 @@ void IMGCLS_COMMAND(int8 CMD0,int8 CMD2,int8 CMD3,int8 CMD4,int8 CMD5,int8 CMD6,
          SAVE_SAT_LOG(0xCC, CMD0, CMD2);                                            //save reset data         
          ACK_for_COM[14] = 0x00;
          
-         output_high (PIN_A5);                                                   //Mission Side         
+         Turn_On_MBP();
+         output_high (PIN_A5); //SFM2 mission side access
+         delay_ms(1000);         
          fprintf (PC, "Start 0x8B\r\n") ;
          FWD_CMD_MBP(CMD0, CMD2, CMD3, CMD4, CMD5, CMD6, CMD7, CMD8);            //Forward command to Mission Boss
 
@@ -2905,7 +2962,9 @@ void IMGCLS_COMMAND(int8 CMD0,int8 CMD2,int8 CMD3,int8 CMD4,int8 CMD5,int8 CMD6,
          SAVE_SAT_LOG(0xCC, CMD0, CMD2);                                            //save reset data         
          ACK_for_COM[14] = 0x00;
          
-         output_high (PIN_A5);                                                   //Mission Side
+         Turn_On_MBP();
+         output_high (PIN_A5); //SFM2 mission side access
+         delay_ms(1000);
          fprintf (PC, "Start 0x8C\r\n") ;
          FWD_CMD_MBP(CMD0, CMD2, CMD3, CMD4, CMD5, CMD6, CMD7, CMD8);            //Forward command to Mission Boss
 
@@ -2944,7 +3003,9 @@ void IMGCLS_COMMAND(int8 CMD0,int8 CMD2,int8 CMD3,int8 CMD4,int8 CMD5,int8 CMD6,
          SAVE_SAT_LOG(0xCC, CMD0, CMD2);                                            //save reset data         
          ACK_for_COM[14] = 0x00;
          
-         output_high (PIN_A5);                                                   //Mission Side
+         Turn_On_MBP();
+         output_high (PIN_A5); //SFM2 mission side access
+         delay_ms(1000);
          fprintf (PC, "Start 0x8D\r\n") ;
          FWD_CMD_MBP(CMD0, CMD2, CMD3, CMD4, CMD5, CMD6, CMD7, CMD8);            //Forward command to Mission Boss
 
@@ -3706,7 +3767,9 @@ void SF_COMMAND(int8 CMD0,int8 CMD2,int8 CMD3,int8 CMD4,int8 CMD5,int8 CMD6, int
          UPLINK_SUCCESS_S_FWD();                                                 //put uplink succes flag in high and store flags
          ACK_for_COM[14] = 0x00;
          
+         Turn_On_MBP();
          output_high (PIN_A5); //SFM2 mission side access
+         delay_ms(1000);
          fprintf (PC, "Start 0x51 - Real time uplink S&F\r\n") ;
          FWD_CMD_MBP(CMD0, CMD2, CMD3, CMD4, CMD5, CMD6, CMD7, CMD8);
          output_high(PIN_C4);                                                    //give access back to COMM
@@ -3719,7 +3782,10 @@ void SF_COMMAND(int8 CMD0,int8 CMD2,int8 CMD3,int8 CMD4,int8 CMD5,int8 CMD6, int
          REPLY_TO_COM(0x66,0);
          SAVE_SAT_LOG(0xCC, CMD0, CMD2);                                            //save reset data        
          ACK_for_COM[14] = 0x00;
-         output_high (PIN_A5);
+         
+         Turn_On_MBP();
+         output_high (PIN_A5); //SFM2 mission side access
+         delay_ms(1000);
          fprintf (PC, "Start 0x52 - Real time downlink S&F\r\n") ;
          MISSION_OPERATING = 1;
          
@@ -3760,14 +3826,17 @@ void SF_COMMAND(int8 CMD0,int8 CMD2,int8 CMD3,int8 CMD4,int8 CMD5,int8 CMD6, int
          REPLY_TO_COM(0x66,0);
          SAVE_SAT_LOG(0xCC, CMD0, CMD2);                                            //save reset data         
          ACK_for_COM[14] = 0x00;
-         output_high (PIN_A5);
+         
+         Turn_On_MBP();
+         output_high (PIN_A5); //SFM2 mission side access
+         delay_ms(1000);
          
          fprintf (PC, "Start 0x53 - Transfer S&F Data to SCF\r\n") ;
          MISSION_OPERATING = 1;
      
          FWD_CMD_MBP(CMD0, CMD2, CMD3, CMD4, CMD5, CMD6, CMD7, CMD8);
          address_data[0] = 0x03<<24;
-         address_data[1] = 0x90<<16;
+         address_data[1] = 0x91<<16;
          address_data[2] = 0x00<<8;
          address_data[3] = 0x00;
          address = address_data[0] + address_data[1] + address_data[2] + address_data[3];
@@ -3776,7 +3845,7 @@ void SF_COMMAND(int8 CMD0,int8 CMD2,int8 CMD3,int8 CMD4,int8 CMD5,int8 CMD6, int
          int8 SFWD_DATAS = 0;
          counter_sf = 0;
          output_low(PIN_C4);
-         delay_ms(10);
+         delay_ms(100);
          sector_erase_SCF(address);
          delay_ms(20);
          
@@ -3798,7 +3867,7 @@ void SF_COMMAND(int8 CMD0,int8 CMD2,int8 CMD3,int8 CMD4,int8 CMD5,int8 CMD6, int
          
          MISSION_OPERATING = 0;
          output_high(PIN_C4);                                                    //give access back to COMM
-         UPLINK_SUCCESS_S_FWD();                                                 //put uplink succes flag in high and store flags
+         UPLINK_SUCCESS_S_FWD();                                                 //put uplink success flag in high and store flags
          fprintf (PC, "Finish 0x53 - Transfer S&F Data\r\n") ;
       break;
       
@@ -3808,7 +3877,10 @@ void SF_COMMAND(int8 CMD0,int8 CMD2,int8 CMD3,int8 CMD4,int8 CMD5,int8 CMD6, int
          REPLY_TO_COM(0x66,0);
          SAVE_SAT_LOG(0xCC, CMD0, CMD2);                                            //save reset data         
          ACK_for_COM[14] = 0x00;
-         output_high (PIN_A5);
+         
+         Turn_On_MBP();
+         output_high (PIN_A5); //SFM2 mission side access
+         delay_ms(1000);
          fprintf (PC, "Start 0x54 - Downlink SF Address Pointer S&F\r\n") ;
          
          FWD_CMD_MBP(CMD0, CMD2, CMD3, CMD4, CMD5, CMD6, CMD7, CMD8);
@@ -3850,6 +3922,7 @@ void SF_COMMAND(int8 CMD0,int8 CMD2,int8 CMD3,int8 CMD4,int8 CMD5,int8 CMD6, int
          ACK_for_COM[14] = 0x00;
          Turn_On_MBP();
          output_high (PIN_A5); //SFM2 mission side access
+         delay_ms(1000);
          fprintf (PC, "Start 0x55 - Erase S&F Flash\r\n") ;
          
          delay_ms(1000);

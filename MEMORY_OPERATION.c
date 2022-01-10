@@ -77,7 +77,7 @@ int8 COM_DATA= 0;
 static int8 CW_IDENTIFIER = 1;
 int8 OPERATION_MODE = 0x00;
 int8 PC_DATA = 0;                                  
-int8 COM_ONEBYTE_COMMAND = 0;                                                    //for GS testing
+
 
 #define buffer_from_com  (in_bffr_main[0]==0xAA) && (in_bffr_main[15]==0xBB)
 #define buffer_flash  (in_bffr_main[7]==0x73)
@@ -87,7 +87,6 @@ int8 COM_ONEBYTE_COMMAND = 0;                                                   
 
 int8 ADCS_SENSOR_DATA[ADCS_SENSOR_SIZE] = {};
 int8 ADCS_ACK = 0;
-int8 ADCS_ACK_COMMING = 0;                                                       //for Checking ACK from ADCS
 #define ATTEMPT_TIME 8
 
 
@@ -265,9 +264,13 @@ void STORE_FLAG_INFO()                                                          
    flag_info_bffr[13] = MISSION_STATUS;
    flag_info_bffr[14] = MISSION_OPERATING;
    
-   output_low(PIN_A5);                                                           //MISSION_MUX MAINSIDE
+   if(MISSION_STATUS == 0)
+   {
+      output_low(PIN_A5);                                                           //MISSION_MUX MAINSIDE
+   }
    output_low(PIN_C4);                                                           //COM_MUX MAINSIDE
    delay_ms(2000);
+   
    SUBSECTOR_4KB_ERASE_OF(FLAG_DATA_ADDRESS);
    delay_ms(200);
    for(int8 num = 0; num < FLAG_INFO_SIZE; num++)
@@ -275,6 +278,7 @@ void STORE_FLAG_INFO()                                                          
       WRITE_DATA_BYTE_OF(FLAG_DATA_ADDRESS + num,flag_info_bffr[num]);
       delay_us(10);
    }
+   
    delay_ms(10);
    SUBSECTOR_4KB_ERASE_SCF(FLAG_DATA_ADDRESS);
    delay_ms(200);
@@ -283,13 +287,17 @@ void STORE_FLAG_INFO()                                                          
       WRITE_DATA_BYTE_SCF(FLAG_DATA_ADDRESS + num,flag_info_bffr[num]);
       delay_us(10);
    }
+   
    delay_ms(10);
-   SUBSECTOR_4KB_ERASE_SMF(FLAG_DATA_ADDRESS);
-   delay_ms(200);
-   for(num = 0; num < FLAG_INFO_SIZE; num++)
+   if(MISSION_STATUS == 0)
    {
-      WRITE_DATA_BYTE_SMF(FLAG_DATA_ADDRESS + num,flag_info_bffr[num]);
-      delay_us(10);
+      SUBSECTOR_4KB_ERASE_SMF(FLAG_DATA_ADDRESS);
+      delay_ms(200);
+      for(num = 0; num < FLAG_INFO_SIZE; num++)
+      {
+         WRITE_DATA_BYTE_SMF(FLAG_DATA_ADDRESS + num,flag_info_bffr[num]);
+         delay_us(10);
+      }
    }
    
    output_high(PIN_C4);                                                          //COM_MUX COMSIDE
@@ -385,11 +393,16 @@ void CHANGE_ADDRESS_WRITING_LOCATION()                                          
    fprintf(PC,"AD COUNTER:%lx\r\n",AD_COUNTER);
    if((AD_COUNTER > 95000) && (AD_COUNTER != 0xffffffff))
    {
-      output_low(PIN_A5);                                                        //CAM_MUX MAINSIDE
+      if(MISSION_STATUS == 0)
+      {
+         output_low(PIN_A5);                                                        //CAM_MUX MAINSIDE
+         SUBSECTOR_4KB_ERASE_SMF(0);
+      }
+
       output_low(PIN_C4);                                                        //COM_MUX MAINSIDE
       SUBSECTOR_4KB_ERASE_OF(0);
       SUBSECTOR_4KB_ERASE_SCF(0);
-      SUBSECTOR_4KB_ERASE_SMF(0);
+
       ADDRESS_WRITING_COUNTER = 0;                                               //reset counter
       ADD_INFO_ADDRESS = ADD_INFO_ADDRESS + 0x00001000;                          //use next subsector
       output_high(PIN_C4);                                                       //COM_MUX COMSIDE
@@ -400,7 +413,16 @@ void CHANGE_ADDRESS_WRITING_LOCATION()                                          
       address_place[2] = ADD_INFO_ADDRESS >> 8;
       address_place[3] = ADD_INFO_ADDRESS;
       
-      output_low(PIN_A5);                                                        //CAM_MUX MAINSIDE
+      if(MISSION_STATUS == 0)
+      {
+         output_low(PIN_A5);                                                        //CAM_MUX MAINSIDE
+         for(int i = 0; i < 4; i++)                                                 //store the new subsector(location) information
+         {
+            WRITE_DATA_BYTE_SMF(i,address_place[i]);
+            delay_us(10);
+         }
+      }
+      
       output_low(PIN_C4);                                                        //COM_MUX MAINSIDE
       for(int i = 0; i < 4; i++)                                                 //store the new subsector(location) information
       {
@@ -408,11 +430,9 @@ void CHANGE_ADDRESS_WRITING_LOCATION()                                          
          delay_us(10);
          WRITE_DATA_BYTE_SCF(i,address_place[i]);
          delay_us(10);
-         WRITE_DATA_BYTE_SMF(i,address_place[i]);
-         delay_us(10);
       }
       output_high(PIN_C4);                                                       //COM_MUX COMSIDE
-      
+      output_high(PIN_A5);
       fprintf(PC,"CHANGED MEMORY ADDRESS:");
       for(i = 0; i < 4; i++)                                                     //store the subsector(location) information
       {
@@ -687,7 +707,9 @@ void CHECK_ADDRESS_DATA()                                                       
          }
          fprintf(PC,"\r\n");
          MAKE_ADDRESS_DATA();
-      }else{                                                                     //if there is nothing, check from SMF
+      }
+      else
+      {                                                                     //if there is nothing, check from SMF
          output_low(PIN_A5);
          TAKE_ADDRESS_DATA_FROM_SMF();
          checksum = 0;
@@ -856,9 +878,11 @@ void LOOP_SAT_LOG()                                                             
       output_low(PIN_C4);                                                        //COM_MUX MAINSIDE
       sector_erase_SCF(SECT*7);                                                  //clears a sector from the COM flash, 65536 * 7
       output_high(PIN_C4);                                                       //CAM_MUX MAINSIDE
-      
-      output_low(PIN_A5);                                                        //CAM_MUX MAINSIDE
-      sector_erase_SMF(SECT*7);                                                  //deletes a sector of the MISSION flash, 65536 * 7
+      if(MISSION_STATUS == 0)
+      {
+         output_low(PIN_A5);                                                        //CAM_MUX MAINSIDE
+         sector_erase_SMF(SECT*7);                                                  //deletes a sector of the MISSION flash, 65536 * 7
+      }
       SAT_LOG = SECT*7;                                                          //Change the address of SAT_LOG and keep the first sector, 65536 * 7
       STORE_ADRESS_DATA_TO_FLASH();                                              //saves the address data, it will be in a new sector if the R / W cycle is fulfilled
    }
@@ -898,9 +922,11 @@ void LOOP_FAB_HK_ADDRESS()                                                      
       sector_erase_SCF(SECT*308);
       output_high(PIN_C4);                                                       //COM_MUX COMSIDE
       
-      output_low(PIN_A5);                                                        //CAM_MUX MAINSIDE
-      sector_erase_SMF(SECT*308);
-      
+      if(MISSION_STATUS == 0)
+      {
+         output_low(PIN_A5);                                                        //CAM_MUX MAINSIDE
+         sector_erase_SMF(SECT*308);
+      }
       FAB_HK_ADDRESS = 65536*309;                                                  //the new address is again the beginning of the allocated space
       STORE_ADRESS_DATA_TO_FLASH();                                              //saves the address data and in a new sector if the R / W cycle is fulfilled
    }
@@ -913,9 +939,11 @@ void LOOP_FAB_HK_ADDRESS()                                                      
       output_low(PIN_C4);                                                        //COM_MUX MAINSIDE
       sector_erase_SCF(FAB_HK_ADDRESS + SECT);
       output_high(PIN_C4);                                                       //COM_MUX COMSIDE
-      
-      output_low(PIN_A5);                                                        //CAM_MUX MAINSIDE
-      sector_erase_SMF(FAB_HK_ADDRESS + SECT);
+      if(MISSION_STATUS == 0)
+      {
+         output_low(PIN_A5);                                                        //CAM_MUX MAINSIDE
+         sector_erase_SMF(FAB_HK_ADDRESS + SECT);
+      }
    }
    return;
 }
@@ -932,9 +960,11 @@ void LOOP_FAB_CW_ADDRESS()                                                      
       sector_erase_SCF(SECT*608);
       output_high(PIN_C4);                                                       //COM_MUX COMSIDE
       
-      output_low(PIN_A5);                                                        //CAM_MUX MAINSIDE
-      sector_erase_SMF(SECT*608);
-      
+      if(MISSION_STATUS == 0)
+      {
+         output_low(PIN_A5);                                                        //CAM_MUX MAINSIDE
+         sector_erase_SMF(SECT*608);
+      }
       FAB_CW_ADDRESS = SECT*608;
       STORE_ADRESS_DATA_TO_FLASH();
    }
@@ -948,8 +978,11 @@ void LOOP_FAB_CW_ADDRESS()                                                      
       sector_erase_SCF(FAB_CW_ADDRESS + SECT);                                   //erase next sector in advance
       output_high(PIN_C4);                                                       //COM_MUX COMSIDE
       
-      output_low(PIN_A5);                                                        //CAM_MUX MAINSIDE
-      sector_erase_SMF(FAB_CW_ADDRESS + SECT);                                   //erase next sector in advance
+      if(MISSION_STATUS == 0) //prevent SMF interruption during mission running
+      {
+         output_low(PIN_A5);                                                        //CAM_MUX MAINSIDE
+         sector_erase_SMF(FAB_CW_ADDRESS + SECT);                                   //erase next sector in advance
+      }
       
    }
    return;
@@ -966,8 +999,11 @@ void LOOP_ADCS_SENSOR_ADDRESS()
       sector_erase_SCF(SECT*922);
       output_high(PIN_C4);                                                       //COM_MUX COMSIDE
       
-      output_low(PIN_A5);                                                        //CAM_MUX MAINSIDE
-      sector_erase_SMF(SECT*922);
+      if(MISSION_STATUS == 0)
+      {
+         output_low(PIN_A5);                                                        //CAM_MUX MAINSIDE
+         sector_erase_SMF(SECT*922);
+      }
       
       ADCS_SENSOR_ADDRESS = SECT*922;                                           //keep first 2 sector forever
       STORE_ADRESS_DATA_TO_FLASH();
@@ -989,10 +1025,13 @@ void LOOP_ADCS_SENSOR_ADDRESS()
       }
       output_high(PIN_C4);                                                       //COM_MUX COMSIDE
       
-      output_low(PIN_A5);                                                        //CAM_MUX MAINSIDE
-      for(i = 1; i < 10; i++)
+      if(MISSION_STATUS == 0)
       {
-         sector_erase_SMF(ADCS_SENSOR_ADDRESS + SECT*i);                         //erase next sector in advance
+         output_low(PIN_A5);                                                        //CAM_MUX MAINSIDE
+         for(i = 1; i < 10; i++)
+         {
+            sector_erase_SMF(ADCS_SENSOR_ADDRESS + SECT*i);                         //erase next sector in advance
+         }
       }
    }
    return;
@@ -1010,8 +1049,11 @@ void LOOP_DC_STATUS_ADDRESS()
       SUBSECTOR_4KB_ERASE_SCF(SECT*912+4096);
       output_high(PIN_C4);                                                       //COM_MUX COMSIDE
       
-      output_low(PIN_A5);                                                        //CAM_MUX MAINSIDE
-      SUBSECTOR_4KB_ERASE_SMF(SECT*912+4096);
+      if(MISSION_STATUS == 0)
+      {
+         output_low(PIN_A5);                                                        //CAM_MUX MAINSIDE
+         SUBSECTOR_4KB_ERASE_SMF(SECT*912+4096);
+      }
       
       DC_STATUS_ADDRESS = SECT*912+4096;                                        //keep first 1 SUBSECTOR forever
       STORE_ADRESS_DATA_TO_FLASH();
@@ -1026,8 +1068,11 @@ void LOOP_DC_STATUS_ADDRESS()
       SUBSECTOR_4KB_ERASE_SCF(DC_STATUS_ADDRESS + 4096);                         //erase next SUBSECTOR in advance
       output_high(PIN_C4);                                                       //COM_MUX COMSIDE
       
-      output_low(PIN_A5);                                                        //CAM_MUX MAINSIDE
-      SUBSECTOR_4KB_ERASE_SMF(DC_STATUS_ADDRESS + 4096);                         //erase next SUBSECTOR in advance
+      if(MISSION_STATUS == 0)
+      {
+         output_low(PIN_A5);                                                        //CAM_MUX MAINSIDE
+         SUBSECTOR_4KB_ERASE_SMF(DC_STATUS_ADDRESS + 4096);                         //erase next SUBSECTOR in advance
+      }
    }
    return;
 }
@@ -1043,8 +1088,11 @@ void LOOP_HIGH_SAMP_HK_ADDRESS()
       sector_erase_SCF(SECT*660);
       output_high(PIN_C4);                                                       //COM_MUX COMSIDE
       
-      output_low(PIN_A5);                                                        //CAM_MUX MAINSIDE
-      sector_erase_SMF(SECT*660);
+      if(MISSION_STATUS == 0)
+      {
+         output_low(PIN_A5);                                                        //CAM_MUX MAINSIDE
+         sector_erase_SMF(SECT*660);
+      }
       
       HIGH_SAMP_HK_ADDRESS = SECT*660;                                          //keep first 2 sector forever
    }
@@ -1062,10 +1110,13 @@ void LOOP_HIGH_SAMP_HK_ADDRESS()
       sector_erase_SCF(HIGH_SAMP_HK_ADDRESS + SECT*3);                           //erase next sector in advance
       output_high(PIN_C4);                                                       //COM_MUX COMSIDE
       
-      output_low(PIN_A5);                                                        //CAM_MUX MAINSIDE
-      sector_erase_SMF(HIGH_SAMP_HK_ADDRESS + SECT);                             //erase next sector in advance
-      sector_erase_SMF(HIGH_SAMP_HK_ADDRESS + SECT*2);                           //erase next sector in advance
-      sector_erase_SMF(HIGH_SAMP_HK_ADDRESS + SECT*3);                           //erase next sector in advance
+      if(MISSION_STATUS == 0)
+      {
+         output_low(PIN_A5);                                                        //SMF_MUX MAINSIDE
+         sector_erase_SMF(HIGH_SAMP_HK_ADDRESS + SECT);                             //erase next sector in advance
+         sector_erase_SMF(HIGH_SAMP_HK_ADDRESS + SECT*2);                           //erase next sector in advance
+         sector_erase_SMF(HIGH_SAMP_HK_ADDRESS + SECT*3);                           //erase next sector in advance
+      }
    }
    return;
 }

@@ -102,15 +102,22 @@ void SAVE_SAT_LOG(int8 data1, int8 data2, int8 data3)
       satellitelog[9] = data3;
       satellitelog[10] = 0xef;                                                   //footer, end of array
       
-      output_low(PIN_A5);                                                        //CAM_MUX main side
+      if(MISSION_STATUS == 0)
+      {
+         output_low(PIN_A5);                                                        //SMF_MUX main side
+      }
       output_low(PIN_C4);                                                        //COM_MUX main side
-      for(int i = 0; i < logdata_size; i++)                                      //guarda el dato en las tres Flash en la posicion de memoria indicada por SAT_LOG 
+      for(int i = 0; i < logdata_size; i++)                                      //saves the data in the three Flash in the memory position indicated by SAT_LOG
       {
          WRITE_DATA_BYTE_OF(SAT_LOG + i,satellitelog[i]);
          WRITE_DATA_BYTE_SCF(SAT_LOG + i,satellitelog[i]);
-         WRITE_DATA_BYTE_SMF(SAT_LOG + i,satellitelog[i]);
+         if(MISSION_STATUS == 0)
+         {  
+            WRITE_DATA_BYTE_SMF(SAT_LOG + i,satellitelog[i]);
+         }
       }
       output_high(PIN_C4);                                                       //COM_MUX COM side
+      output_high(PIN_A5);                                                       //SMF_MUX main side
       SAT_LOG = SAT_LOG + logdata_size;
       fprintf(PC,"LOG saving done\r\n");
    }
