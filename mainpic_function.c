@@ -58,10 +58,10 @@ void GIVE_ACCESS_SCF_Nsec(int8 min)
 }
 
 //--------FAB HK collection--------------------------------------------------//
-#define HK_size 76                                                               //HK FORMAT ARRAY SIZE
+#define HK_size 80                                                               //HK FORMAT ARRAY SIZE
 #define CW_size 5                                                                //CW FORMAT ARRAY SIZE
-#define HIGH_SAMP_HK_size 76                                                     //High Sampling HK FORMAT ARRAY SIZE
-#define FAB_SENSOR_size 45                                                       //HK FAB Part (intentionally larger than FAB data array incase data from FAB is shifted/incorrect. This is checked in FAB Verify function)
+#define HIGH_SAMP_HK_size 80                                                     //High Sampling HK FORMAT ARRAY SIZE
+#define FAB_SENSOR_size 50                                                       //HK FAB Part (intentionally larger than FAB data array incase data from FAB is shifted/incorrect. This is checked in FAB Verify function)
 
 static unsigned int8 CW_FORMAT[CW_size] = {};
 unsigned int8 in_HK[FAB_SENSOR_size] = {};
@@ -720,7 +720,7 @@ void COMMAND_TO_FAB(int32 delaytime)                                            
 }
 
 
-int8 CHECK_SUNSHINE(int8 current)
+int8 CHECK_SUNSHINE(int16 current)
 {
    if(current > EX_PANEL_THRESHHOLD)
    {
@@ -867,25 +867,25 @@ void MAKE_CW1_FORMAT()
 {
    Delete_CW_FORMAT();                                                            //borra el array CW_FORMAT[5]
    
-   CW_FORMAT[0] = HKDATA[44];                                                    //battery voltage
-   CW_FORMAT[1] = HKDATA[45]<<4|HKDATA[46]>>4;                                   //battery current
-   CW_FORMAT[2] = HKDATA[47];                                                    //battery temp
+   CW_FORMAT[0] = HKDATA[48];                                                    //battery voltage
+   CW_FORMAT[1] = HKDATA[49]<<4|HKDATA[50]>>4;                                   //battery current
+   CW_FORMAT[2] = HKDATA[51];                                                    //battery temp
    
    CW_FORMAT[3] = CW_FORMAT[3];                                                  //0:CW1
 //   CW_FORMAT[3] = CW_FORMAT[3] + RESERVE_CHECK * 64;
-   CW_FORMAT[3] = CW_FORMAT[3] + OPERATION_MODE_VALUE(HKDATA[68]);               //96(=64+32-->0x01100000):nomal, 64(0x01000000):low, 16(0x00100000):safe
-   KILL_FLAG_FAB = (HKDATA[49] & 0x10)>>4;
-   KILL_FLAG_MAIN = HKDATA[49] & 0x01;
+   CW_FORMAT[3] = CW_FORMAT[3] + OPERATION_MODE_VALUE(HKDATA[72]);               //96(=64+32-->0x01100000):nomal, 64(0x01000000):low, 16(0x00100000):safe
+   KILL_FLAG_FAB = (HKDATA[53] & 0x10)>>4;
+   KILL_FLAG_MAIN = HKDATA[53] & 0x01;
    CW_FORMAT[3] = CW_FORMAT[3] + KILL_FLAG_MAIN * 16;
    CW_FORMAT[3] = CW_FORMAT[3] + KILL_FLAG_FAB * 8;
    CW_FORMAT[3] = CW_FORMAT[3] + ANT_DEP_STATUS * 4;
-   CW_FORMAT[3] = CW_FORMAT[3] + CHECK_SUNSHINE(HKDATA[34]) * 2;                 //+Y Panel (new axis definition)
-   CW_FORMAT[3] = CW_FORMAT[3] + CHECK_SUNSHINE(HKDATA[35]) * 1;                 //+X Panel (new axis definition)
+   CW_FORMAT[3] = CW_FORMAT[3] + CHECK_SUNSHINE(make16(HKDATA[32],HKDATA[33])) * 2;                 //-X Panel (new axis definition)
+   CW_FORMAT[3] = CW_FORMAT[3] + CHECK_SUNSHINE(make16(HKDATA[34],HKDATA[35])) * 1;                 //+Y Panel (new axis definition)
    
-   CW_FORMAT[4] = CW_FORMAT[4] + CHECK_SUNSHINE(HKDATA[36]) * 128;               //-Z Panel (new axis definition)
-   CW_FORMAT[4] = CW_FORMAT[4] + CHECK_SUNSHINE(HKDATA[37]) * 64;                //-X Panel (new axis definition)
-   CW_FORMAT[4] = CW_FORMAT[4] + CHECK_SUNSHINE(HKDATA[38]) * 32;                //+Z Panel (new axis definition)
-   CW_FORMAT[4] = CW_FORMAT[4] + (HKDATA[4] & 0b00011111);                       //time data
+   CW_FORMAT[4] = CW_FORMAT[4] + CHECK_SUNSHINE(make16(HKDATA[36],HKDATA[37])) * 128;               //-Z Panel (new axis definition)
+   CW_FORMAT[4] = CW_FORMAT[4] + CHECK_SUNSHINE(make16(HKDATA[38],HKDATA[39])) * 64;                //-Y Panel (new axis definition)
+   CW_FORMAT[4] = CW_FORMAT[4] + CHECK_SUNSHINE(make16(HKDATA[40],HKDATA[41])) * 32;                //+Z Panel (new axis definition)
+   CW_FORMAT[4] = CW_FORMAT[4] + (HKDATA[4] & 0b00011111);                                          //time data
    
    CW_IDENTIFIER = 0;
    CHECK_50_and_CW_RESPOND();
@@ -898,16 +898,16 @@ void MAKE_CW1_FORMAT()
 void MAKE_CW2_FORMAT()                                                           
 {
    Delete_CW_FORMAT();
-   CW_FORMAT[0] = CONVERT_16bit_GYRO_to_8bit_X(HKDATA[59], HKDATA[60]);          //GYRO X axis
-   CW_FORMAT[1] = CONVERT_16bit_GYRO_to_8bit_Y(HKDATA[61], HKDATA[62]);          //GYRO Y axis
-   CW_FORMAT[2] = CONVERT_16bit_GYRO_to_8bit_Z(HKDATA[63], HKDATA[64]);          //GYRO Z axis
+   CW_FORMAT[0] = CONVERT_16bit_GYRO_to_8bit_X(HKDATA[63], HKDATA[64]);          //GYRO X axis
+   CW_FORMAT[1] = CONVERT_16bit_GYRO_to_8bit_Y(HKDATA[65], HKDATA[66]);          //GYRO Y axis
+   CW_FORMAT[2] = CONVERT_16bit_GYRO_to_8bit_Z(HKDATA[67], HKDATA[68]);          //GYRO Z axis
    
    CW_FORMAT[3] = CW_FORMAT[3] + 128;                                            //1:CW2
    CW_FORMAT[3] = CW_FORMAT[3] + FIRST_HSSC_DONE * 64;                           //High Sampling Sensor Collection Flag 0:not done, 1:done
    CW_FORMAT[3] = CW_FORMAT[3] + COM_TO_MAIN_FLAG * 32;                          //COM TO MAIN Flag 0:no communication, 1:communication
    CW_FORMAT[3] = CW_FORMAT[3] + RESET_TO_MAIN_FLAG * 16;                        //RESET TO MAIN Flag 0:no communication, 1:communication
    CW_FORMAT[3] = CW_FORMAT[3] + CHECK_FAB_RESPONSE * 8;                         //FAB TO MAIN Flag 0:no communication, 1:communication
-   CW_FORMAT[3] = CW_FORMAT[3] + HKDATA[48] * 4;                                 //Heater 0:OFF, 1:ON
+   CW_FORMAT[3] = CW_FORMAT[3] + HKDATA[52] * 4;                                 //Heater 0:OFF, 1:ON
    CW_FORMAT[3] = CW_FORMAT[3] + RESERVE_CHECK * 2;                              //RSV Flag
    CW_FORMAT[3] = CW_FORMAT[3] + UPLINK_SUCCESS;                                 //UPLINK SUCCESS
    
@@ -1064,7 +1064,7 @@ void CHECK_HKDATA(int8 in,int32 delaytime)                                      
    Delete_HKDATA();                                                              //delete the HKDATA [] array
    waiting(delaytime);                                                           //waiting
    CHECK_50_and_CW_RESPOND();
-   for(int num = 1; num < 11 - in; num++)                                        //[FAB] +X,-Y,-Z,+Y,-X temp_high,low(array[10] to [17])
+   for(int num = 1; num < 11 - in; num++)                                        //[FAB] +Y,+X,-Z,-X,-Y temp_high,low(array[10] to [17])
    {
       HKDATA[num + 5+4] = in_HK[num + 2 - in];                                   //places the data sent by the FAB in the HKDATA [] array from position 10 to 17
       /* fputc(HKDATA[num + 5+4],PC); */                                         //prints the data from position 10 to 19
