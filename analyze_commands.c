@@ -3633,7 +3633,7 @@ void SF_COMMAND_PC(int8 CMD0,int8 CMD2,int8 CMD3,int8 CMD4,int8 CMD5,int8 CMD6, 
                WRITE_DATA_BYTE_SCF(address, SFWD_DATAS);
                address++;
                counter_sf++;
-               if (counter_sf == 81*PcktNo)
+               if (counter_sf == (81*PcktNo))
                {
                   break;
                } 

@@ -142,8 +142,8 @@ void main()
    
    FAB_TEST_OPERATION();
    fprintf(PC, "\r\n********Finish FAB TEST OPERATION*******\r\n");   
-   
-   delay_ms(1000);
+
+   delay_ms(5000);
    
 
    while(TRUE)                                                                     //Main Operation Loop
@@ -270,7 +270,6 @@ void main()
          FAB_FLAG = 0;
          fprintf(PC,"\r\n***NORMAL SAMPLING HOUSEKEEPING DATA COLLECTION***\r\n");
          FAB_TEST_OPERATION();
-         COM_DATA = 0;
          
          STORE_ADRESS_DATA_TO_FLASH();                                           //for store the address info
 

@@ -28,6 +28,9 @@ int OitaTestArray[14] = {};
 float df;
 float dg;
 float dk;
+float d_x;
+float d_y;
+float d_z;
 int8 CWtest[1] = {};
 
 void GIVE_ACCESS_SCF_Nsec(int8 min)
@@ -753,7 +756,7 @@ int8 OPERATION_MODE_VALUE(int8 Bat_Vol)
 int8 CONVERT_16bit_GYRO_to_8bit_X(int8 HIGH_8bit, int8 LOW_8bit)
 {
    signed int16 row_data = make16(HIGH_8bit, LOW_8bit);
-   float ang_v = row_data*0.00875-0.11853;
+   float ang_v = row_data*0.00875;
    /*fprintf(PC,"ang:%.4f\r\n",ang_v);*/
    return (int8)ang_v; 
 }
@@ -762,7 +765,7 @@ int8 CONVERT_16bit_GYRO_to_8bit_X(int8 HIGH_8bit, int8 LOW_8bit)
 int8 CONVERT_16bit_GYRO_to_8bit_Y(int8 HIGH_8bit, int8 LOW_8bit)
 {
    signed int16 row_data = make16(HIGH_8bit, LOW_8bit);
-   float ang_v = row_data*0.00875-0.24552;
+   float ang_v = row_data*0.00875;
    /*fprintf(PC,"ang:%.4f\r\n",ang_v);*/
    return (int8)ang_v; 
 }
@@ -771,7 +774,7 @@ int8 CONVERT_16bit_GYRO_to_8bit_Y(int8 HIGH_8bit, int8 LOW_8bit)
 int8 CONVERT_16bit_GYRO_to_8bit_Z(int8 HIGH_8bit, int8 LOW_8bit)
 {
    signed int16 row_data = make16(HIGH_8bit, LOW_8bit);
-   float ang_v = row_data*0.00875-0.40486;
+   float ang_v = row_data*0.00875;
    /*fprintf(PC,"ang:%.4f\r\n",ang_v);*/
    return (int8)ang_v; 
 }
@@ -1370,52 +1373,13 @@ void GET_ADCS_SENSOR_DATA()                                                     
    {
       Delete_ADCS_data();
    }
-   
-   OitaTestArray[0] = ADCS_SENSOR_DATA[0];
-   OitaTestArray[1] = ADCS_SENSOR_DATA[1];
-   OitaTestArray[2] = ADCS_SENSOR_DATA[2];
-   OitaTestArray[3] = ADCS_SENSOR_DATA[3];
-   OitaTestArray[4] = ADCS_SENSOR_DATA[4];
-   OitaTestArray[5] = ADCS_SENSOR_DATA[5];
-   OitaTestArray[6] = ADCS_SENSOR_DATA[6];
-   OitaTestArray[7] = ADCS_SENSOR_DATA[7];
-   OitaTestArray[8] = ADCS_SENSOR_DATA[8];
-   OitaTestArray[9] = ADCS_SENSOR_DATA[9];
-   OitaTestArray[10] = ADCS_SENSOR_DATA[10];
-   OitaTestArray[11] = ADCS_SENSOR_DATA[11];
-   OitaTestArray[12] = ADCS_SENSOR_DATA[12];
-   OitaTestArray[13] = ADCS_SENSOR_DATA[13];
 
-   
-//!   for(int lm = 0; lm < 14; lm++)
-//!   {
-//!      fprintf(PC, "%d ", OitaTestArray[lm]);
-//!   }
-//!   fprintf(PC,"\r\n");
-   
-   df = make16(ADCS_SENSOR_DATA[1], ADCS_SENSOR_DATA[2]);
-   dg = make16(ADCS_SENSOR_DATA[3], ADCS_SENSOR_DATA[4]);
-   dk = make16(ADCS_SENSOR_DATA[5], ADCS_SENSOR_DATA[6]);
-      
-      
-//!   fprintf(PC, "%03f ", df);
-//!   fprintf(PC, "%03f ", dg);
-//!   fprintf(PC, "%03f ", dk);
-//!   fprintf(PC,"\r\n");
-//!   
-//!   fprintf(PC, "%5.3f ", df);
-//!   fprintf(PC, "%5.3f ", dg);
-//!   fprintf(PC, "%5.3f ", dk);
-//!   fprintf(PC,"\r\n");
-//!   
-//!   df = df/100;
-//!   dg = dg/100;
-//!   dk = dk/100;
-//!   
-//!   fprintf(PC, "%5.3f ", df);
-//!   fprintf(PC, "%5.3f ", dg);
-//!   fprintf(PC, "%5.3f ", dk);
-//!   fprintf(PC,"\r\n");
+
+////////////////////////////Magnetometer testing///////////////////////////////
+
+//!   df = make16(ADCS_SENSOR_DATA[1], ADCS_SENSOR_DATA[2]);
+//!   dg = make16(ADCS_SENSOR_DATA[3], ADCS_SENSOR_DATA[4]);
+//!   dk = make16(ADCS_SENSOR_DATA[5], ADCS_SENSOR_DATA[6]);
 //!
 //!   if((df - 32768.00) > 0)
 //!   {
@@ -1443,10 +1407,41 @@ void GET_ADCS_SENSOR_DATA()                                                     
 //!   {
 //!      fprintf(PC, "%f ", dk/100);
 //!   }
+
+////////////////////////////Gyro testing///////////////////////////////////////
+
+//!      d_x = make16(ADCS_SENSOR_DATA[7], ADCS_SENSOR_DATA[8]);
+//!      d_y = make16(ADCS_SENSOR_DATA[9], ADCS_SENSOR_DATA[10]);
+//!      d_z = make16(ADCS_SENSOR_DATA[11], ADCS_SENSOR_DATA[12]);
+//!      
+//!      if(d_x < (65536/2))
+//!      {
+//!         fprintf(PC, "%f ", (d_x*0.00875));
+//!      }
+//!      else
+//!      {
+//!         fprintf(PC, "%f ", ((d_x-65536)*0.00875));
+//!      }
+//!      
+//!      if(d_y < (65536/2))
+//!      {
+//!         fprintf(PC, "%f ", (d_y*0.00875));
+//!      }
+//!      else
+//!      {
+//!         fprintf(PC, "%f ", ((d_y-65536)*0.00875));
+//!      }
+//!      
+//!      if(d_z < (65536/2))
+//!      {
+//!         fprintf(PC, "%f ", (d_z*0.00875));
+//!      }
+//!      else
+//!      {
+//!         fprintf(PC, "%f ", ((d_z-65536)*0.00875));
+//!      }
+//!      fprintf(PC,"\r\n");
       
-//!   fprintf(PC, "%f ", dg);
-//!   fprintf(PC, "%f ", dk);
-//!   fprintf(PC,"\r\n");
   
    return;
 }
@@ -1921,12 +1916,12 @@ void Forward_CMD_MBP()
 
 //--------Mission Execution Tests--------------------------------------------//
 
-//!void OITA_Test()
-//!{
-//!   Turn_On_MBP();
-//!   Turn_On_ADCS();
-//!   MAKE_ADCS_HKDATA();
-//!   
+void OITA_Test()
+{
+      Turn_On_MBP();
+   Turn_On_ADCS();
+   MAKE_ADCS_HKDATA();
+   
 //!   command[0] = 0x21;
 //!   command[1] = ADCS_SENSOR_DATA[1];
 //!   command[2] = ADCS_SENSOR_DATA[2];
@@ -1943,15 +1938,15 @@ void Forward_CMD_MBP()
 //!         fprintf(PC,"%x ",command[ll]);
 //!      }
 //!  
-//!   //Forward_CMD_MBP();
-//!   
-//!   //Delete_ADCS_data();
-//!   
-//!   //DELETE_CMD_ARRAY_DATA();
-//!   
-//!   
-//!}
-//!
+   //Forward_CMD_MBP();
+   
+   //Delete_ADCS_data();
+   
+   //DELETE_CMD_ARRAY_DATA();
+   
+   
+}
+
 
 
 void ADCS_TEST()
