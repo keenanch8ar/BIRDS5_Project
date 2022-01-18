@@ -61,7 +61,7 @@ void GIVE_ACCESS_SCF_Nsec(int8 min)
 #define HK_size 80                                                               //HK FORMAT ARRAY SIZE
 #define CW_size 5                                                                //CW FORMAT ARRAY SIZE
 #define HIGH_SAMP_HK_size 80                                                     //High Sampling HK FORMAT ARRAY SIZE
-#define FAB_SENSOR_size 50                                                       //HK FAB Part (intentionally larger than FAB data array incase data from FAB is shifted/incorrect. This is checked in FAB Verify function)
+#define FAB_SENSOR_size 47                                                       //HK FAB Part (intentionally larger than FAB data array incase data from FAB is shifted/incorrect. This is checked in FAB Verify function)
 
 static unsigned int8 CW_FORMAT[CW_size] = {};
 unsigned int8 in_HK[FAB_SENSOR_size] = {};
@@ -1064,10 +1064,10 @@ void CHECK_HKDATA(int8 in,int32 delaytime)                                      
    Delete_HKDATA();                                                              //delete the HKDATA [] array
    waiting(delaytime);                                                           //waiting
    CHECK_50_and_CW_RESPOND();
-   for(int num = 1; num < 11 - in; num++)                                        //[FAB] +Y,+X,-Z,-X,-Y temp_high,low(array[10] to [17])
+   for(int num = 1; num < FAB_SENSOR_size - in; num++)                           //Places all FAB data into HK array
    {
-      HKDATA[num + 5+4] = in_HK[num + 2 - in];                                   //places the data sent by the FAB in the HKDATA [] array from position 10 to 17
-      /* fputc(HKDATA[num + 5+4],PC); */                                         //prints the data from position 10 to 19
+      HKDATA[num + 5+4] = in_HK[num + 2 - in];                                   
+      /* fputc(HKDATA[num + 5+4],PC); */                                         
       fprintf(PC,"%x ",HKDATA[num + 5+4]);
    }
    
@@ -1075,13 +1075,13 @@ void CHECK_HKDATA(int8 in,int32 delaytime)                                      
    CHECK_50_and_CW_RESPOND();   
 //!   HKDATA[14+4] = BC_temp_data_h;                                                //+X temp high[18]
 //!   HKDATA[15+4] = BC_temp_data_l;                                                //+X temp low[19]
-   
-   for(num = 7; num < FAB_SENSOR_size - 2; num++)                                //[FAB] from CPLD temp to Kill status(array[20] to [49])
-   {
-      HKDATA[num + 7+4] = in_HK[num + 2 - in];
-      /*fputc(HKDATA[num + 7+4],PC);*/                                           //prints the data from position 20 to 49
-      fprintf(PC,"%x ",HKDATA[num + 7+4]);
-   }
+//!   
+//!   for(num = 7; num < FAB_SENSOR_size - in; num++)                                
+//!   {
+//!      HKDATA[num + 7+4] = in_HK[num + 2 - in];
+//!      /*fputc(HKDATA[num + 7+4],PC);*/                                           //prints the data from position 20 to 49
+//!      fprintf(PC,"%x ",HKDATA[num + 7+4]);
+//!   }
    fprintf(PC,"\r\n");
    FAB_DATA = 0;                                                                 //reset the flag
    return;
@@ -1629,21 +1629,22 @@ void CHECK_HIGH_SAMP_FABDATA(int8 in)                                           
 {
    fprintf(PC,"\r\nFAB DATA OBTAINED: ");
    Delete_HKDATA();
-   for(int8 num_fab = 1; num_fab < 11 - in; num_fab++)                                             //Collect HK DATA
+   for(int8 num_fab = 1; num_fab < FAB_SENSOR_size - in; num_fab++)                                             //Collect HK DATA
    {
       HKDATA[num_fab + 5+4] = in_HK[num_fab + 2 - in];
       fprintf(PC, "%x ", HKDATA[num_fab + 5 + 4]);
    }
    
+   
 //!   MEASURE_BC_TEMP();
 //!   HKDATA[18] = BC_temp_data_h;                                                  //-X Panel Temp
 //!   HKDATA[19] = BC_temp_data_l;                                                  //-X Panel Temp
    
-   for(num_fab = 7; num_fab < FAB_SENSOR_size - 2; num_fab++)                                //[FAB] from CPLD temp to Kill status(array[20] to [49])
-   {
-      HKDATA[num_fab + 7+4] = in_HK[num_fab + 2 - in];
-      fprintf(PC, "%x ", HKDATA[num_fab + 7+4]);
-   }
+//!   for(num_fab = 7; num_fab < FAB_SENSOR_size - 2; num_fab++)                                //[FAB] from CPLD temp to Kill status(array[20] to [49])
+//!   {
+//!      HKDATA[num_fab + 7+4] = in_HK[num_fab + 2 - in];
+//!      fprintf(PC, "%x ", HKDATA[num_fab + 7+4]);
+//!   }
    fprintf(PC,"\r\n");
    FAB_DATA = 0;
 }

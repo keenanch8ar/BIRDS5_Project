@@ -22,7 +22,7 @@ AdditionalOptionString=
 1=BIRDS5_OBC.c
 
 [defines]
-buildcount=846
+buildcount=849
 enabled=0
 chip=1
 D1=
@@ -1853,7 +1853,7 @@ D91_L6=[78164]Project Closed.
 D91_L7=[82386]Project Opened.
 D91_L8=[82426]Project Closed.
 D92=18-01-2022
-D92_L=12
+D92_L=16
 D92_L1=[8565]Project Opened.
 D92_L2=[8747]Started Editing.
 D92_L3=[9132]Stopped Editing.
@@ -1868,10 +1868,14 @@ D92_L9=[68351]Project Closed.
 D92_L10=[68746]Project Opened.
 D92_L11=[68892]Project Closed.
 D92_L12=[70014]Project Opened.
+D92_L13=[70482]Started Editing.
+D92_L14=[70916]Stopped Editing.
+D92_L15=[71159]Started Editing.
+D92_L16=[71718]Stopped Editing.
 
 [Opened Files]
 1=BIRDS5_OBC.c
-t1=57
+t1=1
 2=BIRDS5_OBC.h
 t2=1
 3=mainpic_function.c
