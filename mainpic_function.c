@@ -1071,12 +1071,12 @@ void CHECK_HKDATA(int8 in,int32 delaytime)                                      
       fprintf(PC,"%x ",HKDATA[num + 5+4]);
    }
    
-   MEASURE_BC_TEMP();                                                            //analog reading and loading of the variable BC_temp_data_h and BC_temp_data_l
+//!   MEASURE_BC_TEMP();                                                            //analog reading and loading of the variable BC_temp_data_h and BC_temp_data_l
    CHECK_50_and_CW_RESPOND();   
-   HKDATA[14+4] = BC_temp_data_h;                                                //+X temp high[18]
-   HKDATA[15+4] = BC_temp_data_l;                                                //+X temp low[19]
+//!   HKDATA[14+4] = BC_temp_data_h;                                                //+X temp high[18]
+//!   HKDATA[15+4] = BC_temp_data_l;                                                //+X temp low[19]
    
-   for(num = 9; num < FAB_SENSOR_size - 2; num++)                                //[FAB] from CPLD temp to Kill status(array[20] to [49])
+   for(num = 7; num < FAB_SENSOR_size - 2; num++)                                //[FAB] from CPLD temp to Kill status(array[20] to [49])
    {
       HKDATA[num + 7+4] = in_HK[num + 2 - in];
       /*fputc(HKDATA[num + 7+4],PC);*/                                           //prints the data from position 20 to 49
@@ -1225,11 +1225,11 @@ void GET_RESET_DATA()                                                           
    
       for(num = 0; num < 5; num++)                                               //load the HKDATA array with reset sensor data in positions 110 to 114
       {
-         HKDATA[num + 68] = reset_bffr[num + 6];                                //load the HKDATA [] with the reset data []
+         HKDATA[num + 72] = reset_bffr[num + 6];                                //load the HKDATA [] with the reset data []
          /*
          fputc(HKDATA[num + 116],PC);
          */
-         fprintf(PC,"%x ",HKDATA[num + 68]);                                    //show to serial monitor
+         fprintf(PC,"%x ",HKDATA[num + 72]);                                    //show to serial monitor
       }
       fprintf(PC,"\r\n");
    }
@@ -1454,9 +1454,9 @@ void MAKE_ADCS_HKDATA()                                                         
    
    CHECK_50_and_CW_RESPOND();   
    
-   for(int num = 53; num < 65; num++)                                           //12byte(MAG6,GYRO6)
+   for(int num = 57; num < 69; num++)                                           //12byte(MAG6,GYRO6)
    {
-      HKDATA[num] = ADCS_SENSOR_DATA[num - 52];                                  //ADCS[1] to ADCS[12]
+      HKDATA[num] = ADCS_SENSOR_DATA[num - 56];                                  //ADCS[1] to ADCS[12]
    }
    
    return;
@@ -1484,14 +1484,14 @@ void SET_IDENTIFIER()
    HKDATA[7] = 0xAA;
    HKDATA[8] = 0xAA;
    HKDATA[9] = 0xAA;
-   HKDATA[50] = 0xBB;
-   HKDATA[51] = 0xBB;
-   HKDATA[52] = 0xBB;
-   HKDATA[65] = 0xCC;
-   HKDATA[66] = 0xCC;
-   HKDATA[67] = 0xCC;
-   HKDATA[74] = 0x44;
-   HKDATA[75] = 0x44;
+   HKDATA[54] = 0xBB;
+   HKDATA[55] = 0xBB;
+   HKDATA[56] = 0xBB;
+   HKDATA[69] = 0xCC;
+   HKDATA[70] = 0xCC;
+   HKDATA[71] = 0xCC;
+   HKDATA[78] = 0x44;
+   HKDATA[79] = 0x44;
    return;
 }
 
@@ -1538,17 +1538,17 @@ void FAB_TEST_OPERATION()
 
       CHECK_50_and_CW_RESPOND();
       
-      for(int num = 0; num < 65; num++)                                          //array[0] to [64](until gyro data)
+      for(int num = 0; num < HK_Size; num++)                                    
       {
          fprintf(PC,"%x ",HKDATA[num]);
       }
       CHECK_50_and_CW_RESPOND();
-      for(num = 65; num < HK_Size; num++)                                            //GPS 60 byte should be shown as char type
-      {
-      
-         fprintf(PC,"%x ",HKDATA[num]);                                          //just for test
-      }
-      CHECK_50_and_CW_RESPOND();
+//!      for(num = 65; num < HK_Size; num++)                                       
+//!      {
+//!      
+//!         fprintf(PC,"%x ",HKDATA[num]);                                          //just for test
+//!      }
+//!      CHECK_50_and_CW_RESPOND();
 
       fprintf(PC,"\r\n");
       CHECK_50_and_CW_RESPOND();
@@ -1595,7 +1595,8 @@ void FAB_TEST_OPERATION()
       
       if (MISSION_STATUS == 0)
       {
-
+         output_low(PIN_A5);                                                        //Shared Mission Flash, Main side
+         
          SEND_HKDATA_to_SMF(FAB_HK_ADDRESS);                                        //save the HKDATA array in SMF flash []
 
          SEND_CWFORMAT_TO_SMF(FAB_CW_ADDRESS);                                      //save the CWFORMAT array in SMF flash []
@@ -1611,7 +1612,10 @@ void FAB_TEST_OPERATION()
       for(int num = 0; num < HK_size; num++)
       {
          fprintf(PC,"%x ",HKDATA[num]);
-      }     
+      }
+      output_high(PIN_C4);                                                       //COM Flash memory COM side
+      output_high(PIN_A5);                                                        //Shared COM Flash memory, Main side
+      CHECK_50_and_CW_RESPOND();
    
    }
    
@@ -1631,11 +1635,11 @@ void CHECK_HIGH_SAMP_FABDATA(int8 in)                                           
       fprintf(PC, "%x ", HKDATA[num_fab + 5 + 4]);
    }
    
-   MEASURE_BC_TEMP();
-   HKDATA[18] = BC_temp_data_h;                                                  //-X Panel Temp
-   HKDATA[19] = BC_temp_data_l;                                                  //-X Panel Temp
+//!   MEASURE_BC_TEMP();
+//!   HKDATA[18] = BC_temp_data_h;                                                  //-X Panel Temp
+//!   HKDATA[19] = BC_temp_data_l;                                                  //-X Panel Temp
    
-   for(num_fab = 9; num_fab < FAB_SENSOR_size - 2; num_fab++)                                //[FAB] from CPLD temp to Kill status(array[20] to [49])
+   for(num_fab = 7; num_fab < FAB_SENSOR_size - 2; num_fab++)                                //[FAB] from CPLD temp to Kill status(array[20] to [49])
    {
       HKDATA[num_fab + 7+4] = in_HK[num_fab + 2 - in];
       fprintf(PC, "%x ", HKDATA[num_fab + 7+4]);
@@ -1695,9 +1699,9 @@ void GET_HIGH_SAMP_RESET_DATA()
    
       for(num = 0; num < 5; num++)                                               //reset sensor data
       {
-         HKDATA[num + 68] = reset_bffr[num + 6];                                //HKDATA[68] = reset[6]
+         HKDATA[num + 72] = reset_bffr[num + 6];                                //HKDATA[68] = reset[6]
          //fputc(HKDATA[num + 68],PC);
-         fprintf(PC,"%x ",HKDATA[num + 68]);
+         fprintf(PC,"%x ",HKDATA[num + 72]);
       }
    fprintf(PC,"\r\n");
    }
@@ -1714,9 +1718,9 @@ void MAKE_HIGH_SAMP_ADCS_FORMAT()
 {
    GET_ADCS_SENSOR_DATA();
    
-   for(int num = 53; num < 65; num++)                                           //12byte(MAG6,GYRO6)
+   for(int num = 57; num < 69; num++)                                           //12byte(MAG6,GYRO6)
    {
-      HKDATA[num] = ADCS_SENSOR_DATA[num - 52];                                  //ADCS[1] to ADCS[12]
+      HKDATA[num] = ADCS_SENSOR_DATA[num - 56];                                  //ADCS[1] to ADCS[12]
    }
    
    Delete_ADCS_data();
@@ -1806,17 +1810,17 @@ void HIGH_SAMP_FAB_OPERATION()
          //MAKE_CW_FORMAT();
               
          fprintf(PC,"\r\n");
-         for(int num = 0; num < 65; num++)                                       //array[0] to [64](until gyro data)
+         for(int num = 0; num < HK_Size; num++)                                 
          {
             fprintf(PC,"%x ",HKDATA[num]);
          }
          CHECK_50_and_CW_RESPOND();
-         for(num = 65; num < HK_Size; num++)
-         {
-          //fputc(HKDATA[num],PC);
-            fprintf(PC,"%x ",HKDATA[num]);
-         }
-         CHECK_50_and_CW_RESPOND();
+//!         for(num = 65; num < HK_Size; num++)
+//!         {
+//!          //fputc(HKDATA[num],PC);
+//!            fprintf(PC,"%x ",HKDATA[num]);
+//!         }
+//!         CHECK_50_and_CW_RESPOND();
 //!         for(num = 113; num < HK_Size; num++)
 //!         {
 //!            fprintf(PC," %x",HKDATA[num]);
