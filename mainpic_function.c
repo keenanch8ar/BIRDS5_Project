@@ -1803,12 +1803,12 @@ void HIGH_SAMP_FAB_OPERATION()
       else
       {
          Delete_in_HK();                                                         //delet HK array
-         GET_RESET_DATA();                                                       //function that loads the HKDATA array with the Reset PIC data
          VERIFY_HIGH_SAMP_FABDATA(10000);                                        //get FAB data   
-         GET_HIGH_SAMP_RESET_DATA();                                             //get reset data
+         GET_RESET_DATA();                                                       //function that loads the HKDATA array with the Reset PIC data
+         //GET_HIGH_SAMP_RESET_DATA();                                             //get reset data
          MAKE_HIGH_SAMP_ADCS_FORMAT();                                           //get ADCS data
          SET_IDENTIFIER();
-         //MAKE_CW_FORMAT();
+         MAKE_CW_FORMAT();
               
          fprintf(PC,"\r\n");
          for(int num = 0; num < HK_Size; num++)                                 
