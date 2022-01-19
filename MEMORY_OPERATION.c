@@ -90,7 +90,7 @@ int8 ADCS_ACK = 0;
 #define ATTEMPT_TIME 8
 
 
-#define EX_PANEL_THRESHHOLD 0x0014
+#define EX_PANEL_THRESHHOLD 0x0019
 #define HIGH_SAMP_TIMES 12                                                       //for 2 hours
 
 //----------RESET--------------------------------------------------------------
