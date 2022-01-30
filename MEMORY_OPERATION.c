@@ -835,6 +835,27 @@ void MEMORY_ERASE(int8 CMD1, int8 CMD2, int8 CMD3)
       sector_erase_SCF(0x06650000);
       sector_erase_SMF(0x06650000);
       
+      fprintf(PC,"\r\nFlag Data:\r\n");
+      TRANSFER_DATA_NBYTE_TOPC_SCF(FLAG_DATA_ADDRESS, 1);
+      delay_ms(10);
+      fprintf(PC,"\r\nSATLOG Data:\r\n");
+      TRANSFER_DATA_NBYTE_TOPC_SCF(SAT_LOG, 81);
+      delay_ms(10);
+      fprintf(PC,"\r\nCW Data:\r\n");
+      TRANSFER_DATA_NBYTE_TOPC_SCF(FAB_CW_ADDRESS, 81*5);
+      delay_ms(10);
+      fprintf(PC,"\r\nIMGCLS Data:\r\n");
+      TRANSFER_DATA_NBYTE_TOPC_SCF(IMGCLS_ADDRESS, 81*5);
+      delay_ms(10);
+      fprintf(PC,"\r\nHSSC Data:\r\n");      
+      TRANSFER_DATA_NBYTE_TOPC_SCF(HIGH_SAMP_HK_ADDRESS, 81*5);
+      delay_ms(10);
+      fprintf(PC,"\r\nHK Data:\r\n");      
+      TRANSFER_DATA_NBYTE_TOPC_SCF(FAB_HK_ADDRESS, 81*5);
+      delay_ms(10);
+      fprintf(PC,"\r\nMCAM Data:\r\n");      
+      TRANSFER_DATA_NBYTE_TOPC_SCF(MCAM1_IMG_ADDRESS, 81*5);
+      
       output_high(PIN_C4);                                                          //COM_MUX COMSIDE
       delay_ms(10000);
       fprintf(PC,"FLASH MEMORY ERASE DONE\r\n");
