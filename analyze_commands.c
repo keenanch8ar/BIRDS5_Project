@@ -2668,6 +2668,8 @@ void IMGCLS_COMMAND(int8 CMD0,int8 CMD2,int8 CMD3,int8 CMD4,int8 CMD5,int8 CMD6,
          UPLINK_SUCCESS_IMGCLS_CAM();                                             //put uplink succes flag in high and store flags
          output_high(PIN_C4);                                                    //give access back to COMM
          fprintf (PC, "Finish 0x84\r\n");
+         
+      break;
       
       case 0x85:
       
