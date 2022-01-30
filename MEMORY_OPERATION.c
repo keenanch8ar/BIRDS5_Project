@@ -14,7 +14,7 @@ Static int32 ADD_INFO_ADDRESS = 4096;                                           
 Static int32 ADDRESS_WRITING_COUNTER = 0;                                        //if address writing more than 30000 times, change the store address
 
 Static int32 FLAG_DATA_ADDRESS = SECT*4;                                         //1sector
-Static int32 RSV_DATA_ADDRESS = SECT*5;                                          //1sector
+Static int32 RSV_DATA_ADDRESS = SECT*5;                                          //1sector (65536 Bytes)
 Static int32 SAT_LOG = SECT*6;                                                   //2sectors
 Static int32 IMGCLS_ADDRESS = SECT*8;                                            //100sectors
 Static int32 MCAM1_THMB_ADDRESS = SECT*108;                                      //50sectors
@@ -50,12 +50,13 @@ int8 RESERVE_CHECK = 0;
 int8 RESERVE_MIN_FLAG = 0;
 int8 RESERVE_TARGET_FLAG = 0;
 int8 MISSION_CONTENTS = 0;
-int8 MISSION_DETAIL = 0;
-int8 RESERVE_ADDRESS_1 = 0;
-int8 RESERVE_ADDRESS_2 = 0;
-int8 RESERVE_ADDRESS_3 = 0;
-int8 RESERVE_ADDRESS_4 = 0;
-int8 RESERVE_PACKET_NUM = 0;
+int8 RESERVE_DATA_0 = 0;
+int8 RESERVE_DATA_1 = 0;
+int8 RESERVE_DATA_2 = 0;
+int8 RESERVE_DATA_3 = 0;
+int8 RESERVE_DATA_4 = 0;
+int8 RESERVE_DATA_5 = 0;
+int8 RESERVE_DATA_6 = 0;
 int8 Kill_FLAG_MAIN = 0;
 int8 Kill_FLAG_FAB = 0;
 int8 FIRST_HSSC_DONE = 0;
@@ -166,8 +167,8 @@ void WRITE_FLAG_to_EEPROM()     //saves the flags in the EEPROM from the address
    WRITE_PROGRAM_EEPROM(FLAG_ADDRESS_EEPROM+8, DATA);
    DATA = (int16)MISSION_CONTENTS;
    WRITE_PROGRAM_EEPROM(FLAG_ADDRESS_EEPROM+10, DATA);
-   DATA = (int16)MISSION_DETAIL;
-   WRITE_PROGRAM_EEPROM(FLAG_ADDRESS_EEPROM+12, DATA);
+   //DATA = (int16)MISSION_DETAIL;
+   //WRITE_PROGRAM_EEPROM(FLAG_ADDRESS_EEPROM+12, DATA);
    DATA = (int16)Kill_FLAG_MAIN;
    WRITE_PROGRAM_EEPROM(FLAG_ADDRESS_EEPROM+14, DATA);
    DATA = (int16)Kill_FLAG_FAB;
@@ -209,7 +210,7 @@ void MAKE_FLAG_from_EEPROM()                                                    
       RESERVE_MIN_FLAG = (int8)READ_PROGRAM_EEPROM(FLAG_ADDRESS_EEPROM+6);
       RESERVE_TARGET_FLAG = (int8)READ_PROGRAM_EEPROM(FLAG_ADDRESS_EEPROM+8);
       MISSION_CONTENTS = (int8)READ_PROGRAM_EEPROM(FLAG_ADDRESS_EEPROM+10);
-      MISSION_DETAIL = (int8)READ_PROGRAM_EEPROM(FLAG_ADDRESS_EEPROM+12);
+      //MISSION_DETAIL = (int8)READ_PROGRAM_EEPROM(FLAG_ADDRESS_EEPROM+12);
       Kill_FLAG_MAIN = (int8)READ_PROGRAM_EEPROM(FLAG_ADDRESS_EEPROM+14);
       Kill_FLAG_FAB = (int8)READ_PROGRAM_EEPROM(FLAG_ADDRESS_EEPROM+16);
       FIRST_HSSC_DONE = (int8)READ_PROGRAM_EEPROM(FLAG_ADDRESS_EEPROM+18);
@@ -255,7 +256,7 @@ void STORE_FLAG_INFO()                                                          
    flag_info_bffr[4] = RESERVE_TARGET_FLAG;
    flag_info_bffr[5] = RESERVE_MIN_FLAG;
    flag_info_bffr[6] = MISSION_CONTENTS;
-   flag_info_bffr[7] = MISSION_DETAIL;
+   //flag_info_bffr[7] = MISSION_DETAIL;
    flag_info_bffr[8] = Kill_FLAG_MAIN;
    flag_info_bffr[9] = Kill_FLAG_FAB;
    flag_info_bffr[10] = FIRST_HSSC_DONE;
@@ -587,7 +588,7 @@ void MAKE_FLAG_INFO()                                                           
    RESERVE_TARGET_FLAG = flag_info_bffr[4];
    RESERVE_MIN_FLAG    = flag_info_bffr[5];
    MISSION_CONTENTS    = flag_info_bffr[6];
-   MISSION_DETAIL      = flag_info_bffr[7];
+   //MISSION_DETAIL      = flag_info_bffr[7];
    Kill_FLAG_MAIN      = flag_info_bffr[8];
    Kill_FLAG_FAB       = flag_info_bffr[9];
    FIRST_HSSC_DONE     = flag_info_bffr[10];

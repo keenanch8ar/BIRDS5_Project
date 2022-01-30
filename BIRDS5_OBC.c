@@ -158,9 +158,9 @@ void main()
          delay_ms(1000);
          fprintf(PC,"Execute reserved command\r\n");
          MISSION_CONTENTS = CHECK_MEMORY_FUNCTION(MISSION_CONTENTS);             //avoid erase or transfer sectors from memory as reserved commands
-         EXECUTE_COMMAND_from_COMM(MISSION_CONTENTS,MISSION_DETAIL,RESERVE_ADDRESS_1,RESERVE_ADDRESS_2,RESERVE_ADDRESS_3,RESERVE_ADDRESS_4,RESERVE_PACKET_NUM, 0x00);    //execute command TODO: fix rsv table to add last byteto command
+         EXECUTE_COMMAND_from_COMM(MISSION_CONTENTS,RESERVE_DATA_0,RESERVE_DATA_1,RESERVE_DATA_2,RESERVE_DATA_3,RESERVE_DATA_4,RESERVE_DATA_5, RESERVE_DATA_6);    //execute command TODO: fix rsv table to add last byteto command
          Remove_1_Reservation();                                                 //remove the finished command and sort again and save updated command table
-         if(reserve_table[80] != 0x00)                                           //if next reservation is registered, wait until time will be come
+         if(reserve_table[90] != 0x00)                                           //if next reservation is registered, wait until time will be come
          {
             Reserve_next();                                                      //take the next CMD from the table
          }
@@ -169,7 +169,7 @@ void main()
             RESERVE_TARGET_FLAG = 0;                                             //reset flag
             RESERVE_CHECK = 0;
             MISSION_CONTENTS = 0;
-            MISSION_DETAIL = 0;
+            //MISSION_DETAIL = 0;
          }
       }
 
