@@ -4,35 +4,35 @@ static int16 currenttime = 0;
 static int16 missiontime = 0;
 BYTE command[9];
 int8 reset_time_data[11] = {};
-BYTE PINO_DATA[39] = {0x00};
-int8 trigger_time_data[5];
+//!BYTE PINO_DATA[39] = {0x00};
+//!int8 trigger_time_data[5];
 unsigned int32 address_data[4];
 unsigned int32 packet_data[2];
 unsigned int32 data[7];
 unsigned int32 address;
 unsigned int32 packet;
-BYTE Down[81];
+//!BYTE Down[81];
 int8 MULTSPEC1_DATA[81] = {};
 int8 MULTSPEC2_DATA[81] = {};
 int8 IMGCLS_DATA[81] = {};
-int8 DLP_DATA[81] = {};
+//!int8 DLP_DATA[81] = {};
 BYTE SFWD_DATA[81] = {0x00};
 BYTE NEW_PINO_DATA[81] = {};
-BYTE dummy[1];
-int8 command_time_data[5];
-int8 j;
+//!BYTE dummy[1];
+//!int8 command_time_data[5];
+//!int8 j;
 int i;
-int result = 1;
-int8 test[9] = {};
-int OitaTestArray[14] = {};
-float df;
-float dg;
-float dk;
-float d_x;
-float d_y;
-float d_z;
-int8 CWtest[1] = {};
-
+//!int result = 1;
+//!int8 test[9] = {};
+//!int OitaTestArray[14] = {};
+//!float df;
+//!float dg;
+//!float dk;
+//!float d_x;
+//!float d_y;
+//!float d_z;
+//!int8 CWtest[1] = {};
+//!
 void GIVE_ACCESS_SCF_Nsec(int8 min)
 {
    fprintf(PC,"\r\nGiving access to COM for %d min\r\n", min);
@@ -92,7 +92,7 @@ int16 UNREG2 = 0;
 
 //--------Mission Boss PIC Data Collection-----------------------------------//
 
-int8 DC_ACK = 0;
+
 
 void DELETE_CMD_FROM_PC()
 {

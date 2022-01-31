@@ -25,9 +25,9 @@ Static int32 FAB_HK_ADDRESS = SECT*308;                                         
 Static int32 FAB_CW_ADDRESS = SECT*608;                                          //50sectors
 Static int32 HIGH_SAMP_HK_ADDRESS = SECT*658;                                    //253sectors
 Static int32 DC_STATUS_ADDRESS = SECT*912;                                       //1sector
-Static int32 STORE_FORWARD_ADDRESS = SECT*913;                                   //9sectors
+//!Static int32 STORE_FORWARD_ADDRESS = SECT*913;                                   //9sectors
 Static int32 ADCS_SENSOR_ADDRESS = SECT*922;                                     //100sectors
-Static int32 PINO_ADDRESS = SECT*1023;                                           //1025sectors
+//!Static int32 PINO_ADDRESS = SECT*1023;                                           //1025sectors
 
 
 Static int32 FLAG_ADDRESS_EEPROM = 0x18000;                                      //from 75 percent of the programming memory
