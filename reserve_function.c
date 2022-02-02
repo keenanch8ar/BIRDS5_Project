@@ -1,4 +1,4 @@
-//TODO: change reservation commands to reserve 8 byte commands not 7 bytes
+
 
 #define table_size 90
 unsigned int8 reserve_table[table_size+1] = {};
@@ -215,8 +215,6 @@ void Disp_RSV()                                                                 
    return;
 }
 
-
-//TODO: ADD FINAL COMM COMMAND BYTE WHEN INPUTTING RESERVATION COMMAND, RIGHT NOW IT DOES NOT SAVE CMD_FROM_COMM[11]
 
 
 void input_reservation_COM()                                                     //put the command from COM into the table and sort in ascending form

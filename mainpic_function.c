@@ -1127,7 +1127,7 @@ void VERIFY_FABDATA(int32 delaytime1,int32 delaytime2)
 }
 
 
-void REPLY_TO_COM(int8 data1,int8 data2)                                         //TODO: MAKE REPLYING TO COMM AND GS ACK SMOOTHER AND MORE RELIABLE
+void REPLY_TO_COM(int8 data1,int8 data2)                               
 {
    if(ACK_for_COM[12] == 0x66 && ACK_for_COM[14] == 0x77)
    {
