@@ -262,6 +262,8 @@ void main()
             missiontime = 0;
             MISSION_STATUS = 0;
             MISSION_OPERATING = 0;
+            STORE_FLAG_INFO();                                                         //store flag info on flash
+            WRITE_FLAG_to_EEPROM();                                                    //store flag info on EEPROM
          }  
       }
       

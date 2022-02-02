@@ -91,7 +91,25 @@ void UPLINK_SUCCESS_IMGCLS_CAM()
    return;
 }
 
+
 void UPLINK_SUCCESS_S_FWD()
+{
+   if(UPLINK_SUCCESS == 0)
+   {
+      UPLINK_SUCCESS = 1;
+      STORE_FLAG_INFO();                                                         //store flag info on flash
+      WRITE_FLAG_to_EEPROM();                                                    //store flag info on EEPROM
+   }
+   else
+   {
+      STORE_FLAG_INFO();                                                         //save flag data to flash memory
+      WRITE_FLAG_to_EEPROM();                                                    //save flags on EEPROM from address 0x18000 (75%)
+   }
+   return;
+}
+
+
+void UPLINK_SUCCESS_PINO()
 {
    if(UPLINK_SUCCESS == 0)
    {
@@ -3963,9 +3981,9 @@ void SF_COMMAND(int8 CMD0,int8 CMD2,int8 CMD3,int8 CMD4,int8 CMD5,int8 CMD6, int
 }
 
 
-void NEW_PINO_test_PC(int8 CMD0,int8 CMD2,int8 CMD3,int8 CMD4,int8 CMD5,int8 CMD6, int8 CMD7, int8 CMD8)
+void PINO_COMMAND_PC(int8 CMD0,int8 CMD2,int8 CMD3,int8 CMD4,int8 CMD5,int8 CMD6, int8 CMD7, int8 CMD8)
 {
-   fprintf(PC, "Start NEW_PINO_test_PC\r\n");
+   fprintf(PC, "Start PINO");
    switch (CMD0)
    {
       
@@ -4087,6 +4105,164 @@ void NEW_PINO_test_PC(int8 CMD0,int8 CMD2,int8 CMD3,int8 CMD4,int8 CMD5,int8 CMD
 }
 
 
+void PINO_COMMAND(int8 CMD0,int8 CMD2,int8 CMD3,int8 CMD4,int8 CMD5,int8 CMD6, int8 CMD7, int8 CMD8)
+{
+
+   switch (CMD0)
+   {
+      
+      case 0x9E:
+          
+         REPLY_TO_COM(0x66,0);
+         SAVE_SAT_LOG(0xCC, CMD0, CMD2);                                            //save reset data 
+         MISSION_STATUS = 1;
+         MISSION_OPERATING = 0;
+         missiontime = 0;
+         UPLINK_SUCCESS_PINO();                                             //put uplink succes flag in high and store flags
+         ACK_for_COM[14] = 0x00;
+         
+         fprintf (PC, "Start 0x9E - Turn ON PINO\r\n") ;
+         FWD_CMD_MBP(CMD0, CMD2, CMD3, CMD4, CMD5, CMD6, CMD7, CMD8);
+         delay_ms(100);
+         output_high (PIN_A5);
+         delay_ms(50);
+         output_high (PINO_power);
+
+         
+         output_high (sel);
+         output_low (hvs);
+         fprintf (PC, "Finish 0x9E\r\n");
+         
+      break;
+      
+      case 0x90:
+
+         REPLY_TO_COM(0x66,0);
+         SAVE_SAT_LOG(0xCC, CMD0, CMD2);                                            //save reset data 
+         MISSION_STATUS = 0;
+         MISSION_OPERATING = 0;
+         UPLINK_SUCCESS_PINO();                                             //put uplink succes flag in high and store flags
+         ACK_for_COM[14] = 0x00;
+         
+         fprintf (PC, "Start 0x90 - Turn OFF PINO\r\n") ;
+         FWD_CMD_MBP(CMD0, CMD2, CMD3, CMD4, CMD5, CMD6, CMD7, CMD8);
+         output_high (hvs);
+         delay_ms(15000);
+         output_low (sel);
+         output_low (PIN_A5);
+         delay_ms(10);
+         output_low (hvs);
+         //fputc(0xAB, reset);
+         output_low (PINO_power);
+         fprintf (PC, "Finish 0x90\r\n");
+         
+      break;
+      
+      case 0x91:
+      
+         REPLY_TO_COM(0x66,0);
+         SAVE_SAT_LOG(0xCC, CMD0, CMD2);                                            //save reset data 
+         UPLINK_SUCCESS_PINO();                                             //put uplink succes flag in high and store flags
+         ACK_for_COM[14] = 0x00;
+         
+         fprintf (PC, "Start 0x91 - Real Time Uplink Command");
+         output_high(PIN_A5);
+         delay_ms(10);
+         FWD_CMD_MBP(CMD0, CMD2, CMD3, CMD4, CMD5, CMD6, CMD7, CMD8);
+         fprintf (PC, "Finish 0x91\r\n");
+         break;
+         
+         case 0x9C://Time and attitude information
+         //output_high(PIN_A5);
+         int a=0;
+         fprintf (PC, "Start 0x9C\r\n") ;
+         
+         for(a=0; a<12; a++){
+            //fputc(0x9C,DC);
+            //delay_ms(50);
+            //GET_RESET_DATA_for_PINO();
+            FWD_CMD_MBP(CMD0, CMD2, CMD3, CMD4, CMD5, CMD6, CMD7, CMD8);
+            BYTE pp[1] = 0x00;
+            for(i=0; i<39; i++)
+            {
+               fputc(pp[0], DC);
+               fputc(pp[0], PC);
+               pp[0]++;
+               delay_ms(50);
+            }
+            
+            delay_ms(10000);
+         }
+         
+         fprintf (PC, "Finish 0x9C\r\n") ;
+         
+
+         break;
+         
+      
+      case 0x92:
+      
+         REPLY_TO_COM(0x66,0);
+         SAVE_SAT_LOG(0xCC, CMD0, CMD2);                                            //save reset data 
+         UPLINK_SUCCESS_PINO();                                             //put uplink succes flag in high and store flags
+         ACK_for_COM[14] = 0x00;
+         
+         fprintf (PC, "Start 0x92 - Request PINO Downlink Data\r\n") ;
+         output_high(PIN_A5);
+         delay_ms(10);
+         FWD_CMD_MBP(CMD0, CMD2, CMD3, CMD4, CMD5, CMD6, CMD7, CMD8);
+         int8 pino_counter = 0;
+         for(int32 num = 0; num < 1500000; num++)
+            {
+             
+               if(kbhit(DC))
+               {
+                  NEW_PINO_DATA[pino_counter] = fgetc(DC);
+                  pino_counter++;
+               }
+               if(pino_counter == 81)
+               {
+                  break;
+               }
+            }
+         fprintf(PC,"Data Recieved: ");
+         for(int l = 0; l < 81; l++)
+         {
+            fprintf(PC,"%x",NEW_PINO_DATA[l]);
+         }
+         fprintf(PC,"\r\n");
+         fprintf (PC, "Finish 0x92\r\n");
+         for(l = 0; l < 81; l++)
+         {
+            NEW_PINO_DATA[l] = 0;
+         }
+   
+         break;
+         
+         case 0x95:
+            REPLY_TO_COM(0x66,0);
+            SAVE_SAT_LOG(0xCC, CMD0, CMD2);                                            //save reset data 
+            UPLINK_SUCCESS_PINO();                                             //put uplink succes flag in high and store flags
+            ACK_for_COM[14] = 0x00;
+            
+            output_high(hvs);
+            break;
+            
+         case 0x96:
+            
+            REPLY_TO_COM(0x66,0);
+            SAVE_SAT_LOG(0xCC, CMD0, CMD2);                                            //save reset data 
+            UPLINK_SUCCESS_PINO();                                             //put uplink succes flag in high and store flags
+            ACK_for_COM[14] = 0x00;
+            
+            output_low(hvs);
+            break;
+ 
+   }
+   
+}
+
+
 void EXECUTE_COMMAND_from_PC(int8 CMD0,int8 CMD2,int8 CMD3,int8 CMD4,int8 CMD5,int8 CMD6, int8 CMD7, int8 CMD8)
 {
    
@@ -4129,7 +4305,7 @@ void EXECUTE_COMMAND_from_PC(int8 CMD0,int8 CMD2,int8 CMD3,int8 CMD4,int8 CMD5,i
    if(command_ID == 0x90)
    {
       fprintf(PC,"PINO Command\r\n");
-      NEW_PINO_test_PC(CMD0, CMD2, CMD3, CMD4, CMD5, CMD6, CMD7, CMD8);
+      PINO_COMMAND_PC(CMD0, CMD2, CMD3, CMD4, CMD5, CMD6, CMD7, CMD8);
    }
    
    return;
@@ -4184,7 +4360,7 @@ void EXECUTE_COMMAND_from_COMM(int8 CMD0,int8 CMD2,int8 CMD3,int8 CMD4,int8 CMD5
    if(command_ID == 0x90)
    {
       fprintf(PC,"PINO Command\r\n");
-      NEW_PINO_test_PC(CMD0, CMD2, CMD3, CMD4, CMD5, CMD6, CMD7, CMD8);
+      PINO_COMMAND(CMD0, CMD2, CMD3, CMD4, CMD5, CMD6, CMD7, CMD8);
    }
    
    return;
