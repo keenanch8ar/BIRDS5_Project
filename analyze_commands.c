@@ -2668,6 +2668,8 @@ void IMGCLS_COMMAND(int8 CMD0,int8 CMD2,int8 CMD3,int8 CMD4,int8 CMD5,int8 CMD6,
          UPLINK_SUCCESS_IMGCLS_CAM();                                             //put uplink succes flag in high and store flags
          output_high(PIN_C4);                                                    //give access back to COMM
          fprintf (PC, "Finish 0x84\r\n");
+         
+      break;
       
       case 0x85:
       
@@ -3572,7 +3574,7 @@ void SF_COMMAND_PC(int8 CMD0,int8 CMD2,int8 CMD3,int8 CMD4,int8 CMD5,int8 CMD6, 
          fprintf (PC, "Start 0x52 - Real time downlink S&F\r\n") ;
          
          FWD_CMD_MBP(CMD0, CMD2, CMD3, CMD4, CMD5, CMD6, CMD7, CMD8);
-         int8 counter_sf = 0;
+         int32 counter_sf = 0;
          for(int32 num_sf = 0; num_sf < 1500000; num_sf++)
             {
                if(kbhit(DC))
@@ -3586,7 +3588,7 @@ void SF_COMMAND_PC(int8 CMD0,int8 CMD2,int8 CMD3,int8 CMD4,int8 CMD5,int8 CMD6, 
                }
             }
          fprintf(PC,"Data Recieved: ");
-         for(int8 sf = 0; sf < 81; sf++)
+         for(int32 sf = 0; sf < 81; sf++)
          {
             fprintf(PC,"%x, ",SFWD_DATA[sf]);
          }
@@ -3611,87 +3613,96 @@ void SF_COMMAND_PC(int8 CMD0,int8 CMD2,int8 CMD3,int8 CMD4,int8 CMD5,int8 CMD6, 
      
          FWD_CMD_MBP(CMD0, CMD2, CMD3, CMD4, CMD5, CMD6, CMD7, CMD8);
          address_data[0] = 0x03<<24;
-         address_data[1] = 0x90<<16;
+         address_data[1] = 0x91<<16;
          address_data[2] = 0x00<<8;
          address_data[3] = 0x00;
          address = address_data[0] + address_data[1] + address_data[2] + address_data[3];
          
-         int8 PcktNo = CMD8;
-         int16 SFWD_DATAS = 0;
-         counter_sf = 0;
-         output_low(PIN_C4);
+         long pcktNo = CMD8;
+         int32 counter_sfwd = 0;
+         int16 SFWD_DATAS=0;
+         int16 w = 0;
+         output_low (PIN_C4) ;//CFM side
          delay_ms(10);
          sector_erase_SCF(address);
          delay_ms(20);
          
-         for(num_sf = 0; num_sf < 20000000; num_sf++)
-         {
-            if (kbhit(DC))
+          for(int32 num_sfw = 0; num_sfw < 10000000; num_sfw++)
             {
-               SFWD_DATAS = fgetc(DC);
-               fprintf(PC, "%x ", SFWD_DATAS);
-               WRITE_DATA_BYTE_SCF(address, SFWD_DATAS);
-               address++;
-               counter_sf++;
-               if (counter_sf == (81*PcktNo))
-               {
-                  break;
-               } 
-            }
-         }
+
+
+                  if (kbhit (DC) )
+                  {
+                     SFWD_DATAS = fgetc (DC);
+                     fprintf(PC, "%x ",  SFWD_DATAS);
+                     WRITE_DATA_BYTE_SCF(address, SFWD_DATAS);
+                     address++;
+                     w++;
+                     if (counter_sfwd == 81*pcktNo)
+                     {
+                        break;
+                     }
+                  }
+           }
+            
+
+         fprintf(PC,"\r\n");
          
-//!         address = address-(81*PcktNo);
-//!         delay_ms(500);
-//!         fprintf (PC, "\r\nReading Data from SCFM\r\n") ;
-//!         
-//!         for(int32 w = 0; w < (81*pcktNo); w++)
-//!         {
-//!             int8 z = READ_DATA_BYTE_SCF(address);
-//!             fprintf(PC, "%x ", z);
-//!             address++;
-//!         }
-//!         fprintf (PC, "\r\nFinished  PC Display\r\n");
-//!         
-//!         delay_ms(1000);
-//!         address = address-(81*PcktNo);
-//!         fprintf (PC, "\r\n") ;
          MISSION_OPERATING = 0;
-         fprintf (PC, "Finish 0x53 - Transfer S&F Data\r\n") ;
+         output_high (PIN_C4) ;//CFM side
+         
+         fprintf (PC, "Finish 0x53\r\n"); 
+
       break;
       
       case 0x54:
       
          output_high (PIN_A5);
-         fprintf (PC, "Start 0x54 - Downlink SF Address Pointer S&F\r\n") ;
          
+         fprintf (PC, "Start 0x54 - Transfer S&F Data\r\n") ;
+         MISSION_OPERATING = 1;
+     
          FWD_CMD_MBP(CMD0, CMD2, CMD3, CMD4, CMD5, CMD6, CMD7, CMD8);
-         counter_sf = 0;
-         for(num_sf = 0; num_sf < 1500000; num_sf++)
+         address_data[0] = 0x03<<24;
+         address_data[1] = 0x91<<16;
+         address_data[2] = 0x00<<8;
+         address_data[3] = 0x00;
+         address = address_data[0] + address_data[1] + address_data[2] + address_data[3];
+         
+         pcktNo = CMD8;
+         counter_sfwd = 0;
+         SFWD_DATAS=0;
+         w = 0;
+         output_low (PIN_C4) ;//CFM side
+         delay_ms(10);
+         sector_erase_SCF(address);
+         delay_ms(20);
+         
+          for(num_sfw = 0; num_sfw < 10000000; num_sfw++)
             {
-               if(kbhit(DC))
-               {
-                  SFWD_DATA[counter_sf] = fgetc(DC);
-                  counter_sf++;
-                  if(counter_sf == 81)
+
+
+                  if (kbhit (DC) )
                   {
-                     break;
+                     SFWD_DATAS = fgetc (DC);
+                     fprintf(PC, "%x ",  SFWD_DATAS);
+                     WRITE_DATA_BYTE_SCF(address, SFWD_DATAS);
+                     address++;
+                     w++;
+                     if (counter_sfwd == 81*pcktNo)
+                     {
+                        break;
+                     }
                   }
-               }
-            }
-         fprintf(PC,"Data Recieved: ");
-         for(sf = 0; sf < 81; sf++)
-         {
-            fprintf(PC,"%x, ",SFWD_DATA[sf]);
-         }
+           }
+            
+
          fprintf(PC,"\r\n");
          
          MISSION_OPERATING = 0;
+         output_high (PIN_C4) ;//CFM side
          
          fprintf (PC, "Finish 0x54\r\n"); 
-         for(sf = 0; sf < 81; sf++)
-         {
-            SFWD_DATA[sf] = 0;
-         }
       
       break;
       
@@ -3785,6 +3796,7 @@ void SF_COMMAND(int8 CMD0,int8 CMD2,int8 CMD3,int8 CMD4,int8 CMD5,int8 CMD6, int
          
          Turn_On_MBP();
          output_high (PIN_A5); //SFM2 mission side access
+         output_low (PIN_C4) ;//CFM side
          delay_ms(1000);
          fprintf (PC, "Start 0x52 - Real time downlink S&F\r\n") ;
          MISSION_OPERATING = 1;
@@ -3804,7 +3816,7 @@ void SF_COMMAND(int8 CMD0,int8 CMD2,int8 CMD3,int8 CMD4,int8 CMD5,int8 CMD6, int
                }
             }
          fprintf(PC,"Data Recieved: ");
-         for(int8 sf = 0; sf < 81; sf++)
+         for(int32 sf = 0; sf < 81; sf++)
          {
             fprintf(PC,"%x, ",SFWD_DATA[sf]);
          }
@@ -3824,14 +3836,11 @@ void SF_COMMAND(int8 CMD0,int8 CMD2,int8 CMD3,int8 CMD4,int8 CMD5,int8 CMD6, int
       case 0x53:
          
          REPLY_TO_COM(0x66,0);
-         SAVE_SAT_LOG(0xCC, CMD0, CMD2);                                            //save reset data         
+         SAVE_SAT_LOG(0xCC, CMD0, CMD2);                                            //save reset data        
          ACK_for_COM[14] = 0x00;
+         output_high (PIN_A5);
          
-         Turn_On_MBP();
-         output_high (PIN_A5); //SFM2 mission side access
-         delay_ms(1000);
-         
-         fprintf (PC, "Start 0x53 - Transfer S&F Data to SCF\r\n") ;
+         fprintf (PC, "Start 0x53 - Transfer S&F Data\r\n") ;
          MISSION_OPERATING = 1;
      
          FWD_CMD_MBP(CMD0, CMD2, CMD3, CMD4, CMD5, CMD6, CMD7, CMD8);
@@ -3841,77 +3850,91 @@ void SF_COMMAND(int8 CMD0,int8 CMD2,int8 CMD3,int8 CMD4,int8 CMD5,int8 CMD6, int
          address_data[3] = 0x00;
          address = address_data[0] + address_data[1] + address_data[2] + address_data[3];
          
-         int8 PcktNo = CMD8;
-         int8 SFWD_DATAS = 0;
-         counter_sf = 0;
-         output_low(PIN_C4);
-         delay_ms(100);
+         long pcktNo = CMD8;
+         int32 counter_sfwd = 0;
+         int16 SFWD_DATAS=0;
+         int16 w = 0;
+         output_low (PIN_C4) ;//CFM side
+         delay_ms(10);
          sector_erase_SCF(address);
          delay_ms(20);
          
-         for(num_sf = 0; num_sf < 20000000; num_sf++)
+         for(int32 num_sfw = 0; num_sfw < 10000000; num_sfw++)
          {
-            if (kbhit(DC))
+            if (kbhit (DC) )
             {
-               SFWD_DATAS = fgetc(DC);
-               fprintf(PC, "%x ", SFWD_DATAS);
+               SFWD_DATAS = fgetc (DC);
+               fprintf(PC, "%x ",  SFWD_DATAS);
                WRITE_DATA_BYTE_SCF(address, SFWD_DATAS);
                address++;
-               counter_sf++;
-               if (counter_sf == 81*PcktNo)
+               w++;
+               if (counter_sfwd == 81*pcktNo)
                {
                   break;
-               } 
+               }
             }
          }
+ 
+         fprintf(PC,"\r\n");
          
          MISSION_OPERATING = 0;
-         output_high(PIN_C4);                                                    //give access back to COMM
-         UPLINK_SUCCESS_S_FWD();                                                 //put uplink success flag in high and store flags
-         fprintf (PC, "Finish 0x53 - Transfer S&F Data\r\n") ;
+         output_high (PIN_C4) ;//CFM side
+         
+         fprintf (PC, "Finish 0x53\r\n"); 
+         UPLINK_SUCCESS_S_FWD();
+
       break;
       
       
       case 0x54:
          
          REPLY_TO_COM(0x66,0);
-         SAVE_SAT_LOG(0xCC, CMD0, CMD2);                                            //save reset data         
+         SAVE_SAT_LOG(0xCC, CMD0, CMD2);                                            //save reset data        
          ACK_for_COM[14] = 0x00;
+         output_high (PIN_A5);
          
-         Turn_On_MBP();
-         output_high (PIN_A5); //SFM2 mission side access
-         delay_ms(1000);
-         fprintf (PC, "Start 0x54 - Downlink SF Address Pointer S&F\r\n") ;
-         
+         fprintf (PC, "Start 0x54 - Transfer S&F Data\r\n") ;
+         MISSION_OPERATING = 1;
+     
          FWD_CMD_MBP(CMD0, CMD2, CMD3, CMD4, CMD5, CMD6, CMD7, CMD8);
-         counter_sf = 0;
-         for(num_sf = 0; num_sf < 1500000; num_sf++)
+         address_data[0] = 0x03<<24;
+         address_data[1] = 0x91<<16;
+         address_data[2] = 0x00<<8;
+         address_data[3] = 0x00;
+         address = address_data[0] + address_data[1] + address_data[2] + address_data[3];
+         
+         pcktNo = CMD8;
+         counter_sfwd = 0;
+         SFWD_DATAS=0;
+         w = 0;
+         output_low (PIN_C4) ;//CFM side
+         delay_ms(10);
+         sector_erase_SCF(address);
+         delay_ms(20);
+         
+         for(num_sfw = 0; num_sfw < 10000000; num_sfw++)
+         {
+            if (kbhit (DC) )
             {
-               if(kbhit(DC))
+               SFWD_DATAS = fgetc (DC);
+               fprintf(PC, "%x ",  SFWD_DATAS);
+               WRITE_DATA_BYTE_SCF(address, SFWD_DATAS);
+               address++;
+               w++;
+               if (counter_sfwd == 81*pcktNo)
                {
-                  SFWD_DATA[counter_sf] = fgetc(DC);
-                  counter_sf++;
-                  if(counter_sf == 81)
-                  {
-                     break;
-                  }
+                  break;
                }
             }
-         fprintf(PC,"Data Recieved: ");
-         for(sf = 0; sf < 81; sf++)
-         {
-            fprintf(PC,"%x, ",SFWD_DATA[sf]);
          }
+ 
          fprintf(PC,"\r\n");
          
          MISSION_OPERATING = 0;
-         output_high(PIN_C4);                                                    //give access back to COMM
+         output_high (PIN_C4) ;//CFM side
+         
          fprintf (PC, "Finish 0x54\r\n"); 
-         for(sf = 0; sf < 81; sf++)
-         {
-            SFWD_DATA[sf] = 0;
-         }
-                  UPLINK_SUCCESS_S_FWD();                                                 //put uplink succes flag in high and store flags
+         UPLINK_SUCCESS_S_FWD();                                              //put uplink succes flag in high and store flags
       
       break;
       

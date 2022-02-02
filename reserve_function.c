@@ -208,7 +208,7 @@ void Disp_RSV()                                                                 
    fprintf(PC,"RESERVE_TARGET_FLAG = %x\r\n",RESERVE_TARGET_FLAG);
    //fprintf(PC,"NEXT FUNCTION DETAIL = %x\r\n",MISSION_DETAIL);
    fprintf(PC,"NEXT FUNCTION Command DATA = %x%x%x%x%x%x%x\r\n",RESERVE_DATA_0,RESERVE_DATA_1,RESERVE_DATA_2, RESERVE_DATA_3,RESERVE_DATA_4, RESERVE_DATA_5, RESERVE_DATA_6);
-   //fprintf(PC,"NEXT FUNCTION PCKT NUMBER = %x\r\n",RESERVE_MIN_FLAG);
+   fprintf(PC,"NEXT FUNCTION PCKT NUMBER = %x\r\n",RESERVE_MIN_FLAG);
    fprintf(PC,"RESERVE_MIN_FLAG = %x\r\n",RESERVE_MIN_FLAG);
    fprintf(PC,"TABLE NUM = %x\r\n",table_num);
    

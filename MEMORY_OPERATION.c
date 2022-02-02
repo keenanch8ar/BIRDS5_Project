@@ -25,9 +25,9 @@ Static int32 FAB_HK_ADDRESS = SECT*308;                                         
 Static int32 FAB_CW_ADDRESS = SECT*608;                                          //50sectors
 Static int32 HIGH_SAMP_HK_ADDRESS = SECT*658;                                    //253sectors
 Static int32 DC_STATUS_ADDRESS = SECT*912;                                       //1sector
-Static int32 STORE_FORWARD_ADDRESS = SECT*913;                                   //9sectors
+//!Static int32 STORE_FORWARD_ADDRESS = SECT*913;                                   //9sectors
 Static int32 ADCS_SENSOR_ADDRESS = SECT*922;                                     //100sectors
-Static int32 PINO_ADDRESS = SECT*1023;                                           //1025sectors
+//!Static int32 PINO_ADDRESS = SECT*1023;                                           //1025sectors
 
 
 Static int32 FLAG_ADDRESS_EEPROM = 0x18000;                                      //from 75 percent of the programming memory
@@ -91,7 +91,7 @@ int8 ADCS_ACK = 0;
 #define ATTEMPT_TIME 8
 
 
-#define EX_PANEL_THRESHHOLD 0x14
+#define EX_PANEL_THRESHHOLD 0x0019
 #define HIGH_SAMP_TIMES 12                                                       //for 2 hours
 
 //----------RESET--------------------------------------------------------------
@@ -834,6 +834,27 @@ void MEMORY_ERASE(int8 CMD1, int8 CMD2, int8 CMD3)
       sector_erase_OF(0x06650000);                                                  //erase ADCS TLE address
       sector_erase_SCF(0x06650000);
       sector_erase_SMF(0x06650000);
+      
+      fprintf(PC,"\r\nFlag Data:\r\n");
+      TRANSFER_DATA_NBYTE_TOPC_SCF(FLAG_DATA_ADDRESS, 1);
+      delay_ms(10);
+      fprintf(PC,"\r\nSATLOG Data:\r\n");
+      TRANSFER_DATA_NBYTE_TOPC_SCF(SAT_LOG, 81);
+      delay_ms(10);
+      fprintf(PC,"\r\nCW Data:\r\n");
+      TRANSFER_DATA_NBYTE_TOPC_SCF(FAB_CW_ADDRESS, 81*5);
+      delay_ms(10);
+      fprintf(PC,"\r\nIMGCLS Data:\r\n");
+      TRANSFER_DATA_NBYTE_TOPC_SCF(IMGCLS_ADDRESS, 81*5);
+      delay_ms(10);
+      fprintf(PC,"\r\nHSSC Data:\r\n");      
+      TRANSFER_DATA_NBYTE_TOPC_SCF(HIGH_SAMP_HK_ADDRESS, 81*5);
+      delay_ms(10);
+      fprintf(PC,"\r\nHK Data:\r\n");      
+      TRANSFER_DATA_NBYTE_TOPC_SCF(FAB_HK_ADDRESS, 81*5);
+      delay_ms(10);
+      fprintf(PC,"\r\nMCAM Data:\r\n");      
+      TRANSFER_DATA_NBYTE_TOPC_SCF(MCAM1_IMG_ADDRESS, 81*5);
       
       output_high(PIN_C4);                                                          //COM_MUX COMSIDE
       delay_ms(10000);
