@@ -605,7 +605,7 @@ void MAKE_BC_FLAG_4()
 
 void BC_ON_30min()
 {
-   if(currenttime > 65 && BC_ATTEMPT_FLAG == 0)                                //if first attempt and 30 min(1800sec) passed // changed to 1 min for testing
+   if(currenttime > 1860 && BC_ATTEMPT_FLAG == 0)                                //if first attempt and 30 min(1800sec) passed // changed to 1 min for testing
    {
       fprintf(PC,"sending BC command to RESET PIC\r\n");
       for(int16 num = 0; num < 200; num++)

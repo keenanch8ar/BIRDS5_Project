@@ -4139,7 +4139,7 @@ void PINO_COMMAND(int8 CMD0,int8 CMD2,int8 CMD3,int8 CMD4,int8 CMD5,int8 CMD6, i
          SAVE_SAT_LOG(0xCC, CMD0, CMD2);                                            //save reset data 
          MISSION_STATUS = 0;
          MISSION_OPERATING = 0;
-         UPLINK_SUCCESS_PINO();                                             //put uplink succes flag in high and store flags
+         UPLINK_SUCCESS_PINO();                                                     //put uplink succes flag in high and store flags
          ACK_for_COM[14] = 0x00;
          
          fprintf (PC, "Start 0x90 - Turn OFF PINO\r\n") ;
