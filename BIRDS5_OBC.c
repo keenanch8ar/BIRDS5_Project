@@ -258,6 +258,15 @@ void main()
             
             fprintf (PC, "Start 0x50 - Turn OFF SFWD (RAB)\r\n") ;            
             FWD_CMD_MBP(0x50, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00);         //Turn off IMGCLS Pi command
+            
+            fprintf (PC, "Start 0x90 - Turn OFF PINO\r\n") ;            
+            output_high (hvs);
+            delay_ms(15000);
+            output_low (sel);
+            delay_ms(10);
+            output_low (hvs);
+            output_low (PINO_power);
+            
             Turn_Off_MBP();
             missiontime = 0;
             MISSION_STATUS = 0;
