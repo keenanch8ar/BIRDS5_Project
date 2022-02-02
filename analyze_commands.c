@@ -4161,7 +4161,7 @@ void EXECUTE_COMMAND_from_COMM(int8 CMD0,int8 CMD2,int8 CMD3,int8 CMD4,int8 CMD5
    if(command_ID == 0x90)
    {
       fprintf(PC,"PINO Command\r\n");
-      //NEW_PINO_test();
+      NEW_PINO_test_PC(CMD0, CMD2, CMD3, CMD4, CMD5, CMD6, CMD7, CMD8);
    }
    
    return;
