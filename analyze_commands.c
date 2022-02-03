@@ -2567,7 +2567,6 @@ void IMGCLS_COMMAND(int8 CMD0,int8 CMD2,int8 CMD3,int8 CMD4,int8 CMD5,int8 CMD6,
          
          Turn_On_MBP();
          output_high (PIN_A5); //SFM2 mission side access
-         delay_ms(1000);
          fprintf (PC, "Start 0x82 - Real time downlink IMGCLS\r\n") ;
          
          FWD_CMD_MBP(CMD0, CMD2, CMD3, CMD4, CMD5, CMD6, CMD7, CMD8);            //TODO: add 81bytes to be sent from IMGCLS so it doesnt wait forever for remaining data
@@ -2584,8 +2583,15 @@ void IMGCLS_COMMAND(int8 CMD0,int8 CMD2,int8 CMD3,int8 CMD4,int8 CMD5,int8 CMD6,
                   }
                }
             }
-         fprintf(PC,"Data Recieved: ");
+            
          for(int8 c = 0; c < 81; c++)
+         {
+            fputc(IMGCLS_DATA[c], COM);
+         }
+         fprintf(PC,"\r\n");
+         
+         fprintf(PC,"Data Recieved: ");
+         for(c = 0; c < 81; c++)
          {
             fprintf(PC,"%x, ",IMGCLS_DATA[c]);
          }
