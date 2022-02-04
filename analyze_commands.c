@@ -3839,6 +3839,11 @@ void SF_COMMAND(int8 CMD0,int8 CMD2,int8 CMD3,int8 CMD4,int8 CMD5,int8 CMD6, int
                   }
                }
             }
+            
+            for(int8 sf_c = 0; sf_c < 81; sf_c++)
+         {
+            fputc(SFWD_DATA[sf_c], COM);
+         }
          fprintf(PC,"Data Recieved: ");
          for(int32 sf = 0; sf < 81; sf++)
          {
@@ -4229,6 +4234,13 @@ void PINO_COMMAND(int8 CMD0,int8 CMD2,int8 CMD3,int8 CMD4,int8 CMD5,int8 CMD6, i
                   break;
                }
             }
+            
+         for(int8 pino_c = 0; pino_c < 81; pino_c++)
+         {
+            fputc(NEW_PINO_DATA[pino_c], COM);
+         }
+         fprintf(PC,"\r\n");
+            
          fprintf(PC,"Data Recieved: ");
          for(int l = 0; l < 81; l++)
          {
