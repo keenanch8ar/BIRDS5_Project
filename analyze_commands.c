@@ -1224,7 +1224,6 @@ void MULT_SPEC_COMMAND(int8 CMD0,int8 CMD2,int8 CMD3,int8 CMD4,int8 CMD5,int8 CM
       
       case 0x22: //Real time downlink command
       
-         REPLY_TO_COM(0x66,0);
          SAVE_SAT_LOG(0xCC, CMD0, CMD2);                                            //save reset data        
          ACK_for_COM[14] = 0x00;
          
@@ -1247,6 +1246,12 @@ void MULT_SPEC_COMMAND(int8 CMD0,int8 CMD2,int8 CMD3,int8 CMD4,int8 CMD5,int8 CM
                }
             }
          }
+         
+         for(int8 m1 = 0; m1 < 81; m1++)
+         {
+            fputc(MULTSPEC1_DATA[m1], COM);
+         }
+         fprintf(PC,"\r\n");
          
          fprintf(PC,"Data Recieved: ");
          for(int l = 0; l < 81; l++)
@@ -1591,7 +1596,6 @@ void MULT_SPEC_COMMAND(int8 CMD0,int8 CMD2,int8 CMD3,int8 CMD4,int8 CMD5,int8 CM
       
       case 0x32: //Turn on CAM1 RPi trigger
          
-         REPLY_TO_COM(0x66,0);
          SAVE_SAT_LOG(0xCC, CMD0, CMD2);                                            //save reset data         
          ACK_for_COM[14] = 0x00;
          
@@ -1603,17 +1607,24 @@ void MULT_SPEC_COMMAND(int8 CMD0,int8 CMD2,int8 CMD3,int8 CMD4,int8 CMD5,int8 CM
          FWD_CMD_MBP(CMD0, CMD2, CMD3, CMD4, CMD5, CMD6, CMD7, CMD8);
          counter = 0;
          for(num = 0; num < 1500000; num++)
+         {
+            if(kbhit(DC))
             {
-               if(kbhit(DC))
+               MULTSPEC2_DATA[counter] = fgetc(DC);
+               counter++;
+               if(counter == 81)
                {
-                  MULTSPEC2_DATA[counter] = fgetc(DC);
-                  counter++;
-                  if(counter == 81)
-                  {
-                     break;
-                  }
+                  break;
                }
             }
+         }
+         
+         for(int8 m2 = 0; m2 < 81; m2++)
+         {
+            fputc(MULTSPEC2_DATA[m2], COM);
+         }
+         fprintf(PC,"\r\n");
+         
          fprintf(PC,"Data Recieved: ");
          for(l = 0; l < 81; l++)
          {
@@ -2560,7 +2571,6 @@ void IMGCLS_COMMAND(int8 CMD0,int8 CMD2,int8 CMD3,int8 CMD4,int8 CMD5,int8 CMD6,
       
       case 0x82: //Real time downlink IMGCLS
          
-         REPLY_TO_COM(0x66,0);
          SAVE_SAT_LOG(0xCC, CMD0, CMD2);                                            //save reset data       
          UPLINK_SUCCESS_IMGCLS_CAM();                                             //put uplink succes flag in high and store flags
          ACK_for_COM[14] = 0x00;
@@ -3814,7 +3824,6 @@ void SF_COMMAND(int8 CMD0,int8 CMD2,int8 CMD3,int8 CMD4,int8 CMD5,int8 CMD6, int
       
       case 0x52:                                                                 //Real time downlink SF
          
-         REPLY_TO_COM(0x66,0);
          SAVE_SAT_LOG(0xCC, CMD0, CMD2);                                            //save reset data        
          ACK_for_COM[14] = 0x00;
          
@@ -3828,19 +3837,19 @@ void SF_COMMAND(int8 CMD0,int8 CMD2,int8 CMD3,int8 CMD4,int8 CMD5,int8 CMD6, int
          FWD_CMD_MBP(CMD0, CMD2, CMD3, CMD4, CMD5, CMD6, CMD7, CMD8);
          int32 counter_sf = 0;
          for(int32 num_sf = 0; num_sf < 1500000; num_sf++)
+         {
+            if(kbhit(DC))
             {
-               if(kbhit(DC))
+               SFWD_DATA[counter_sf] = fgetc(DC);
+               counter_sf++;
+               if(counter_sf == 81)
                {
-                  SFWD_DATA[counter_sf] = fgetc(DC);
-                  counter_sf++;
-                  if(counter_sf == 81)
-                  {
-                     break;
-                  }
+                  break;
                }
             }
+         }
             
-            for(int8 sf_c = 0; sf_c < 81; sf_c++)
+         for(int8 sf_c = 0; sf_c < 81; sf_c++)
          {
             fputc(SFWD_DATA[sf_c], COM);
          }
@@ -4211,7 +4220,6 @@ void PINO_COMMAND(int8 CMD0,int8 CMD2,int8 CMD3,int8 CMD4,int8 CMD5,int8 CMD6, i
       
       case 0x92:
       
-         REPLY_TO_COM(0x66,0);
          SAVE_SAT_LOG(0xCC, CMD0, CMD2);                                            //save reset data 
          UPLINK_SUCCESS_PINO();                                             //put uplink succes flag in high and store flags
          ACK_for_COM[14] = 0x00;
