@@ -1441,7 +1441,7 @@ void GET_ADCS_SENSOR_DATA()                                                     
 //!         fprintf(PC, "%f ", ((d_z-65536)*0.00875));
 //!      }
 //!      fprintf(PC,"\r\n");
-      
+//!      
   
    return;
 }
