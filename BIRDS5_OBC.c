@@ -138,7 +138,7 @@ void main()
 
    settings();                                                                   //Prepare all interrupts, timers, flag information, BC setup etc.
    
-   //Antenna_Deploy();                                                           //Attempt deploying of antenna. This is the 2nd, 3rd and 4th attempts
+   Antenna_Deploy();                                                           //Attempt deploying of antenna. This is the 2nd, 3rd and 4th attempts
    
    FAB_TEST_OPERATION();
    fprintf(PC, "\r\n********Finish FAB TEST OPERATION*******\r\n");   
@@ -148,7 +148,7 @@ void main()
 
    while(TRUE)                                                                     //Main Operation Loop
    {
-      //BC_ON_30min();                                                             //Attempt 1st antenna deployment after 30mins
+      BC_ON_30min();                                                             //Attempt 1st antenna deployment after 30mins
       
       delay_ms(100); 
       
