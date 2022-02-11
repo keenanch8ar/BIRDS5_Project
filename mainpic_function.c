@@ -1897,17 +1897,6 @@ void Turn_Off_MBP()
    return;
 }
 
-
-//!void DEL_MBP_DATA()
-//!{
-//!   for(int n = 0; n < 9; n++)
-//!   {
-//!      MBP_DATA[n] = 0;  
-//!   }
-//!   return;
-//!}
-
-
 void Forward_CMD_MBP()
 {
       for(int8 n = 0; n < 9; n++)

@@ -3,7 +3,7 @@
  * Author: Keenan Chatar and Yukihisa Otani
  * PIC: 18F67J94 w/Int OSC @ 16MHz, 3.3v
  * Program: MAIN PIC Program
- * Compiler: XC8 (v1.35, CCS C Compiler v5.026)
+ * Compiler: XC8 (v1.35, CCS C Compiler v5.050)
  * Program Version: 1.0
  *                
  * Program Description: This is the main program loop for the BIRDS-5 OBC.

@@ -163,20 +163,39 @@ void MAIN_COMMAND(int8 CMD0,int8 CMD2,int8 CMD3,int8 CMD4,int8 CMD5,int8 CMD6, i
       case 0x01:                                                                 //Uplink 3 bytes to SMF at specified address
       
          REPLY_TO_COM(0x66,0);
-         SAVE_SAT_LOG(0xCC, CMD0, CMD2);                                            //save reset data         
+         SAVE_SAT_LOG(0xCC, CMD0, CMD2);                                         //save reset data         
          UPLINK_SUCCESS_CHECK();                                                 //put uplink succes flag in high and store flags
          ACK_for_COM[14] = 0x00;  
-         fprintf(PC, "Nothing yet\r\n");                                                    //Nothing for now
+         fprintf(PC, "Nothing yet\r\n");                                         //Nothing for now
          
       break;
        
       case 0x02:
       
-         REPLY_TO_COM(0x66,0);
-         SAVE_SAT_LOG(0xCC, CMD0, CMD2);                                            //save reset data          
+         SAVE_SAT_LOG(0xCC, CMD0, CMD2);                                         //save reset data          
          UPLINK_SUCCESS_CHECK();                                                 //put uplink succes flag in high and store flags
          ACK_for_COM[14] = 0x00;  
-         fprintf(PC, "Nothing yet\r\n");                                                    //Nothing for now
+         FAB_FLAG = 0;
+         fprintf(PC,"\r\n***Command NORMAL SAMPLING HOUSEKEEPING DATA COLLECTION***\r\n");
+         FAB_TEST_OPERATION();
+         for(int num = 0; num < HK_Size; num++)                                    
+         {
+            fputc(HKDATA[num],COM);
+         }
+         fputc(0x00,COM);
+         STORE_ADRESS_DATA_TO_FLASH();                                           //for store the address info
+
+         fprintf(PC,"CW:");
+         for(int i = 0; i < 4; i++)                                              //show CW format
+         {
+            fprintf(PC,"%x,",CW_FORMAT[i]);
+         }
+         fprintf(PC,"%x\r\n",CW_FORMAT[4]);
+         DELETE_CMD_FROM_PC();                                                   //delete PC command
+         PC_DATA = 0;                                                            //reset interrupt data for safety
+         COM_DATA = 0;                                                           //reset interrupt data for safety
+         RESET_DATA = 0;                                                         //reset interrupt data for safety
+         fprintf(PC,"\r\n");
          
       break;
      
@@ -732,7 +751,27 @@ void MAIN_COMMAND_PC(int8 CMD0,int8 CMD2,int8 CMD3,int8 CMD4,int8 CMD5,int8 CMD6
        
       case 0x02:
 
-         fprintf(PC, "Nothing yet\r\n");                                                    //Nothing for now
+         FAB_FLAG = 0;
+         fprintf(PC,"\r\n***Command NORMAL SAMPLING HOUSEKEEPING DATA COLLECTION***\r\n");
+         FAB_TEST_OPERATION();
+         for(int num = 0; num < HK_Size; num++)                                    
+         {
+            fputc(HKDATA[num],COM);
+         }
+         fputc(0x00,COM);
+         STORE_ADRESS_DATA_TO_FLASH();                                           //for store the address info
+
+         fprintf(PC,"CW:");
+         for(int i = 0; i < 4; i++)                                              //show CW format
+         {
+            fprintf(PC,"%x,",CW_FORMAT[i]);
+         }
+         fprintf(PC,"%x\r\n",CW_FORMAT[4]);
+         DELETE_CMD_FROM_PC();                                                   //delete PC command
+         PC_DATA = 0;                                                            //reset interrupt data for safety
+         COM_DATA = 0;                                                           //reset interrupt data for safety
+         RESET_DATA = 0;                                                         //reset interrupt data for safety
+         fprintf(PC,"\r\n");
          
       break;
      
@@ -4082,24 +4121,32 @@ void PINO_COMMAND_PC(int8 CMD0,int8 CMD2,int8 CMD3,int8 CMD4,int8 CMD5,int8 CMD6
          FWD_CMD_MBP(CMD0, CMD2, CMD3, CMD4, CMD5, CMD6, CMD7, CMD8);
          int8 pino_counter = 0;
          for(int32 num = 0; num < 1500000; num++)
+         {
+          
+            if(kbhit(DC))
             {
-             
-               if(kbhit(DC))
-               {
-                  NEW_PINO_DATA[pino_counter] = fgetc(DC);
-                  pino_counter++;
-               }
-               if(pino_counter == 81)
-               {
-                  break;
-               }
+               NEW_PINO_DATA[pino_counter] = fgetc(DC);
+               pino_counter++;
             }
+            if(pino_counter == 81)
+            {
+               break;
+            }
+         }
+            
+         for(int8 l = 0; l < 81; l++)
+         {
+            fputc(NEW_PINO_DATA[l], COM);
+         }
+         fprintf(PC,"\r\n");
+         
          fprintf(PC,"Data Recieved: ");
-         for(int l = 0; l < 81; l++)
+         for(l = 0; l < 81; l++)
          {
             fprintf(PC,"%x",NEW_PINO_DATA[l]);
          }
          fprintf(PC,"\r\n");
+         
          fprintf (PC, "Finish 0x92\r\n");
          for(l = 0; l < 81; l++)
          {
