@@ -24,6 +24,8 @@ To get started with the BIRDS-5 OBC code repository, follow these steps:
 
 3. **Contribute**: If you wish to contribute to the development of the BIRDS-5 OBC software, please fork the repository, make your changes, and submit a pull request.
 
+## Project Website
+For more information about the BIRDS-5 nanosatellite project, please visit our [BIRDS-5 project website](https://birds5.birds-project.com/).
 
 ## Documentation
 For detailed documentation on the BIRDS-5 OBC software, including architecture, interfaces, and usage instructions, refer to the `docs` directory in this repository.
